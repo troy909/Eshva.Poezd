@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.UnitTests.Application
       _isItResearchCaseTypeQuery = isItResearchCaseTypeQuery;
     }
 
-    public async Task Handle(CreateCase message, IMessageHandlingContext context)
+    public async Task Handle(CreateCase message, SampleMessageHandlingContext context)
     {
       var researchCase = new ResearchCase(message.CaseId, message.SubjectId, message.Reason);
 
@@ -37,11 +37,11 @@ namespace Eshva.Poezd.Core.UnitTests.Application
       catch (Exception exception)
       {
         _logger.LogException(exception);
-        context.Uncommit();
+        context.Abort();
       }
     }
 
-    public Task<bool> ShouldHandle(CreateCase message, IMessageHandlingContext context) =>
+    public Task<bool> ShouldHandle(CreateCase message, SampleMessageHandlingContext context) =>
       _isItResearchCaseTypeQuery.Execute(message.CaseType);
 
     private readonly ILogger<CreateResearchCaseUseCase> _logger;

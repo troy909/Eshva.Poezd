@@ -27,7 +27,7 @@ namespace Eshva.Poezd.Core.UnitTests.Application
       _isJusticeCaseExists = isJusticeCaseExists;
     }
 
-    public async Task Handle(CreateCase message, SampleMessageHandlingContext context)
+    public async Task Handle(CreateCase message, VentureMessageHandlingContext context)
     {
       var justiceCase = new JusticeCase(message.CaseId, message.SubjectId, message.Reason);
 
@@ -43,7 +43,7 @@ namespace Eshva.Poezd.Core.UnitTests.Application
       }
     }
 
-    public async Task<bool> ShouldHandle(CreateCase message, SampleMessageHandlingContext context) =>
+    public async Task<bool> ShouldHandle(CreateCase message, VentureMessageHandlingContext context) =>
       await _isItJusticeCaseTypeQuery.Execute(message.CaseType) &&
       !await _isJusticeCaseExists.Execute(message.CaseId);
 

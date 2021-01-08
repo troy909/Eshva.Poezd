@@ -3,9 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Core", "Eshva.Poezd.Core\Eshva.Poezd.Core.csproj", "{E7C781DF-77DB-435B-95F1-24D3928B9916}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Core", "Eshva.Poezd.Core\Eshva.Poezd.Core.csproj", "{E7C781DF-77DB-435B-95F1-24D3928B9916}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Core.UnitTests", "Eshva.Poezd.Core.UnitTests\Eshva.Poezd.Core.UnitTests.csproj", "{80C3B6B8-7C34-4648-9F37-A31C837B6803}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Core.UnitTests", "Eshva.Poezd.Core.UnitTests\Eshva.Poezd.Core.UnitTests.csproj", "{80C3B6B8-7C34-4648-9F37-A31C837B6803}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{5FAB6CF4-E697-4955-ADF7-1B650F77A2F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Venture", "Venture", "{161DFBF8-D707-40B4-8ECB-71F21E29DCD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CaseOffice", "CaseOffice", "{B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WorkPlanner", "WorkPlanner", "{8D645678-A97B-41C7-AF46-8B8653CE44C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +32,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{161DFBF8-D707-40B4-8ECB-71F21E29DCD3} = {5FAB6CF4-E697-4955-ADF7-1B650F77A2F9}
+		{B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04} = {161DFBF8-D707-40B4-8ECB-71F21E29DCD3}
+		{8D645678-A97B-41C7-AF46-8B8653CE44C3} = {161DFBF8-D707-40B4-8ECB-71F21E29DCD3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

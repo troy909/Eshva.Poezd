@@ -11,6 +11,6 @@ namespace Eshva.Poezd.Core
   [UsedImplicitly(ImplicitUseTargetFlags.Itself | ImplicitUseTargetFlags.WithInheritors)]
   public interface IHandleMessageOfType<in TMessage> where TMessage : class
   {
-    Task Handle(TMessage message, SampleMessageHandlingContext context);
+    Task Handle(TMessage message, VentureMessageHandlingContext context);
   }
 }

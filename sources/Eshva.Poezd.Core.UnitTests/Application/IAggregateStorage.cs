@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core.UnitTests.Application
 {
   public interface IAggregateStorage<TAggregate> where TAggregate : class
   {

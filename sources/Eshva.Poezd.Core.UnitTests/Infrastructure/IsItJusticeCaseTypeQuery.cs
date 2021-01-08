@@ -1,12 +1,13 @@
-﻿#region Usings
+#region Usings
 
 using System;
 using System.Threading.Tasks;
+using Eshva.Poezd.Core.UnitTests.Application;
 
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core.UnitTests.Infrastructure
 {
   public class IsItJusticeCaseTypeQuery : IIsItJusticeCaseTypeQuery
   {

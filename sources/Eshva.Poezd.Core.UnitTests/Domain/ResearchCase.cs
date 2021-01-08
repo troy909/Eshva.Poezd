@@ -5,18 +5,18 @@ using System;
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core.UnitTests.Domain
 {
-  public class JusticeCase
+  public class ResearchCase
   {
-    public JusticeCase(Guid caseId, Guid subjectId, string reason)
+    public ResearchCase(Guid caseId, Guid subjectId, string reason)
     {
       _caseId = caseId;
       _subjectId = subjectId;
       _reason = reason;
     }
 
-    public static readonly JusticeCase None = new JusticeCase(Guid.Empty, Guid.Empty, string.Empty);
+    public static readonly ResearchCase None = new ResearchCase(Guid.Empty, Guid.Empty, string.Empty);
     private readonly Guid _caseId;
     private readonly Guid _subjectId;
     private readonly string _reason;

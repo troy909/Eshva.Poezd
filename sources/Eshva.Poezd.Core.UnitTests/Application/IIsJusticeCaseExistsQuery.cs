@@ -1,4 +1,4 @@
-﻿#region Usings
+#region Usings
 
 using System;
 using System.Threading.Tasks;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core.UnitTests.Application
 {
   public interface IIsJusticeCaseExistsQuery : IQuery
   {

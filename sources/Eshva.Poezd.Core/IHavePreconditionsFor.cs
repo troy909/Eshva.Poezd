@@ -1,11 +1,11 @@
-﻿#region Usings
+#region Usings
 
 using System.Threading.Tasks;
 
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core
 {
   public interface IHavePreconditionsFor<in TMessage> where TMessage : class
   {

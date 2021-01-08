@@ -1,4 +1,4 @@
-﻿namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core
 {
   /// <summary>
   /// Маркерный интерфейс для регистрации скопом в DI-контейнере.

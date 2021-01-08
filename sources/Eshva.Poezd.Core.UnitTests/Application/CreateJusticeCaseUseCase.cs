@@ -1,12 +1,15 @@
-﻿#region Usings
+#region Usings
 
 using System;
 using System.Threading.Tasks;
+using Eshva.Poezd.Core.UnitTests.Domain;
+using Eshva.Poezd.Core.UnitTests.Infrastructure;
+using Eshva.Poezd.Core.UnitTests.Messages;
 
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core.UnitTests.Application
 {
   public sealed class CreateJusticeCaseUseCase :
     IHandleMessageOfType<CreateCase>,

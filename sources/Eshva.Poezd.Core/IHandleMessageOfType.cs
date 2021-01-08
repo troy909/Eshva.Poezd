@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core
 {
   public interface IHandleMessageOfType<in TMessage> where TMessage : class
   {

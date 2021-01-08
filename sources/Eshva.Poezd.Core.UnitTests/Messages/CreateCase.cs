@@ -5,7 +5,7 @@ using System;
 #endregion
 
 
-namespace Eshva.Poezd.Core.UnitTests
+namespace Eshva.Poezd.Core.UnitTests.Messages
 {
   public class CreateCase
   {

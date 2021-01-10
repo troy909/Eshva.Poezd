@@ -22,6 +22,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
+    <ProjectReference Include="..\..\..\Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj" />
+    <ProjectReference Include="..\..\..\Eshva.Poezd.RabbitMqCoupling\Eshva.Poezd.RabbitMqCoupling.csproj" />
+    <ProjectReference Include="..\..\..\Eshva.Poezd.SerilogCoupling\Eshva.Poezd.SerilogCoupling.csproj" />
     <ProjectReference Include="..\..\..\Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj" />
     <ProjectReference Include="..\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj" />
   </ItemGroup>

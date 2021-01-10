@@ -14,12 +14,10 @@ namespace Eshva.Poezd.Core.Configuration
     /// Call this method with the chosen implementation of <see cref="IMessageHandlersFactory"/>
     /// in order to start configuring a Poezd instance.
     /// </summary>
-    public static PoezdConfigurator With(IMessageHandlersFactory handlersFactory)
-    {
-      if (handlersFactory == null) throw new ArgumentNullException(nameof(handlersFactory), HandlerActivatorNotSpecifiedErrorMessage);
-
-      return new PoezdConfigurator(handlersFactory);
-    }
+    public static PoezdConfigurator With(IMessageHandlersFactory handlersFactory) =>
+      handlersFactory != null
+        ? new PoezdConfigurator(handlersFactory)
+        : throw new ArgumentNullException(nameof(handlersFactory), HandlerActivatorNotSpecifiedErrorMessage);
 
     private static readonly string HandlerActivatorNotSpecifiedErrorMessage =
       "Please remember to pass a handlers factory to the .With(..) method." + Environment.NewLine +

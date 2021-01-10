@@ -34,8 +34,4 @@ namespace Eshva.Poezd.Core.Transport
     /// </summary>
     Task<TransportMessage> Receive(ITransactionContext context, CancellationToken cancellationToken);
   }
-
-  public class TransportMessage
-  {
-  }
 }

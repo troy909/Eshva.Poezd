@@ -49,9 +49,10 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
 
     public static void ConfigurePoezdRouter(this Container container, Func<PoezdConfigurator, IMessageRouter> configurator)
     {
-      if (container.GetCurrentRegistrations()
-                   .Select(instanceProducer => instanceProducer.ServiceType)
-                   .Any(type => type == typeof(IMessageRouter)))
+      var isMessageRouterRegistered = container.GetCurrentRegistrations()
+                                               .Select(instanceProducer => instanceProducer.ServiceType)
+                                               .Any(type => type == typeof(IMessageRouter));
+      if (isMessageRouterRegistered)
       {
         throw new InvalidOperationException("Cannot register IMessageRouter in the container because it has already been registered.");
       }

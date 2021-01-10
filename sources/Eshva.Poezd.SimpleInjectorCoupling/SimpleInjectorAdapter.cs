@@ -40,8 +40,17 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
 
       return Task.FromResult(
         TryGetInstance<IReadOnlyCollection<IHandleMessage<TMessage>>>(scope, out var handlerInstances)
-          ? handlerInstances
+          ? AdaptHandlers(handlerInstances)
           : new IHandleMessage<TMessage>[0]);
+    }
+
+    public Task<IReadOnlyCollection<IHandleMessage<>>>
+
+    private IReadOnlyCollection<IHandleMessage<TMessage>> AdaptHandlers<TMessage>(
+      IReadOnlyCollection<IHandleMessage<TMessage>> handlerInstances)
+      where TMessage : class
+    {
+      return null;
     }
 
     private static bool TryGetInstance<TService>(IServiceProvider provider, out TService instance)

@@ -52,8 +52,4 @@ namespace Eshva.Poezd.Core.Configuration
 
     private readonly DependencyInjector _dependencyInjector;
   }
-
-  public class Options
-  {
-  }
 }

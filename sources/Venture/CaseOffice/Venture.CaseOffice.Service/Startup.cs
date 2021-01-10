@@ -1,10 +1,12 @@
 #region Usings
 
+using System.Text.Json.Serialization;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using SimpleInjector;
 
 #endregion
 
@@ -13,23 +15,33 @@ namespace Venture.CaseOffice.Service
 {
   public class Startup
   {
-    // This method gets called by the runtime. Use this method to add services to the container.
-    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+    public Startup(IConfiguration configuration)
+    {
+      Configuration = configuration;
+    }
+
+    [UsedImplicitly(ImplicitUseKindFlags.Access)]
+    public IConfiguration Configuration { get; }
+
     public void ConfigureServices(IServiceCollection services)
     {
+      services.AddControllers().AddJsonOptions(opt => { opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
+      services.AddLogging();
+      services.AddSimpleInjector(
+        _container,
+        options => options.AddLogging().AddAspNetCore().AddControllerActivation());
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    [UsedImplicitly]
+    public void Configure(IApplicationBuilder builder, IWebHostEnvironment environment)
     {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-
-      app.UseRouting();
-
-      app.UseEndpoints(endpoints => { endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); }); });
+      builder.ConfigureContainer(_container, Configuration);
+      //builder.UseSerilogRequestLogging();
+      builder.UseHttpsRedirection();
+      builder.UseRouting().UseEndpoints(endpoints => endpoints.MapControllers());
+      builder.UseAuthorization();
     }
+
+    private readonly Container _container = new Container();
   }
 }

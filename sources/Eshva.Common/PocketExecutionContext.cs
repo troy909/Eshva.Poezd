@@ -2,22 +2,23 @@
 
 using System;
 using System.Collections.Concurrent;
-using Venture.Common.Tools;
 
 #endregion
 
 
-namespace Venture.Common.Application.MessageHandling
+namespace Eshva.Common
 {
   public class PocketExecutionContext : IPocket
   {
     public bool TryGet<TValue>(out TValue value) => TryGet(typeof(TValue).FullName, out value);
 
-    /// <exception cref="System.InvalidCastException">
-    /// Найденное значение имеет тип, отличный от ожидаемого.
-    /// </exception>
     public bool TryGet<TValue>(string key, out TValue value)
     {
+      if (string.IsNullOrWhiteSpace(key))
+      {
+        throw new ArgumentNullException(nameof(key));
+      }
+
       if (_things.TryGetValue(key, out var found))
       {
         value = (TValue)found;
@@ -28,14 +29,8 @@ namespace Venture.Common.Application.MessageHandling
       return false;
     }
 
-    /// <exception cref="ArgumentNullException">
-    /// Значение не задано.
-    /// </exception>
     public void Set<TValue>(TValue value) => Set(typeof(TValue).FullName, value);
 
-    /// <exception cref="ArgumentNullException">
-    /// Не задан ключ или значение, либо ключ представляет собой пустую строку или только пробельные символы.
-    /// </exception>
     public void Set<TValue>(string key, TValue value)
     {
       if (string.IsNullOrWhiteSpace(key))
@@ -53,9 +48,6 @@ namespace Venture.Common.Application.MessageHandling
 
     public bool TryRemove<TValue>() => TryRemove(typeof(TValue).FullName);
 
-    /// <exception cref="ArgumentNullException">
-    /// Ключ представляет собой пустую строку или только пробельные символы.
-    /// </exception>
     public bool TryRemove(string key)
     {
       if (string.IsNullOrWhiteSpace(key))

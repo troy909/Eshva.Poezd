@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.ReadMode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Poezd.Coupling", "Venture\Common\Venture.Poezd.Coupling\Venture.Poezd.Coupling.csproj", "{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Common", "Eshva.Common\Eshva.Common.csproj", "{7663432D-EFD2-4424-8B70-DF92BE8C3C01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.SimpleInjectorCoupling", "Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj", "{85AF1D21-9C16-4CCD-B9A3-8DA891490301}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +89,14 @@ Global
 		{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7663432D-EFD2-4424-8B70-DF92BE8C3C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7663432D-EFD2-4424-8B70-DF92BE8C3C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7663432D-EFD2-4424-8B70-DF92BE8C3C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7663432D-EFD2-4424-8B70-DF92BE8C3C01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85AF1D21-9C16-4CCD-B9A3-8DA891490301}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85AF1D21-9C16-4CCD-B9A3-8DA891490301}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85AF1D21-9C16-4CCD-B9A3-8DA891490301}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85AF1D21-9C16-4CCD-B9A3-8DA891490301}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

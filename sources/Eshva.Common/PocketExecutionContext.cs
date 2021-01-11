@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 #endregion
 
@@ -57,6 +58,8 @@ namespace Eshva.Common
 
       return _things.TryRemove(key, out _);
     }
+
+    public IEnumerable<KeyValuePair<string, object>> GetItems() => _things;
 
     private readonly ConcurrentDictionary<string, object> _things = new ConcurrentDictionary<string, object>();
   }

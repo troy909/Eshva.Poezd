@@ -5,11 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2020.3.0"/> <PackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.88"/>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" /> <PackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.88" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Venture.Common.Tools\Venture.Common.Tools.csproj"/>
+    <ProjectReference Include="..\..\..\Eshva.Common\Eshva.Common.csproj" />
+    <ProjectReference Include="..\Venture.Common.Tools\Venture.Common.Tools.csproj" />
   </ItemGroup>
 
 </Project>

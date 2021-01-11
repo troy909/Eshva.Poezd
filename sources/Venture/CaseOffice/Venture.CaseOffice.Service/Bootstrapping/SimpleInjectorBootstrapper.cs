@@ -5,15 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Eshva.Poezd.Core.Configuration;
-using Eshva.Poezd.KafkaCoupling;
-using Eshva.Poezd.RabbitMqCoupling;
-using Eshva.Poezd.SerilogCoupling;
-using Eshva.Poezd.SimpleInjectorCoupling;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using Venture.CaseOffice.Application;
 using Venture.Common.Application.MessageHandling;
+using Venture.Poezd.Coupling;
 
 #endregion
 
@@ -29,12 +26,24 @@ namespace Venture.CaseOffice.Service.Bootstrapping
       container.Verify(VerificationOption.VerifyAndDiagnose);
     }
 
+    private static void SetupPoezd(this Container container, IConfiguration configuration)
+    {
+      var messageRouter =
+        PoezdConfiguration.Create(
+                            configurator => configurator
+                              .WithMessageHandling(
+                                messageHandling => messageHandling.WithMessageHandlersFactory(new VentureMessageHandlerFactory(container))))
+                          .BuildMessageRouter();
+      container.RegisterInstance(messageRouter);
+    }
+
     private static void SetupContainer(this Container container, IConfiguration configuration)
     {
       var messageHandlersAssemblies = new[] { typeof(CaseOfficeApplicationAssemblyTag).Assembly };
       var serviceTypes = container.GetMessageHandlersTypes(messageHandlersAssemblies).ToArray();
       container.Collection.Register(typeof(IHandleMessageOfType<>), serviceTypes);
 
+      /*
       container.ConfigurePoezdRouter(
         router => router.AddBus(
                           bus => bus.WithName("lowers department Kafka bus")
@@ -85,6 +94,7 @@ namespace Venture.CaseOffice.Service.Bootstrapping
                         .WithProcessManaging(processManaging => processManaging.UseInMemoryStorage())
                         .WithMessageHandling(messageHandling => messageHandling.WithBaseMessageHandlerType(typeof(IHandleMessageOfType<>)))
                         .Start());
+    */
     }
 
     private static IEnumerable<Type> GetMessageHandlersTypes(this Container container, IEnumerable<Assembly> assemblies) =>
@@ -96,49 +106,5 @@ namespace Venture.CaseOffice.Service.Bootstrapping
           IncludeGenericTypeDefinitions = true,
           IncludeComposites = true
         });
-  }
-
-  internal class MyXmlSerializer : IMessageSerializer
-  {
-  }
-
-  internal class AccountantsAuditServiceMetadataHandler : IMetadataHandler
-  {
-  }
-
-  internal class MainAccountantsServiceMetadataHandler : IMetadataHandler
-  {
-  }
-
-  internal class Service2QueueNamingConvention : IQueueNamingConvention
-  {
-  }
-
-  internal class ServiceMessageTypingConvention : IMessageTypingConvention
-  {
-  }
-
-  internal class Service2MetadataHandler : IMetadataHandler
-  {
-  }
-
-  internal class MyJsonSerializer : IMessageSerializer
-  {
-  }
-
-  internal class Service1QueueNamingConvention : IQueueNamingConvention
-  {
-  }
-
-  internal class Service1MessageTypingConvention : IMessageTypingConvention
-  {
-  }
-
-  internal class Service1MetadataHandler : IMetadataHandler
-  {
-  }
-
-  internal class FlatBuffersSerializer : IMessageSerializer
-  {
   }
 }

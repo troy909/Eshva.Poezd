@@ -39,6 +39,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
     */
 
+    /*
     public IMessageRouter Start()
     {
       VerifyRequirements();
@@ -60,6 +61,7 @@ namespace Eshva.Poezd.Core.Configuration
                  .Append(new DispatchIncomingMessageStep(loggerFactory));
         });
     }
+    */
 
     public PoezdConfigurator AddBus([NotNull] Action<BusConfigurator> configurator)
     {
@@ -94,6 +96,7 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
+    /*
     public PoezdConfigurator WithMessageHandling(Action<MessageHandlingConfigurator> configurator)
     {
       if (configurator == null)
@@ -104,6 +107,7 @@ namespace Eshva.Poezd.Core.Configuration
       configurator(new MessageHandlingConfigurator());
       return this;
     }
+    */
 
     private void VerifyRequirements()
     {
@@ -142,16 +146,6 @@ namespace Eshva.Poezd.Core.Configuration
     private readonly Options _options = new Options();
   }
 
-  public class MessageHandlingConfigurator
-  {
-    public Type BaseMessageHandlerType { get; private set; }
-
-    public MessageHandlingConfigurator WithBaseMessageHandlerType(Type baseMessageHandlerType)
-    {
-      BaseMessageHandlerType = baseMessageHandlerType;
-      return this;
-    }
-  }
 
   public class ProcessManagingConfigurator
   {

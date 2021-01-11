@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
+    <ProjectReference Include="..\Venture\Common\Venture.Common.Application\Venture.Common.Application.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,12 +3,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Eshva.Common;
 
 #endregion
 
 
-namespace Eshva.Poezd.Core.Transport
+namespace Eshva.Common
 {
   public static class PocketExtensions
   {

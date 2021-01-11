@@ -47,6 +47,7 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
       RegisterHandlers(container, typeof(IHandleMessage<TMessage>), new[] { typeof(THandler1), typeof(THandler2), typeof(THandler3) });
     }
 
+    /*
     public static void ConfigurePoezdRouter(this Container container, Func<PoezdConfigurator, IMessageRouter> configurator)
     {
       var isMessageRouterRegistered = container.GetCurrentRegistrations()
@@ -57,8 +58,9 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
         throw new InvalidOperationException("Cannot register IMessageRouter in the container because it has already been registered.");
       }
 
-      container.Register(() => configurator(Configure.With(new SimpleInjectorAdapter(container))));
+      container.Register(() => configurator(Configure.With(new VentureMessageHandlerFactory(container))));
     }
+    */
 
     private static void RegisterHandlers(Container container, Type messageHandlerType, IEnumerable<Type> concreteHandlerTypes) =>
       container.Collection.Register(messageHandlerType, concreteHandlerTypes, Lifestyle.Scoped);

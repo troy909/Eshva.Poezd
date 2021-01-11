@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+
+
 namespace Eshva.Common
 {
   public interface IPocket
@@ -34,5 +37,7 @@ namespace Eshva.Common
     /// Ключ представляет собой пустую строку или только пробельные символы.
     /// </exception>
     bool TryRemove(string key);
+
+    IEnumerable<KeyValuePair<string, object>> GetItems();
   }
 }

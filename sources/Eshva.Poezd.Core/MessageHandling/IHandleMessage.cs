@@ -8,8 +8,8 @@ using Eshva.Common;
 
 namespace Eshva.Poezd.Core.MessageHandling
 {
-  public interface IHandleMessage<in TMessage>
+  public interface IHandleMessage
   {
-    Task Handle(TMessage message, IPocket poezdContext);
+    Task Handle(object message, IPocket poezdContext);
   }
 }

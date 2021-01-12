@@ -2,10 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.MessageHandling;
-using Eshva.Poezd.Core.Routing;
 using SimpleInjector;
 
 #endregion
@@ -19,32 +16,32 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
     /// Registers <typeparamref name="THandler"/> as a handler of messages of type <typeparamref name="TMessage"/>
     /// </summary>
     public static void RegisterHandlers<TMessage, THandler>(this Container container)
-      where THandler : IHandleMessage<TMessage> where TMessage : class
+      where THandler : IHandleMessage where TMessage : class
     {
-      RegisterHandlers(container, typeof(IHandleMessage<TMessage>), new[] { typeof(THandler) });
+      RegisterHandlers(container, typeof(IHandleMessage), new[] { typeof(THandler) });
     }
 
     /// <summary>
     /// Registers <typeparamref name="THandler1"/> and <typeparamref name="THandler2"/> as handlers of messages of type <typeparamref name="TMessage"/>
     /// </summary>
     public static void RegisterHandlers<TMessage, THandler1, THandler2>(this Container container)
-      where THandler1 : IHandleMessage<TMessage>
-      where THandler2 : IHandleMessage<TMessage>
+      where THandler1 : IHandleMessage
+      where THandler2 : IHandleMessage
       where TMessage : class
     {
-      RegisterHandlers(container, typeof(IHandleMessage<TMessage>), new[] { typeof(THandler1), typeof(THandler2) });
+      RegisterHandlers(container, typeof(IHandleMessage), new[] { typeof(THandler1), typeof(THandler2) });
     }
 
     /// <summary>
     /// Registers <typeparamref name="THandler1"/> and <typeparamref name="THandler2"/> and <typeparamref name="THandler3"/> as handlers of messages of type <typeparamref name="TMessage"/>
     /// </summary>
     public static void RegisterHandlers<TMessage, THandler1, THandler2, THandler3>(this Container container)
-      where THandler1 : IHandleMessage<TMessage>
-      where THandler2 : IHandleMessage<TMessage>
-      where THandler3 : IHandleMessage<TMessage>
+      where THandler1 : IHandleMessage
+      where THandler2 : IHandleMessage
+      where THandler3 : IHandleMessage
       where TMessage : class
     {
-      RegisterHandlers(container, typeof(IHandleMessage<TMessage>), new[] { typeof(THandler1), typeof(THandler2), typeof(THandler3) });
+      RegisterHandlers(container, typeof(IHandleMessage), new[] { typeof(THandler1), typeof(THandler2), typeof(THandler3) });
     }
 
     /*

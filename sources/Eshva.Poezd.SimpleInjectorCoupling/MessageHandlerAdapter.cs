@@ -21,7 +21,7 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
     protected MessageHandlerAdapter([NotNull] Container container, [NotNull] Type messageHandlerType)
     {
       _container = container ?? throw new ArgumentNullException(nameof(container));
-      MessageHandlerType = messageHandlerType ?? throw new ArgumentNullException(nameof(messageHandlerType));
+      _messageHandlerType = messageHandlerType ?? throw new ArgumentNullException(nameof(messageHandlerType));
 
       var doesLookLikeMessageHandler = messageHandlerType.IsGenericTypeDefinition &&
                                        messageHandlerType.GenericTypeArguments.Length == 0 &&
@@ -34,15 +34,12 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
       }
     }
 
-    public Type MessageHandlerType { get; }
+    public Task<IEnumerable<IHandleMessage>> GetHandlersOfMessage(
+      object message,
+      ITransactionContext transactionContext) =>
+      Task.FromResult(GetInstances(CreateContainerScope(transactionContext), message.GetType()));
 
-    public Task<IEnumerable<IHandleMessage<TMessage>>> GetHandlersOfMessage<TMessage>(
-      TMessage message,
-      ITransactionContext transactionContext)
-      where TMessage : class =>
-      Task.FromResult(GetInstances<TMessage>(CreateContainerScope(transactionContext)));
-
-    protected abstract IHandleMessage<TMessage> CreatePoezdMessageHandler<TMessage>(object handler);
+    protected abstract IHandleMessage CreatePoezdMessageHandler(object applicationHandler);
 
     private Scope CreateContainerScope(ITransactionContext transactionContext)
     {
@@ -58,15 +55,17 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
       return scope;
     }
 
-    private IEnumerable<IHandleMessage<TMessage>> GetInstances<TMessage>(IServiceProvider provider)
+    private IEnumerable<IHandleMessage> GetInstances(IServiceProvider provider, Type messageType)
     {
-      var handlerCollectionType = typeof(IEnumerable<>).MakeGenericType(MessageHandlerType);
+      var handlerType = _messageHandlerType.MakeGenericType(messageType);
+      var handlerCollectionType = typeof(IEnumerable<>).MakeGenericType(handlerType);
       foreach (var handler in (IEnumerable)provider.GetService(handlerCollectionType))
       {
-        yield return CreatePoezdMessageHandler<TMessage>(handler);
+        yield return CreatePoezdMessageHandler(handler);
       }
     }
 
+    private readonly Type _messageHandlerType;
     private readonly Container _container;
   }
 }

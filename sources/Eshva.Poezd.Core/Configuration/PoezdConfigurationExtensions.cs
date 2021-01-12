@@ -9,6 +9,6 @@ namespace Eshva.Poezd.Core.Configuration
 {
   public static class PoezdConfigurationExtensions
   {
-    public static IMessageRouter BuildMessageRouter(this PoezdConfiguration configuration) => new MessageRouter(configuration);
+    public static IMessageRouter BuildMessageRouter(this PoezdConfiguration configuration) => new DefaultMessageRouter(configuration);
   }
 }

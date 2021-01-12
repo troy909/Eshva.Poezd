@@ -20,29 +20,50 @@ namespace Venture.Poezd.Coupling
     {
     }
 
-    protected override IHandleMessage<TMessage> CreatePoezdMessageHandler<TMessage>(object handler)
+    protected override IHandleMessage CreatePoezdMessageHandler(object applicationHandler)
     {
-      return new VentureMessageHandlerAdapter<TMessage>(handler);
+      return new VentureMessageHandlerAdapter(applicationHandler);
     }
 
-    private sealed class VentureMessageHandlerAdapter<TMessage> : IHandleMessage<TMessage>
+    private sealed class VentureMessageHandlerAdapter : IHandleMessage
     {
-      public VentureMessageHandlerAdapter([CanBeNull] object ventureHandler)
+      public VentureMessageHandlerAdapter([NotNull] object applicationHandler)
       {
-        _ventureHandler = (IHandleMessageOfType<TMessage>)ventureHandler ?? throw new ArgumentNullException(nameof(ventureHandler));
+        // Get Handle method from handler
+        _applicationHandler = applicationHandler ?? throw new ArgumentNullException(nameof(applicationHandler));
       }
 
-      public Task Handle([NotNull] TMessage message, [NotNull] IPocket poezdContext)
+      public Task Handle([NotNull] object message, [NotNull] IPocket poezdContext)
       {
         // ReSharper disable once CompareNonConstrainedGenericWithNull
         if (!message.GetType().IsValueType &&
             message == null) throw new ArgumentNullException(nameof(message));
         if (poezdContext == null) throw new ArgumentNullException(nameof(poezdContext));
 
-        return _ventureHandler.Handle(message, MakeVentureMessageHandlingContext(poezdContext));
+        var applicationMessageHandler = AdoptPoezdMessageHandler(message);
+        var applicationContext = AdoptPoezdMessageHandlingContext(poezdContext);
+        return applicationMessageHandler(message, applicationContext);
       }
 
-      private static VentureMessageHandlingContext MakeVentureMessageHandlingContext(IPocket context)
+      private Func<object, VentureMessageHandlingContext, Task> AdoptPoezdMessageHandler(object message)
+      {
+        // TODO: Reflection call is slow. I need to replace it with an Expression in the future.
+        var messageType = message.GetType();
+        var handlerConcreteType = typeof(IHandleMessageOfType<>)
+                                  .GetGenericTypeDefinition()
+                                  .MakeGenericType(messageType);
+        var handleMethod = handlerConcreteType.GetMethod(nameof(IHandleMessageOfType<object>.Handle));
+        if (handleMethod == null)
+        {
+          throw new InvalidOperationException(
+            $"Method {nameof(IHandleMessageOfType<object>.Handle)} with arguments of types " +
+            $"TMessage and {nameof(VentureMessageHandlingContext)} isn't found on type {nameof(IHandleMessageOfType<object>)}");
+        }
+
+        return (message1, context) => (Task)handleMethod.Invoke(_applicationHandler, new[] { message1, context });
+      }
+
+      private static VentureMessageHandlingContext AdoptPoezdMessageHandlingContext(IPocket context)
       {
         var ventureContext = new VentureMessageHandlingContext();
         foreach (var (key, value) in context.GetItems())
@@ -53,7 +74,7 @@ namespace Venture.Poezd.Coupling
         return ventureContext;
       }
 
-      private readonly IHandleMessageOfType<TMessage> _ventureHandler;
+      private readonly object _applicationHandler;
     }
   }
 }

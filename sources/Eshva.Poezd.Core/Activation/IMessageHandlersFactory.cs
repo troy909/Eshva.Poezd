@@ -11,9 +11,6 @@ namespace Eshva.Poezd.Core.Activation
 {
   public interface IMessageHandlersFactory
   {
-    Task<IEnumerable<IHandleMessage<TMessage>>> GetHandlersOfMessage<TMessage>(
-      TMessage message,
-      ITransactionContext transactionContext)
-      where TMessage : class;
+    Task<IEnumerable<IHandleMessage>> GetHandlersOfMessage(object message, ITransactionContext transactionContext);
   }
 }

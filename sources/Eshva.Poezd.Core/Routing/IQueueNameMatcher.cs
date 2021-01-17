@@ -26,6 +26,6 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="System.OverflowException">
     /// Too many patterns used.
     /// </exception>
-    bool IsMatch(string queueName, string queueNamePattern);
+    bool DoesMatch(string queueName, string queueNamePattern);
   }
 }

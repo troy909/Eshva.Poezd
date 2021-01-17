@@ -32,14 +32,12 @@ namespace Eshva.Poezd.Core.Routing
       string queueName,
       DateTimeOffset receivedOnUtc,
       byte[] brokerPayload,
-      IReadOnlyDictionary<string, string> brokerMetadata,
-      string messageId)
+      IReadOnlyDictionary<string, string> brokerMetadata)
     {
       if (brokerPayload == null) throw new ArgumentNullException(nameof(brokerPayload));
       if (brokerMetadata == null) throw new ArgumentNullException(nameof(brokerMetadata));
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentException(NotWhitespace, nameof(brokerId));
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentException(NotWhitespace, nameof(queueName));
-      if (string.IsNullOrWhiteSpace(messageId)) throw new ArgumentException(NotWhitespace, nameof(messageId));
 
       MessageHandlingPipeline pipeline;
       var messageHandlingContext = new MessageHandlingContext();
@@ -107,8 +105,7 @@ namespace Eshva.Poezd.Core.Routing
     {
       var queueNameMatcher = (IQueueNameMatcher)_serviceProvider.GetService(brokerConfiguration.QueueNameMatcherType);
       var configuration = brokerConfiguration.PublicApis.SingleOrDefault(
-        api => api.QueueNamePatterns
-                  .Any(queueNamePattern => queueNameMatcher.IsMatch(queueName, queueNamePattern)));
+        api => api.QueueNamePatterns.Any(queueNamePattern => queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
       if (configuration != null)
       {
         return configuration;

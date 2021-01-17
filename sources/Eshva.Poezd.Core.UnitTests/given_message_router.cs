@@ -34,9 +34,9 @@ namespace Eshva.Poezd.Core.UnitTests
       const string QueueName = "some-topic";
       const string BrokerId = "broker-id";
       const string MessageId = "message-id";
-      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), MessageId);
-      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), MessageId);
-      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), MessageId);
+      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>());
+      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>());
+      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>());
 
       testProperties.Handled1.Should()
                     .Be(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
@@ -72,8 +72,7 @@ namespace Eshva.Poezd.Core.UnitTests
         QueueName,
         DateTimeOffset.UtcNow,
         new byte[0],
-        new Dictionary<string, string>(),
-        "message-id");
+        new Dictionary<string, string>());
 
       testProperties.Property1.Should()
                     .Be(ExpectedProperty1Value, $"{nameof(CustomHandler1)} set property in own execution context");

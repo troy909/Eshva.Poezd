@@ -16,7 +16,6 @@ namespace Eshva.Poezd.Core.Routing
       string queueName,
       DateTimeOffset receivedOnUtc,
       byte[] brokerPayload,
-      IReadOnlyDictionary<string, string> brokerMetadata,
-      string messageId);
+      IReadOnlyDictionary<string, string> brokerMetadata);
   }
 }

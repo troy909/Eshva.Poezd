@@ -1,11 +1,15 @@
-﻿using System.Threading.Tasks;
+#region Usings
+
+using System.Threading.Tasks;
 using Eshva.Common;
+
+#endregion
 
 
 namespace Eshva.Poezd.Core.Pipeline
 {
   public interface IStep
   {
-    Task ExecuteWithinContext(IPocket context, IStep nextStep);
+    Task Execute(IPocket context);
   }
 }

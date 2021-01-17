@@ -4,7 +4,7 @@ using Eshva.Common;
 
 namespace Eshva.Poezd.Core.Activation
 {
-  public class TransactionContext : PocketExecutionContext, ITransactionContext
+  public sealed class MessageHandlingContext : PocketExecutionContext, IMessageHandlingContext
   {
     public Task Commit()
     {
@@ -16,6 +16,6 @@ namespace Eshva.Poezd.Core.Activation
       return Task.CompletedTask;
     }
 
-    public IExecutionEventsSubscriptions SubscribeOn { get; } = new TempExecutionEventsSubscriptions();
+    public IExecutionEventSubscriptions SubscribeOn { get; } = new ExecutionEventSubscriptions();
   }
 }

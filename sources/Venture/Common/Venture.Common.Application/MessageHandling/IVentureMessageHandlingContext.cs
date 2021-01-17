@@ -1,18 +1,13 @@
 #region Usings
 
-#endregion
-
-#region Usings
-
-
-#endregion
-
 using Eshva.Common;
+
+#endregion
 
 
 namespace Venture.Common.Application.MessageHandling
 {
-  public interface IMessageHandlingContext : IPocket
+  public interface IVentureMessageHandlingContext : IPocket
   {
     void Commit(); // TODO: May be async?
 

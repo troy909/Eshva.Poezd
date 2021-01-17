@@ -9,19 +9,20 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class MessageHandlingConfigurator
+  public sealed class MessageHandlingConfigurator
   {
-    public MessageHandlingConfigurator([NotNull] MessageHandling messageHandling)
+    public MessageHandlingConfigurator([NotNull] MessageHandlingConfiguration messageHandlingConfiguration)
     {
-      _messageHandling = messageHandling ?? throw new ArgumentNullException(nameof(messageHandling));
+      _messageHandlingConfiguration = messageHandlingConfiguration ?? throw new ArgumentNullException(nameof(messageHandlingConfiguration));
     }
 
     public MessageHandlingConfigurator WithMessageHandlersFactory(IMessageHandlersFactory messageHandlersFactory)
     {
-      _messageHandling.MessageHandlersFactory = messageHandlersFactory ?? throw new ArgumentNullException(nameof(messageHandlersFactory));
+      _messageHandlingConfiguration.MessageHandlersFactory =
+        messageHandlersFactory ?? throw new ArgumentNullException(nameof(messageHandlersFactory));
       return this;
     }
 
-    private readonly MessageHandling _messageHandling;
+    private readonly MessageHandlingConfiguration _messageHandlingConfiguration;
   }
 }

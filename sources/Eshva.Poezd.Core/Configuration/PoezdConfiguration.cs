@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 #endregion
@@ -8,35 +9,15 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class PoezdConfiguration
+  public sealed class PoezdConfiguration
   {
-    private PoezdConfiguration()
-    {
-    }
+    public MessageHandlingConfiguration MessageHandling { get; } = new MessageHandlingConfiguration();
 
-    public MessageHandling MessageHandling { get; } = new MessageHandling();
+    public IReadOnlyList<MessageBrokerConfiguration> Brokers => _brokers.AsReadOnly();
 
-    public static PoezdConfiguration Create([NotNull] Action<PoezdConfiguration> configurator)
-    {
-      if (configurator == null)
-      {
-        throw new ArgumentNullException(nameof(configurator));
-      }
+    internal void AddBroker([NotNull] MessageBrokerConfiguration brokerConfiguration) =>
+      _brokers.Add(brokerConfiguration ?? throw new ArgumentNullException(nameof(brokerConfiguration)));
 
-      var configuration = new PoezdConfiguration();
-      configurator(configuration);
-      return configuration;
-    }
-
-    public PoezdConfiguration WithMessageHandling(Action<MessageHandlingConfigurator> configurator)
-    {
-      if (configurator == null)
-      {
-        throw new ArgumentNullException(nameof(configurator));
-      }
-
-      configurator(new MessageHandlingConfigurator(MessageHandling));
-      return this;
-    }
+    private readonly List<MessageBrokerConfiguration> _brokers = new List<MessageBrokerConfiguration>();
   }
 }

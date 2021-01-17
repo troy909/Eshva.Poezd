@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Eshva.Common;
 
@@ -9,13 +10,15 @@ using Eshva.Common;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
-  public interface IPipeline<in TStep>
+  public interface IPipeline
   {
-    IPipeline<TStep> Append(TStep step);
+    IPipeline Append(IStep step);
 
-    void InsertBefore(TStep step);
+    IPipeline Append(IEnumerable<IStep> steps);
 
-    void InsertAfter(TStep step);
+    void InsertBefore(IStep step);
+
+    void InsertAfter(IStep step);
 
     void Remove(Type stepType);
 

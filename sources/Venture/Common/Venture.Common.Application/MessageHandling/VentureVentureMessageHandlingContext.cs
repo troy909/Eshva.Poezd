@@ -10,7 +10,7 @@ namespace Venture.Common.Application.MessageHandling
   /// <summary>
   /// Представляет собой реализацию контекста обработки сообщения внутри продукта Venture.
   /// </summary>
-  public class VentureMessageHandlingContext : PocketExecutionContext, IMessageHandlingContext
+  public class VentureVentureMessageHandlingContext : PocketExecutionContext, IVentureMessageHandlingContext
   {
     public void Commit()
     {

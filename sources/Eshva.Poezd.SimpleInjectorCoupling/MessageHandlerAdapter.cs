@@ -3,7 +3,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Eshva.Common;
 using Eshva.Poezd.Core.Activation;
 using Eshva.Poezd.Core.MessageHandling;
@@ -34,22 +33,20 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
       }
     }
 
-    public Task<IEnumerable<IHandleMessage>> GetHandlersOfMessage(
-      object message,
-      ITransactionContext transactionContext) =>
-      Task.FromResult(GetInstances(CreateContainerScope(transactionContext), message.GetType()));
+    public IEnumerable<IHandleMessage> GetHandlersOfMessage(Type messageType, IMessageHandlingContext messageHandlingContext) =>
+      GetInstances(CreateContainerScope(messageHandlingContext), messageType);
 
     protected abstract IHandleMessage CreatePoezdMessageHandler(object applicationHandler);
 
-    private Scope CreateContainerScope(ITransactionContext transactionContext)
+    private Scope CreateContainerScope(IMessageHandlingContext messageHandlingContext)
     {
       const string CurrentSimpleInjectorScope = "current-simpleinjector-scope";
-      var scope = transactionContext.GetOrAdd(
+      var scope = messageHandlingContext.GetOrAdd(
         CurrentSimpleInjectorScope,
         () =>
         {
           var newScope = AsyncScopedLifestyle.BeginScope(_container);
-          transactionContext.SubscribeOn.Disposed(context => newScope.Dispose());
+          messageHandlingContext.SubscribeOn.Disposed(context => newScope.Dispose());
           return newScope;
         });
       return scope;

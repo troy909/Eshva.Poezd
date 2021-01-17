@@ -9,6 +9,6 @@ namespace Venture.Common.Application.MessageHandling
 {
   public interface IHavePreconditionsFor<in TMessage> where TMessage : class
   {
-    public Task<bool> ShouldHandle(TMessage message, VentureMessageHandlingContext context);
+    public Task<bool> ShouldHandle(TMessage message, VentureVentureMessageHandlingContext context);
   }
 }

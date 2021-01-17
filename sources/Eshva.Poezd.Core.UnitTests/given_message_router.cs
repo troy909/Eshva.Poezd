@@ -1,8 +1,11 @@
 #region Usings
 
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Eshva.Poezd.Core.Activation;
 using Eshva.Poezd.Core.Configuration;
+using Eshva.Poezd.Core.Routing;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
 using FluentAssertions;
 using SimpleInjector;
@@ -25,12 +28,16 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Verify();
 
       var poezdConfiguration = ConfigurePoezd(container);
-      var router = poezdConfiguration.BuildMessageRouter();
-      var transactionContext = new TransactionContext();
+      var router = poezdConfiguration.CreateMessageRouter(container);
 
-      router.RouteIncomingMessage(new CustomCommand1(), transactionContext);
-      router.RouteIncomingMessage(new CustomCommand2(), new TransactionContext());
-      router.RouteIncomingMessage(new CustomCommand3(), new TransactionContext());
+      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
+      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
+      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
+      /*
+      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new CustomCommand1(), transactionContext, "TODO");
+      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new CustomCommand2(), new MessageHandlingContext(), "TODO");
+      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new CustomCommand3(), new MessageHandlingContext(), "TODO");
+      */
 
       testProperties.Handled1.Should()
                     .Be(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
@@ -53,25 +60,29 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Verify();
 
       var poezdConfiguration = ConfigurePoezd(container);
-      var router = poezdConfiguration.BuildMessageRouter();
-      var transactionContext = new TransactionContext();
+      var router = poezdConfiguration.CreateMessageRouter(container);
+      var transactionContext = new MessageHandlingContext();
       const string ExpectedProperty1Value = "value1";
       transactionContext.Set(CustomHandler1.Property1, ExpectedProperty1Value);
 
-      router.RouteIncomingMessage(new CustomCommand1(), transactionContext);
+      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
+      // router.RouteIncomingMessage(TODO, TODO, TODO, new CustomCommand1(), transactionContext, TODO);
 
       testProperties.Property1.Should()
                     .Be(ExpectedProperty1Value, $"{nameof(CustomHandler1)} set property in own execution context");
     }
 
+
     private static PoezdConfiguration ConfigurePoezd(Container container)
     {
-      var poezdConfiguration =
-        PoezdConfiguration.Create(
+      var configuration =
+        MessageRouter.Configure(
           configurator => configurator
             .WithMessageHandling(
-              messageHandling => messageHandling.WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
-      return poezdConfiguration;
+              messageHandling => messageHandling
+                .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
+      return configuration;
     }
+
   }
 }

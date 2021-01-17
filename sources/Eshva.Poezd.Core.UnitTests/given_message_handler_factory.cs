@@ -25,12 +25,12 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Verify();
 
       var sut = new CustomMessageHandlerFactory(container);
-      var transactionContext = new TransactionContext();
-      var handlers = await sut.GetHandlersOfMessage(new CustomCommand1(), transactionContext);
+      var context = new MessageHandlingContext();
+      var handlers = sut.GetHandlersOfMessage(typeof(CustomCommand1), context);
       handlers.Should()
               .HaveCount(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
-
     }
+
     [Fact]
     public async Task when_handlers_requested_it_should_application_handlers_adopted()
     {
@@ -41,11 +41,10 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Verify();
 
       var sut = new CustomMessageHandlerFactory(container);
-      var transactionContext = new TransactionContext();
-      var handlers = await sut.GetHandlersOfMessage(new CustomCommand1(), transactionContext);
+      var transactionContext = new MessageHandlingContext();
+      var handlers = sut.GetHandlersOfMessage(typeof(CustomCommand1), transactionContext);
       handlers.Should()
               .HaveCount(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
-
     }
   }
 }

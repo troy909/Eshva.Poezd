@@ -1,6 +1,7 @@
 #region Usings
 
 using Eshva.Poezd.Core.Configuration;
+using Eshva.Poezd.Core.Routing;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
 using FluentAssertions;
 using SimpleInjector;
@@ -26,12 +27,10 @@ namespace Eshva.Poezd.Core.UnitTests
 
     private static PoezdConfiguration ConfigurePoezd(Container container)
     {
-      var poezdConfiguration =
-        PoezdConfiguration.Create(
-          configurator => configurator
-            .WithMessageHandling(
-              messageHandling => messageHandling.WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
-      return poezdConfiguration;
+      return MessageRouter.Configure(
+        configurator => configurator
+          .WithMessageHandling(
+            messageHandling => messageHandling.WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
     }
   }
 }

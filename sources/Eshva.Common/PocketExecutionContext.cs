@@ -30,9 +30,9 @@ namespace Eshva.Common
       return false;
     }
 
-    public void Set<TValue>(TValue value) => Set(typeof(TValue).FullName, value);
+    public IPocket Set<TValue>(TValue value) => Set(typeof(TValue).FullName, value);
 
-    public void Set<TValue>(string key, TValue value)
+    public IPocket Set<TValue>(string key, TValue value)
     {
       if (string.IsNullOrWhiteSpace(key))
       {
@@ -44,7 +44,14 @@ namespace Eshva.Common
         throw new ArgumentNullException(nameof(value));
       }
 
+      if (_things.ContainsKey(key))
+      {
+        throw new ArgumentException($"The value with '{key}' already set. It's forbidden to change value in a pocket.");
+      }
+
       _things[key] = value;
+
+      return this;
     }
 
     public bool TryRemove<TValue>() => TryRemove(typeof(TValue).FullName);

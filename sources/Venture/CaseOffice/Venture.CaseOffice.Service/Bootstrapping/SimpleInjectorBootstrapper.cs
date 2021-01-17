@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Eshva.Poezd.Core.Configuration;
+using Eshva.Poezd.Core.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
@@ -28,13 +28,10 @@ namespace Venture.CaseOffice.Service.Bootstrapping
 
     private static void SetupPoezd(this Container container, IConfiguration configuration)
     {
-      var messageRouter =
-        PoezdConfiguration.Create(
-                            configurator => configurator
-                              .WithMessageHandling(
-                                messageHandling => messageHandling.WithMessageHandlersFactory(new VentureMessageHandlerFactory(container))))
-                          .BuildMessageRouter();
-      container.RegisterInstance(messageRouter);
+      var poezdConfiguration = MessageRouter.Configure(
+        configurator => configurator
+          .WithMessageHandling(
+            messageHandling => messageHandling.WithMessageHandlersFactory(new VentureMessageHandlerFactory(container))));
     }
 
     private static void SetupContainer(this Container container, IConfiguration configuration)

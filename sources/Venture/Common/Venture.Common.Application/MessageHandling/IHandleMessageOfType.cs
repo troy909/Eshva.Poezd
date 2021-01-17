@@ -11,6 +11,6 @@ namespace Venture.Common.Application.MessageHandling
   [UsedImplicitly(ImplicitUseTargetFlags.Itself | ImplicitUseTargetFlags.WithInheritors)]
   public interface IHandleMessageOfType<in TMessage>
   {
-    Task Handle(TMessage message, VentureMessageHandlingContext context);
+    Task Handle(TMessage message, VentureVentureMessageHandlingContext context);
   }
 }

@@ -45,7 +45,7 @@ namespace Venture.Poezd.Coupling
         return applicationMessageHandler(message, applicationContext);
       }
 
-      private Func<object, VentureMessageHandlingContext, Task> AdoptPoezdMessageHandler(object message)
+      private Func<object, VentureVentureMessageHandlingContext, Task> AdoptPoezdMessageHandler(object message)
       {
         // TODO: Reflection call is slow. I need to replace it with an Expression in the future.
         var messageType = message.GetType();
@@ -57,15 +57,15 @@ namespace Venture.Poezd.Coupling
         {
           throw new InvalidOperationException(
             $"Method {nameof(IHandleMessageOfType<object>.Handle)} with arguments of types " +
-            $"TMessage and {nameof(VentureMessageHandlingContext)} isn't found on type {nameof(IHandleMessageOfType<object>)}");
+            $"TMessage and {nameof(VentureVentureMessageHandlingContext)} isn't found on type {nameof(IHandleMessageOfType<object>)}");
         }
 
         return (message1, context) => (Task)handleMethod.Invoke(_applicationHandler, new[] { message1, context });
       }
 
-      private static VentureMessageHandlingContext AdoptPoezdMessageHandlingContext(IPocket context)
+      private static VentureVentureMessageHandlingContext AdoptPoezdMessageHandlingContext(IPocket context)
       {
-        var ventureContext = new VentureMessageHandlingContext();
+        var ventureContext = new VentureVentureMessageHandlingContext();
         foreach (var (key, value) in context.GetItems())
         {
           ventureContext.Set(key, value);

@@ -1,8 +1,8 @@
 #region Usings
 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Poezd.Core.Activation;
-using JetBrains.Annotations;
 
 #endregion
 
@@ -11,6 +11,12 @@ namespace Eshva.Poezd.Core.Routing
 {
   public interface IMessageRouter
   {
-    Task RouteIncomingMessage([NotNull] object message, [NotNull] ITransactionContext transactionContext);
+    Task RouteIncomingMessage(
+      string brokerId,
+      string queueName,
+      DateTimeOffset receivedOnUtc,
+      byte[] brokerPayload,
+      IReadOnlyDictionary<string, string> brokerMetadata,
+      string messageId);
   }
 }

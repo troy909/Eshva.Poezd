@@ -7,7 +7,7 @@ using Eshva.Poezd.Core.Activation;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class MessageHandling
+  public sealed class MessageHandlingConfiguration
   {
     public IMessageHandlersFactory MessageHandlersFactory { get; set; }
   }

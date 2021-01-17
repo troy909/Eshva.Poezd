@@ -24,12 +24,12 @@ namespace Eshva.Common
     /// <exception cref="System.ArgumentNullException">
     /// Значение не задано.
     /// </exception>
-    void Set<TValue>(TValue value);
+    IPocket Set<TValue>(TValue value);
 
     /// <exception cref="System.ArgumentNullException">
     /// Не задан ключ или значение, либо ключ представляет собой пустую строку или только пробельные символы.
     /// </exception>
-    void Set<TValue>(string key, TValue value);
+    IPocket Set<TValue>(string key, TValue value);
 
     bool TryRemove<TValue>();
 

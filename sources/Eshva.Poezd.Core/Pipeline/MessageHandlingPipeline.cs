@@ -12,9 +12,10 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
-  public sealed class MessageProcessingPipeline : IPipeline<IStep>
+  // TODO: Add parameter validation.
+  public sealed class MessageHandlingPipeline : IPipeline
   {
-    public IPipeline<IStep> Append([NotNull] IStep step)
+    public IPipeline Append([NotNull] IStep step)
     {
       if (step == null)
       {
@@ -28,6 +29,16 @@ namespace Eshva.Poezd.Core.Pipeline
       }
 
       _steps.AddLast(step ?? throw new ArgumentNullException(nameof(step)));
+
+      return this;
+    }
+
+    public IPipeline Append(IEnumerable<IStep> steps)
+    {
+      foreach (var step in steps)
+      {
+        Append(step);
+      }
 
       return this;
     }
@@ -85,7 +96,7 @@ namespace Eshva.Poezd.Core.Pipeline
         var currentStep = currentNode.Value;
         var nextStep = currentNode.Next?.Value ?? new NoopStep();
         currentNode = currentNode.Next;
-        await currentStep.ExecuteWithinContext(context, nextStep);
+        await currentStep.Execute(context);
       }
     }
 
@@ -95,7 +106,7 @@ namespace Eshva.Poezd.Core.Pipeline
 
     private sealed class NoopStep : IStep
     {
-      public Task ExecuteWithinContext(IPocket context, IStep nextStep) => Task.CompletedTask;
+      public Task Execute(IPocket context) => Task.CompletedTask;
     }
   }
 }

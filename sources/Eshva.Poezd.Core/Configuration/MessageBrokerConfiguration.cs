@@ -13,21 +13,19 @@ namespace Eshva.Poezd.Core.Configuration
   {
     public string Id { get; internal set; }
 
-    public string Name { get; internal set; }
-
-    public IReadOnlyList<ExternalServiceConfiguration> ExternalServices => _externalServices;
+    public IReadOnlyList<PublicApiConfiguration> PublicApis => _publicApis;
 
     public Type QueueNameMatcherType { get; internal set; }
 
-    public Type AdapterType { get; set; }
+    public Type PipelineConfiguratorType { get; set; }
 
-    public void AddExternalService([NotNull] ExternalServiceConfiguration externalServiceConfiguration)
+    public void AddPublicApi([NotNull] PublicApiConfiguration publicApiConfiguration)
     {
-      if (externalServiceConfiguration == null) throw new ArgumentNullException(nameof(externalServiceConfiguration));
+      if (publicApiConfiguration == null) throw new ArgumentNullException(nameof(publicApiConfiguration));
 
-      _externalServices.Add(externalServiceConfiguration);
+      _publicApis.Add(publicApiConfiguration);
     }
 
-    private readonly List<ExternalServiceConfiguration> _externalServices = new List<ExternalServiceConfiguration>();
+    private readonly List<PublicApiConfiguration> _publicApis = new List<PublicApiConfiguration>();
   }
 }

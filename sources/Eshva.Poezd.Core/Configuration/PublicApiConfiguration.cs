@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public sealed class ExternalServiceConfiguration
+  public sealed class PublicApiConfiguration
   {
     public string Id { get; internal set; }
 
@@ -18,6 +18,10 @@ namespace Eshva.Poezd.Core.Configuration
     public string Name { get; internal set; }
 
     public Type AdapterType { get; internal set; }
+
+    public Type PipelineConfiguratorType { get; set; }
+
+    public Type QueueNameMatcherType { get; set; }
 
     public void AddQueueNamePatterns([NotNull] string queueNamePattern)
     {

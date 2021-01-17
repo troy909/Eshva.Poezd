@@ -21,7 +21,7 @@ namespace Eshva.Poezd.Core.Routing
       public const string Configuration = "broker-configuration";
     }
 
-    public static class ExternalService
+    public static class PublicApi
     {
       /// <summary>
       /// The key of external service message payload extracted from message broker payload. The value is byte[].
@@ -37,10 +37,6 @@ namespace Eshva.Poezd.Core.Routing
       public const string MessageId = "external-service-message-id";
 
       public const string Id = "external-service-id";
-
-      public const string Name = "external-service-name";
-
-      public const string Adapter = "external-service-adapter";
 
       public const string Configuration = "external-service-configuration";
     }

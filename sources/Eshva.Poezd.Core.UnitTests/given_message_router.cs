@@ -72,17 +72,36 @@ namespace Eshva.Poezd.Core.UnitTests
                     .Be(ExpectedProperty1Value, $"{nameof(CustomHandler1)} set property in own execution context");
     }
 
+    private static PoezdConfiguration ConfigurePoezd(Container container) =>
+      MessageRouter.Configure(
+        router => router
+                  .AddMessageBroker(
+                    broker => broker.WithId("sample-kafka-server")
+                                    .WithPipelineConfigurator<SampleKafkaBrokerPipelineConfigurator>()
+                                    .AddPublicApi(
+                                      api => api.WithId("api-1")
+                                                .AddQueueNamePattern("sample.commands.service1.v1")
+                                                .AddQueueNamePattern("sample.facts.service1.v1")
+                                                .WithQueueNameMatcher<KafkaQueueNameMatcher>()
+                                                .WithPipelineConfigurator<Service1PipelineConfigurator>())
+                                    .AddPublicApi(
+                                      api => api.WithId("api-2")
+                                                .AddQueueNamePattern("sample.facts.service-2.v1")
+                                                .WithPipelineConfigurator<Service2PipelineConfigurator>())
+                                    .AddPublicApi(
+                                      api => api.WithId("cdc-notifications")
+                                                .AddQueueNamePattern("sample.cdc.*")
+                                                .WithPipelineConfigurator<CdcNotificationsPipelineConfigurator>()))
+                  .WithMessageHandling(
+                    messageHandling => messageHandling
+                      .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
+  }
 
-    private static PoezdConfiguration ConfigurePoezd(Container container)
+  public class KafkaQueueNameMatcher : IQueueNameMatcher
+  {
+    public bool IsMatch(string queueName, string queueNamePattern)
     {
-      var configuration =
-        MessageRouter.Configure(
-          configurator => configurator
-            .WithMessageHandling(
-              messageHandling => messageHandling
-                .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
-      return configuration;
+      return false;
     }
-
   }
 }

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Eshva.Poezd.Core.Activation;
-using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Routing;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
 using FluentAssertions;
@@ -27,17 +26,17 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Collection.Register(typeof(ICustomHandler<>), Assembly.GetExecutingAssembly());
       container.Verify();
 
-      var poezdConfiguration = ConfigurePoezd(container);
-      var router = poezdConfiguration.CreateMessageRouter(container);
+      ConfigurePoezd(container);
 
-      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
-      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
-      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
-      /*
-      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new CustomCommand1(), transactionContext, "TODO");
-      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new CustomCommand2(), new MessageHandlingContext(), "TODO");
-      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new CustomCommand3(), new MessageHandlingContext(), "TODO");
-      */
+      using var scope = new Scope(container);
+      var router = scope.GetInstance<MessageRouter>();
+
+      const string QueueName = "some-topic";
+      const string BrokerId = "broker-id";
+      const string MessageId = "message-id";
+      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), MessageId);
+      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), MessageId);
+      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), MessageId);
 
       testProperties.Handled1.Should()
                     .Be(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
@@ -51,7 +50,7 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
-    public void when_route_message_requested_it_should_provide_adopted_transaction_context_to_application_message_handlers()
+    public void when_route_message_requested_it_should_provide_adopted_context_to_application_message_handlers()
     {
       var container = new Container();
       var testProperties = new TestProperties();
@@ -59,49 +58,61 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Collection.Register(typeof(ICustomHandler<>), Assembly.GetExecutingAssembly());
       container.Verify();
 
-      var poezdConfiguration = ConfigurePoezd(container);
-      var router = poezdConfiguration.CreateMessageRouter(container);
-      var transactionContext = new MessageHandlingContext();
-      const string ExpectedProperty1Value = "value1";
-      transactionContext.Set(CustomHandler1.Property1, ExpectedProperty1Value);
+      ConfigurePoezd(container);
 
-      router.RouteIncomingMessage("TODO", "TODO", DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>(), "TODO");
-      // router.RouteIncomingMessage(TODO, TODO, TODO, new CustomCommand1(), transactionContext, TODO);
+      using var scope = new Scope(container);
+      var router = scope.GetInstance<MessageRouter>();
+      var context = new MessageHandlingContext();
+      const string ExpectedProperty1Value = "value1";
+      context.Set(CustomHandler1.Property1, ExpectedProperty1Value);
+
+      const string QueueName = "some-topic";
+      router.RouteIncomingMessage(
+        "broker-id",
+        QueueName,
+        DateTimeOffset.UtcNow,
+        new byte[0],
+        new Dictionary<string, string>(),
+        "message-id");
 
       testProperties.Property1.Should()
                     .Be(ExpectedProperty1Value, $"{nameof(CustomHandler1)} set property in own execution context");
     }
 
-    private static PoezdConfiguration ConfigurePoezd(Container container) =>
-      MessageRouter.Configure(
-        router => router
-                  .AddMessageBroker(
-                    broker => broker.WithId("sample-kafka-server")
-                                    .WithPipelineConfigurator<SampleKafkaBrokerPipelineConfigurator>()
-                                    .AddPublicApi(
-                                      api => api.WithId("api-1")
-                                                .AddQueueNamePattern("sample.commands.service1.v1")
-                                                .AddQueueNamePattern("sample.facts.service1.v1")
-                                                .WithQueueNameMatcher<KafkaQueueNameMatcher>()
-                                                .WithPipelineConfigurator<Service1PipelineConfigurator>())
-                                    .AddPublicApi(
-                                      api => api.WithId("api-2")
-                                                .AddQueueNamePattern("sample.facts.service-2.v1")
-                                                .WithPipelineConfigurator<Service2PipelineConfigurator>())
-                                    .AddPublicApi(
-                                      api => api.WithId("cdc-notifications")
-                                                .AddQueueNamePattern("sample.cdc.*")
-                                                .WithPipelineConfigurator<CdcNotificationsPipelineConfigurator>()))
-                  .WithMessageHandling(
-                    messageHandling => messageHandling
-                      .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
-  }
-
-  public class KafkaQueueNameMatcher : IQueueNameMatcher
-  {
-    public bool IsMatch(string queueName, string queueNamePattern)
+    private static void ConfigurePoezd(Container container)
     {
-      return false;
+      var messageRouter =
+        MessageRouter.Configure(
+                       router => router
+                                 .AddMessageBroker(
+                                   broker => broker.WithId("sample-kafka-server")
+                                                   .WithPipelineConfigurator<SampleKafkaBrokerPipelineConfigurator>()
+                                                   .AddPublicApi(
+                                                     api => api.WithId("api-1")
+                                                               .AddQueueNamePattern(@"^sample\.(commands|facts)\.service1\.v1")
+                                                               .WithQueueNameMatcher<RegexQueueNameMatcher>()
+                                                               .WithPipelineConfigurator<Service1PipelineConfigurator>())
+                                                   .AddPublicApi(
+                                                     api => api.WithId("api-2")
+                                                               .AddQueueNamePattern("sample.facts.service-2.v1")
+                                                               .WithPipelineConfigurator<Service2PipelineConfigurator>())
+                                                   .AddPublicApi(
+                                                     api => api.WithId("cdc-notifications")
+                                                               .AddQueueNamePattern(@"^sample\.cdc\..*")
+                                                               .WithPipelineConfigurator<CdcNotificationsPipelineConfigurator>()))
+                                 .WithMessageHandling(
+                                   messageHandling => messageHandling
+                                     .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))))
+                     .CreateMessageRouter(container);
+      container.RegisterInstance(messageRouter);
+
+      container.RegisterSingleton<RegexQueueNameMatcher>();
+      container.Register<SampleKafkaBrokerPipelineConfigurator>(Lifestyle.Scoped);
+      container.Register<Service1PipelineConfigurator>(Lifestyle.Scoped);
+      container.Register<Service2PipelineConfigurator>(Lifestyle.Scoped);
+      container.Register<CdcNotificationsPipelineConfigurator>(Lifestyle.Scoped);
+
+      container.Verify();
     }
   }
 }

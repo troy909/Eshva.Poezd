@@ -19,6 +19,10 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type PipelineConfiguratorType { get; set; }
 
+    public Type DriverType { get; set; }
+
+    public Type DriverConfiguratorType { get; set; }
+
     public void AddPublicApi([NotNull] PublicApiConfiguration publicApiConfiguration)
     {
       if (publicApiConfiguration == null) throw new ArgumentNullException(nameof(publicApiConfiguration));

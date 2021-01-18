@@ -10,7 +10,7 @@ namespace Eshva.Poezd.Core.Configuration
 {
   public sealed class PoezdConfigurator
   {
-    public PoezdConfiguration Configuration { get; } = new PoezdConfiguration();
+    public MessageRouterConfiguration Configuration { get; } = new MessageRouterConfiguration();
 
     public PoezdConfigurator WithMessageHandling([NotNull] Action<MessageHandlingConfigurator> configurator)
     {

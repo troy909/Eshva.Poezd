@@ -40,6 +40,13 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
+    public MessageBrokerConfigurator WithDriver<TDriver, TConfigurator>()
+    {
+      _configuration.DriverType = typeof(TDriver);
+      _configuration.DriverConfiguratorType = typeof(TConfigurator);
+      return this;
+    }
+
     private readonly MessageBrokerConfiguration _configuration;
   }
 }

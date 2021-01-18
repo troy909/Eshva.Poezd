@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Activation;
 using Eshva.Poezd.Core.Configuration;
@@ -18,13 +19,40 @@ namespace Eshva.Poezd.Core.Routing
   public sealed class MessageRouter : IMessageRouter
   {
     internal MessageRouter(
-      [NotNull] PoezdConfiguration configuration,
+      [NotNull] MessageRouterConfiguration configuration,
       [NotNull] IServiceProvider serviceProvider)
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _logger = (ILogger<MessageRouter>)_serviceProvider.GetService(typeof(ILogger<MessageRouter>)) ??
                 throw new ArgumentException($"Can not get {nameof(ILogger<MessageRouter>)} implementation from the service provider.");
+    }
+
+    public Task Start(CancellationToken cancellationToken = default)
+    {
+      if (_isStarted)
+      {
+        throw new InvalidOperationException("The router is started already.");
+      }
+
+      // configure, subscribe and start all broker drivers
+      var driverConfigs = _configuration.Brokers.Select(broker => (broker.DriverType, broker.DriverConfiguratorType));
+      foreach (var driverConfig in driverConfigs)
+      {
+        var (driverType, driverConfiguratorType) = driverConfig;
+        var driver = (IMessageBrokerDriver)_serviceProvider.GetService(
+          driverType,
+          type => new PoezdConfigurationException(
+            $"Can not find a message broker driver of type '{type.FullName}. You should register it in DI-container."));
+        dynamic configurator = _serviceProvider.GetService(
+          driverConfiguratorType,
+          type => new PoezdConfigurationException(
+            $"Can not find a message broker driver configurator of type '{type.FullName}. You should register it in DI-container."));
+        configurator.Configure(driver);
+      }
+
+      // set started
+      return null;
     }
 
     public Task RouteIncomingMessage(
@@ -79,7 +107,7 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    public static PoezdConfiguration Configure([NotNull] Action<PoezdConfigurator> configurator)
+    public static MessageRouterConfiguration Configure([NotNull] Action<PoezdConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
 
@@ -104,7 +132,7 @@ namespace Eshva.Poezd.Core.Routing
     private PublicApiConfiguration GetPublicApiConfiguration(MessageBrokerConfiguration brokerConfiguration, string queueName)
     {
       var queueNameMatcher = (IQueueNameMatcher)_serviceProvider.GetService(brokerConfiguration.QueueNameMatcherType);
-      var configuration = brokerConfiguration.PublicApis.SingleOrDefault(
+      var configuration = brokerConfiguration.PublicApis.FirstOrDefault(
         api => api.QueueNamePatterns.Any(queueNamePattern => queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
       if (configuration != null)
       {
@@ -151,8 +179,10 @@ namespace Eshva.Poezd.Core.Routing
           "You should register this type in DI-container."));
     }
 
+    private bool _isStarted;
+
     private readonly ILogger<MessageRouter> _logger;
-    private readonly PoezdConfiguration _configuration;
+    private readonly MessageRouterConfiguration _configuration;
     private readonly IServiceProvider _serviceProvider;
     private const string NotWhitespace = "Value cannot be null or whitespace.";
   }

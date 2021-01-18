@@ -85,6 +85,7 @@ namespace Eshva.Poezd.Core.UnitTests
                        router => router
                                  .AddMessageBroker(
                                    broker => broker.WithId("sample-kafka-server")
+                                                   .WithDriver<TestBrokerDriver, TestBrokerDriverConfigurator>()
                                                    .WithPipelineConfigurator<SampleKafkaBrokerPipelineConfigurator>()
                                                    .AddPublicApi(
                                                      api => api.WithId("api-1")

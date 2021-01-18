@@ -8,10 +8,10 @@ using Eshva.Poezd.Core.Configuration;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public static class PoezdConfigurationExtensions
+  public static class MessageRouterConfigurationExtensions
   {
     public static IMessageRouter CreateMessageRouter(
-      this PoezdConfiguration configuration,
+      this MessageRouterConfiguration configuration,
       IServiceProvider serviceProvider) =>
       new MessageRouter(configuration, serviceProvider);
   }

@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public sealed class PoezdConfiguration
+  public sealed class MessageRouterConfiguration
   {
     public MessageHandlingConfiguration MessageHandling { get; } = new MessageHandlingConfiguration();
 

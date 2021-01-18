@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.UnitTests
                         .BeOfType<CustomMessageHandlerFactory>($"set factory of type {nameof(CustomMessageHandlerFactory)}");
     }
 
-    private static PoezdConfiguration ConfigurePoezd(Container container)
+    private static MessageRouterConfiguration ConfigurePoezd(Container container)
     {
       return MessageRouter.Configure(
         configurator => configurator

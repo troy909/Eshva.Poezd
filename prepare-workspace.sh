@@ -62,8 +62,7 @@ EOF
 }
 
 function createLocalDataFolders {
-    mkdir --parents modules/.local-data/message-bus
-    mkdir --parents modules/.local-data/POEZD/rules
+    mkdir --parents .local-data/
 }
 
 

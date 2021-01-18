@@ -1,5 +1,9 @@
+#region Usings
+
 using System;
 using Eshva.Poezd.Core.Configuration;
+
+#endregion
 
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
@@ -16,4 +20,3 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   {
   }
 }
-

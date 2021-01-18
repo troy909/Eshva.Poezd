@@ -1,4 +1,8 @@
+#region Usings
+
 using System.Collections.Generic;
+
+#endregion
 
 
 namespace Eshva.Common

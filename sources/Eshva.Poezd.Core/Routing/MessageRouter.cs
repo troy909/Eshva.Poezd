@@ -61,18 +61,6 @@ namespace Eshva.Poezd.Core.Routing
       _isStarted = true;
     }
 
-    private void ValidateConfiguration()
-    {
-      var configurationErrors = _configuration.Validate().ToList();
-      if (configurationErrors.Any())
-      {
-        var message = new StringBuilder("Unable to start the message router due configuration errors:");
-        configurationErrors.ForEach(error => message.AppendLine($"\t* {error}"));
-
-        throw new PoezdConfigurationException(message.ToString());
-      }
-    }
-
     public Task RouteIncomingMessage(
       string brokerId,
       string queueName,
@@ -132,6 +120,17 @@ namespace Eshva.Poezd.Core.Routing
       var poezdConfigurator = new PoezdConfigurator();
       configurator(poezdConfigurator);
       return poezdConfigurator.Configuration;
+    }
+
+    private void ValidateConfiguration()
+    {
+      var configurationErrors = _configuration.Validate().ToList();
+      if (!configurationErrors.Any()) return;
+
+      var message = new StringBuilder("Unable to start the message router due configuration errors:");
+      configurationErrors.ForEach(error => message.AppendLine($"\t* {error}"));
+
+      throw new PoezdConfigurationException(message.ToString());
     }
 
     private void ConfigureMessageBrokerDrivers()

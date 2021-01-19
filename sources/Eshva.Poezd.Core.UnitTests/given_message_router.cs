@@ -111,11 +111,11 @@ namespace Eshva.Poezd.Core.UnitTests
                       broker => broker.WithId("sample-broker-server")
                                       .WithDriver<TestBrokerDriver, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
                                         driver => driver.WithSomeSetting(TestBrokerDriverSettings))
+                                      .WithQueueNameMatcher<RegexQueueNameMatcher>()
                                       .WithPipelineConfigurator<SampleBrokerPipelineConfigurator>()
                                       .AddPublicApi(
                                         api => api.WithId("api-1")
                                                   .AddQueueNamePattern(@"^sample\.(commands|facts)\.service1\.v1")
-                                                  .WithQueueNameMatcher<RegexQueueNameMatcher>()
                                                   .WithPipelineConfigurator<Service1PipelineConfigurator>())
                                       .AddPublicApi(
                                         api => api.WithId("api-2")

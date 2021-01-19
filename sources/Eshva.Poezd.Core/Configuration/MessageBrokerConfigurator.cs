@@ -42,6 +42,12 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
+    public MessageBrokerConfigurator WithQueueNameMatcher<TMatcher>() where TMatcher : IQueueNameMatcher
+    {
+      _configuration.QueueNameMatcherType = typeof(TMatcher);
+      return this;
+    }
+
     public MessageBrokerConfigurator WithDriver<TDriver, TConfigurator, TConfiguration>(Action<TConfigurator> configurator)
       where TDriver : IMessageBrokerDriver
     {

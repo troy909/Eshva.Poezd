@@ -2,7 +2,6 @@
 
 using System;
 using Eshva.Poezd.Core.Pipeline;
-using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
 
 #endregion
@@ -33,21 +32,9 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public PublicApiConfigurator WithAdapter<TAdapter>()
-    {
-      _configuration.AdapterType = typeof(TAdapter);
-      return this;
-    }
-
     public PublicApiConfigurator WithPipelineConfigurator<TConfigurator>() where TConfigurator : IPipelineConfigurator
     {
       _configuration.PipelineConfiguratorType = typeof(TConfigurator);
-      return this;
-    }
-
-    public PublicApiConfigurator WithQueueNameMatcher<TMatcher>() where TMatcher : IQueueNameMatcher
-    {
-      _configuration.QueueNameMatcherType = typeof(TMatcher);
       return this;
     }
 

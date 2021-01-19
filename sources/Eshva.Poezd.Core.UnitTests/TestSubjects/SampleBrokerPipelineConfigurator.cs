@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
 
@@ -10,11 +11,15 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   [UsedImplicitly]
-  public class SampleBrokerPipelineConfigurator : IPipelineConfigurator
+  public class SampleBrokerPipelineConfigurator : TypeBasedLinearPipelineConfigurator
   {
-    /// <remarks>
-    /// TODO: Add message audit logging or some other very general actions.
-    /// </remarks>>
-    public IPipeline ConfigurePipeline([NotNull] IPipeline pipeline) => pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+    public SampleBrokerPipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider)
+    {
+    }
+
+    protected override IEnumerable<Type> GetStepTypes()
+    {
+      yield return typeof(LogMessageHandlingContextStep);
+    }
   }
 }

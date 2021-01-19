@@ -52,21 +52,10 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       return Task.CompletedTask;
     }
 
-    public Task PublishMessage(
-      string brokerId,
-      string queueName,
-      DateTimeOffset receivedOnUtc,
-      byte[] brokerPayload,
-      IReadOnlyDictionary<string, string> brokerMetadata) =>
-      _messageRouter.RouteIncomingMessage(
-        brokerId,
-        queueName,
-        receivedOnUtc,
-        brokerPayload,
-        brokerMetadata);
-
     private bool _isMessageConsumingStarted;
+    // ReSharper disable once NotAccessedField.Local In a real world driver configuration will be used in StartConsumeMessages().
     private readonly TestBrokerDriverConfiguration _configuration;
+    // ReSharper disable once NotAccessedField.Local It a real world driver will be used in StartConsumeMessages().
     private readonly IMessageRouter _messageRouter;
   }
 }

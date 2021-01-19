@@ -23,7 +23,6 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 
     protected override IEnumerable<Type> GetStepTypes()
     {
-      yield return typeof(CommitMessageStep);
       yield return typeof(CdcNotificationsCommitStep);
     }
   }

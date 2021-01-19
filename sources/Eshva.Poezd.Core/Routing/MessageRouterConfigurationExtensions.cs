@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 
 #endregion
@@ -12,7 +13,7 @@ namespace Eshva.Poezd.Core.Routing
   {
     public static IMessageRouter CreateMessageRouter(
       this MessageRouterConfiguration configuration,
-      IServiceProvider serviceProvider) =>
-      new MessageRouter(configuration, serviceProvider);
+      IDiContainerAdapter diContainerAdapter) =>
+      new MessageRouter(configuration, diContainerAdapter);
   }
 }

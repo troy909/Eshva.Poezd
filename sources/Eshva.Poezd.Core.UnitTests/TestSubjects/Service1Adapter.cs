@@ -22,10 +22,10 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public IEnumerable<IStep> GetPipelineSteps() =>
       new IStep[]
       {
-        new Service1DeserializeMessageStep(),
-        new GetMessageHandlersStep(),
-        new DispatchMessageToHandlersStep(),
-        new CommitMessageStep()
+        // new Service1DeserializeMessageStep(),
+        // new GetMessageHandlersStep(),
+        // new DispatchMessageToHandlersStep(),
+        // new CommitMessageStep()
       };
   }
 }

@@ -13,7 +13,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   {
     public Task Execute(IPocket context)
     {
-      return null;
+      return Task.CompletedTask;
     }
   }
 }

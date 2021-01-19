@@ -21,7 +21,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     {
       yield return typeof(Service1DeserializeMessageStep);
       yield return typeof(GetMessageHandlersStep);
-      yield return typeof(Service1DeserializeMessageStep);
+      yield return typeof(DispatchMessageToHandlersStep);
       yield return typeof(CommitMessageStep);
     }
   }

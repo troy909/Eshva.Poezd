@@ -22,11 +22,11 @@ namespace Eshva.Poezd.Core.Routing
   {
     internal MessageRouter(
       [NotNull] MessageRouterConfiguration configuration,
-      [NotNull] IServiceProvider serviceProvider)
+      [NotNull] IDiContainerAdapter diContainerAdapter)
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-      _logger = (ILogger<MessageRouter>)_serviceProvider.GetService(typeof(ILogger<MessageRouter>)) ??
+      _diContainerAdapter = diContainerAdapter ?? throw new ArgumentNullException(nameof(diContainerAdapter));
+      _logger = (ILogger<MessageRouter>)_diContainerAdapter.GetService(typeof(ILogger<MessageRouter>)) ??
                 throw new ArgumentException($"Can not get {nameof(ILogger<MessageRouter>)} implementation from the service provider.");
     }
 
@@ -73,43 +73,46 @@ namespace Eshva.Poezd.Core.Routing
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentException(NotWhitespace, nameof(brokerId));
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentException(NotWhitespace, nameof(queueName));
 
-      MessageHandlingPipeline pipeline;
-      var messageHandlingContext = new MessageHandlingContext();
-      try
+      using (_diContainerAdapter.BeginScope())
       {
-        var brokerConfiguration = _configuration.Brokers.Single(
-          configuration => configuration.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
-        var publicApiConfiguration = GetPublicApiConfiguration(brokerConfiguration, queueName);
-        pipeline = BuildPipeline(brokerConfiguration, publicApiConfiguration);
+        MessageHandlingPipeline pipeline;
+        var messageHandlingContext = new MessageHandlingContext();
+        try
+        {
+          var brokerConfiguration = _configuration.Brokers.Single(
+            configuration => configuration.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
+          var publicApiConfiguration = GetPublicApiConfiguration(brokerConfiguration, queueName);
+          pipeline = BuildPipeline(brokerConfiguration, publicApiConfiguration);
 
-        messageHandlingContext.Set(ContextKeys.Broker.Id, brokerId)
-                              .Set(ContextKeys.Broker.MessageMetadata, brokerMetadata)
-                              .Set(ContextKeys.Broker.MessagePayload, brokerPayload)
-                              .Set(ContextKeys.Broker.QueueName, queueName)
-                              .Set(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
-                              .Set(ContextKeys.Broker.Configuration, brokerConfiguration)
-                              .Set(ContextKeys.PublicApi.Id, publicApiConfiguration.Id)
-                              .Set(ContextKeys.PublicApi.Configuration, publicApiConfiguration);
-      }
-      catch (Exception exception)
-      {
-        _logger.LogError(
-          exception,
-          "An error occurred during preparing to handle a message. See inner exception to find details about the error.");
-        throw;
-      }
+          messageHandlingContext.Set(ContextKeys.Broker.Id, brokerId)
+                                .Set(ContextKeys.Broker.MessageMetadata, brokerMetadata)
+                                .Set(ContextKeys.Broker.MessagePayload, brokerPayload)
+                                .Set(ContextKeys.Broker.QueueName, queueName)
+                                .Set(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
+                                .Set(ContextKeys.Broker.Configuration, brokerConfiguration)
+                                .Set(ContextKeys.PublicApi.Id, publicApiConfiguration.Id)
+                                .Set(ContextKeys.PublicApi.Configuration, publicApiConfiguration);
+        }
+        catch (Exception exception)
+        {
+          _logger.LogError(
+            exception,
+            "An error occurred during preparing to handle a message. See inner exception to find details about the error.");
+          throw;
+        }
 
-      try
-      {
-        return pipeline.Execute(messageHandlingContext);
-      }
-      catch (Exception exception)
-      {
-        _logger.LogError(
-          exception,
-          "An error occurred during message handling. See inner exception to find details about the error.");
-        messageHandlingContext.Rollback();
-        return Task.CompletedTask;
+        try
+        {
+          return pipeline.Execute(messageHandlingContext);
+        }
+        catch (Exception exception)
+        {
+          _logger.LogError(
+            exception,
+            "An error occurred during message handling. See inner exception to find details about the error.");
+          messageHandlingContext.Rollback();
+          return Task.CompletedTask;
+        }
       }
     }
 
@@ -160,7 +163,7 @@ namespace Eshva.Poezd.Core.Routing
 
     private PublicApiConfiguration GetPublicApiConfiguration(MessageBrokerConfiguration brokerConfiguration, string queueName)
     {
-      var queueNameMatcher = (IQueueNameMatcher)_serviceProvider.GetService(brokerConfiguration.QueueNameMatcherType);
+      var queueNameMatcher = (IQueueNameMatcher)_diContainerAdapter.GetService(brokerConfiguration.QueueNameMatcherType);
       var configuration = brokerConfiguration.PublicApis.FirstOrDefault(
         api => api.QueueNamePatterns.Any(queueNamePattern => queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
       if (configuration != null)
@@ -184,7 +187,7 @@ namespace Eshva.Poezd.Core.Routing
           "method to set pipeline configurator CLR-type.");
       }
 
-      return (IPipelineConfigurator)_serviceProvider.GetService(
+      return (IPipelineConfigurator)_diContainerAdapter.GetService(
         brokerConfiguration.PipelineConfiguratorType,
         type => new PoezdConfigurationException(
           $"Can not get instance of the message broker pipeline configurator of type '{type.FullName}'. " +
@@ -201,7 +204,7 @@ namespace Eshva.Poezd.Core.Routing
           "method to set pipeline configurator CLR-type.");
       }
 
-      return (IPipelineConfigurator)_serviceProvider.GetService(
+      return (IPipelineConfigurator)_diContainerAdapter.GetService(
         publicApiConfiguration.PipelineConfiguratorType,
         type => new PoezdConfigurationException(
           $"Can not get instance of the public API pipeline configurator of type '{type.FullName}'. " +
@@ -209,10 +212,10 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     private bool _isStarted;
+    private readonly IDiContainerAdapter _diContainerAdapter;
     private readonly List<MessageBroker> _brokers = new List<MessageBroker>();
     private readonly ILogger<MessageRouter> _logger;
     private readonly MessageRouterConfiguration _configuration;
-    private readonly IServiceProvider _serviceProvider;
     private const string NotWhitespace = "Value cannot be null or whitespace.";
   }
 }

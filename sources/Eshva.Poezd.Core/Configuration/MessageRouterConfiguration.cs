@@ -9,14 +9,26 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public sealed class MessageRouterConfiguration
+  public sealed class MessageRouterConfiguration : CompositeMessageRouterConfigurationPart
   {
     public MessageHandlingConfiguration MessageHandling { get; } = new MessageHandlingConfiguration();
 
-    public IReadOnlyList<MessageBrokerConfiguration> Brokers => _brokers.AsReadOnly();
+    public IReadOnlyCollection<MessageBrokerConfiguration> Brokers => _brokers.AsReadOnly();
 
     internal void AddBroker([NotNull] MessageBrokerConfiguration brokerConfiguration) =>
       _brokers.Add(brokerConfiguration ?? throw new ArgumentNullException(nameof(brokerConfiguration)));
+
+    protected override IEnumerable<string> ValidateItself()
+    {
+      // TODO: Implement
+      yield break;
+    }
+
+    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations()
+    {
+      // TODO: Implement
+      yield break;
+    }
 
     private readonly List<MessageBrokerConfiguration> _brokers = new List<MessageBrokerConfiguration>();
   }

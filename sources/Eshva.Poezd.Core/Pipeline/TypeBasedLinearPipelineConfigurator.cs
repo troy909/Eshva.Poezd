@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using Eshva.Poezd.Core.Configuration;
+using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
 
 #endregion

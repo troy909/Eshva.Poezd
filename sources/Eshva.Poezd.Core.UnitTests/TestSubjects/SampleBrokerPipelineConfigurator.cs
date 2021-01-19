@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   [UsedImplicitly]
-  public class SampleKafkaBrokerPipelineConfigurator : IPipelineConfigurator
+  public class SampleBrokerPipelineConfigurator : IPipelineConfigurator
   {
     /// <remarks>
     /// TODO: Add message audit logging or some other very general actions.

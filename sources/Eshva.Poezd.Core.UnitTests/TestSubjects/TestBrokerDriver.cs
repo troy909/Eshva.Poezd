@@ -11,12 +11,17 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public sealed class TestBrokerDriver : IMessageBrokerDriver
+  internal sealed class TestBrokerDriver : IMessageBrokerDriver
   {
-    public TestBrokerDriver([NotNull] IMessageRouter messageRouter)
+    public TestBrokerDriver(
+      [NotNull] IMessageRouter messageRouter,
+      [NotNull] TestBrokerDriverConfiguration configuration)
     {
       _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
+      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
+
+    public IEnumerable<string> SubscribedQueueNamePatters { get; private set; } = new List<string>();
 
     public Task StartConsumeMessages()
     {
@@ -35,7 +40,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       throw new NotImplementedException();
     }
 
-    public Task Subscribe(IEnumerable<string> queueNamePatterns)
+    public Task SubscribeToQueues(IEnumerable<string> queueNamePatterns)
     {
       if (_isMessageConsumingStarted)
       {
@@ -43,18 +48,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
           $"{nameof(TestBrokerDriver)} is started already. You can subscribe to queues only before driver is started.");
       }
 
-      throw new NotImplementedException();
-    }
-
-    public void SetSomeConfiguration(TestBrokerDriverConfiguration configuration)
-    {
-      if (_isMessageConsumingStarted)
-      {
-        throw new InvalidOperationException(
-          $"{nameof(TestBrokerDriver)} is started already. You can not configure driver after it is started.");
-      }
-
-      _configuration = configuration;
+      SubscribedQueueNamePatters = queueNamePatterns;
+      return Task.CompletedTask;
     }
 
     public Task PublishMessage(
@@ -71,7 +66,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
         brokerMetadata);
 
     private bool _isMessageConsumingStarted;
-    private TestBrokerDriverConfiguration _configuration;
+    private readonly TestBrokerDriverConfiguration _configuration;
     private readonly IMessageRouter _messageRouter;
   }
 }

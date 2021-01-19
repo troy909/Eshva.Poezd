@@ -3,9 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Activation;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
@@ -28,31 +30,47 @@ namespace Eshva.Poezd.Core.Routing
                 throw new ArgumentException($"Can not get {nameof(ILogger<MessageRouter>)} implementation from the service provider.");
     }
 
-    public Task Start(CancellationToken cancellationToken = default)
+    public IReadOnlyCollection<MessageBroker> Brokers => _brokers.AsReadOnly();
+
+    public async Task Start(CancellationToken cancellationToken = default)
     {
       if (_isStarted)
       {
-        throw new InvalidOperationException("The router is started already.");
+        throw new PoezdOperationException("The router is started already.");
       }
 
-      // configure, subscribe and start all broker drivers
-      var driverConfigs = _configuration.Brokers.Select(broker => (broker.DriverType, broker.DriverConfiguratorType));
-      foreach (var driverConfig in driverConfigs)
+      ValidateConfiguration();
+
+      try
       {
-        var (driverType, driverConfiguratorType) = driverConfig;
-        var driver = (IMessageBrokerDriver)_serviceProvider.GetService(
-          driverType,
-          type => new PoezdConfigurationException(
-            $"Can not find a message broker driver of type '{type.FullName}. You should register it in DI-container."));
-        dynamic configurator = _serviceProvider.GetService(
-          driverConfiguratorType,
-          type => new PoezdConfigurationException(
-            $"Can not find a message broker driver configurator of type '{type.FullName}. You should register it in DI-container."));
-        configurator.Configure(driver);
+        ConfigureMessageBrokerDrivers();
+        foreach (var descriptor in _brokers)
+        {
+          var queueNamePatterns = descriptor.PublicApis.SelectMany(api => api.QueueNamePatterns);
+          await descriptor.Driver.SubscribeToQueues(queueNamePatterns);
+          await descriptor.Driver.StartConsumeMessages();
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new PoezdOperationException(
+          "Unable to start message router due an error. Inspect the inner exception for detailed information.",
+          exception);
       }
 
-      // set started
-      return null;
+      _isStarted = true;
+    }
+
+    private void ValidateConfiguration()
+    {
+      var configurationErrors = _configuration.Validate().ToList();
+      if (configurationErrors.Any())
+      {
+        var message = new StringBuilder("Unable to start the message router due configuration errors:");
+        configurationErrors.ForEach(error => message.AppendLine($"\t* {error}"));
+
+        throw new PoezdConfigurationException(message.ToString());
+      }
     }
 
     public Task RouteIncomingMessage(
@@ -114,6 +132,18 @@ namespace Eshva.Poezd.Core.Routing
       var poezdConfigurator = new PoezdConfigurator();
       configurator(poezdConfigurator);
       return poezdConfigurator.Configuration;
+    }
+
+    private void ConfigureMessageBrokerDrivers()
+    {
+      foreach (var broker in _configuration.Brokers)
+      {
+        var driver = (IMessageBrokerDriver)Activator.CreateInstance(broker.DriverType, this, broker.DriverConfiguration) ??
+                     throw new PoezdOperationException(
+                       $"Can not create a message broker driver {broker.DriverType.FullName} during starting of the message router.");
+
+        _brokers.Add(new MessageBroker(driver, broker));
+      }
     }
 
     private MessageHandlingPipeline BuildPipeline(
@@ -180,7 +210,7 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     private bool _isStarted;
-
+    private readonly List<MessageBroker> _brokers = new List<MessageBroker>();
     private readonly ILogger<MessageRouter> _logger;
     private readonly MessageRouterConfiguration _configuration;
     private readonly IServiceProvider _serviceProvider;

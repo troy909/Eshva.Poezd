@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
 
 #endregion
@@ -9,25 +8,20 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public sealed class TestBrokerDriverConfigurator : IMessageBrokerDriverConfigurator<TestBrokerDriver>
+  [UsedImplicitly]
+  public sealed class TestBrokerDriverConfigurator
   {
-    public const string TestBrokerSettings = "test broker settings";
-
-    public void Configure([NotNull] TestBrokerDriver driver)
+    public TestBrokerDriverConfigurator([NotNull] TestBrokerDriverConfiguration configuration)
     {
-      if (driver == null) throw new ArgumentNullException(nameof(driver));
-
-      driver.SetSomeConfiguration(new TestBrokerDriverConfiguration(TestBrokerSettings));
-    }
-  }
-
-  public class TestBrokerDriverConfiguration
-  {
-    public TestBrokerDriverConfiguration(string settings)
-    {
-      Settings = settings;
+      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public string Settings { get; }
+    public TestBrokerDriverConfigurator WithSomeSetting(string someSetting)
+    {
+      _configuration.SomeSettings = someSetting;
+      return this;
+    }
+
+    private readonly TestBrokerDriverConfiguration _configuration;
   }
 }

@@ -15,8 +15,6 @@ namespace Eshva.Poezd.Core.Configuration
 
     public IReadOnlyCollection<string> QueueNamePatterns => _queueNamePatterns.AsReadOnly();
 
-    public string Name { get; internal set; }
-
     public Type AdapterType { get; internal set; }
 
     public Type PipelineConfiguratorType { get; set; }

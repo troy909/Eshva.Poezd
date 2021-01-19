@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 
 #endregion
@@ -9,11 +10,11 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public sealed class MessageBrokerConfiguration
+  public sealed class MessageBrokerConfiguration : CompositeMessageRouterConfigurationPart
   {
     public string Id { get; internal set; }
 
-    public IReadOnlyList<PublicApiConfiguration> PublicApis => _publicApis;
+    public IReadOnlyCollection<PublicApiConfiguration> PublicApis => _publicApis.AsReadOnly();
 
     public Type QueueNameMatcherType { get; internal set; }
 
@@ -21,13 +22,28 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type DriverType { get; set; }
 
-    public Type DriverConfiguratorType { get; set; }
+    public object DriverConfiguration { get; set; }
 
     public void AddPublicApi([NotNull] PublicApiConfiguration publicApiConfiguration)
     {
       if (publicApiConfiguration == null) throw new ArgumentNullException(nameof(publicApiConfiguration));
 
       _publicApis.Add(publicApiConfiguration);
+    }
+
+    protected override IEnumerable<string> ValidateItself()
+    {
+      if (string.IsNullOrWhiteSpace(Id)) yield return "ID of message broker should be specified.";
+      if (!_publicApis.Any()) yield return $"At least one public API should be configured for message broker with ID '{Id}'.";
+      if (QueueNameMatcherType == null) yield return $"Queue name matcher type should be set for message broker with ID '{Id}'.";
+      if (PipelineConfiguratorType == null) yield return $"Pipeline configurator type should be set for message broker with ID '{Id}'.";
+      if (DriverType == null) yield return $"Message broker driver type should be set for message broker with ID '{Id}'.";
+    }
+
+    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations()
+    {
+      // TODO: Add validation to PublicApiConfiguration and other configuration types.
+      yield break;
     }
 
     private readonly List<PublicApiConfiguration> _publicApis = new List<PublicApiConfiguration>();

@@ -14,6 +14,6 @@ namespace Eshva.Poezd.Core.Routing
 
     Task Publish(byte[] brokerPayload, IReadOnlyDictionary<string, string> brokerMetadata);
 
-    Task Subscribe(IEnumerable<string> queueNamePatterns);
+    Task SubscribeToQueues(IEnumerable<string> queueNamePatterns);
   }
 }

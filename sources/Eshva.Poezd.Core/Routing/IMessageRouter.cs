@@ -12,6 +12,8 @@ namespace Eshva.Poezd.Core.Routing
 {
   public interface IMessageRouter
   {
+    IReadOnlyCollection<MessageBroker> Brokers { get; }
+
     Task Start(CancellationToken cancellationToken = default);
 
     Task RouteIncomingMessage(

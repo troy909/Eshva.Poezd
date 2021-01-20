@@ -11,8 +11,8 @@ using Eshva.Poezd.SimpleInjectorCoupling;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Events;
 using Serilog.Sinks.InMemory;
-using Serilog.Sinks.InMemory.Assertions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Xunit;
@@ -53,7 +53,19 @@ namespace Eshva.Poezd.Core.UnitTests
         new byte[0],
         new Dictionary<string, string>());
 
-      InMemorySink.Instance.Should().HaveMessage("DEBUG");
+      InMemorySink.Instance.LogEvents
+                  .Where(@event => @event.Level == LogEventLevel.Information)
+                  .Select(@event => @event.MessageTemplate.Text)
+                  .Should().BeEquivalentTo(
+                    new[]
+                    {
+                      nameof(LogMessageHandlingContextStep),
+                      nameof(Service2DeserializeMessageStep),
+                      nameof(GetMessageHandlersStep),
+                      nameof(DispatchMessageToHandlersStep),
+                      nameof(CommitMessageStep)
+                    },
+                    options => options.WithStrictOrdering());
     }
 
     [Fact]
@@ -155,10 +167,7 @@ namespace Eshva.Poezd.Core.UnitTests
                         .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
-      // var sink = new InMemorySink();
-      // container.RegisterInstance(sink);
       container.RegisterInstance(GetLoggerFactory());
-      // container.RegisterInstance(GetLoggerFactory(sink));
       container.Register(typeof(ILogger<>), typeof(Logger<>), Lifestyle.Singleton);
 
       container.RegisterSingleton<RegexQueueNameMatcher>();
@@ -166,7 +175,6 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Register<Service1PipelineConfigurator>(Lifestyle.Scoped);
       container.Register<Service2PipelineConfigurator>(Lifestyle.Scoped);
       container.Register<CdcNotificationsPipelineConfigurator>(Lifestyle.Scoped);
-
       container.Register<LogMessageHandlingContextStep>(Lifestyle.Scoped);
       container.Register<CdcNotificationsCommitStep>(Lifestyle.Scoped);
       container.Register<Service1DeserializeMessageStep>(Lifestyle.Scoped);

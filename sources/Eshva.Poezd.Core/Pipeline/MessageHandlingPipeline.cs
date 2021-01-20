@@ -94,9 +94,6 @@ namespace Eshva.Poezd.Core.Pipeline
       while (currentNode != null)
       {
         var currentStep = currentNode.Value;
-        // var nextNode 
-        // var nextStep = currentNode.Next?.Value ?? new NoopStep();
-        //currentNode = currentNode.Next;
         await currentStep.Execute(context);
         currentNode = currentNode.Next;
       }
@@ -105,10 +102,5 @@ namespace Eshva.Poezd.Core.Pipeline
     private IStep GetStepOfType(Type stepType) => _steps.FirstOrDefault(step => step.GetType() == stepType);
 
     private readonly LinkedList<IStep> _steps = new LinkedList<IStep>();
-
-    private sealed class NoopStep : IStep
-    {
-      public Task Execute(IPocket context) => Task.CompletedTask;
-    }
   }
 }

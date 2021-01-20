@@ -22,7 +22,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 
     public Task Execute(IPocket context)
     {
-      _logger.LogInformation("TEST");
+      _logger.LogInformation(nameof(LogMessageHandlingContextStep));
       _logger.LogDebug(
         $"A message from queue with name '{context.GetContextVariable<string>(ContextKeys.Broker.QueueName)}' from " +
         $" {context.GetContextVariable<string>(ContextKeys.Broker.Id)} has been received.");

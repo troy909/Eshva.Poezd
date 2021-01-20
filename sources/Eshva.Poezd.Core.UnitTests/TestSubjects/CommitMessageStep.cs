@@ -19,12 +19,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 
     public Task Execute(IPocket context)
     {
-      _logger.LogInformation("COMMIT");
-      _logger.LogError("ERROR");
-      _logger.LogDebug("DEBUG");
-      _logger.LogTrace("TRACE");
-      _logger.LogCritical("CRIT");
-      _logger.LogWarning("WARNING");
+      _logger.LogInformation(nameof(CommitMessageStep));
       return Task.CompletedTask;
     }
 

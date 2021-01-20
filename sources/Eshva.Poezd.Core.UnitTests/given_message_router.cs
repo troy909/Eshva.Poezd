@@ -16,6 +16,7 @@ using Serilog.Sinks.InMemory;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Xunit;
+using Xunit.Abstractions;
 
 #endregion
 
@@ -24,6 +25,11 @@ namespace Eshva.Poezd.Core.UnitTests
 {
   public sealed class given_message_router
   {
+    public given_message_router(ITestOutputHelper testOutputHelper)
+    {
+      _testOutputHelper = testOutputHelper;
+    }
+
     [Fact]
     public void when_starting_it_should_subscribe_to_all_queues_specified_in_configuration()
     {
@@ -186,11 +192,14 @@ namespace Eshva.Poezd.Core.UnitTests
       container.Verify();
     }
 
-    private static ILoggerFactory GetLoggerFactory() =>
+    private ILoggerFactory GetLoggerFactory() =>
       new LoggerFactory().AddSerilog(
         new LoggerConfiguration()
           .WriteTo.InMemory()
+          .WriteTo.XunitTestOutput(_testOutputHelper)
           .MinimumLevel.Verbose()
           .CreateLogger());
+
+    private readonly ITestOutputHelper _testOutputHelper;
   }
 }

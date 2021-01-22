@@ -15,35 +15,39 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CaseOffice", "CaseOffice", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WorkPlanner", "WorkPlanner", "{8D645678-A97B-41C7-AF46-8B8653CE44C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.Application", "Venture\CaseOffice\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj", "{7F48C001-EBE6-4E6D-9621-0D8AF61A065C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Application", "Venture\CaseOffice\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj", "{7F48C001-EBE6-4E6D-9621-0D8AF61A065C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.Domain", "Venture\CaseOffice\Venture.CaseOffice.Domain\Venture.CaseOffice.Domain.csproj", "{5C28E737-82E9-42F6-B77A-41F4E8068DD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Domain", "Venture\CaseOffice\Venture.CaseOffice.Domain\Venture.CaseOffice.Domain.csproj", "{5C28E737-82E9-42F6-B77A-41F4E8068DD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.Public", "Venture\CaseOffice\Venture.CaseOffice.Public\Venture.CaseOffice.Public.csproj", "{36A04301-F6AE-44F2-940C-26A6A6C1C327}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Public", "Venture\CaseOffice\Venture.CaseOffice.Public\Venture.CaseOffice.Public.csproj", "{36A04301-F6AE-44F2-940C-26A6A6C1C327}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.Service", "Venture\CaseOffice\Venture.CaseOffice.Service\Venture.CaseOffice.Service.csproj", "{81E4C566-E3F2-4E1C-92A0-FB5073FA8C1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Service", "Venture\CaseOffice\Venture.CaseOffice.Service\Venture.CaseOffice.Service.csproj", "{81E4C566-E3F2-4E1C-92A0-FB5073FA8C1D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{DA7B0FDC-3612-4FBB-8C17-D169B54871AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.Application", "Venture\Common\Venture.Common.Application\Venture.Common.Application.csproj", "{A88021C0-3349-4D1A-A8B7-24B2D9375813}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Application", "Venture\Common\Venture.Common.Application\Venture.Common.Application.csproj", "{A88021C0-3349-4D1A-A8B7-24B2D9375813}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.Tools", "Venture\Common\Venture.Common.Tools\Venture.Common.Tools.csproj", "{1538AE33-34D4-439B-8C88-11ACFF10A530}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Tools", "Venture\Common\Venture.Common.Tools\Venture.Common.Tools.csproj", "{1538AE33-34D4-439B-8C88-11ACFF10A530}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.Infrastructure", "Venture\Common\Venture.Common.Infrastructure\Venture.Common.Infrastructure.csproj", "{88AC610D-8301-46ED-81C6-2C3F2D78FBC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Infrastructure", "Venture\Common\Venture.Common.Infrastructure\Venture.Common.Infrastructure.csproj", "{88AC610D-8301-46ED-81C6-2C3F2D78FBC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.ReadModelStorage.Redis", "Venture\CaseOffice\Venture.CaseOffice.ReadModelStorage.Redis\Venture.CaseOffice.ReadModelStorage.Redis.csproj", "{3CB5B32E-D9BD-4DD5-8B7A-1A60B99A2C56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.ReadModelStorage.Redis", "Venture\CaseOffice\Venture.CaseOffice.ReadModelStorage.Redis\Venture.CaseOffice.ReadModelStorage.Redis.csproj", "{3CB5B32E-D9BD-4DD5-8B7A-1A60B99A2C56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Poezd.Coupling", "Venture\Common\Venture.Poezd.Coupling\Venture.Poezd.Coupling.csproj", "{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Poezd.Coupling", "Venture\Common\Venture.Poezd.Coupling\Venture.Poezd.Coupling.csproj", "{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Common", "Eshva.Common\Eshva.Common.csproj", "{7663432D-EFD2-4424-8B70-DF92BE8C3C01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Common", "Eshva.Common\Eshva.Common.csproj", "{7663432D-EFD2-4424-8B70-DF92BE8C3C01}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.SimpleInjectorCoupling", "Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj", "{85AF1D21-9C16-4CCD-B9A3-8DA891490301}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.KafkaCoupling", "Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj", "{DF999F58-7A68-4D65-B936-AF9B66658085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.KafkaCoupling", "Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj", "{DF999F58-7A68-4D65-B936-AF9B66658085}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.RabbitMqCoupling", "Eshva.Poezd.RabbitMqCoupling\Eshva.Poezd.RabbitMqCoupling.csproj", "{2B6A3131-B73A-46A8-92F1-B102C52CC886}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.RabbitMqCoupling", "Eshva.Poezd.RabbitMqCoupling\Eshva.Poezd.RabbitMqCoupling.csproj", "{2B6A3131-B73A-46A8-92F1-B102C52CC886}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.SerilogCoupling", "Eshva.Poezd.SerilogCoupling\Eshva.Poezd.SerilogCoupling.csproj", "{0B754C71-E592-41B9-81B9-79F2634B7281}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.SerilogCoupling", "Eshva.Poezd.SerilogCoupling\Eshva.Poezd.SerilogCoupling.csproj", "{0B754C71-E592-41B9-81B9-79F2634B7281}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.IntegrationTests", "Venture\Venture.IntegrationTests\Venture.IntegrationTests.csproj", "{EFA0590F-48F6-4EF8-B147-D00A872AF26E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.TestingTools", "Venture\Common\Venture.Common.TestingTools\Venture.Common.TestingTools.csproj", "{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +119,14 @@ Global
 		{0B754C71-E592-41B9-81B9-79F2634B7281}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B754C71-E592-41B9-81B9-79F2634B7281}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B754C71-E592-41B9-81B9-79F2634B7281}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFA0590F-48F6-4EF8-B147-D00A872AF26E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFA0590F-48F6-4EF8-B147-D00A872AF26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFA0590F-48F6-4EF8-B147-D00A872AF26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFA0590F-48F6-4EF8-B147-D00A872AF26E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -133,6 +145,8 @@ Global
 		{88AC610D-8301-46ED-81C6-2C3F2D78FBC5} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 		{3CB5B32E-D9BD-4DD5-8B7A-1A60B99A2C56} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
 		{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
+		{EFA0590F-48F6-4EF8-B147-D00A872AF26E} = {161DFBF8-D707-40B4-8ECB-71F21E29DCD3}
+		{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

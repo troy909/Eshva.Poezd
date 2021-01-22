@@ -1,5 +1,7 @@
 #region Usings
 
+using Xunit;
+
 #endregion
 
 namespace Venture.Common.TestingTools

@@ -3,6 +3,7 @@
 using System;
 using SimpleInjector;
 using Venture.Common.TestingTools;
+using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
 #endregion

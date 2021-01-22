@@ -4,7 +4,7 @@ using DotNet.Testcontainers.Containers;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Kafka
 {
   public class KafkaDockerContainerBuilder
   {

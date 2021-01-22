@@ -8,7 +8,7 @@ using DotNet.Testcontainers.Containers;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Core
 {
   public abstract class DockerContainerAdapter : IDockerContainer
   {

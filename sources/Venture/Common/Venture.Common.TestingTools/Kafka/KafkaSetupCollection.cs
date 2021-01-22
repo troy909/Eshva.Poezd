@@ -4,7 +4,7 @@ using Xunit;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Kafka
 {
   [Collection(Name)]
   public class KafkaSetupCollection

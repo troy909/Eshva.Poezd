@@ -1,4 +1,4 @@
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Core
 {
   public interface IProvideExposedPorts
   {

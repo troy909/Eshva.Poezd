@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Core
 {
   public interface IProvidePortBindings
   {

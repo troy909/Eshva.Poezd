@@ -7,10 +7,11 @@ using DotNet.Testcontainers.Containers;
 using DotNet.Testcontainers.Containers.Builders;
 using DotNet.Testcontainers.Containers.Modules;
 using DotNet.Testcontainers.Containers.WaitStrategies;
+using Venture.Common.TestingTools.Core;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Kafka
 {
   public class KafkaDockerContainer : DockerContainerAdapter
   {

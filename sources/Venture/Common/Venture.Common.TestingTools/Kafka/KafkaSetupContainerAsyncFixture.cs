@@ -6,7 +6,7 @@ using Xunit;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Kafka
 {
   public class KafkaSetupContainerAsyncFixture : IAsyncLifetime
   {

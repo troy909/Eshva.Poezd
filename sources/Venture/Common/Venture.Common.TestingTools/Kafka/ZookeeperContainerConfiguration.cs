@@ -2,10 +2,11 @@
 
 using System.Collections.Generic;
 using DotNet.Testcontainers.Images;
+using Venture.Common.TestingTools.Core;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Kafka
 {
   public class ZookeeperContainerConfiguration : DockerContainerConfiguration
   {

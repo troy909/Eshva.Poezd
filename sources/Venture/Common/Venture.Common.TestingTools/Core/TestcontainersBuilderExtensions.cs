@@ -10,7 +10,7 @@ using DotNet.Testcontainers.Containers.Builders;
 
 #endregion
 
-namespace Venture.Common.TestingTools
+namespace Venture.Common.TestingTools.Core
 {
   public static class TestcontainersBuilderExtensions
   {

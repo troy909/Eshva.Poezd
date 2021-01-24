@@ -14,8 +14,11 @@ namespace Venture.Common.TestingTools.Kafka
 
     public ushort InternalHttpPort { get; set; } = DefaultZookeeperHttpPort;
 
-    public override IReadOnlyCollection<KeyValuePair<string, string>> GetVariables() =>
-      new List<KeyValuePair<string, string>>().AsReadOnly();
+    public override IReadOnlyCollection<KeyValuePair<string, string>> GetVariables() => new[]
+    {
+      new KeyValuePair<string, string>("ALLOW_ANONYMOUS_LOGIN", "true")
+    };
+
 
     public override ushort[] GetExposedPorts() => new[] {ExposedHttpPort};
 
@@ -26,7 +29,7 @@ namespace Venture.Common.TestingTools.Kafka
 
     protected override string GetDefaultContainerName() => "test-zookeeper";
 
-    protected override DockerImage GetDefaultDockerImage() => new DockerImage(@"bitnami/kafka:latest");
+    protected override DockerImage GetDefaultDockerImage() => new DockerImage(@"bitnami/zookeeper:latest");
 
     private const int DefaultZookeeperHttpPort = 2181;
   }

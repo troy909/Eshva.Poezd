@@ -57,13 +57,14 @@ namespace Venture.Common.TestingTools.Kafka
         .WithPortBindingsFrom(KafkaConfiguration)
         .WithExposedPortsFrom(KafkaConfiguration)
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(KafkaConfiguration.ExposedHttpPort))
-        .WithCleanUp(cleanUp: false)
+        .WithCleanUp(cleanUp: true)
         .Build();
 
     private TestcontainersContainer BuildZookeeperContainer() =>
       new TestcontainersBuilder<TestcontainersContainer>()
         .WithImage(ZookeeperConfiguration.DockerImage)
         .WithName(ZookeeperConfiguration.ContainerName)
+        .WithEnvironmentVariablesFrom(ZookeeperConfiguration)
         .WithPortBindingsFrom(ZookeeperConfiguration)
         .WithExposedPortsFrom(ZookeeperConfiguration)
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(ZookeeperConfiguration.ExposedHttpPort))

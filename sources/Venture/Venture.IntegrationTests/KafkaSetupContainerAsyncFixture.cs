@@ -2,11 +2,12 @@
 
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Containers;
+using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
 #endregion
 
-namespace Venture.Common.TestingTools.Kafka
+namespace Venture.IntegrationTests
 {
   public class KafkaSetupContainerAsyncFixture : IAsyncLifetime
   {
@@ -18,9 +19,9 @@ namespace Venture.Common.TestingTools.Kafka
         .Build();
     }
 
-    public Task InitializeAsync() => null;
+    public Task InitializeAsync() => _kafkaContainer.StartAsync();
 
-    public Task DisposeAsync() => null;
+    public async Task DisposeAsync() => await _kafkaContainer.DisposeAsync();
 
     private IDockerContainer _kafkaContainer;
   }

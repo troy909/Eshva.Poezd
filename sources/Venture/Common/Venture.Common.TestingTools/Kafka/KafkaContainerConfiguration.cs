@@ -25,11 +25,11 @@ namespace Venture.Common.TestingTools.Kafka
 
     public override IReadOnlyCollection<KeyValuePair<string, string>> GetVariables() => new[]
     {
-      new KeyValuePair<string, string>("KAFKA_BROKER_ID", "1"),
+      new KeyValuePair<string, string>("KAFKA_ADVERTISED_HOST_NAME", "localhost"),
       new KeyValuePair<string, string>("KAFKA_LISTENERS", $"PLAINTEXT://{AdvertisedHostName}:{DefaultKafkaHttpPort}"),
       new KeyValuePair<string, string>("KAFKA_ZOOKEEPER_CONNECT", ZookeeperAddress),
-      new KeyValuePair<string, string>("ALLOW_PLAINTEXT_LISTENER", "true"),
-      new KeyValuePair<string, string>("KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE", "true")
+      // new KeyValuePair<string, string>("ALLOW_PLAINTEXT_LISTENER", "true"),
+      // new KeyValuePair<string, string>("KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE", "true")
     };
 
     public override ushort[] GetExposedPorts() => new[] {ExposedHttpPort};
@@ -41,7 +41,7 @@ namespace Venture.Common.TestingTools.Kafka
 
     protected override string GetDefaultContainerName() => "test-kafka";
 
-    protected override DockerImage GetDefaultDockerImage() => new DockerImage(@"bitnami/kafka:latest");
+    protected override DockerImage GetDefaultDockerImage() => new DockerImage(@"wurstmeister/kafka:latest");
 
     private const int DefaultKafkaHttpPort = 9092;
   }

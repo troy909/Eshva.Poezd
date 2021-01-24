@@ -1,13 +1,14 @@
 #region Usings
 
+using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
 #endregion
 
-namespace Venture.Common.TestingTools.Kafka
+namespace Venture.IntegrationTests
 {
-  [Collection(Name)]
-  public class KafkaSetupCollection
+  [CollectionDefinition(Name)]
+  public class KafkaSetupCollection : ICollectionFixture<KafkaSetupContainerAsyncFixture>
   {
     public static ContainersConfiguration Containers { get; } = new ContainersConfiguration();
 

@@ -19,10 +19,12 @@ namespace Venture.IntegrationTests
         .Build();
     }
 
+    // public Task InitializeAsync() => Task.CompletedTask;
     public Task InitializeAsync() => _kafkaContainer.StartAsync();
 
+    // public async Task DisposeAsync() => await Task.CompletedTask;
     public async Task DisposeAsync() => await _kafkaContainer.DisposeAsync();
 
-    private IDockerContainer _kafkaContainer;
+    private readonly IDockerContainer _kafkaContainer;
   }
 }

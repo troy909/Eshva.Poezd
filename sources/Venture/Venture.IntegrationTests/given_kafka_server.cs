@@ -1,9 +1,10 @@
 #region Usings
 
 using System;
-using SimpleInjector;
-using Venture.Common.TestingTools;
-using Venture.Common.TestingTools.Kafka;
+using System.Threading.Tasks;
+using Confluent.Kafka;
+using Confluent.Kafka.Admin;
+using FluentAssertions;
 using Xunit;
 
 #endregion
@@ -20,10 +21,65 @@ namespace Venture.IntegrationTests
     }
 
     [Fact]
-    public void when_message_published_to_kafka_topic_it_should_be_received_by_poezd_with_correct_configuration()
+    public async Task when_message_published_to_kafka_topic_it_should_be_received_by_poezd_with_correct_configuration()
     {
-      var container = new Container();
-      // configure DI-container.
+      var bootstrapServers = "localhost:9092";
+
+      const string someTopic = "some-topic";
+      const string expectedValue = "Eshva1";
+
+      var topic = new TopicSpecification {Name = someTopic, NumPartitions = 1};
+      var adminClientConfig = new AdminClientConfig {BootstrapServers = bootstrapServers};
+      using (var adminClient = new AdminClientBuilder(adminClientConfig).Build())
+      {
+        try
+        {
+          await adminClient.CreateTopicsAsync(new[] {topic});
+        }
+        catch (Exception exception)
+        {
+          Console.WriteLine(exception);
+          throw;
+        }
+      }
+
+
+      var producerConfig = new ProducerConfig {BootstrapServers = bootstrapServers};
+      using (var producer = new ProducerBuilder<Null, string>(producerConfig).Build())
+      {
+        try
+        {
+          await producer.ProduceAsync(someTopic, new Message<Null, string> {Value = expectedValue});
+        }
+        catch (Exception exception)
+        {
+          Console.WriteLine(exception);
+          throw;
+        }
+      }
+
+      var consumerConfig = new ConsumerConfig
+      {
+        BootstrapServers = bootstrapServers,
+        GroupId = Guid.NewGuid().ToString("N"),
+        AutoOffsetReset = AutoOffsetReset.Earliest,
+        AllowAutoCreateTopics = true
+      };
+
+      using (var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build())
+      {
+        try
+        {
+          consumer.Subscribe(someTopic);
+          var result = consumer.Consume(millisecondsTimeout: 500);
+          result.Message.Value.Should().Be(expectedValue);
+        }
+        catch (Exception exception)
+        {
+          Console.WriteLine(exception);
+          throw;
+        }
+      }
     }
 
     private readonly KafkaSetupContainerAsyncFixture _fixture;

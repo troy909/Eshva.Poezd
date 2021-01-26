@@ -1,0 +1,6 @@
+version: "2"
+services:
+  toolbox:
+    image: praqma/network-multitool
+    container_name: toolbox
+    restart: "no"

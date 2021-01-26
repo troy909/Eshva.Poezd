@@ -60,6 +60,15 @@ namespace Venture.Common.TestingTools.Core
       _isStarted = false;
     }
 
+    public Task CopyFileAsync(
+      string filePath,
+      byte[] fileContent,
+      int accessMode = 384,
+      int userId = 0,
+      int groupId = 0,
+      CancellationToken ct = new CancellationToken()) =>
+      GetMainContainer().CopyFileAsync(filePath, fileContent, accessMode, userId, groupId, ct);
+
     public Task<long> ExecAsync(IList<string> command, CancellationToken ct = new CancellationToken())
     {
       EnsureContainerIsStarted();

@@ -23,7 +23,7 @@ namespace Venture.IntegrationTests
     }
 
     [Fact]
-    public async Task when_message_published_to_kafka_topic_it_should_be_received_by_poezd_with_correct_configuration()
+    public async Task when_message_published_to_kafka_topic_it_should_be_received_from_same_topic()
     {
       const string someTopic = "some-topic";
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;

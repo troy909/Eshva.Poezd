@@ -11,6 +11,9 @@
     <PackageReference Include="DotNet.Testcontainers" Version="1.5.1-beta.20210124.8" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="Serilog.Sinks.InMemory" Version="0.6.0" />
+    <PackageReference Include="Serilog.Sinks.InMemory.Assertions" Version="0.6.0" />
+    <PackageReference Include="Serilog.Sinks.XunitTestOutput" Version="1.0.14" />
     <PackageReference Include="SimpleInjector" Version="5.2.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -24,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
+    <ProjectReference Include="..\..\Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj" />
+    <ProjectReference Include="..\..\Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj" />
     <ProjectReference Include="..\Common\Venture.Common.TestingTools\Venture.Common.TestingTools.csproj" />
   </ItemGroup>
 

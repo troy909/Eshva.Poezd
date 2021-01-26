@@ -57,7 +57,7 @@ namespace Venture.Common.TestingTools.Kafka
         .WithEnvironmentVariablesFrom(KafkaConfiguration)
         .WithPortBindingsFrom(KafkaConfiguration)
         .WithExposedPortsFrom(KafkaConfiguration)
-        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(KafkaConfiguration.ExposedHttpPort))
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(KafkaConfiguration.BootstrapPort))
         .WithCleanUp(cleanUp: true)
         .Build();
 

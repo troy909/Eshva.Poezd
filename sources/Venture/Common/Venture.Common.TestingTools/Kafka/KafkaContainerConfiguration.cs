@@ -10,7 +10,7 @@ namespace Venture.Common.TestingTools.Kafka
 {
   public class KafkaContainerConfiguration : DockerContainerConfiguration
   {
-    public ushort ExposedHttpPort { get; set; } = DefaultKafkaHttpPort;
+    public ushort BootstrapPort { get; set; } = DefaultKafkaHttpPort;
 
     public ushort InternalHttpPort { get; set; } = DefaultKafkaHttpPort;
 
@@ -29,11 +29,11 @@ namespace Venture.Common.TestingTools.Kafka
       new KeyValuePair<string, string>("KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE", "true")
     };
 
-    public override ushort[] GetExposedPorts() => new[] {ExposedHttpPort};
+    public override ushort[] GetExposedPorts() => new[] {BootstrapPort};
 
     public override IReadOnlyCollection<IProvidePortBindings.PortBinding> GetPortBindings() => new[]
     {
-      new IProvidePortBindings.PortBinding(ExposedHttpPort, InternalHttpPort)
+      new IProvidePortBindings.PortBinding(BootstrapPort, InternalHttpPort)
     };
 
     protected override string GetDefaultContainerName() => "test-kafka";

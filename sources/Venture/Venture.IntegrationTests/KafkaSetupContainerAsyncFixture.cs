@@ -17,7 +17,10 @@ namespace Venture.IntegrationTests
         .WithKafkaConfiguration(KafkaSetupCollection.Containers.Kafka)
         .WithZookeeperConfiguration(KafkaSetupCollection.Containers.Zookeeper)
         .Build();
+      KafkaContainerConfiguration = KafkaSetupCollection.Containers.Kafka;
     }
+
+    public KafkaContainerConfiguration KafkaContainerConfiguration { get; }
 
     // public Task InitializeAsync() => Task.CompletedTask;
     public Task InitializeAsync() => _kafkaContainer.StartAsync();

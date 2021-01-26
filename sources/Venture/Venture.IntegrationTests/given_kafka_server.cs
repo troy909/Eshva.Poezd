@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
@@ -23,10 +24,11 @@ namespace Venture.IntegrationTests
     [Fact]
     public async Task when_message_published_to_kafka_topic_it_should_be_received_by_poezd_with_correct_configuration()
     {
-      var bootstrapServers = "localhost:9092";
+      var bootstrapServers = $"localhost:{_fixture.KafkaContainerConfiguration.BootstrapPort}";
 
       const string someTopic = "some-topic";
-      const string expectedValue = "Eshva1";
+      const string expectedValue = "Eshva";
+      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
 
       var topic = new TopicSpecification {Name = someTopic, NumPartitions = 1};
       var adminClientConfig = new AdminClientConfig {BootstrapServers = bootstrapServers};
@@ -49,7 +51,11 @@ namespace Venture.IntegrationTests
       {
         try
         {
-          await producer.ProduceAsync(someTopic, new Message<Null, string> {Value = expectedValue});
+          await producer.ProduceAsync(
+            someTopic,
+            new Message<Null, string> {Value = expectedValue},
+            timeout);
+          producer.Flush(timeout);
         }
         catch (Exception exception)
         {
@@ -71,7 +77,7 @@ namespace Venture.IntegrationTests
         try
         {
           consumer.Subscribe(someTopic);
-          var result = consumer.Consume(millisecondsTimeout: 500);
+          var result = consumer.Consume(timeout);
           result.Message.Value.Should().Be(expectedValue);
         }
         catch (Exception exception)

@@ -10,17 +10,23 @@ namespace Venture.Common.TestingTools.Kafka
 {
   public class KafkaContainerConfiguration : DockerContainerConfiguration
   {
-    public ushort BootstrapPort { get; set; } = DefaultKafkaHttpPort;
+    public ushort BootstrapPort { get; set; } = DefaultBootstrapPort;
 
-    public ushort InternalHttpPort { get; set; } = DefaultKafkaHttpPort;
+    public ushort InternalHttpPort { get; set; } = DefaultBootstrapPort;
 
     public string ZookeeperAddress { get; set; }
+
+    public string BootstrapServers => $"localhost:{BootstrapPort}";
 
 
     public override IReadOnlyCollection<KeyValuePair<string, string>> GetVariables() => new[]
     {
-      new KeyValuePair<string, string>("KAFKA_LISTENERS", "INTERNAL://:29092,EXTERNAL://:9092"),
-      new KeyValuePair<string, string>("KAFKA_ADVERTISED_LISTENERS", $"INTERNAL://{ContainerName}:29092,EXTERNAL://localhost:9092"),
+      new KeyValuePair<string, string>(
+        "KAFKA_LISTENERS",
+        $"INTERNAL://:{DefaultInternalCommunicationPort},EXTERNAL://:{BootstrapPort}"),
+      new KeyValuePair<string, string>(
+        "KAFKA_ADVERTISED_LISTENERS",
+        $"INTERNAL://{ContainerName}:{DefaultInternalCommunicationPort},EXTERNAL://localhost:{BootstrapPort}"),
       new KeyValuePair<string, string>("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"),
       new KeyValuePair<string, string>("KAFKA_INTER_BROKER_LISTENER_NAME", "INTERNAL"),
       new KeyValuePair<string, string>("KAFKA_ZOOKEEPER_CONNECT", ZookeeperAddress),
@@ -40,6 +46,7 @@ namespace Venture.Common.TestingTools.Kafka
 
     protected override DockerImage GetDefaultDockerImage() => new DockerImage(@"bitnami/kafka:latest");
 
-    private const int DefaultKafkaHttpPort = 9092;
+    private const int DefaultBootstrapPort = 9092;
+    private const int DefaultInternalCommunicationPort = 29092;
   }
 }

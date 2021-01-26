@@ -67,7 +67,13 @@ namespace Venture.Common.TestingTools.Core
       int userId = 0,
       int groupId = 0,
       CancellationToken ct = new CancellationToken()) =>
-      GetMainContainer().CopyFileAsync(filePath, fileContent, accessMode, userId, groupId, ct);
+      GetMainContainer().CopyFileAsync(
+        filePath,
+        fileContent,
+        accessMode,
+        userId,
+        groupId,
+        ct);
 
     public Task<long> ExecAsync(IList<string> command, CancellationToken ct = new CancellationToken())
     {

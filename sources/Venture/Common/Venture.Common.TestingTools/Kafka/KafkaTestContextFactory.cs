@@ -1,0 +1,25 @@
+#region Usings
+
+using System;
+using System.Threading;
+
+#endregion
+
+namespace Venture.Common.TestingTools.Kafka
+{
+  public class KafkaTestContextFactory<TValue>
+  {
+    public KafkaTestContextFactory(string bootstrapServers)
+    {
+      if (string.IsNullOrWhiteSpace(bootstrapServers))
+        throw new ArgumentException("Value cannot be null or whitespace.", nameof(bootstrapServers));
+
+      _bootstrapServers = bootstrapServers;
+    }
+
+    public KafkaTestContext<TValue> Create(CancellationToken cancellationToken = default) =>
+      new KafkaTestContext<TValue>(_bootstrapServers, cancellationToken);
+
+    private readonly string _bootstrapServers;
+  }
+}

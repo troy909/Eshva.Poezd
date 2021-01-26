@@ -3,9 +3,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Confluent.Kafka;
-using Confluent.Kafka.Admin;
 using FluentAssertions;
+using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
 #endregion
@@ -18,76 +17,25 @@ namespace Venture.IntegrationTests
   {
     public given_kafka_server(KafkaSetupContainerAsyncFixture fixture)
     {
-      _fixture = fixture ?? throw new ArgumentNullException(nameof(fixture));
+      if (fixture == null) throw new ArgumentNullException(nameof(fixture));
+
+      _kafkaTestContextFactory = new KafkaTestContextFactory<string>(fixture.KafkaContainerConfiguration.BootstrapServers);
     }
 
     [Fact]
     public async Task when_message_published_to_kafka_topic_it_should_be_received_by_poezd_with_correct_configuration()
     {
-      var bootstrapServers = $"localhost:{_fixture.KafkaContainerConfiguration.BootstrapPort}";
-
       const string someTopic = "some-topic";
-      const string expectedValue = "Eshva";
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+      await using var kafkaTestContext = _kafkaTestContextFactory.Create(timeout);
+      await kafkaTestContext.CreateTopics(someTopic);
 
-      var topic = new TopicSpecification {Name = someTopic, NumPartitions = 1};
-      var adminClientConfig = new AdminClientConfig {BootstrapServers = bootstrapServers};
-      using (var adminClient = new AdminClientBuilder(adminClientConfig).Build())
-      {
-        try
-        {
-          await adminClient.CreateTopicsAsync(new[] {topic});
-        }
-        catch (Exception exception)
-        {
-          Console.WriteLine(exception);
-          throw;
-        }
-      }
-
-
-      var producerConfig = new ProducerConfig {BootstrapServers = bootstrapServers};
-      using (var producer = new ProducerBuilder<Null, string>(producerConfig).Build())
-      {
-        try
-        {
-          await producer.ProduceAsync(
-            someTopic,
-            new Message<Null, string> {Value = expectedValue},
-            timeout);
-          producer.Flush(timeout);
-        }
-        catch (Exception exception)
-        {
-          Console.WriteLine(exception);
-          throw;
-        }
-      }
-
-      var consumerConfig = new ConsumerConfig
-      {
-        BootstrapServers = bootstrapServers,
-        GroupId = Guid.NewGuid().ToString("N"),
-        AutoOffsetReset = AutoOffsetReset.Earliest,
-        AllowAutoCreateTopics = true
-      };
-
-      using (var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build())
-      {
-        try
-        {
-          consumer.Subscribe(someTopic);
-          var result = consumer.Consume(timeout);
-          result.Message.Value.Should().Be(expectedValue);
-        }
-        catch (Exception exception)
-        {
-          Console.WriteLine(exception);
-          throw;
-        }
-      }
+      const string expectedValue = "Eshva";
+      await kafkaTestContext.Produce(expectedValue, someTopic);
+      var consumed = kafkaTestContext.Consume(someTopic);
+      consumed.Should().Be(expectedValue);
     }
 
-    private readonly KafkaSetupContainerAsyncFixture _fixture;
+    private readonly KafkaTestContextFactory<string> _kafkaTestContextFactory;
   }
 }

@@ -1,6 +1,4 @@
 namespace Eshva.Poezd.Core.Configuration
 {
-  public interface IQueueNamingConvention
-  {
-  }
+  public interface IQueueNamingConvention { }
 }

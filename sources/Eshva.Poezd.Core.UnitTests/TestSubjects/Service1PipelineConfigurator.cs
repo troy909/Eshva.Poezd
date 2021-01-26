@@ -13,9 +13,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   [UsedImplicitly]
   public sealed class Service1PipelineConfigurator : TypeBasedLinearPipelineConfigurator
   {
-    public Service1PipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider)
-    {
-    }
+    public Service1PipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

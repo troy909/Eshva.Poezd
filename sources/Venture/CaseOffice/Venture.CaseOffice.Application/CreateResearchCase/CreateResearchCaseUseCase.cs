@@ -30,7 +30,10 @@ namespace Venture.CaseOffice.Application.CreateResearchCase
 
     public async Task Handle(CreateCase message, VentureVentureMessageHandlingContext context)
     {
-      var researchCase = new ResearchCase(message.CaseId, message.SubjectId, message.Reason);
+      var researchCase = new ResearchCase(
+        message.CaseId,
+        message.SubjectId,
+        message.Reason);
 
       try
       {
@@ -47,8 +50,9 @@ namespace Venture.CaseOffice.Application.CreateResearchCase
     public Task<bool> ShouldHandle(CreateCase message, VentureVentureMessageHandlingContext context) =>
       _isItResearchCaseTypeQuery.Execute(message.CaseType);
 
-    private readonly ILogger<CreateResearchCaseUseCase> _logger;
     private readonly IIsItResearchCaseTypeQuery _isItResearchCaseTypeQuery;
+
+    private readonly ILogger<CreateResearchCaseUseCase> _logger;
     private readonly IAggregateStorage<ResearchCase> _researchCaseStorage;
   }
 }

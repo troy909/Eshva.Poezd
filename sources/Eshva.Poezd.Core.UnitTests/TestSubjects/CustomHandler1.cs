@@ -14,8 +14,6 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       _properties = properties;
     }
 
-    public const string Property1 = "property1";
-
     public Task Handle(CustomCommand1 message, CustomMessageHandlingContext context)
     {
       _properties.Handled1 += 1;
@@ -24,5 +22,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     }
 
     private readonly TestProperties _properties;
+
+    public const string Property1 = "property1";
   }
 }

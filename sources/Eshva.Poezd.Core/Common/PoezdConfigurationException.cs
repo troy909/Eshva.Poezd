@@ -13,22 +13,16 @@ namespace Eshva.Poezd.Core.Common
     /// <summary>
     /// Constructs the exception with the given message
     /// </summary>
-    public PoezdConfigurationException(string message) : base(message)
-    {
-    }
+    public PoezdConfigurationException(string message) : base(message) { }
 
     /// <summary>
     /// Constructs the exception with the given message and inner exception
     /// </summary>
-    public PoezdConfigurationException(string message, Exception innerException) : base(message, innerException)
-    {
-    }
+    public PoezdConfigurationException(string message, Exception innerException) : base(message, innerException) { }
 
     /// <summary>
     /// Happy cross-domain serialization!
     /// </summary>
-    public PoezdConfigurationException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
+    public PoezdConfigurationException(SerializationInfo info, StreamingContext context) : base(info, context) { }
   }
 }

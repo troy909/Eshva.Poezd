@@ -21,8 +21,8 @@ namespace Eshva.Poezd.Core.UnitTests
       var poezdConfiguration = ConfigurePoezd(container);
 
       poezdConfiguration.MessageHandling.MessageHandlersFactory.Should()
-                        .NotBeNull("it's configured").And
-                        .BeOfType<CustomMessageHandlerFactory>($"set factory of type {nameof(CustomMessageHandlerFactory)}");
+        .NotBeNull("it's configured").And
+        .BeOfType<CustomMessageHandlerFactory>($"set factory of type {nameof(CustomMessageHandlerFactory)}");
     }
 
     private static MessageRouterConfiguration ConfigurePoezd(Container container)

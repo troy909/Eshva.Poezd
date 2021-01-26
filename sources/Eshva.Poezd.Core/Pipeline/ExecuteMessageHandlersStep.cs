@@ -23,7 +23,10 @@ namespace Eshva.Poezd.Core.Pipeline
       var handlers = context.GetContextVariable<IEnumerable<IHandleMessage>>(ContextKeys.MessageHandling.Handlers);
       var message = context.GetContextVariable<object>(ContextKeys.Application.MessagePayload);
 
-      return _messageHandlersExecutionStrategy.Execute(handlers, message, context);
+      return _messageHandlersExecutionStrategy.Execute(
+        handlers,
+        message,
+        context);
     }
 
     private readonly IMessageHandlersExecutionStrategy _messageHandlersExecutionStrategy;

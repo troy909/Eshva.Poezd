@@ -12,6 +12,9 @@ namespace Eshva.Poezd.Core.Pipeline
 {
   public interface IMessageHandlersExecutionStrategy
   {
-    Task Execute(IEnumerable<IHandleMessage> handlers, object message, IPocket context);
+    Task Execute(
+      IEnumerable<IHandleMessage> handlers,
+      object message,
+      IPocket context);
   }
 }

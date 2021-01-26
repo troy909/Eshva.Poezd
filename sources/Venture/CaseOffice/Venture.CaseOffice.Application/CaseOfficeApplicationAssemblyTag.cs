@@ -1,6 +1,4 @@
 namespace Venture.CaseOffice.Application
 {
-  public static class CaseOfficeApplicationAssemblyTag
-  {
-  }
+  public static class CaseOfficeApplicationAssemblyTag { }
 }

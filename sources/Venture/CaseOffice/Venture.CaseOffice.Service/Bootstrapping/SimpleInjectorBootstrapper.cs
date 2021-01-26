@@ -19,7 +19,10 @@ namespace Venture.CaseOffice.Service.Bootstrapping
 {
   public static class SimpleInjectorBootstrapper
   {
-    public static void ConfigureContainer(this IApplicationBuilder applicationBuilder, Container container, IConfiguration configuration)
+    public static void ConfigureContainer(
+      this IApplicationBuilder applicationBuilder,
+      Container container,
+      IConfiguration configuration)
     {
       applicationBuilder.UseSimpleInjector(container);
       container.SetupContainer(configuration);
@@ -36,7 +39,7 @@ namespace Venture.CaseOffice.Service.Bootstrapping
 
     private static void SetupContainer(this Container container, IConfiguration configuration)
     {
-      var messageHandlersAssemblies = new[] { typeof(CaseOfficeApplicationAssemblyTag).Assembly };
+      var messageHandlersAssemblies = new[] {typeof(CaseOfficeApplicationAssemblyTag).Assembly};
       var serviceTypes = container.GetMessageHandlersTypes(messageHandlersAssemblies).ToArray();
       container.Collection.Register(typeof(IHandleMessageOfType<>), serviceTypes);
 

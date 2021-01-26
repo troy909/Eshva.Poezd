@@ -1,6 +1,5 @@
 #region Usings
 
-using System;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 

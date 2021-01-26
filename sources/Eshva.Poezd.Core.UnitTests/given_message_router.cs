@@ -37,7 +37,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var messageRouter = GetMessageRouter(container);
 
       var messageBroker = messageRouter.Brokers.Single(broker => broker.Id.Equals("sample-broker-server"));
-      ((TestBrokerDriver)messageBroker.Driver).SubscribedQueueNamePatters.Should().BeEquivalentTo(
+      ((TestBrokerDriver) messageBroker.Driver).SubscribedQueueNamePatters.Should().BeEquivalentTo(
         new[]
         {
           @"^sample\.(commands|facts)\.service1\.v1",
@@ -60,18 +60,18 @@ namespace Eshva.Poezd.Core.UnitTests
         new Dictionary<string, string>());
 
       InMemorySink.Instance.LogEvents
-                  .Where(@event => @event.Level == LogEventLevel.Information)
-                  .Select(@event => @event.MessageTemplate.Text)
-                  .Should().BeEquivalentTo(
-                    new[]
-                    {
-                      nameof(LogMessageHandlingContextStep),
-                      nameof(Service2DeserializeMessageStep),
-                      nameof(GetMessageHandlersStep),
-                      nameof(DispatchMessageToHandlersStep),
-                      nameof(CommitMessageStep)
-                    },
-                    options => options.WithStrictOrdering());
+        .Where(@event => @event.Level == LogEventLevel.Information)
+        .Select(@event => @event.MessageTemplate.Text)
+        .Should().BeEquivalentTo(
+          new[]
+          {
+            nameof(LogMessageHandlingContextStep),
+            nameof(Service2DeserializeMessageStep),
+            nameof(GetMessageHandlersStep),
+            nameof(DispatchMessageToHandlersStep),
+            nameof(CommitMessageStep)
+          },
+          options => options.WithStrictOrdering());
     }
 
     [Fact]
@@ -90,19 +90,34 @@ namespace Eshva.Poezd.Core.UnitTests
 
       const string QueueName = "some-topic";
       const string BrokerId = "broker-id";
-      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>());
-      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>());
-      router.RouteIncomingMessage(BrokerId, QueueName, DateTimeOffset.UtcNow, new byte[0], new Dictionary<string, string>());
+      router.RouteIncomingMessage(
+        BrokerId,
+        QueueName,
+        DateTimeOffset.UtcNow,
+        new byte[0],
+        new Dictionary<string, string>());
+      router.RouteIncomingMessage(
+        BrokerId,
+        QueueName,
+        DateTimeOffset.UtcNow,
+        new byte[0],
+        new Dictionary<string, string>());
+      router.RouteIncomingMessage(
+        BrokerId,
+        QueueName,
+        DateTimeOffset.UtcNow,
+        new byte[0],
+        new Dictionary<string, string>());
 
       testProperties.Handled1.Should()
-                    .Be(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
+        .Be(expected: 2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
       testProperties.Handled2.Should()
-                    .Be(
-                      3,
-                      $"there is 3 handlers of {nameof(CustomCommand2)}: {nameof(CustomHandler2)}, " +
-                      $"{nameof(CustomHandler12)} and {nameof(CustomHandler23)}");
+        .Be(
+          expected: 3,
+          $"there is 3 handlers of {nameof(CustomCommand2)}: {nameof(CustomHandler2)}, " +
+          $"{nameof(CustomHandler12)} and {nameof(CustomHandler23)}");
       testProperties.Handled3.Should()
-                    .Be(1, $"there is 1 handlers of {nameof(CustomCommand3)}: {nameof(CustomHandler23)}");
+        .Be(expected: 1, $"there is 1 handlers of {nameof(CustomCommand3)}: {nameof(CustomHandler23)}");
     }
 
     [Fact]
@@ -131,7 +146,7 @@ namespace Eshva.Poezd.Core.UnitTests
         new Dictionary<string, string>());
 
       testProperties.Property1.Should()
-                    .Be(ExpectedProperty1Value, $"{nameof(CustomHandler1)} set property in own execution context");
+        .Be(ExpectedProperty1Value, $"{nameof(CustomHandler1)} set property in own execution context");
     }
 
     private IMessageRouter GetMessageRouter(Container container)
@@ -150,31 +165,34 @@ namespace Eshva.Poezd.Core.UnitTests
       var messageRouterConfiguration =
         MessageRouter.Configure(
           router => router
-                    .AddMessageBroker(
-                      broker => broker.WithId("sample-broker-server")
-                                      .WithDriver<TestBrokerDriver, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
-                                        driver => driver.WithSomeSetting(TestBrokerDriverSettings))
-                                      .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                                      .WithPipelineConfigurator<SampleBrokerPipelineConfigurator>()
-                                      .AddPublicApi(
-                                        api => api.WithId("api-1")
-                                                  .AddQueueNamePattern(@"^sample\.(commands|facts)\.service1\.v1")
-                                                  .WithPipelineConfigurator<Service1PipelineConfigurator>())
-                                      .AddPublicApi(
-                                        api => api.WithId("api-2")
-                                                  .AddQueueNamePattern("sample.facts.service-2.v1")
-                                                  .WithPipelineConfigurator<Service2PipelineConfigurator>())
-                                      .AddPublicApi(
-                                        api => api.WithId("cdc-notifications")
-                                                  .AddQueueNamePattern(@"^sample\.cdc\..*")
-                                                  .WithPipelineConfigurator<CdcNotificationsPipelineConfigurator>()))
-                    .WithMessageHandling(
-                      messageHandling => messageHandling
-                        .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
+            .AddMessageBroker(
+              broker => broker.WithId("sample-broker-server")
+                .WithDriver<TestBrokerDriver, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
+                  driver => driver.WithSomeSetting(TestBrokerDriverSettings))
+                .WithQueueNameMatcher<RegexQueueNameMatcher>()
+                .WithPipelineConfigurator<SampleBrokerPipelineConfigurator>()
+                .AddPublicApi(
+                  api => api.WithId("api-1")
+                    .AddQueueNamePattern(@"^sample\.(commands|facts)\.service1\.v1")
+                    .WithPipelineConfigurator<Service1PipelineConfigurator>())
+                .AddPublicApi(
+                  api => api.WithId("api-2")
+                    .AddQueueNamePattern("sample.facts.service-2.v1")
+                    .WithPipelineConfigurator<Service2PipelineConfigurator>())
+                .AddPublicApi(
+                  api => api.WithId("cdc-notifications")
+                    .AddQueueNamePattern(@"^sample\.cdc\..*")
+                    .WithPipelineConfigurator<CdcNotificationsPipelineConfigurator>()))
+            .WithMessageHandling(
+              messageHandling => messageHandling
+                .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       container.RegisterInstance(GetLoggerFactory());
-      container.Register(typeof(ILogger<>), typeof(Logger<>), Lifestyle.Singleton);
+      container.Register(
+        typeof(ILogger<>),
+        typeof(Logger<>),
+        Lifestyle.Singleton);
 
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.Register<SampleBrokerPipelineConfigurator>(Lifestyle.Scoped);

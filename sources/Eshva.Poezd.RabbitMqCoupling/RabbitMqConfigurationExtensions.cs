@@ -16,9 +16,7 @@ namespace Eshva.Poezd.RabbitMqCoupling
     public static MessageBrokerConfigurator UseRabbitMq(this MessageBrokerConfigurator broker, [NotNull] string connectionString)
     {
       if (string.IsNullOrWhiteSpace(connectionString))
-      {
         throw new ArgumentException("Value cannot be null or whitespace.", nameof(connectionString));
-      }
 
       ConnectionString = connectionString;
       return broker;

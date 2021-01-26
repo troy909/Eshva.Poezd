@@ -7,7 +7,5 @@ using Eshva.Common;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public class CustomMessageHandlingContext : PocketExecutionContext
-  {
-  }
+  public class CustomMessageHandlingContext : PocketExecutionContext { }
 }

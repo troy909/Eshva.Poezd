@@ -15,14 +15,11 @@ namespace Eshva.Common
 
     public bool TryGet<TValue>(string key, out TValue value)
     {
-      if (string.IsNullOrWhiteSpace(key))
-      {
-        throw new ArgumentNullException(nameof(key));
-      }
+      if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
 
       if (_things.TryGetValue(key, out var found))
       {
-        value = (TValue)found;
+        value = (TValue) found;
         return true;
       }
 
@@ -34,20 +31,12 @@ namespace Eshva.Common
 
     public IPocket Set<TValue>(string key, TValue value)
     {
-      if (string.IsNullOrWhiteSpace(key))
-      {
-        throw new ArgumentNullException(nameof(key));
-      }
+      if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
 
-      if (Equals(value, default(TValue)))
-      {
-        throw new ArgumentNullException(nameof(value));
-      }
+      if (Equals(value, default(TValue))) throw new ArgumentNullException(nameof(value));
 
       if (_things.ContainsKey(key))
-      {
         throw new ArgumentException($"The value with '{key}' already set. It's forbidden to change value in a pocket.");
-      }
 
       _things[key] = value;
 
@@ -58,10 +47,7 @@ namespace Eshva.Common
 
     public bool TryRemove(string key)
     {
-      if (string.IsNullOrWhiteSpace(key))
-      {
-        throw new ArgumentNullException(nameof(key));
-      }
+      if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
 
       return _things.TryRemove(key, out _);
     }

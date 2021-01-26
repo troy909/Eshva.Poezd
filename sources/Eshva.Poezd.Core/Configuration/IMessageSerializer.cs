@@ -1,6 +1,4 @@
 namespace Eshva.Poezd.Core.Configuration
 {
-  public interface IMessageSerializer
-  {
-  }
+  public interface IMessageSerializer { }
 }

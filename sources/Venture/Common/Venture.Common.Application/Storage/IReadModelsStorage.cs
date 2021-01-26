@@ -9,7 +9,5 @@ namespace Venture.Common.Application.Storage
   /// Это можно реализовать либо обращением к хранилищу агрегатов (моделей записи), либо прикопав все ID этих агрегатов в
   /// hash map Redis и выполняя запрос к этому хранилищу моделей чтения в Redis. Запросы должны использовать это хранилище.
   /// </remarks>
-  public interface IReadModelsStorage
-  {
-  }
+  public interface IReadModelsStorage { }
 }

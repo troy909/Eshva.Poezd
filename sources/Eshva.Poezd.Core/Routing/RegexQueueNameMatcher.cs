@@ -22,10 +22,7 @@ namespace Eshva.Poezd.Core.Routing
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(NotWhitespace, nameof(queueName));
       if (string.IsNullOrWhiteSpace(queueNamePattern)) throw new ArgumentNullException(NotWhitespace, nameof(queueNamePattern));
 
-      if (!queueNamePattern.StartsWith('^'))
-      {
-        return queueName.Equals(queueNamePattern, StringComparison.InvariantCulture);
-      }
+      if (!queueNamePattern.StartsWith(value: '^')) return queueName.Equals(queueNamePattern, StringComparison.InvariantCulture);
 
       var regex = KnownRegex.GetOrAdd(
         queueNamePattern,

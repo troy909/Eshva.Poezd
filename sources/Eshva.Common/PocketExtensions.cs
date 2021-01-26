@@ -17,10 +17,7 @@ namespace Eshva.Common
     /// </summary>
     public static TItem GetOrNull<TItem>(this IPocket context, string key) where TItem : class
     {
-      if (!context.TryGet<TItem>(key, out var item))
-      {
-        return default(TItem);
-      }
+      if (!context.TryGet<TItem>(key, out var item)) return default;
 
       if (item == null)
       {
@@ -37,10 +34,7 @@ namespace Eshva.Common
     /// </summary>
     public static TItem GetOrThrow<TItem>(this IPocket context, string key) where TItem : class
     {
-      if (!context.TryGet<TItem>(key, out var item))
-      {
-        throw new KeyNotFoundException($"Could not find an item with the key '{key}'.");
-      }
+      if (!context.TryGet<TItem>(key, out var item)) throw new KeyNotFoundException($"Could not find an item with the key '{key}'.");
 
       if (item == null)
       {
@@ -53,9 +47,13 @@ namespace Eshva.Common
 
     /// <summary>
     /// Provides a shortcut to the transaction context's
-    /// <see cref="ConcurrentDictionary{TKey,TValue}.GetOrAdd(TKey,System.Func{TKey,TValue})"/>,  only as a typed version that.
+    /// <see cref="ConcurrentDictionary{TKey,TValue}.GetOrAdd(TKey,System.Func{TKey,TValue})" />,  only as a typed version
+    /// that.
     /// </summary>
-    public static TItem GetOrAdd<TItem>(this IPocket context, string key, Func<TItem> newItemFactory) where TItem : class
+    public static TItem GetOrAdd<TItem>(
+      this IPocket context,
+      string key,
+      Func<TItem> newItemFactory) where TItem : class
     {
       try
       {

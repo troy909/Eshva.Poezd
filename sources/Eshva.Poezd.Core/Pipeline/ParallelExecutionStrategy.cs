@@ -13,7 +13,10 @@ namespace Eshva.Poezd.Core.Pipeline
 {
   public class ParallelExecutionStrategy : IMessageHandlersExecutionStrategy
   {
-    public Task Execute(IEnumerable<IHandleMessage> handlers, object message, IPocket context)
+    public Task Execute(
+      IEnumerable<IHandleMessage> handlers,
+      object message,
+      IPocket context)
     {
       var handlingTasks = handlers.Select(handler => handler.Handle(message, context)).ToList();
       return Task.WhenAll(handlingTasks);

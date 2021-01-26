@@ -9,8 +9,6 @@ namespace Eshva.Poezd.Core.Pipeline
 {
   public sealed class PoezdMessageHandlingException : Exception
   {
-    public PoezdMessageHandlingException(string message) : base(message)
-    {
-    }
+    public PoezdMessageHandlingException(string message) : base(message) { }
   }
 }

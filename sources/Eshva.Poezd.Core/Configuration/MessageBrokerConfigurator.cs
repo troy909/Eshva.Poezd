@@ -57,7 +57,7 @@ namespace Eshva.Poezd.Core.Configuration
         Activator.CreateInstance(typeof(TConfiguration)) ??
         throw new PoezdConfigurationException($"Can not create a driver configuration instance of type {typeof(TConfiguration).FullName}");
       var driverConfigurator =
-        (TConfigurator)Activator.CreateInstance(typeof(TConfigurator), configuration) ??
+        (TConfigurator) Activator.CreateInstance(typeof(TConfigurator), configuration) ??
         throw new PoezdConfigurationException($"Can not create a driver configurator instance of type {typeof(TConfigurator).FullName}");
       _configuration.DriverConfiguration = configuration;
 

@@ -7,7 +7,5 @@ using Eshva.Common;
 
 namespace Eshva.Poezd.Core.Activation
 {
-  public interface IMessageHandlingContext : IPocket, IManageTransaction, IExecutionContextNotifier
-  {
-  }
+  public interface IMessageHandlingContext : IPocket, IManageTransaction, IExecutionContextNotifier { }
 }

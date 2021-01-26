@@ -56,13 +56,14 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
     {
       var handlerType = _messageHandlerType.MakeGenericType(messageType);
       var handlerCollectionType = typeof(IEnumerable<>).MakeGenericType(handlerType);
-      foreach (var handler in (IEnumerable)provider.GetService(handlerCollectionType))
+      foreach (var handler in (IEnumerable) provider.GetService(handlerCollectionType))
       {
         yield return CreatePoezdMessageHandler(handler);
       }
     }
 
-    private readonly Type _messageHandlerType;
     private readonly Container _container;
+
+    private readonly Type _messageHandlerType;
   }
 }

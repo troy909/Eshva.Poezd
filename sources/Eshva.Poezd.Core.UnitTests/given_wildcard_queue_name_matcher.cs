@@ -52,7 +52,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var matcher = new RegexQueueNameMatcher();
 
       // ReSharper disable once AssignNullToNotNullAttribute
-      new Action(() => matcher.DoesMatch(null, "something"))
+      new Action(() => matcher.DoesMatch(queueName: null, "something"))
         .Should().Throw<ArgumentNullException>("null is illegal as queue name");
       new Action(() => matcher.DoesMatch(string.Empty, "something"))
         .Should().Throw<ArgumentNullException>("empty string is illegal as queue name");
@@ -66,7 +66,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var matcher = new RegexQueueNameMatcher();
 
       // ReSharper disable once AssignNullToNotNullAttribute
-      new Action(() => matcher.DoesMatch("something", null))
+      new Action(() => matcher.DoesMatch("something", queueNamePattern: null))
         .Should().Throw<ArgumentNullException>("null is illegal as queue name pattern");
       new Action(() => matcher.DoesMatch("something", string.Empty))
         .Should().Throw<ArgumentNullException>("empty string is illegal as queue name pattern");

@@ -26,19 +26,14 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public Task StartConsumeMessages()
     {
       if (_isMessageConsumingStarted)
-      {
         throw new InvalidOperationException($"{nameof(TestBrokerDriver)} is started already. You can start driver only once.");
-      }
 
       // In a real world driver you will do something to connect to the broker.
       _isMessageConsumingStarted = true;
       return Task.CompletedTask;
     }
 
-    public Task Publish(byte[] brokerPayload, IReadOnlyDictionary<string, string> brokerMetadata)
-    {
-      throw new NotImplementedException();
-    }
+    public Task Publish(byte[] brokerPayload, IReadOnlyDictionary<string, string> brokerMetadata) => throw new NotImplementedException();
 
     public Task SubscribeToQueues(IEnumerable<string> queueNamePatterns)
     {
@@ -52,10 +47,12 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       return Task.CompletedTask;
     }
 
-    private bool _isMessageConsumingStarted;
     // ReSharper disable once NotAccessedField.Local In a real world driver configuration will be used in StartConsumeMessages().
     private readonly TestBrokerDriverConfiguration _configuration;
+
     // ReSharper disable once NotAccessedField.Local It a real world driver will be used in StartConsumeMessages().
     private readonly IMessageRouter _messageRouter;
+
+    private bool _isMessageConsumingStarted;
   }
 }

@@ -80,9 +80,10 @@ namespace Eshva.Poezd.Core.Activation
       }
     }
 
+    private readonly IList<Action<IMessageHandlingContext>> _abortedEventHandlers = new List<Action<IMessageHandlingContext>>();
+
     private readonly IList<Func<IMessageHandlingContext, Task>> _committedEventHandlers = new List<Func<IMessageHandlingContext, Task>>();
     private readonly IList<Func<IMessageHandlingContext, Task>> _completedEventHandlers = new List<Func<IMessageHandlingContext, Task>>();
-    private readonly IList<Action<IMessageHandlingContext>> _abortedEventHandlers = new List<Action<IMessageHandlingContext>>();
     private readonly IList<Action<IMessageHandlingContext>> _disposedEventHandlers = new List<Action<IMessageHandlingContext>>();
   }
 }

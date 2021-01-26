@@ -1,6 +1,4 @@
 namespace Eshva.Poezd.Core.Configuration
 {
-  public interface IMessageTypingConvention
-  {
-  }
+  public interface IMessageTypingConvention { }
 }

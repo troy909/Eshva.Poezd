@@ -50,7 +50,7 @@ namespace Eshva.Poezd.Core.Routing
       public const string MessagePayload = "application-message-payload";
 
       /// <summary>
-      /// The key of application message type. THe value is <see cref="Type"/>.
+      /// The key of application message type. THe value is <see cref="Type" />.
       /// </summary>
       public const string Type = "application-message-type";
 
@@ -63,7 +63,7 @@ namespace Eshva.Poezd.Core.Routing
     {
       /// <summary>
       /// The key of message handler list for the current message. The value is IEnumerable&lt;IHandleMessage&gt;"/>.
-      /// </summary> 
+      /// </summary>
       public const string Handlers = "message-handling-handlers";
     }
   }

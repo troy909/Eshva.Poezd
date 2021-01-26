@@ -32,7 +32,10 @@ namespace Venture.CaseOffice.Application.CreateJusticeCase
 
     public async Task Handle(CreateCase message, VentureVentureMessageHandlingContext context)
     {
-      var justiceCase = new JusticeCase(message.CaseId, message.SubjectId, message.Reason);
+      var justiceCase = new JusticeCase(
+        message.CaseId,
+        message.SubjectId,
+        message.Reason);
 
       try
       {

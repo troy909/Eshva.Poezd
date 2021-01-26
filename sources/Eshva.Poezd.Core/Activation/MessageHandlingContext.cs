@@ -12,14 +12,8 @@ namespace Eshva.Poezd.Core.Activation
   {
     public IExecutionEventSubscriptions SubscribeOn { get; } = new ExecutionEventSubscriptions();
 
-    public Task Commit()
-    {
-      return Task.CompletedTask;
-    }
+    public Task Commit() => Task.CompletedTask;
 
-    public Task Rollback()
-    {
-      return Task.CompletedTask;
-    }
+    public Task Rollback() => Task.CompletedTask;
   }
 }

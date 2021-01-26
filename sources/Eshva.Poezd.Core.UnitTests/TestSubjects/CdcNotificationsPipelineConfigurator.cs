@@ -17,9 +17,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   [UsedImplicitly]
   public sealed class CdcNotificationsPipelineConfigurator : TypeBasedLinearPipelineConfigurator
   {
-    public CdcNotificationsPipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider)
-    {
-    }
+    public CdcNotificationsPipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

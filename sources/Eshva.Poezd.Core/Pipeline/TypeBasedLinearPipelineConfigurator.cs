@@ -21,7 +21,7 @@ namespace Eshva.Poezd.Core.Pipeline
     {
       foreach (var stepType in GetStepTypes())
       {
-        pipeline.Append((IStep)_serviceProvider.GetService(stepType, MakeException));
+        pipeline.Append((IStep) _serviceProvider.GetService(stepType, MakeException));
       }
 
       return pipeline;

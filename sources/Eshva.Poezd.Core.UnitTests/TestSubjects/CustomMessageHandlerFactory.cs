@@ -15,14 +15,10 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   public sealed class CustomMessageHandlerFactory : MessageHandlerAdapter
   {
-    public CustomMessageHandlerFactory([NotNull] Container container) : base(container, typeof(ICustomHandler<>))
-    {
-    }
+    public CustomMessageHandlerFactory([NotNull] Container container) : base(container, typeof(ICustomHandler<>)) { }
 
-    protected override IHandleMessage CreatePoezdMessageHandler(object applicationHandler)
-    {
-      return new VentureMessageHandlerAdapter(applicationHandler);
-    }
+    protected override IHandleMessage CreatePoezdMessageHandler(object applicationHandler) =>
+      new VentureMessageHandlerAdapter(applicationHandler);
 
     private sealed class VentureMessageHandlerAdapter : IHandleMessage
     {
@@ -49,8 +45,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
         // TODO: Reflection call is slow. I need to replace it with an Expression in the future.
         var messageType = message.GetType();
         var handlerConcreteType = typeof(ICustomHandler<>)
-                                  .GetGenericTypeDefinition()
-                                  .MakeGenericType(messageType);
+          .GetGenericTypeDefinition()
+          .MakeGenericType(messageType);
         var handleMethod = handlerConcreteType.GetMethod(nameof(ICustomHandler<object>.Handle));
         if (handleMethod == null)
         {
@@ -59,7 +55,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
             $"TMessage and {nameof(CustomMessageHandlingContext)} isn't found on type {nameof(ICustomHandler<object>)}");
         }
 
-        return (message1, context) => (Task)handleMethod.Invoke(_applicationHandler, new[] { message1, context });
+        return (message1, context) => (Task) handleMethod.Invoke(_applicationHandler, new[] {message1, context});
       }
 
       private static CustomMessageHandlingContext AdoptPoezdMessageHandlingContext(IPocket context)

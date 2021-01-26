@@ -7,7 +7,5 @@ using Eshva.Poezd.Core.Configuration;
 
 namespace Venture.CaseOffice.Service.Bootstrapping
 {
-  internal class Service1QueueNamingConvention : IQueueNamingConvention
-  {
-  }
+  internal class Service1QueueNamingConvention : IQueueNamingConvention { }
 }

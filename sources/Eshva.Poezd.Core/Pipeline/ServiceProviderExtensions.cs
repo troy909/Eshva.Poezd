@@ -11,7 +11,7 @@ namespace Eshva.Poezd.Core.Pipeline
   public static class ServiceProviderExtensions
   {
     public static TService GetService<TService>(this IServiceProvider serviceProvider) =>
-      (TService)serviceProvider.GetService(typeof(TService));
+      (TService) serviceProvider.GetService(typeof(TService));
 
     public static object GetService(
       this IServiceProvider serviceProvider,

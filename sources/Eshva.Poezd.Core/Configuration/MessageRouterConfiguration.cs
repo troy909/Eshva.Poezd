@@ -26,7 +26,7 @@ namespace Eshva.Poezd.Core.Configuration
 
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations()
     {
-      var parts = new List<IMessageRouterConfigurationPart> { MessageHandling };
+      var parts = new List<IMessageRouterConfigurationPart> {MessageHandling};
       parts.AddRange(Brokers);
       return parts;
     }

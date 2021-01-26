@@ -28,7 +28,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var context = new MessageHandlingContext();
       var handlers = sut.GetHandlersOfMessage(typeof(CustomCommand1), context);
       handlers.Should()
-              .HaveCount(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
+        .HaveCount(expected: 2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
     }
 
     [Fact]
@@ -44,7 +44,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var transactionContext = new MessageHandlingContext();
       var handlers = sut.GetHandlersOfMessage(typeof(CustomCommand1), transactionContext);
       handlers.Should()
-              .HaveCount(2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
+        .HaveCount(expected: 2, $"there is 2 handlers of {nameof(CustomCommand1)}: {nameof(CustomHandler1)} and {nameof(CustomHandler2)}");
     }
   }
 }

@@ -1,7 +1,8 @@
 namespace Eshva.Poezd.Core.Routing
 {
   /// <summary>
-  /// Contract of a matcher of a queue name to a pattern of some kind. Implementations should define pattern matching algorithm.
+  /// Contract of a matcher of a queue name to a pattern of some kind. Implementations should define pattern matching
+  /// algorithm.
   /// </summary>
   public interface IQueueNameMatcher
   {

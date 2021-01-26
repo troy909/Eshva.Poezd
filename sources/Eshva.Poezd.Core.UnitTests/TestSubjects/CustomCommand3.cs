@@ -1,6 +1,4 @@
 ﻿namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public sealed class CustomCommand3
-  {
-  }
+  public sealed class CustomCommand3 { }
 }

@@ -6,7 +6,5 @@
   /// <typeparam name="TMessage">
   /// Тип сообщения, являющегося триггером процесса.
   /// </typeparam>
-  public interface IHaveTrigger<in TMessage> : IHandleMessageOfType<TMessage> where TMessage : class
-  {
-  }
+  public interface IHaveTrigger<in TMessage> : IHandleMessageOfType<TMessage> where TMessage : class { }
 }

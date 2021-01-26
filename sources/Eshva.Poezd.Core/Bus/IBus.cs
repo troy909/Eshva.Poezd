@@ -19,8 +19,9 @@ namespace Eshva.Poezd.Core.Bus
 
     /// <summary>
     /// Publishes the event message on the topic defined by the assembly-qualified name of the type of the message.
-    /// While this kind of pub/sub can work universally with the general topic-based routing, it works especially well with type-based routing,
-    /// which can be enabled by going 
+    /// While this kind of pub/sub can work universally with the general topic-based routing, it works especially well with
+    /// type-based routing,
+    /// which can be enabled by going
     /// <code>
     /// Configure.With(...)
     ///     .(...)
@@ -34,15 +35,15 @@ namespace Eshva.Poezd.Core.Bus
 
     /// <summary>
     /// Replies back to the endpoint specified as return address on the message currently being handled.
-    /// Throws an <see cref="InvalidOperationException"/> if called outside of a proper message context.
+    /// Throws an <see cref="InvalidOperationException" /> if called outside of a proper message context.
     /// </summary>
     Task Reply(object replyMessage, IDictionary<string, string> optionalHeaders = null);
 
     /// <summary>
-    /// Subscribes to the topic defined by the assembly-qualified name of <typeparamref name="TEvent"/>. 
+    /// Subscribes to the topic defined by the assembly-qualified name of <typeparamref name="TEvent" />.
     /// While this kind of subscription can work universally with the general topic-based routing,
     /// it works especially well with type-based routing,
-    /// which can be enabled by going 
+    /// which can be enabled by going
     /// <code>
     /// Configure.With(...)
     ///     .(...)
@@ -55,10 +56,10 @@ namespace Eshva.Poezd.Core.Bus
     Task Subscribe<TEvent>();
 
     /// <summary>
-    /// Subscribes to the topic defined by the assembly-qualified name of <paramref name="eventType"/>. 
+    /// Subscribes to the topic defined by the assembly-qualified name of <paramref name="eventType" />.
     /// While this kind of subscription can work universally with the general topic-based routing,
     /// it works especially well with type-based routing,
-    /// which can be enabled by going 
+    /// which can be enabled by going
     /// <code>
     /// Configure.With(...)
     ///     .(...)
@@ -71,12 +72,12 @@ namespace Eshva.Poezd.Core.Bus
     Task Subscribe(Type eventType);
 
     /// <summary>
-    /// Unsubscribes from the topic defined by the assembly-qualified name of <typeparamref name="TEvent"/>.
+    /// Unsubscribes from the topic defined by the assembly-qualified name of <typeparamref name="TEvent" />.
     /// </summary>
     Task Unsubscribe<TEvent>();
 
     /// <summary>
-    /// Unsubscribes from the topic defined by the assembly-qualified name of <paramref name="eventType"/>.
+    /// Unsubscribes from the topic defined by the assembly-qualified name of <paramref name="eventType" />.
     /// </summary>
     Task Unsubscribe(Type eventType);
   }

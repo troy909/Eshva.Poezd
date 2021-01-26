@@ -17,16 +17,11 @@ namespace Eshva.Poezd.Core.Pipeline
   {
     public IPipeline Append([NotNull] IStep step)
     {
-      if (step == null)
-      {
-        throw new ArgumentNullException(nameof(step));
-      }
+      if (step == null) throw new ArgumentNullException(nameof(step));
 
       var stepType = step.GetType();
       if (GetStepOfType(stepType) != null)
-      {
         throw new ArgumentException($"A step with type {stepType.FullName} already present in the pipeline.", nameof(step));
-      }
 
       _steps.AddLast(step ?? throw new ArgumentNullException(nameof(step)));
 
@@ -45,34 +40,22 @@ namespace Eshva.Poezd.Core.Pipeline
 
     public void InsertBefore([NotNull] IStep step)
     {
-      if (step == null)
-      {
-        throw new ArgumentNullException(nameof(step));
-      }
+      if (step == null) throw new ArgumentNullException(nameof(step));
 
       var stepType = step.GetType();
       var foundStep = GetStepOfType(stepType);
-      if (foundStep == null)
-      {
-        throw new ArgumentException($"Step of type {stepType.FullName} isn't found among pipeline steps.");
-      }
+      if (foundStep == null) throw new ArgumentException($"Step of type {stepType.FullName} isn't found among pipeline steps.");
 
       _steps.AddBefore(_steps.Find(foundStep)!, step);
     }
 
     public void InsertAfter(IStep step)
     {
-      if (step == null)
-      {
-        throw new ArgumentNullException(nameof(step));
-      }
+      if (step == null) throw new ArgumentNullException(nameof(step));
 
       var stepType = step.GetType();
       var foundStep = GetStepOfType(stepType);
-      if (foundStep == null)
-      {
-        throw new ArgumentException($"Step of type {stepType.FullName} isn't found among pipeline steps.");
-      }
+      if (foundStep == null) throw new ArgumentException($"Step of type {stepType.FullName} isn't found among pipeline steps.");
 
       _steps.AddAfter(_steps.Find(foundStep)!, step);
     }
@@ -80,10 +63,7 @@ namespace Eshva.Poezd.Core.Pipeline
     public void Remove(Type stepType)
     {
       var presentStep = GetStepOfType(stepType);
-      if (presentStep == null)
-      {
-        return;
-      }
+      if (presentStep == null) return;
 
       _steps.Remove(presentStep);
     }

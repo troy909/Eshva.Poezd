@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Venture.Common.TestingTools.Kafka
 {
-  public class KafkaTestContextFactory<TValue>
+  public class KafkaTestContextFactory
   {
     public KafkaTestContextFactory(string bootstrapServers)
     {
@@ -17,7 +17,7 @@ namespace Venture.Common.TestingTools.Kafka
       _bootstrapServers = bootstrapServers;
     }
 
-    public KafkaTestContext<TValue> Create(CancellationToken cancellationToken = default) =>
+    public KafkaTestContext<TValue> Create<TValue>(CancellationToken cancellationToken = default) =>
       new KafkaTestContext<TValue>(_bootstrapServers, cancellationToken);
 
     private readonly string _bootstrapServers;

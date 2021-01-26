@@ -19,7 +19,7 @@ namespace Venture.IntegrationTests
     {
       if (fixture == null) throw new ArgumentNullException(nameof(fixture));
 
-      _kafkaTestContextFactory = new KafkaTestContextFactory<string>(fixture.KafkaContainerConfiguration.BootstrapServers);
+      _kafkaTestContextFactory = new KafkaTestContextFactory(fixture.KafkaContainerConfiguration.BootstrapServers);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ namespace Venture.IntegrationTests
     {
       const string someTopic = "some-topic";
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-      await using var kafkaTestContext = _kafkaTestContextFactory.Create(timeout);
+      await using var kafkaTestContext = _kafkaTestContextFactory.Create<string>(timeout);
       await kafkaTestContext.CreateTopics(someTopic);
 
       const string expectedValue = "Eshva";
@@ -36,6 +36,6 @@ namespace Venture.IntegrationTests
       consumed.Should().Be(expectedValue);
     }
 
-    private readonly KafkaTestContextFactory<string> _kafkaTestContextFactory;
+    private readonly KafkaTestContextFactory _kafkaTestContextFactory;
   }
 }

@@ -41,11 +41,14 @@ namespace Eshva.Poezd.Core.Routing
       try
       {
         ConfigureMessageBrokerDrivers();
-        foreach (var descriptor in _brokers)
+        foreach (var broker in _brokers)
         {
-          var queueNamePatterns = descriptor.PublicApis.SelectMany(api => api.QueueNamePatterns);
-          await descriptor.Driver.SubscribeToQueues(queueNamePatterns);
-          await descriptor.Driver.StartConsumeMessages();
+          broker.Driver.Initialize(
+            this,
+            broker.Id,
+            broker.DriverConfiguration);
+          var queueNamePatterns = broker.PublicApis.SelectMany(api => api.QueueNamePatterns);
+          await broker.Driver.StartConsumeMessages(queueNamePatterns, cancellationToken);
         }
       }
       catch (Exception exception)
@@ -137,14 +140,17 @@ namespace Eshva.Poezd.Core.Routing
     {
       foreach (var broker in _configuration.Brokers)
       {
-        var driver = (IMessageBrokerDriver) Activator.CreateInstance(
-                       broker.DriverType,
-                       this,
-                       broker.DriverConfiguration) ??
-                     throw new PoezdOperationException(
-                       $"Can not create a message broker driver {broker.DriverType.FullName} during starting of the message router.");
-
-        _brokers.Add(new MessageBroker(driver, broker));
+        try
+        {
+          var driverFactory = (IMessageBrokerDriverFactory) _diContainerAdapter.GetService(broker.DriverFactoryType);
+          _brokers.Add(new MessageBroker(driverFactory.Create(), broker));
+        }
+        catch (Exception exception)
+        {
+          throw new PoezdOperationException(
+            $"Can not create a message broker driver using {broker.DriverFactoryType.FullName} during starting of the message router.",
+            exception);
+        }
       }
     }
 
@@ -177,12 +183,10 @@ namespace Eshva.Poezd.Core.Routing
     private IPipelineConfigurator GetBrokerPipelineConfigurator(MessageBrokerConfiguration brokerConfiguration)
     {
       if (brokerConfiguration.PipelineConfiguratorType == null)
-      {
         throw new PoezdConfigurationException(
           $"Broker with ID '{brokerConfiguration.Id}' has no configured pipeline configurator. You should use " +
           $"{nameof(MessageBrokerConfigurator)}.{nameof(MessageBrokerConfigurator.WithPipelineConfigurator)} " +
           "method to set pipeline configurator CLR-type.");
-      }
 
       return (IPipelineConfigurator) _diContainerAdapter.GetService(
         brokerConfiguration.PipelineConfiguratorType,
@@ -194,12 +198,10 @@ namespace Eshva.Poezd.Core.Routing
     private IPipelineConfigurator GetPublicApiPipelineConfigurator(PublicApiConfiguration publicApiConfiguration)
     {
       if (publicApiConfiguration.PipelineConfiguratorType == null)
-      {
         throw new PoezdConfigurationException(
           $"Public API with ID '{publicApiConfiguration.Id}' has no configured pipeline configurator. You should use " +
           $"{nameof(PublicApiConfigurator)}.{nameof(PublicApiConfigurator.WithPipelineConfigurator)} " +
           "method to set pipeline configurator CLR-type.");
-      }
 
       return (IPipelineConfigurator) _diContainerAdapter.GetService(
         publicApiConfiguration.PipelineConfiguratorType,

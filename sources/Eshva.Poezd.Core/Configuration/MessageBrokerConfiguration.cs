@@ -20,7 +20,7 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type PipelineConfiguratorType { get; set; }
 
-    public Type DriverType { get; set; }
+    public Type DriverFactoryType { get; set; }
 
     public object DriverConfiguration { get; set; }
 
@@ -37,7 +37,7 @@ namespace Eshva.Poezd.Core.Configuration
       if (!_publicApis.Any()) yield return $"At least one public API should be configured for message broker with ID '{Id}'.";
       if (QueueNameMatcherType == null) yield return $"Queue name matcher type should be set for message broker with ID '{Id}'.";
       if (PipelineConfiguratorType == null) yield return $"Pipeline configurator type should be set for message broker with ID '{Id}'.";
-      if (DriverType == null) yield return $"Message broker driver type should be set for message broker with ID '{Id}'.";
+      if (DriverFactoryType == null) yield return $"Message broker driver factory type should be set for message broker with ID '{Id}'.";
     }
 
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations()

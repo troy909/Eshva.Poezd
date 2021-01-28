@@ -48,15 +48,15 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public MessageBrokerConfigurator WithDriver<TDriver, TConfigurator, TConfiguration>(Action<TConfigurator> configurator)
-      where TDriver : IMessageBrokerDriver
+    public MessageBrokerConfigurator WithDriver<TDriverFactory, TConfigurator, TConfiguration>(Action<TConfigurator> configurator)
+      where TDriverFactory : IMessageBrokerDriverFactory
     {
-      _configuration.DriverType = typeof(TDriver);
+      _configuration.DriverFactoryType = typeof(TDriverFactory);
 
       var configuration =
         Activator.CreateInstance(typeof(TConfiguration)) ??
         throw new PoezdConfigurationException($"Can not create a driver configuration instance of type {typeof(TConfiguration).FullName}");
-      var driverConfigurator =
+      var driverConfigurator = 
         (TConfigurator) Activator.CreateInstance(typeof(TConfigurator), configuration) ??
         throw new PoezdConfigurationException($"Can not create a driver configurator instance of type {typeof(TConfigurator).FullName}");
       _configuration.DriverConfiguration = configuration;

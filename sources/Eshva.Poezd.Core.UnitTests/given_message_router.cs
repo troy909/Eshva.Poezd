@@ -167,7 +167,7 @@ namespace Eshva.Poezd.Core.UnitTests
           router => router
             .AddMessageBroker(
               broker => broker.WithId("sample-broker-server")
-                .WithDriver<TestBrokerDriver, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
+                .WithDriver<TestBrokerDriverFactory, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
                   driver => driver.WithSomeSetting(TestBrokerDriverSettings))
                 .WithQueueNameMatcher<RegexQueueNameMatcher>()
                 .WithPipelineConfigurator<SampleBrokerPipelineConfigurator>()

@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public sealed class MessageBroker
+  public sealed class MessageBroker : IDisposable
   {
     public MessageBroker(
       [NotNull] IMessageBrokerDriver driver,
@@ -27,6 +27,13 @@ namespace Eshva.Poezd.Core.Routing
     public string Id => _configuration.Id;
 
     public IReadOnlyCollection<PublicApi> PublicApis { get; }
+
+    public object DriverConfiguration => _configuration.DriverConfiguration;
+
+    public void Dispose()
+    {
+      Driver?.Dispose();
+    }
 
     private readonly MessageBrokerConfiguration _configuration;
   }

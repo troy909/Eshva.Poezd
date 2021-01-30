@@ -82,7 +82,7 @@ namespace Eshva.Poezd.Core.Routing
           var brokerConfiguration = _configuration.Brokers.Single(
             configuration => configuration.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
           var publicApiConfiguration = GetPublicApiConfiguration(brokerConfiguration, queueName);
-          pipeline = BuildPipeline(brokerConfiguration, publicApiConfiguration);
+          pipeline = BuildIngressPipeline(brokerConfiguration, publicApiConfiguration);
 
           messageHandlingContext.Set(ContextKeys.Broker.Id, brokerId)
             .Set(ContextKeys.Broker.MessageMetadata, brokerMetadata)
@@ -154,20 +154,14 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    private MessageHandlingPipeline BuildPipeline(
+    private MessageHandlingPipeline BuildIngressPipeline(
       MessageBrokerConfiguration brokerConfiguration,
       PublicApiConfiguration publicApiConfiguration)
     {
       var pipeline = new MessageHandlingPipeline();
-
-      var brokerIngressEnterPipelineConfigurator = GetBrokerIngressEnterPipelineConfigurator(brokerConfiguration);
-      brokerIngressEnterPipelineConfigurator.ConfigurePipeline(pipeline);
-
-      var publicApiPipelineConfigurator = GetPublicApiPipelineConfigurator(publicApiConfiguration);
-      publicApiPipelineConfigurator.ConfigurePipeline(pipeline);
-
-      var brokerIngressExitPipelineConfigurator = GetBrokerIngressExitPipelineConfigurator(brokerConfiguration);
-      brokerIngressExitPipelineConfigurator.ConfigurePipeline(pipeline);
+      GetBrokerIngressEnterPipelineConfigurator(brokerConfiguration).ConfigurePipeline(pipeline);
+      GetPublicApiPipelineConfigurator(publicApiConfiguration).ConfigurePipeline(pipeline);
+      GetBrokerIngressExitPipelineConfigurator(brokerConfiguration).ConfigurePipeline(pipeline);
       return pipeline;
     }
 

@@ -32,9 +32,9 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public PublicApiConfigurator WithPipelineConfigurator<TConfigurator>() where TConfigurator : IPipelineConfigurator
+    public PublicApiConfigurator WithIngressPipelineConfigurator<TConfigurator>() where TConfigurator : IPipelineConfigurator
     {
-      _configuration.PipelineConfiguratorType = typeof(TConfigurator);
+      _configuration.IngressPipelineConfiguratorType = typeof(TConfigurator);
       return this;
     }
 

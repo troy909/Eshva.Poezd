@@ -159,11 +159,15 @@ namespace Eshva.Poezd.Core.Routing
       PublicApiConfiguration publicApiConfiguration)
     {
       var pipeline = new MessageHandlingPipeline();
-      var brokerPipelineConfigurator = GetBrokerPipelineConfigurator(brokerConfiguration);
-      brokerPipelineConfigurator.ConfigurePipeline(pipeline);
+
+      var brokerIngressEnterPipelineConfigurator = GetBrokerIngressEnterPipelineConfigurator(brokerConfiguration);
+      brokerIngressEnterPipelineConfigurator.ConfigurePipeline(pipeline);
 
       var publicApiPipelineConfigurator = GetPublicApiPipelineConfigurator(publicApiConfiguration);
       publicApiPipelineConfigurator.ConfigurePipeline(pipeline);
+
+      var brokerIngressExitPipelineConfigurator = GetBrokerIngressExitPipelineConfigurator(brokerConfiguration);
+      brokerIngressExitPipelineConfigurator.ConfigurePipeline(pipeline);
       return pipeline;
     }
 
@@ -180,31 +184,46 @@ namespace Eshva.Poezd.Core.Routing
       return null;
     }
 
-    private IPipelineConfigurator GetBrokerPipelineConfigurator(MessageBrokerConfiguration brokerConfiguration)
+    private IPipelineConfigurator GetBrokerIngressEnterPipelineConfigurator(MessageBrokerConfiguration brokerConfiguration)
     {
-      if (brokerConfiguration.PipelineConfiguratorType == null)
+      if (brokerConfiguration.IngressEnterPipelineConfiguratorType == null)
         throw new PoezdConfigurationException(
-          $"Broker with ID '{brokerConfiguration.Id}' has no configured pipeline configurator. You should use " +
-          $"{nameof(MessageBrokerConfigurator)}.{nameof(MessageBrokerConfigurator.WithPipelineConfigurator)} " +
+          $"Broker with ID '{brokerConfiguration.Id}' has no configured ingress enter pipeline configurator. You should use " +
+          $"{nameof(MessageBrokerConfigurator)}.{nameof(MessageBrokerConfigurator.WithIngressEnterPipelineConfigurator)} " +
           "method to set pipeline configurator CLR-type.");
 
       return (IPipelineConfigurator) _diContainerAdapter.GetService(
-        brokerConfiguration.PipelineConfiguratorType,
+        brokerConfiguration.IngressEnterPipelineConfiguratorType,
         type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker pipeline configurator of type '{type.FullName}'. " +
+          $"Can not get instance of the message broker ingress enter pipeline configurator of type '{type.FullName}'. " +
+          "You should register this type in DI-container."));
+    }
+
+    private IPipelineConfigurator GetBrokerIngressExitPipelineConfigurator(MessageBrokerConfiguration brokerConfiguration)
+    {
+      if (brokerConfiguration.IngressExitPipelineConfiguratorType == null)
+        throw new PoezdConfigurationException(
+          $"Broker with ID '{brokerConfiguration.Id}' has no configured ingress exit pipeline configurator. You should use " +
+          $"{nameof(MessageBrokerConfigurator)}.{nameof(MessageBrokerConfigurator.WithIngressExitPipelineConfigurator)} " +
+          "method to set pipeline configurator CLR-type.");
+
+      return (IPipelineConfigurator) _diContainerAdapter.GetService(
+        brokerConfiguration.IngressExitPipelineConfiguratorType,
+        type => new PoezdConfigurationException(
+          $"Can not get instance of the message broker ingress exit pipeline configurator of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
     }
 
     private IPipelineConfigurator GetPublicApiPipelineConfigurator(PublicApiConfiguration publicApiConfiguration)
     {
-      if (publicApiConfiguration.PipelineConfiguratorType == null)
+      if (publicApiConfiguration.IngressPipelineConfiguratorType == null)
         throw new PoezdConfigurationException(
           $"Public API with ID '{publicApiConfiguration.Id}' has no configured pipeline configurator. You should use " +
-          $"{nameof(PublicApiConfigurator)}.{nameof(PublicApiConfigurator.WithPipelineConfigurator)} " +
+          $"{nameof(PublicApiConfigurator)}.{nameof(PublicApiConfigurator.WithIngressPipelineConfigurator)} " +
           "method to set pipeline configurator CLR-type.");
 
       return (IPipelineConfigurator) _diContainerAdapter.GetService(
-        publicApiConfiguration.PipelineConfiguratorType,
+        publicApiConfiguration.IngressPipelineConfiguratorType,
         type => new PoezdConfigurationException(
           $"Can not get instance of the public API pipeline configurator of type '{type.FullName}'. " +
           "You should register this type in DI-container."));

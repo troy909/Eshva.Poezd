@@ -16,7 +16,7 @@ namespace Eshva.Poezd.Core.Configuration
 
     public IReadOnlyCollection<string> QueueNamePatterns => _queueNamePatterns.AsReadOnly();
 
-    public Type PipelineConfiguratorType { get; set; }
+    public Type IngressPipelineConfiguratorType { get; set; }
 
     public void AddQueueNamePatterns([NotNull] string queueNamePattern)
     {
@@ -29,7 +29,7 @@ namespace Eshva.Poezd.Core.Configuration
     {
       if (string.IsNullOrWhiteSpace(Id)) yield return "Public API ID should be set.";
       if (!QueueNamePatterns.Any()) yield return "At least one queue name pattern should be added.";
-      if (PipelineConfiguratorType == null) yield return "Pipeline configurator type should be set.";
+      if (IngressPipelineConfiguratorType == null) yield return "Pipeline configurator type should be set.";
     }
 
     private readonly List<string> _queueNamePatterns = new List<string>();

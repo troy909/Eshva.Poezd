@@ -34,27 +34,39 @@ namespace Venture.Common.TestingTools.Kafka
       return _adminClient.CreateTopicsAsync(topicNames.Select(topicName => new TopicSpecification {Name = topicName, NumPartitions = 1}));
     }
 
-    public async Task<DeliveryResult<Null, TValue>> Produce(TValue value, string topicName)
+    public async Task<DeliveryResult<Null, TValue>> Produce(
+      string topicName,
+      TValue value,
+      IDictionary<string, byte[]> headers = default)
     {
       if (value == null) throw new ArgumentNullException(nameof(value));
       if (string.IsNullOrWhiteSpace(topicName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(topicName));
 
       EnsureProducer();
+
+      var headersToSend = new Headers();
+      if (headers != null)
+      {
+        foreach (var (headerKey, headerValue) in headers)
+        {
+          headersToSend.Add(headerKey, headerValue);
+        }
+      }
+
       var result = await _producer.ProduceAsync(
         topicName,
-        new Message<Null, TValue> {Value = value},
+        new Message<Null, TValue> {Value = value, Headers = headersToSend},
         _cancellationToken);
       _producer.Flush(_cancellationToken);
       return result;
     }
 
-    public TValue Consume(string topicName)
+    public ConsumeResult<Ignore, TValue> Consume(string topicName)
     {
       if (string.IsNullOrWhiteSpace(topicName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(topicName));
 
       EnsureConsumer();
-      var result = _consumer.Consume(_cancellationToken);
-      return result.Message.Value;
+      return _consumer.Consume(_cancellationToken);
     }
 
     public async ValueTask DisposeAsync()

@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,9 +44,13 @@ namespace Venture.IntegrationTests
       await kafkaTestContext.CreateTopics(someTopic);
 
       const string expectedValue = "Eshva";
-      await kafkaTestContext.Produce(expectedValue, someTopic);
-      var consumed = kafkaTestContext.Consume(someTopic);
-      consumed.Should().Be(expectedValue);
+      await kafkaTestContext.Produce(
+        someTopic,
+        expectedValue,
+        new Dictionary<string, byte[]> {{"header1", new byte[0]}});
+      var consumeResult = kafkaTestContext.Consume(someTopic);
+      consumeResult.Message.Value.Should().Be(expectedValue, "this value was sent");
+      consumeResult.Message.Headers.Count.Should().Be(expected: 1, "one header was set");
     }
 
     [Fact]
@@ -60,7 +65,7 @@ namespace Venture.IntegrationTests
       await kafkaTestContext.CreateTopics(someTopic);
 
       const string expectedValue = "Eshva";
-      await kafkaTestContext.Produce(expectedValue, someTopic);
+      await kafkaTestContext.Produce(someTopic, expectedValue);
 
       container.Register<MessageCountingPipelineConfigurator>(Lifestyle.Scoped);
       container.Register<CounterStep>(Lifestyle.Scoped);
@@ -69,14 +74,13 @@ namespace Venture.IntegrationTests
 
       container.Register<FinishTestPipelineConfigurator>(Lifestyle.Scoped);
       container.Register<FinishTestStep>(Lifestyle.Scoped);
-      var semaphore = new FinishTestStep.Properties();
-      container.RegisterInstance(semaphore);
+      var testIsFinished = new FinishTestStep.Properties();
+      container.RegisterInstance(testIsFinished);
 
       var messageRouter = GetMessageRouter<MessageCountingPipelineConfigurator, FinishTestPipelineConfigurator>(container);
       await messageRouter.Start(timeout);
 
-      await semaphore.Semaphore.WaitAsync(timeout);
-      var events = InMemorySink.Instance.LogEvents.ToArray();
+      await testIsFinished.Semaphore.WaitAsync(timeout);
       counter.Counter.Should().Be(expected: 1, "one message has been sent");
     }
 
@@ -93,7 +97,7 @@ namespace Venture.IntegrationTests
       where TIngressEnterPipeline : IPipelineConfigurator
       where TIngressExitPipeline : IPipelineConfigurator
     {
-      container.RegisterInstance<IServiceProvider>(container); // TODO: Do I need it?
+      container.RegisterInstance<IServiceProvider>(container);
 
       var messageRouterConfiguration =
         MessageRouter.Configure(

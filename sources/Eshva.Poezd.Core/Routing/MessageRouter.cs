@@ -47,7 +47,7 @@ namespace Eshva.Poezd.Core.Routing
             this,
             broker.Id,
             broker.DriverConfiguration);
-          var queueNamePatterns = broker.PublicApis.SelectMany(api => api.QueueNamePatterns);
+          var queueNamePatterns = broker.PublicApis.SelectMany(api => api.GetQueueNamePatterns());
           await broker.Driver.StartConsumeMessages(queueNamePatterns, cancellationToken);
         }
       }
@@ -79,19 +79,19 @@ namespace Eshva.Poezd.Core.Routing
         var messageHandlingContext = new MessageHandlingContext();
         try
         {
-          var brokerConfiguration = _configuration.Brokers.Single(
-            configuration => configuration.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
-          var publicApiConfiguration = GetPublicApiConfiguration(brokerConfiguration, queueName);
-          pipeline = BuildIngressPipeline(brokerConfiguration, publicApiConfiguration);
+          var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
+          var publicApi = messageBroker.GetApiByQueueName(queueName);
+
+          pipeline = BuildIngressPipeline(messageBroker, publicApi);
 
           messageHandlingContext.Set(ContextKeys.Broker.Id, brokerId)
             .Set(ContextKeys.Broker.MessageMetadata, brokerMetadata)
             .Set(ContextKeys.Broker.MessagePayload, brokerPayload)
             .Set(ContextKeys.Broker.QueueName, queueName)
             .Set(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
-            .Set(ContextKeys.Broker.Configuration, brokerConfiguration)
-            .Set(ContextKeys.PublicApi.Id, publicApiConfiguration.Id)
-            .Set(ContextKeys.PublicApi.Configuration, publicApiConfiguration);
+            .Set(ContextKeys.Broker.Configuration, messageBroker.Configuration)
+            .Set(ContextKeys.PublicApi.Id, publicApi.Id)
+            .Set(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
         }
         catch (Exception exception)
         {
@@ -143,7 +143,11 @@ namespace Eshva.Poezd.Core.Routing
         try
         {
           var driverFactory = (IMessageBrokerDriverFactory) _diContainerAdapter.GetService(broker.DriverFactoryType);
-          _brokers.Add(new MessageBroker(driverFactory.Create(), broker));
+          _brokers.Add(
+            new MessageBroker(
+              driverFactory.Create(),
+              broker,
+              _diContainerAdapter));
         }
         catch (Exception exception)
         {
@@ -154,73 +158,13 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    private MessageHandlingPipeline BuildIngressPipeline(
-      MessageBrokerConfiguration brokerConfiguration,
-      PublicApiConfiguration publicApiConfiguration)
+    private static MessageHandlingPipeline BuildIngressPipeline(MessageBroker messageBroker, IPublicApi publicApi)
     {
       var pipeline = new MessageHandlingPipeline();
-      GetBrokerIngressEnterPipelineConfigurator(brokerConfiguration).ConfigurePipeline(pipeline);
-      GetPublicApiPipelineConfigurator(publicApiConfiguration).ConfigurePipeline(pipeline);
-      GetBrokerIngressExitPipelineConfigurator(brokerConfiguration).ConfigurePipeline(pipeline);
+      messageBroker.IngressEnterPipelineConfigurator.ConfigurePipeline(pipeline);
+      publicApi.IngressPipelineConfigurator.ConfigurePipeline(pipeline);
+      messageBroker.IngressExitPipelineConfigurator.ConfigurePipeline(pipeline);
       return pipeline;
-    }
-
-    private PublicApiConfiguration GetPublicApiConfiguration(MessageBrokerConfiguration brokerConfiguration, string queueName)
-    {
-      var queueNameMatcher = (IQueueNameMatcher) _diContainerAdapter.GetService(brokerConfiguration.QueueNameMatcherType);
-      var configuration = brokerConfiguration.PublicApis.FirstOrDefault(
-        api => api.QueueNamePatterns.Any(queueNamePattern => queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
-      if (configuration != null) return configuration;
-
-      _logger.LogDebug(
-        $"The queue '{queueName}' for '{brokerConfiguration.Id}' broker isn't configured " +
-        "but a message received from this queue.");
-      return null;
-    }
-
-    private IPipelineConfigurator GetBrokerIngressEnterPipelineConfigurator(MessageBrokerConfiguration brokerConfiguration)
-    {
-      if (brokerConfiguration.IngressEnterPipelineConfiguratorType == null)
-        throw new PoezdConfigurationException(
-          $"Broker with ID '{brokerConfiguration.Id}' has no configured ingress enter pipeline configurator. You should use " +
-          $"{nameof(MessageBrokerConfigurator)}.{nameof(MessageBrokerConfigurator.WithIngressEnterPipelineConfigurator)} " +
-          "method to set pipeline configurator CLR-type.");
-
-      return (IPipelineConfigurator) _diContainerAdapter.GetService(
-        brokerConfiguration.IngressEnterPipelineConfiguratorType,
-        type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker ingress enter pipeline configurator of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-    }
-
-    private IPipelineConfigurator GetBrokerIngressExitPipelineConfigurator(MessageBrokerConfiguration brokerConfiguration)
-    {
-      if (brokerConfiguration.IngressExitPipelineConfiguratorType == null)
-        throw new PoezdConfigurationException(
-          $"Broker with ID '{brokerConfiguration.Id}' has no configured ingress exit pipeline configurator. You should use " +
-          $"{nameof(MessageBrokerConfigurator)}.{nameof(MessageBrokerConfigurator.WithIngressExitPipelineConfigurator)} " +
-          "method to set pipeline configurator CLR-type.");
-
-      return (IPipelineConfigurator) _diContainerAdapter.GetService(
-        brokerConfiguration.IngressExitPipelineConfiguratorType,
-        type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker ingress exit pipeline configurator of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-    }
-
-    private IPipelineConfigurator GetPublicApiPipelineConfigurator(PublicApiConfiguration publicApiConfiguration)
-    {
-      if (publicApiConfiguration.IngressPipelineConfiguratorType == null)
-        throw new PoezdConfigurationException(
-          $"Public API with ID '{publicApiConfiguration.Id}' has no configured pipeline configurator. You should use " +
-          $"{nameof(PublicApiConfigurator)}.{nameof(PublicApiConfigurator.WithIngressPipelineConfigurator)} " +
-          "method to set pipeline configurator CLR-type.");
-
-      return (IPipelineConfigurator) _diContainerAdapter.GetService(
-        publicApiConfiguration.IngressPipelineConfiguratorType,
-        type => new PoezdConfigurationException(
-          $"Can not get instance of the public API pipeline configurator of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
     }
 
     private readonly List<MessageBroker> _brokers = new List<MessageBroker>();

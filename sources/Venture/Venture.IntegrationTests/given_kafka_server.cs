@@ -67,12 +67,12 @@ namespace Venture.IntegrationTests
       var expectedValue = GetRandomString();
       await kafkaTestContext.Produce(topic, expectedValue);
 
-      container.Register<MessageCountingPipelineConfigurator>(Lifestyle.Scoped);
+      container.RegisterSingleton<MessageCountingPipelineConfigurator>();
       container.Register<CounterStep>(Lifestyle.Scoped);
       var counter = new CounterStep.Properties();
       container.RegisterInstance(counter);
 
-      container.Register<FinishTestPipelineConfigurator>(Lifestyle.Scoped);
+      container.RegisterSingleton<FinishTestPipelineConfigurator>();
       container.Register<FinishTestStep>(Lifestyle.Scoped);
       var testIsFinished = new FinishTestStep.Properties();
       container.RegisterInstance(testIsFinished);
@@ -117,8 +117,9 @@ namespace Venture.IntegrationTests
                 .AddPublicApi(
                   api => api
                     .WithId("api-1")
-                    .AddQueueNamePattern(@"^some-.*")
-                    .WithIngressPipelineConfigurator<EmptyPipelineConfigurator>())));
+                    .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
+                    .WithIngressPipelineConfigurator<EmptyPipelineConfigurator>()
+                    .WithHandlerFactory<PublicApi1HandlerFactory>())));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       container.RegisterInstance(GetLoggerFactory());
@@ -131,6 +132,7 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<EmptyPipelineConfigurator>();
       container.RegisterSingleton<KafkaDriverFactory>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
+      container.RegisterSingleton<PublicApi1QueueNamePatternsProvider>();
 
       container.Verify();
     }
@@ -179,9 +181,10 @@ namespace Venture.IntegrationTests
 
     private string GetRandomString() => _stringCreator.Get(length: 10);
 
-    private string GetRandomTopic(string prefix = "some") => $"{prefix}-{GetRandomString()}";
+    private string GetRandomTopic(string prefix = TopicPrefix) => $"{prefix}-{GetRandomString()}";
 
     private readonly KafkaTestContextFactory _kafkaTestContextFactory;
     private readonly StringCreator _stringCreator = new StringCreator();
+    private const string TopicPrefix = @"some";
   }
 }

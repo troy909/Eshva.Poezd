@@ -173,16 +173,19 @@ namespace Eshva.Poezd.Core.UnitTests
                 .WithIngressEnterPipelineConfigurator<SampleBrokerPipelineConfigurator>()
                 .AddPublicApi(
                   api => api.WithId("api-1")
-                    .AddQueueNamePattern(@"^sample\.(commands|facts)\.service1\.v1")
-                    .WithIngressPipelineConfigurator<Service1PipelineConfigurator>())
+                    .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
+                    .WithIngressPipelineConfigurator<Service1PipelineConfigurator>()
+                    .WithHandlerFactory<NoneHandlerFactory>())
                 .AddPublicApi(
                   api => api.WithId("api-2")
-                    .AddQueueNamePattern("sample.facts.service-2.v1")
-                    .WithIngressPipelineConfigurator<Service2PipelineConfigurator>())
+                    .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
+                    .WithIngressPipelineConfigurator<Service2PipelineConfigurator>()
+                    .WithHandlerFactory<NoneHandlerFactory>())
                 .AddPublicApi(
                   api => api.WithId("cdc-notifications")
-                    .AddQueueNamePattern(@"^sample\.cdc\..*")
-                    .WithIngressPipelineConfigurator<CdcNotificationsPipelineConfigurator>()))
+                    .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
+                    .WithIngressPipelineConfigurator<CdcNotificationsPipelineConfigurator>()
+                    .WithHandlerFactory<NoneHandlerFactory>()))
             .WithMessageHandling(
               messageHandling => messageHandling
                 .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));

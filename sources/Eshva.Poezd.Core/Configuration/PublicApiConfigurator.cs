@@ -24,17 +24,24 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public PublicApiConfigurator AddQueueNamePattern([NotNull] string queueNamePattern)
+    public PublicApiConfigurator WithIngressPipelineConfigurator<TConfigurator>()
+      where TConfigurator : IPipelineConfigurator
     {
-      if (string.IsNullOrWhiteSpace(queueNamePattern)) throw new ArgumentException(NotWhitespace, nameof(queueNamePattern));
-
-      _configuration.AddQueueNamePatterns(queueNamePattern);
+      _configuration.IngressPipelineConfiguratorType = typeof(TConfigurator);
       return this;
     }
 
-    public PublicApiConfigurator WithIngressPipelineConfigurator<TConfigurator>() where TConfigurator : IPipelineConfigurator
+    public PublicApiConfigurator WithHandlerFactory<THandlerFactoryType>()
+      where THandlerFactoryType : IHandlerFactory
     {
-      _configuration.IngressPipelineConfiguratorType = typeof(TConfigurator);
+      _configuration.HandlerFactoryType = typeof(THandlerFactoryType);
+      return this;
+    }
+
+    public PublicApiConfigurator WithQueueNamePatternsProvider<TQueueNamePatternsProvider>()
+      where TQueueNamePatternsProvider : IQueueNamePatternsProvider
+    {
+      _configuration.QueueNamePatternsProviderType = typeof(TQueueNamePatternsProvider);
       return this;
     }
 

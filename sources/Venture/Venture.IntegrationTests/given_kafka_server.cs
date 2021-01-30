@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -12,6 +11,7 @@ using Eshva.Poezd.KafkaCoupling;
 using Eshva.Poezd.SimpleInjectorCoupling;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using RandomStringCreator;
 using Serilog;
 using Serilog.Sinks.InMemory;
 using SimpleInjector;
@@ -38,17 +38,17 @@ namespace Venture.IntegrationTests
     [Fact]
     public async Task when_message_published_to_kafka_topic_it_should_be_received_from_same_topic()
     {
-      const string someTopic = "some-topic";
+      var topic = GetRandomTopic();
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<string>(timeout);
-      await kafkaTestContext.CreateTopics(someTopic);
+      await kafkaTestContext.CreateTopics(topic);
 
-      const string expectedValue = "Eshva";
+      var expectedValue = GetRandomString();
       await kafkaTestContext.Produce(
-        someTopic,
+        topic,
         expectedValue,
         new Dictionary<string, byte[]> {{"header1", new byte[0]}});
-      var consumeResult = kafkaTestContext.Consume(someTopic);
+      var consumeResult = kafkaTestContext.Consume(topic);
       consumeResult.Message.Value.Should().Be(expectedValue, "this value was sent");
       consumeResult.Message.Headers.Count.Should().Be(expected: 1, "one header was set");
     }
@@ -59,13 +59,13 @@ namespace Venture.IntegrationTests
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
-      const string someTopic = "some-topic";
+      var topic = GetRandomTopic();
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<string>(timeout);
-      await kafkaTestContext.CreateTopics(someTopic);
+      await kafkaTestContext.CreateTopics(topic);
 
-      const string expectedValue = "Eshva";
-      await kafkaTestContext.Produce(someTopic, expectedValue);
+      var expectedValue = GetRandomString();
+      await kafkaTestContext.Produce(topic, expectedValue);
 
       container.Register<MessageCountingPipelineConfigurator>(Lifestyle.Scoped);
       container.Register<CounterStep>(Lifestyle.Scoped);
@@ -108,7 +108,9 @@ namespace Venture.IntegrationTests
                 .WithDriver<KafkaDriverFactory, KafkaDriverConfigurator, KafkaDriverConfiguration>(
                   driver => driver
                     .WithConsumerConfig(CreateConsumerConfig())
-                    .WithProducerConfig(CreateProducerConfig()))
+                    .WithProducerConfig(CreateProducerConfig())
+                    .WithCommitPeriod(commitPeriod: 1)
+                    .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
                 .WithQueueNameMatcher<RegexQueueNameMatcher>()
                 .WithIngressEnterPipelineConfigurator<TIngressEnterPipeline>()
                 .WithIngressExitPipelineConfigurator<TIngressExitPipeline>()
@@ -128,6 +130,7 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipelineConfigurator>();
       container.RegisterSingleton<KafkaDriverFactory>();
+      container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
 
       container.Verify();
     }
@@ -174,6 +177,11 @@ namespace Venture.IntegrationTests
           .MinimumLevel.Verbose()
           .CreateLogger());
 
+    private string GetRandomString() => _stringCreator.Get(length: 10);
+
+    private string GetRandomTopic(string prefix = "some") => $"{prefix}-{GetRandomString()}";
+
     private readonly KafkaTestContextFactory _kafkaTestContextFactory;
+    private readonly StringCreator _stringCreator = new StringCreator();
   }
 }

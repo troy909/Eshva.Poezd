@@ -18,8 +18,9 @@ namespace Eshva.Poezd.KafkaCoupling
 {
   public class KafkaDriver : IMessageBrokerDriver
   {
-    public KafkaDriver([NotNull] ILogger<KafkaDriver> logger)
+    public KafkaDriver([NotNull] IServiceProvider serviceProvider, [NotNull] ILogger<KafkaDriver> logger)
     {
+      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -83,7 +84,7 @@ namespace Eshva.Poezd.KafkaCoupling
       _logger.LogInformation(
         "Closed consumer with bootstrap servers '@{BootstrapServers}' and @{GroupID}.",
         _configuration.ConsumerConfig.BootstrapServers,
-        _configuration.GroupId);
+        _configuration.ConsumerConfig.GroupId);
 
       _consumer?.Dispose();
       _producer?.Dispose();
@@ -92,9 +93,16 @@ namespace Eshva.Poezd.KafkaCoupling
     private async Task OnMessageReceived(ConsumeResult<Ignore, byte[]> consumeResult)
     {
       // TODO: handle in parallel.
+      if (!(_serviceProvider.GetService(_configuration.HeaderValueParserType) is IHeaderValueParser parser))
+      {
+        throw new PoezdOperationException(
+          "Can not parse Kafka broker message headers because can not get a header value parser. " +
+          $"You should register a service of type {_configuration.HeaderValueParserType.FullName} in your DI-container.");
+      }
+
       var headers = consumeResult.Message.Headers.ToDictionary(
         header => header.Key,
-        header => Encoding.UTF8.GetString(header.GetValueBytes()));
+        header => parser.Parser(header.GetValueBytes()));
       await _messageRouter.RouteIncomingMessage(
         _brokerId,
         consumeResult.Topic,
@@ -232,6 +240,7 @@ namespace Eshva.Poezd.KafkaCoupling
       }
     }
 
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<KafkaDriver> _logger;
     private string _brokerId;
     private KafkaDriverConfiguration _configuration;

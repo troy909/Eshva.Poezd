@@ -27,6 +27,21 @@ namespace Eshva.Poezd.KafkaCoupling
       return this;
     }
 
+    public KafkaDriverConfigurator WithCommitPeriod(long commitPeriod)
+    {
+      _configuration.CommitPeriod = commitPeriod > 0
+        ? commitPeriod
+        : throw new ArgumentOutOfRangeException(nameof(commitPeriod), "Commit period should be greater than 0.");
+
+      return this;
+    }
+
+    public KafkaDriverConfigurator WithHeaderValueParser<THeaderValueParser>()
+    {
+      _configuration.HeaderValueParserType = typeof(THeaderValueParser);
+      return this;
+    }
+
     private readonly KafkaDriverConfiguration _configuration;
   }
 }

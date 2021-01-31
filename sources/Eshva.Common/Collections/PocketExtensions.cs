@@ -79,7 +79,7 @@ namespace Eshva.Common.Collections
           $"Found item with key '{name}' but it was a {item.GetType()} and not of type {typeof(TThing)} as expected.");
       }
 
-      return item;
+      return item!;
     }
 
     /// <summary>

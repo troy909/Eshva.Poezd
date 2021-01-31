@@ -11,9 +11,9 @@ using Eshva.Poezd.Core.Routing;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
-  public sealed class ExecuteMessageHandlersStep : IStep
+  public sealed class ExecuteMessageHandlersStep_delit : IStep
   {
-    public ExecuteMessageHandlersStep(IMessageHandlersExecutionStrategy messageHandlersExecutionStrategy)
+    public ExecuteMessageHandlersStep_delit(IMessageHandlersExecutionStrategy messageHandlersExecutionStrategy)
     {
       _messageHandlersExecutionStrategy = messageHandlersExecutionStrategy;
     }

@@ -17,14 +17,12 @@ namespace Eshva.Poezd.Core.Pipeline
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
-    public IPipeline Setup(IPipeline pipeline)
+    public void Setup(IPipeline pipeline)
     {
       foreach (var stepType in GetStepTypes())
       {
         pipeline.Append((IStep) _serviceProvider.GetService(stepType, MakeException));
       }
-
-      return pipeline;
     }
 
     protected abstract IEnumerable<Type> GetStepTypes();

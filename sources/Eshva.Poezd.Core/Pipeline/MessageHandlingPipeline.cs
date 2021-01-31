@@ -68,7 +68,7 @@ namespace Eshva.Poezd.Core.Pipeline
       _steps.Remove(presentStep);
     }
 
-    public async Task Execute(IPocket context)
+    public async Task Execute(IPocket context) // TODO: Add a cancellation token.
     {
       var currentNode = _steps.First;
       while (currentNode != null)

@@ -49,7 +49,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.IntegrationTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.TestingTools", "Venture\Common\Venture.Common.TestingTools\Venture.Common.TestingTools.csproj", "{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.KafkaCoupling.UnitTests", "Eshva.Poezd.KafkaCoupling.UnitTests\Eshva.Poezd.KafkaCoupling.UnitTests.csproj", "{814EBF90-598E-41B5-AF38-3A75F2E0A388}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.KafkaCoupling.UnitTests", "Eshva.Poezd.KafkaCoupling.UnitTests\Eshva.Poezd.KafkaCoupling.UnitTests.csproj", "{814EBF90-598E-41B5-AF38-3A75F2E0A388}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlanner.Adapter", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Adapter\Venture.CaseOffice.WorkPlanner.Adapter.csproj", "{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlanner.Messages", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj", "{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +137,14 @@ Global
 		{814EBF90-598E-41B5-AF38-3A75F2E0A388}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814EBF90-598E-41B5-AF38-3A75F2E0A388}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814EBF90-598E-41B5-AF38-3A75F2E0A388}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +165,8 @@ Global
 		{4D20F14F-7445-4DF4-85AB-C6773FA6EDCD} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 		{EFA0590F-48F6-4EF8-B147-D00A872AF26E} = {161DFBF8-D707-40B4-8ECB-71F21E29DCD3}
 		{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
+		{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
+		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

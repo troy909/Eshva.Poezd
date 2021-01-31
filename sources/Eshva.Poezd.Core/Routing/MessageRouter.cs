@@ -103,6 +103,7 @@ namespace Eshva.Poezd.Core.Routing
 
         try
         {
+          // TODO: Add timeout as a cancellation token and configuration of it using router configuration fluent interface.
           return pipeline.Execute(messageHandlingContext);
         }
         catch (Exception exception)

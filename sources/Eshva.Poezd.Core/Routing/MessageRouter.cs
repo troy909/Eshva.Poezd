@@ -161,9 +161,9 @@ namespace Eshva.Poezd.Core.Routing
     private static MessageHandlingPipeline BuildIngressPipeline(MessageBroker messageBroker, IPublicApi publicApi)
     {
       var pipeline = new MessageHandlingPipeline();
-      messageBroker.IngressEnterPipelineConfigurator.ConfigurePipeline(pipeline);
-      publicApi.IngressPipelineConfigurator.ConfigurePipeline(pipeline);
-      messageBroker.IngressExitPipelineConfigurator.ConfigurePipeline(pipeline);
+      messageBroker.IngressEnterPipeFitter.Setup(pipeline);
+      publicApi.IngressPipeFitter.Setup(pipeline);
+      messageBroker.IngressExitPipeFitter.Setup(pipeline);
       return pipeline;
     }
 

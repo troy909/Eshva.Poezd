@@ -67,17 +67,17 @@ namespace Venture.IntegrationTests
       var expectedValue = GetRandomString();
       await kafkaTestContext.Produce(topic, expectedValue);
 
-      container.RegisterSingleton<MessageCountingPipelineConfigurator>();
+      container.RegisterSingleton<MessageCountingPipeFitter>();
       container.Register<CounterStep>(Lifestyle.Scoped);
       var counter = new CounterStep.Properties();
       container.RegisterInstance(counter);
 
-      container.RegisterSingleton<FinishTestPipelineConfigurator>();
+      container.RegisterSingleton<FinishTestPipeFitter>();
       container.Register<FinishTestStep>(Lifestyle.Scoped);
       var testIsFinished = new FinishTestStep.Properties();
       container.RegisterInstance(testIsFinished);
 
-      var messageRouter = GetMessageRouter<MessageCountingPipelineConfigurator, FinishTestPipelineConfigurator>(container);
+      var messageRouter = GetMessageRouter<MessageCountingPipeFitter, FinishTestPipeFitter>(container);
       await messageRouter.Start(timeout);
 
       await testIsFinished.Semaphore.WaitAsync(timeout);
@@ -85,8 +85,8 @@ namespace Venture.IntegrationTests
     }
 
     private IMessageRouter GetMessageRouter<TIngressEnterPipeline, TIngressExitPipeline>(Container container)
-      where TIngressEnterPipeline : IPipelineConfigurator
-      where TIngressExitPipeline : IPipelineConfigurator
+      where TIngressEnterPipeline : IPipeFitter
+      where TIngressExitPipeline : IPipeFitter
     {
       ConfigurePoezd<TIngressEnterPipeline, TIngressExitPipeline>(container);
       var messageRouter = container.GetInstance<IMessageRouter>();
@@ -94,8 +94,8 @@ namespace Venture.IntegrationTests
     }
 
     private void ConfigurePoezd<TIngressEnterPipeline, TIngressExitPipeline>(Container container)
-      where TIngressEnterPipeline : IPipelineConfigurator
-      where TIngressExitPipeline : IPipelineConfigurator
+      where TIngressEnterPipeline : IPipeFitter
+      where TIngressExitPipeline : IPipeFitter
     {
       container.RegisterInstance<IServiceProvider>(container);
 
@@ -118,7 +118,7 @@ namespace Venture.IntegrationTests
                   api => api
                     .WithId("api-1")
                     .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
-                    .WithIngressPipelineConfigurator<EmptyPipelineConfigurator>()
+                    .WithIngressPipelineConfigurator<EmptyPipeFitter>()
                     .WithHandlerFactory<PublicApi1HandlerFactory>())));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
@@ -129,7 +129,7 @@ namespace Venture.IntegrationTests
         Lifestyle.Singleton);
 
       container.RegisterSingleton<RegexQueueNameMatcher>();
-      container.RegisterSingleton<EmptyPipelineConfigurator>();
+      container.RegisterSingleton<EmptyPipeFitter>();
       container.RegisterSingleton<KafkaDriverFactory>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
       container.RegisterSingleton<PublicApi1QueueNamePatternsProvider>();

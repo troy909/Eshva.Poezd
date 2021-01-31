@@ -21,7 +21,7 @@ namespace Eshva.Poezd.Core.Routing
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
 
       _queueNamePatternsProvider = GetQueueNamePatternsProvider(serviceProvider);
-      IngressPipelineConfigurator = GetIngressPipelineConfigurator(serviceProvider);
+      IngressPipeFitter = GetIngressPipelineConfigurator(serviceProvider);
     }
 
     public string Id => Configuration.Id;
@@ -30,13 +30,13 @@ namespace Eshva.Poezd.Core.Routing
 
     public static IPublicApi Empty { get; } = new EmptyPublicApi();
 
-    public IPipelineConfigurator IngressPipelineConfigurator { get; }
+    public IPipeFitter IngressPipeFitter { get; }
 
     public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
 
-    private IPipelineConfigurator GetIngressPipelineConfigurator(IServiceProvider serviceProvider)
+    private IPipeFitter GetIngressPipelineConfigurator(IServiceProvider serviceProvider)
     {
-      var configurator = (IPipelineConfigurator) serviceProvider.GetService(
+      var configurator = (IPipeFitter) serviceProvider.GetService(
         Configuration.IngressPipelineConfiguratorType,
         type => new PoezdOperationException(
           $"Can not get an instance of public API ingress pipeline configurator of type '{type.FullName}'." +
@@ -62,7 +62,7 @@ namespace Eshva.Poezd.Core.Routing
 
       public PublicApiConfiguration Configuration => new PublicApiConfiguration();
 
-      public IPipelineConfigurator IngressPipelineConfigurator { get; } = new EmptyPipelineConfigurator();
+      public IPipeFitter IngressPipeFitter { get; } = new EmptyPipeFitter();
 
       public IEnumerable<string> GetQueueNamePatterns() => Enumerable.Empty<string>();
     }

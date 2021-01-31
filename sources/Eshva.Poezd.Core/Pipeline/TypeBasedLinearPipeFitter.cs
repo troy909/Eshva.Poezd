@@ -10,14 +10,14 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
-  public abstract class TypeBasedLinearPipelineConfigurator : IPipelineConfigurator
+  public abstract class TypeBasedLinearPipeFitter : IPipeFitter
   {
-    protected TypeBasedLinearPipelineConfigurator([NotNull] IServiceProvider serviceProvider)
+    protected TypeBasedLinearPipeFitter([NotNull] IServiceProvider serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
-    public IPipeline ConfigurePipeline(IPipeline pipeline)
+    public IPipeline Setup(IPipeline pipeline)
     {
       foreach (var stepType in GetStepTypes())
       {

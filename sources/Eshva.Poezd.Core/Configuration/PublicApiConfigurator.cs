@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     public PublicApiConfigurator WithIngressPipelineConfigurator<TConfigurator>()
-      where TConfigurator : IPipelineConfigurator
+      where TConfigurator : IPipeFitter
     {
       _configuration.IngressPipelineConfiguratorType = typeof(TConfigurator);
       return this;

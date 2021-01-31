@@ -14,7 +14,7 @@ namespace Eshva.Poezd.Core.Routing
 
     PublicApiConfiguration Configuration { get; }
 
-    IPipelineConfigurator IngressPipelineConfigurator { get; }
+    IPipeFitter IngressPipeFitter { get; }
 
     IEnumerable<string> GetQueueNamePatterns();
   }

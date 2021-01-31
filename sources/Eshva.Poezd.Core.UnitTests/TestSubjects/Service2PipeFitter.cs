@@ -15,9 +15,9 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   /// should handle some of it's events. Message payload encoded as JSON-documents of known schema.
   /// </summary>
   [UsedImplicitly]
-  public sealed class Service2PipelineConfigurator : TypeBasedLinearPipelineConfigurator
+  public sealed class Service2PipeFitter : TypeBasedLinearPipeFitter
   {
-    public Service2PipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public Service2PipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

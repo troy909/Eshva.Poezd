@@ -11,9 +11,9 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   [UsedImplicitly]
-  public class SampleBrokerPipelineConfigurator : TypeBasedLinearPipelineConfigurator
+  public class SampleBrokerPipeFitter : TypeBasedLinearPipeFitter
   {
-    public SampleBrokerPipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public SampleBrokerPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

@@ -170,21 +170,21 @@ namespace Eshva.Poezd.Core.UnitTests
                 .WithDriver<TestBrokerDriverFactory, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
                   driver => driver.WithSomeSetting(TestBrokerDriverSettings))
                 .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                .WithIngressEnterPipelineConfigurator<SampleBrokerPipelineConfigurator>()
+                .WithIngressEnterPipelineConfigurator<SampleBrokerPipeFitter>()
                 .AddPublicApi(
                   api => api.WithId("api-1")
                     .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
-                    .WithIngressPipelineConfigurator<Service1PipelineConfigurator>()
+                    .WithIngressPipelineConfigurator<Service1PipeFitter>()
                     .WithHandlerFactory<NoneHandlerFactory>())
                 .AddPublicApi(
                   api => api.WithId("api-2")
                     .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
-                    .WithIngressPipelineConfigurator<Service2PipelineConfigurator>()
+                    .WithIngressPipelineConfigurator<Service2PipeFitter>()
                     .WithHandlerFactory<NoneHandlerFactory>())
                 .AddPublicApi(
                   api => api.WithId("cdc-notifications")
                     .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
-                    .WithIngressPipelineConfigurator<CdcNotificationsPipelineConfigurator>()
+                    .WithIngressPipelineConfigurator<CdcNotificationsPipeFitter>()
                     .WithHandlerFactory<NoneHandlerFactory>()))
             .WithMessageHandling(
               messageHandling => messageHandling
@@ -198,10 +198,10 @@ namespace Eshva.Poezd.Core.UnitTests
         Lifestyle.Singleton);
 
       container.RegisterSingleton<RegexQueueNameMatcher>();
-      container.Register<SampleBrokerPipelineConfigurator>(Lifestyle.Scoped);
-      container.Register<Service1PipelineConfigurator>(Lifestyle.Scoped);
-      container.Register<Service2PipelineConfigurator>(Lifestyle.Scoped);
-      container.Register<CdcNotificationsPipelineConfigurator>(Lifestyle.Scoped);
+      container.Register<SampleBrokerPipeFitter>(Lifestyle.Scoped);
+      container.Register<Service1PipeFitter>(Lifestyle.Scoped);
+      container.Register<Service2PipeFitter>(Lifestyle.Scoped);
+      container.Register<CdcNotificationsPipeFitter>(Lifestyle.Scoped);
       container.Register<LogMessageHandlingContextStep>(Lifestyle.Scoped);
       container.Register<CdcNotificationsCommitStep>(Lifestyle.Scoped);
       container.Register<Service1DeserializeMessageStep>(Lifestyle.Scoped);

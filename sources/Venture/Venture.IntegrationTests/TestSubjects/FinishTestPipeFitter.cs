@@ -9,13 +9,13 @@ using JetBrains.Annotations;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class MessageCountingPipelineConfigurator : TypeBasedLinearPipelineConfigurator
+  public class FinishTestPipeFitter : TypeBasedLinearPipeFitter
   {
-    public MessageCountingPipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public FinishTestPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {
-      yield return typeof(CounterStep);
+      yield return typeof(FinishTestStep);
     }
   }
 }

@@ -15,9 +15,9 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   /// So we don't need to deserialize message payload.
   /// </summary>
   [UsedImplicitly]
-  public sealed class CdcNotificationsPipelineConfigurator : TypeBasedLinearPipelineConfigurator
+  public sealed class CdcNotificationsPipeFitter : TypeBasedLinearPipeFitter
   {
-    public CdcNotificationsPipelineConfigurator([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public CdcNotificationsPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

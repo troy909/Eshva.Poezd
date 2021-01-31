@@ -27,8 +27,8 @@ namespace Eshva.Poezd.Core.Routing
       PublicApis = configuration.PublicApis.Select(
         apiConfiguration => new PublicApi(apiConfiguration, serviceProvider)).ToList().AsReadOnly();
       _queueNameMatcher = (IQueueNameMatcher) serviceProvider.GetService(configuration.QueueNameMatcherType);
-      IngressEnterPipelineConfigurator = GetIngressEnterPipelineConfigurator(serviceProvider);
-      IngressExitPipelineConfigurator = GetIngressExitPipelineConfigurator(serviceProvider);
+      IngressEnterPipeFitter = GetIngressEnterPipelineConfigurator(serviceProvider);
+      IngressExitPipeFitter = GetIngressExitPipelineConfigurator(serviceProvider);
     }
 
     public IMessageBrokerDriver Driver { get; }
@@ -41,9 +41,9 @@ namespace Eshva.Poezd.Core.Routing
 
     public MessageBrokerConfiguration Configuration { get; }
 
-    public IPipelineConfigurator IngressEnterPipelineConfigurator { get; set; }
+    public IPipeFitter IngressEnterPipeFitter { get; set; }
 
-    public IPipelineConfigurator IngressExitPipelineConfigurator { get; set; }
+    public IPipeFitter IngressExitPipeFitter { get; set; }
 
     public void Dispose()
     {
@@ -58,18 +58,18 @@ namespace Eshva.Poezd.Core.Routing
       return publicApi ?? PublicApi.Empty;
     }
 
-    private IPipelineConfigurator GetIngressEnterPipelineConfigurator(IServiceProvider serviceProvider)
+    private IPipeFitter GetIngressEnterPipelineConfigurator(IServiceProvider serviceProvider)
     {
-      return (IPipelineConfigurator) serviceProvider.GetService(
+      return (IPipeFitter) serviceProvider.GetService(
         Configuration.IngressEnterPipelineConfiguratorType,
         type => new PoezdConfigurationException(
           $"Can not get instance of the message broker ingress enter pipeline configurator of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
     }
 
-    private IPipelineConfigurator GetIngressExitPipelineConfigurator(IServiceProvider serviceProvider)
+    private IPipeFitter GetIngressExitPipelineConfigurator(IServiceProvider serviceProvider)
     {
-      return (IPipelineConfigurator) serviceProvider.GetService(
+      return (IPipeFitter) serviceProvider.GetService(
         Configuration.IngressExitPipelineConfiguratorType,
         type => new PoezdConfigurationException(
           $"Can not get instance of the message broker ingress exit pipeline configurator of type '{type.FullName}'. " +

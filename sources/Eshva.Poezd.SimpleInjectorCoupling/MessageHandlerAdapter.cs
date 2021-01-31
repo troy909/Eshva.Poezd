@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Eshva.Common;
+using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Activation;
 using Eshva.Poezd.Core.MessageHandling;
 using JetBrains.Annotations;
@@ -41,7 +42,7 @@ namespace Eshva.Poezd.SimpleInjectorCoupling
     private Scope CreateContainerScope(IMessageHandlingContext messageHandlingContext)
     {
       const string CurrentSimpleInjectorScope = "current-simpleinjector-scope";
-      var scope = messageHandlingContext.GetOrAdd(
+      var scope = messageHandlingContext.TakeOrPut(
         CurrentSimpleInjectorScope,
         () =>
         {

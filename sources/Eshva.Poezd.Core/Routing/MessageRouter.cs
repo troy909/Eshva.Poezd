@@ -84,14 +84,14 @@ namespace Eshva.Poezd.Core.Routing
 
           pipeline = BuildIngressPipeline(messageBroker, publicApi);
 
-          messageHandlingContext.Set(ContextKeys.Broker.Id, brokerId)
-            .Set(ContextKeys.Broker.MessageMetadata, brokerMetadata)
-            .Set(ContextKeys.Broker.MessagePayload, brokerPayload)
-            .Set(ContextKeys.Broker.QueueName, queueName)
-            .Set(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
-            .Set(ContextKeys.Broker.Configuration, messageBroker.Configuration)
-            .Set(ContextKeys.PublicApi.Id, publicApi.Id)
-            .Set(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
+          messageHandlingContext.Put(ContextKeys.Broker.Id, brokerId)
+            .Put(ContextKeys.Broker.MessageMetadata, brokerMetadata)
+            .Put(ContextKeys.Broker.MessagePayload, brokerPayload)
+            .Put(ContextKeys.Broker.QueueName, queueName)
+            .Put(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
+            .Put(ContextKeys.Broker.Configuration, messageBroker.Configuration)
+            .Put(ContextKeys.PublicApi.Id, publicApi.Id)
+            .Put(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
         }
         catch (Exception exception)
         {

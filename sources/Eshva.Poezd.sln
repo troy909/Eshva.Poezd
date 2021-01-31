@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlanner.Messages", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj", "{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Common.UnitTests", "Eshva.Common.UnitTests\Eshva.Common.UnitTests.csproj", "{B07264FF-37AC-492C-B5BC-64ED7547D8F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,10 @@ Global
 		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B07264FF-37AC-492C-B5BC-64ED7547D8F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07264FF-37AC-492C-B5BC-64ED7547D8F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B07264FF-37AC-492C-B5BC-64ED7547D8F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B07264FF-37AC-492C-B5BC-64ED7547D8F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 #region Usings
 
 using Eshva.Common;
+using Eshva.Common.Collections;
 
 #endregion
 
@@ -10,7 +11,7 @@ namespace Venture.Common.Application.MessageHandling
   /// <summary>
   /// Представляет собой реализацию контекста обработки сообщения внутри продукта Venture.
   /// </summary>
-  public class VentureVentureMessageHandlingContext : PocketExecutionContext, IVentureMessageHandlingContext
+  public class VentureVentureMessageHandlingContext : ConcurrentPocket, IVentureMessageHandlingContext
   {
     public void Commit()
     {

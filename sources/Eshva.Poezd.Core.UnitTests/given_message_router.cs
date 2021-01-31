@@ -135,7 +135,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var router = scope.GetInstance<MessageRouter>();
       var context = new MessageHandlingContext();
       const string ExpectedProperty1Value = "value1";
-      context.Set(CustomHandler1.Property1, ExpectedProperty1Value);
+      context.Put(CustomHandler1.Property1, ExpectedProperty1Value);
 
       const string QueueName = "some-topic";
       router.RouteIncomingMessage(

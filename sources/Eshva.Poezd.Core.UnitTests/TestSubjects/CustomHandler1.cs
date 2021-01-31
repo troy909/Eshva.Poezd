@@ -17,7 +17,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public Task Handle(CustomCommand1 message, CustomMessageHandlingContext context)
     {
       _properties.Handled1 += 1;
-      _properties.Property1 = context.TryGet<string>(Property1, out var property1) ? property1 : string.Empty;
+      _properties.Property1 = context.TryTake<string>(Property1, out var property1) ? property1 : string.Empty;
       return Task.CompletedTask;
     }
 

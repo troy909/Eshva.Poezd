@@ -49,7 +49,7 @@ namespace Venture.IntegrationTests
         expectedValue,
         new Dictionary<string, byte[]> {{"header1", new byte[0]}});
       var consumeResult = kafkaTestContext.Consume(topic);
-      consumeResult.Message.Value.Should().Be(expectedValue, "this value was sent");
+      consumeResult.Message.Value.Should().Be(expectedValue, "this thing was sent");
       consumeResult.Message.Headers.Count.Should().Be(expected: 1, "one header was set");
     }
 

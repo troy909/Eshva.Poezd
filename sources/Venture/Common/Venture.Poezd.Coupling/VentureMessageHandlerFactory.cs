@@ -3,6 +3,7 @@
 using System;
 using System.Threading.Tasks;
 using Eshva.Common;
+using Eshva.Common.Collections;
 using Eshva.Poezd.Core.MessageHandling;
 using Eshva.Poezd.SimpleInjectorCoupling;
 using JetBrains.Annotations;
@@ -62,9 +63,9 @@ namespace Venture.Poezd.Coupling
       private static VentureVentureMessageHandlingContext AdoptPoezdMessageHandlingContext(IPocket context)
       {
         var ventureContext = new VentureVentureMessageHandlingContext();
-        foreach (var (key, value) in context.GetItems())
+        foreach (var (key, value) in context.GetThings())
         {
-          ventureContext.Set(key, value);
+          ventureContext.Put(key, value);
         }
 
         return ventureContext;

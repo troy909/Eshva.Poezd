@@ -23,7 +23,8 @@ namespace Eshva.Common.Collections
 
       if (_things.TryGetValue(name, out var found))
       {
-        if (found.GetType() != typeof(TValue))
+        // ReSharper disable once JoinNullCheckWithUsage The R# is wrong here with suggestion because TValue has no a 'class' constraint.
+        if (!(found is TValue))
         {
           throw new InvalidCastException(
             $"Found item with name '{name}' but it was a {found.GetType()} and not of type {typeof(TValue)} as expected.");

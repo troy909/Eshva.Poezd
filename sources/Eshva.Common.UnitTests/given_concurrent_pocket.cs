@@ -94,6 +94,18 @@ namespace Eshva.Common.UnitTests
     }
 
     [Fact]
+    public void when_try_to_take_stored_thing_by_name_and_its_parent_type_it_should_return_it_and_success_status()
+    {
+      var sut = new ConcurrentPocket();
+      const string nameOfThing = "name of the thing";
+      var thingItself = new Derived();
+      sut.Put(nameOfThing, thingItself);
+
+      sut.TryTake<Base>(nameOfThing, out var foundThing).Should().BeTrue("the requested thing lies in the pocket");
+      foundThing.Should().BeSameAs(thingItself, "thing should be stored by reference");
+    }
+
+    [Fact]
     public void when_try_to_take_missing_reference_thing_it_should_return_null_and_fail_status()
     {
       var sut = new ConcurrentPocket();
@@ -207,5 +219,9 @@ namespace Eshva.Common.UnitTests
     }
 
     private const string WhiteSpaceString = " \n\t\r";
+
+    private abstract class Base { }
+
+    private sealed class Derived : Base { }
   }
 }

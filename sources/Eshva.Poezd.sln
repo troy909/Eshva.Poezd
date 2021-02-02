@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Common.UnitTests", "Eshva.Common.UnitTests\Eshva.Common.UnitTests.csproj", "{B07264FF-37AC-492C-B5BC-64ED7547D8F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlanner.Adapter.UnitTests", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Adapter.UnitTests\Venture.CaseOffice.WorkPlanner.Adapter.UnitTests.csproj", "{5A858335-7E9C-4CB6-A891-A21C7E6508D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,6 +153,10 @@ Global
 		{B07264FF-37AC-492C-B5BC-64ED7547D8F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B07264FF-37AC-492C-B5BC-64ED7547D8F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B07264FF-37AC-492C-B5BC-64ED7547D8F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A858335-7E9C-4CB6-A891-A21C7E6508D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A858335-7E9C-4CB6-A891-A21C7E6508D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A858335-7E9C-4CB6-A891-A21C7E6508D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A858335-7E9C-4CB6-A891-A21C7E6508D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -173,6 +179,7 @@ Global
 		{D8B1652B-24DF-4F6F-8C05-203F8D6EA2D6} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 		{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
 		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
+		{5A858335-7E9C-4CB6-A891-A21C7E6508D2} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

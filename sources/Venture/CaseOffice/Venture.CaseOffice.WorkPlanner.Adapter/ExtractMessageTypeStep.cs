@@ -46,7 +46,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter
 
       try
       {
-        context.Put(ContextKeys.Application.MessageType, MessageTypeMatcher.MatchToType(messageTypeName));
+        context.Put(ContextKeys.Application.MessageType, MessageTypeRegistry.GetType(messageTypeName));
       }
       catch (InvalidOperationException exception)
       {
@@ -56,6 +56,6 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter
       return Task.CompletedTask;
     }
 
-    private static readonly MessageTypeMatcher MessageTypeMatcher = new MessageTypeMatcher();
+    private static readonly MessageTypeRegistry MessageTypeRegistry = new MessageTypeRegistry();
   }
 }

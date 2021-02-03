@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
+    <ProjectReference Include="..\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj" />
   </ItemGroup>
 
 </Project>

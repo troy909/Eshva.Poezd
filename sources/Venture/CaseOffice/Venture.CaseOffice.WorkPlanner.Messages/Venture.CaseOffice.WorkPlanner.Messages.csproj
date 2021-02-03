@@ -5,4 +5,16 @@
     <RootNamespace>Venture.WorkPlanner.Messages</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <FlatSharpSchema Include="Schemas/Common/uuid.fbs" />
+    <FlatSharpSchema Include="Schemas/V1/Events/TaskCreated.fbs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FlatSharp.Compiler" Version="4.1.0">
+      <PrivateAssets>all</PrivateAssets> <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FlatSharp.Runtime" Version="4.1.0" />
+  </ItemGroup>
+
 </Project>

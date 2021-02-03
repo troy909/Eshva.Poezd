@@ -1,0 +1,5 @@
+namespace Venture.WorkPlanner.Messages.Common;
+
+table uuid {
+  value:[ubyte] (VectorType:"Array");
+}

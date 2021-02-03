@@ -1,3 +1,5 @@
+using System;
+
 namespace Eshva.Poezd.Core.Routing
 {
   public static class ContextKeys
@@ -55,12 +57,12 @@ namespace Eshva.Poezd.Core.Routing
       /// <summary>
       /// The key of application message type. The value is a <see cref="Type" />.
       /// </summary>
-      public const string Type = Prefix + "message-type";
+      public const string MessageType = Prefix + "message-type";
 
       /// <summary>
       /// The key of application message type name. The value is a <see cref="string" />.
       /// </summary>
-      public const string TypeName = Prefix + "message-type-name";
+      public const string MessageTypeName = Prefix + "message-type-name";
 
       /// <summary>
       /// The key of the message ID. The value is a <see cref="string" />.

@@ -7,6 +7,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter
     /// </summary>
     public static class Headers
     {
+      public const string MessageTypeName = "type";
       public const string MessageId = "id";
       public const string CorrelationId = "correlation-id";
       public const string CausationId = "causation-id";

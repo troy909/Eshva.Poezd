@@ -30,7 +30,7 @@ namespace Venture.CaseOffice.Application.CreateJusticeCase
       _isJusticeCaseExists = isJusticeCaseExists;
     }
 
-    public async Task Handle(CreateCase message, VentureVentureMessageHandlingContext context)
+    public async Task Handle(CreateCase message, VentureContext context)
     {
       var justiceCase = new JusticeCase(
         message.CaseId,
@@ -49,7 +49,7 @@ namespace Venture.CaseOffice.Application.CreateJusticeCase
       }
     }
 
-    public async Task<bool> ShouldHandle(CreateCase message, VentureVentureMessageHandlingContext context) =>
+    public async Task<bool> ShouldHandle(CreateCase message, VentureContext context) =>
       await _isItJusticeCaseTypeQuery.Execute(message.CaseType) &&
       !await _isJusticeCaseExists.Execute(message.CaseId);
 

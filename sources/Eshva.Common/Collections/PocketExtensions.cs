@@ -72,14 +72,7 @@ namespace Eshva.Common.Collections
     public static TThing TakeOrThrow<TThing>(this IPocket pocket, [NotNull] string name) where TThing : class
     {
       if (!pocket.TryTake<TThing>(name, out var item)) throw new KeyNotFoundException($"Could not find an item with the key '{name}'.");
-
-      if (item != null && item.GetType() != typeof(TThing))
-      {
-        throw new InvalidCastException(
-          $"Found item with key '{name}' but it was a {item.GetType()} and not of type {typeof(TThing)} as expected.");
-      }
-
-      return item!;
+      return item;
     }
 
     /// <summary>

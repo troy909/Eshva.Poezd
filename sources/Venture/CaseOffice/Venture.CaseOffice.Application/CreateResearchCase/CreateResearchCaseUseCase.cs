@@ -28,7 +28,7 @@ namespace Venture.CaseOffice.Application.CreateResearchCase
       _isItResearchCaseTypeQuery = isItResearchCaseTypeQuery;
     }
 
-    public async Task Handle(CreateCase message, VentureVentureMessageHandlingContext context)
+    public async Task Handle(CreateCase message, VentureContext context)
     {
       var researchCase = new ResearchCase(
         message.CaseId,
@@ -47,7 +47,7 @@ namespace Venture.CaseOffice.Application.CreateResearchCase
       }
     }
 
-    public Task<bool> ShouldHandle(CreateCase message, VentureVentureMessageHandlingContext context) =>
+    public Task<bool> ShouldHandle(CreateCase message, VentureContext context) =>
       _isItResearchCaseTypeQuery.Execute(message.CaseType);
 
     private readonly IIsItResearchCaseTypeQuery _isItResearchCaseTypeQuery;

@@ -175,17 +175,17 @@ namespace Eshva.Poezd.Core.UnitTests
                   api => api.WithId("api-1")
                     .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
                     .WithIngressPipelineConfigurator<Service1PipeFitter>()
-                    .WithHandlerFactory<NoneHandlerFactory>())
+                    .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
                   api => api.WithId("api-2")
                     .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
                     .WithIngressPipelineConfigurator<Service2PipeFitter>()
-                    .WithHandlerFactory<NoneHandlerFactory>())
+                    .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
                   api => api.WithId("cdc-notifications")
                     .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
                     .WithIngressPipelineConfigurator<CdcNotificationsPipeFitter>()
-                    .WithHandlerFactory<NoneHandlerFactory>()))
+                    .WithHandlerRegistry<NoneHandlerRegistry>()))
             .WithMessageHandling(
               messageHandling => messageHandling
                 .WithMessageHandlersFactory(new CustomMessageHandlerFactory(container))));

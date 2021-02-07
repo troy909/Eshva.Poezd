@@ -119,7 +119,7 @@ namespace Venture.IntegrationTests
                     .WithId("api-1")
                     .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
                     .WithIngressPipelineConfigurator<EmptyPipeFitter>()
-                    .WithHandlerFactory<PublicApi1HandlerFactory>())));
+                    .WithHandlerRegistry<PublicApi1HandlerRegistry>())));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       container.RegisterInstance(GetLoggerFactory());
@@ -133,6 +133,7 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<KafkaDriverFactory>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
       container.RegisterSingleton<PublicApi1QueueNamePatternsProvider>();
+      container.RegisterSingleton<PublicApi1HandlerRegistry>();
 
       container.Verify();
     }

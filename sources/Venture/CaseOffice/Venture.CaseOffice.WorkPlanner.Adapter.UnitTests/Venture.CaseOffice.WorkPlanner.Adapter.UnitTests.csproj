@@ -9,7 +9,11 @@
   <ItemGroup>
     <PackageReference Include="FlatSharp" Version="4.1.0" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.InMemory" Version="0.6.0" />
+    <PackageReference Include="SimpleInjector" Version="5.2.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,8 +26,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj" />
     <ProjectReference Include="..\Venture.CaseOffice.WorkPlanner.Adapter\Venture.CaseOffice.WorkPlanner.Adapter.csproj" />
     <ProjectReference Include="..\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\3.1.10\ref\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

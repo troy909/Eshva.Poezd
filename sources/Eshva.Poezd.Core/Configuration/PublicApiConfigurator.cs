@@ -31,10 +31,10 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public PublicApiConfigurator WithHandlerFactory<THandlerFactoryType>()
-      where THandlerFactoryType : IHandlerFactory
+    public PublicApiConfigurator WithHandlerRegistry<THandlerRegistryType>()
+      where THandlerRegistryType : IHandlerRegistry
     {
-      _configuration.HandlerFactoryType = typeof(THandlerFactoryType);
+      _configuration.HandlerRegistryType = typeof(THandlerRegistryType);
       return this;
     }
 

@@ -1,7 +1,7 @@
-namespace Venture.WorkPlanner.Messages
+namespace Venture.CaseOffice.Application
 {
   /// <summary>
-  /// Work Planner messages assembly tag.
+  /// Case Office message handlers assembly tag.
   /// </summary>
   /// <remarks>
   /// Used to identify this assembly when searching for types in this assembly with reflection.

@@ -21,7 +21,7 @@ namespace Eshva.Poezd.Core.Pipeline
 
     public Task Execute(IPocket context)
     {
-      var handlers = context.GetContextVariable<IEnumerable<IHandleMessage>>(ContextKeys.MessageHandling.Handlers);
+      var handlers = context.GetContextVariable<IEnumerable<IHandleMessage>>(ContextKeys.Application.Handlers);
       var message = context.GetContextVariable<object>(ContextKeys.Application.MessagePayload);
 
       return _messageHandlersExecutionStrategy.Execute(

@@ -35,20 +35,46 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter
       var handlers = handlerTypes
         .Select(handlerType => _serviceProvider.GetService(handlerType))
         .Where(handler => handler != null)
-        .Select(handler => MakeHandlerAdapter(handler, messageType));
+        .Select(handler => MakeHandlerDescriptor(handler, messageType));
 
-      context.Put(ContextKeys.MessageHandling.Handlers, handlers);
+      context.Put(ContextKeys.Application.Handlers, handlers);
       return Task.CompletedTask;
     }
 
-    private static Func<object, VentureContext, Task> MakeHandlerAdapter(object handler, Type messageType)
+    private static HandlerDescriptor MakeHandlerDescriptor(object handler, Type messageType)
     {
-      var handleMethod = handler.GetType().GetMethod(
+      var type = handler.GetType();
+      var handleMethod = type.GetMethod(
         nameof(IHandleMessageOfType<object>.Handle),
         new[] {messageType, typeof(VentureContext)});
+      Func<object, VentureContext, Task> onHandle = (message, context) => (Task) handleMethod!.Invoke(handler, new[] {message, context});
 
-      return (message, context) => (Task) handleMethod!.Invoke(handler, new[] {message, context});
+      Func<object, VentureContext, Task> onCommit = null;
+      if (CanCommit(type))
+      {
+        var commitMethod = type.GetMethod(nameof(ICanCommit<object>.Commit), new[] {messageType, typeof(VentureContext)});
+        onCommit = (message, context) => (Task) commitMethod!.Invoke(handler, new[] {message, context});
+      }
+
+      Func<object, VentureContext, Task> onCompensate = null;
+      if (CanCompensate(type))
+      {
+        var compensateMethod = type.GetMethod(nameof(ICanCompensate<object>.Compensate), new[] {messageType, typeof(VentureContext)});
+        onCompensate = (message, context) => (Task) compensateMethod!.Invoke(handler, new[] {message, context});
+      }
+
+      return new HandlerDescriptor(
+        type,
+        onHandle,
+        onCommit,
+        onCompensate);
     }
+
+    private static bool CanCompensate(Type type) =>
+      type.GetInterfaces().Any(@interface => @interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(ICanCompensate<>));
+
+    private static bool CanCommit(Type type) =>
+      type.GetInterfaces().Any(@interface => @interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(ICanCommit<>));
 
     private readonly IHandlerRegistry _handlerRegistry;
     private readonly IServiceProvider _serviceProvider;

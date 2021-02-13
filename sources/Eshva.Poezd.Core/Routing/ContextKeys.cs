@@ -131,19 +131,15 @@ namespace Eshva.Poezd.Core.Routing
       public const string CausationId = Prefix + "correlation-id";
 
       private const string Prefix = "application-";
-    }
 
-    public static class MessageHandling
-    {
       /// <summary>
       /// The key of message handler list for the current message.
       /// </summary>
       /// <value>
-      /// The value is IEnumerable&lt;Func&lt;object, YourContextType, Task&gt;&gt;.
+      /// The type of value depends on Poezd to service adapter. In the simplest variation in could be
+      /// IEnumerable&lt;Func&lt;object, YourContextType, Task&gt;&gt;.
       /// </value>
       public const string Handlers = Prefix + "handlers";
-
-      private const string Prefix = "message-handling-";
     }
   }
 }

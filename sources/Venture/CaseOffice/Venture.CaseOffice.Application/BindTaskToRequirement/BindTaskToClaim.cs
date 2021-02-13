@@ -12,9 +12,9 @@ namespace Venture.CaseOffice.Application.BindTaskToRequirement
   /// <summary>
   /// Binds a task created in the Work Planner to the case requirement it planned for.
   /// </summary>
-  public class BindTaskToRequirement : IHandleMessageOfType<TaskCreated>
+  public class BindTaskToClaim : IHandleMessageOfType<TaskCreated>
   {
-    public BindTaskToRequirement(ILogger<BindTaskToRequirement> logger)
+    public BindTaskToClaim(ILogger<BindTaskToClaim> logger)
     {
       _logger = logger;
     }
@@ -26,6 +26,6 @@ namespace Venture.CaseOffice.Application.BindTaskToRequirement
       return Task.CompletedTask;
     }
 
-    private readonly ILogger<BindTaskToRequirement> _logger;
+    private readonly ILogger<BindTaskToClaim> _logger;
   }
 }

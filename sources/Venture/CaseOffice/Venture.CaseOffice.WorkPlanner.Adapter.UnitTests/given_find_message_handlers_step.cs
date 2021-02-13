@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -42,7 +41,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
 
       await sut.Execute(context);
 
-      var foundHandlers = context.TakeOrNull<IEnumerable<Func<object, VentureContext, Task>>>(ContextKeys.MessageHandling.Handlers);
+      var foundHandlers = context.TakeOrNull<IEnumerable<Func<object, VentureContext, Task>>>(ContextKeys.Application.Handlers);
       var taskCreatedHandler = foundHandlers.Single();
       taskCreatedHandler.Should().BeOfType<Func<object, VentureContext, Task>>("should find the handler for the message");
       await taskCreatedHandler(new TaskCreated(), new VentureContext());
@@ -55,7 +54,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       var container = CreateContainerWithLogging();
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new FindMessageHandlersStep(null, container);
+      Action sut = () => new FindMessageHandlersStep(handlerRegistry: null, container);
       sut.Should().Throw<ArgumentNullException>("handlersRegistry is required");
     }
 
@@ -64,7 +63,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new FindMessageHandlersStep(new WorkPlannerHandlersRegistry(), null);
+      Action sut = () => new FindMessageHandlersStep(new WorkPlannerHandlersRegistry(), serviceProvider: null);
       sut.Should().Throw<ArgumentNullException>("handlersRegistry is required");
     }
 
@@ -76,7 +75,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       var step = new FindMessageHandlersStep(handlersRegistry, container);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
-      Action sut = () => step.Execute(null);
+      Action sut = () => step.Execute(context: null);
       sut.Should().Throw<ArgumentNullException>("context is required");
     }
 

@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
@@ -15,7 +14,6 @@ using Xunit;
 
 namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_extract_message_type_step
   {
     [Fact]

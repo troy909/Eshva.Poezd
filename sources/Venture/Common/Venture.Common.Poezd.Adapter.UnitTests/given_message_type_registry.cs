@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Eshva.Poezd.Core.Common;
 using FlatSharp;
 using FluentAssertions;
@@ -12,7 +11,6 @@ using Xunit;
 
 namespace Venture.Common.Poezd.Adapter.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_message_type_registry
   {
     [Fact]

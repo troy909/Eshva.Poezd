@@ -2,19 +2,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
-using Venture.Common.Poezd.Adapter;
 using Xunit;
 
 #endregion
 
 namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_extract_relation_metadata_step
   {
     [Fact]

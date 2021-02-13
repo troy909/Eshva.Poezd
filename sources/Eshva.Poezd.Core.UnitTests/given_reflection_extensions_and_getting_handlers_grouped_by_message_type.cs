@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Eshva.Poezd.Core.Common;
 using FluentAssertions;
 using Xunit;
@@ -10,7 +9,6 @@ using Xunit;
 
 namespace Eshva.Poezd.Core.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_reflection_extensions_and_getting_handlers_grouped_by_message_type
   {
     [Fact]
@@ -58,9 +56,9 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_message_handler_interface_not_provided_it_should_throw()
     {
-      var assemblies = new[] { typeof(H11).Assembly };
+      var assemblies = new[] {typeof(H11).Assembly};
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
-      Action sut = () => assemblies.GetHandlersGroupedByMessageType(null);
+      Action sut = () => assemblies.GetHandlersGroupedByMessageType(messageHandlerInterface: null);
       sut.Should().Throw<ArgumentNullException>().Where(
         exception => exception.ParamName.Equals("messageHandlerInterface"),
         "message handler interface type should be specified");
@@ -69,7 +67,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_message_handler_interface_is_not_interface_type_it_should_throw()
     {
-      var assemblies = new[] { typeof(H11).Assembly };
+      var assemblies = new[] {typeof(H11).Assembly};
       Action sut = () => assemblies.GetHandlersGroupedByMessageType(typeof(H11));
       sut.Should().ThrowExactly<ArgumentException>().Where(
         exception => exception.ParamName.Equals("messageHandlerInterface"),

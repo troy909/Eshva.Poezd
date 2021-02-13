@@ -1,20 +1,16 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
+using Eshva.Common.TestTools;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Serilog;
 using Serilog.Sinks.InMemory;
-using SimpleInjector;
-using Venture.Common.Application.MessageHandling;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
@@ -22,13 +18,12 @@ using Xunit;
 
 namespace Venture.Common.Poezd.Adapter.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_execute_message_handlers_step
   {
     [Fact]
     public async Task when_executed_with_filled_context_it_should_execute_all_handlers_in_it()
     {
-      var container = CreateContainerWithLogging();
+      var container = Logging.CreateContainerWithLogging();
       var sut = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
         new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
@@ -36,11 +31,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var handler1 = new MessageHandler();
       var handler2 = new MessageHandler();
       var handler3 = new MessageHandler();
-      var handlers = CreateHandlerDescriptors(
+      var handlers = VentureContextTools.CreateHandlerDescriptors(
         handler1,
         handler2,
         handler3);
-      var context = CreateFilledContext(new Message02(), handlers);
+      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
 
       await sut.Execute(context);
 
@@ -73,7 +68,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_without_required_context_items_it_should_throw()
     {
-      var container = CreateContainerWithLogging();
+      var container = Logging.CreateContainerWithLogging();
       var step = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
         new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
@@ -81,34 +76,34 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       IPocket context = null;
       // ReSharper disable once AccessToModifiedClosure - it's a test.
       Func<Task> sut = () => step.Execute(context!);
-      context = CreateContextWithout(ContextKeys.Application.MessageType);
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.MessageType);
       sut.Should().Throw<PoezdOperationException>();
-      context = CreateContextWithout(ContextKeys.Broker.QueueName);
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.QueueName);
       sut.Should().Throw<PoezdOperationException>();
-      context = CreateContextWithout(ContextKeys.Application.Handlers);
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.Handlers);
       sut.Should().Throw<PoezdOperationException>();
-      context = CreateContextWithout(ContextKeys.Application.MessageId);
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.MessageId);
       sut.Should().NotThrow<PoezdOperationException>();
-      context = CreateContextWithout(ContextKeys.Application.CorrelationId);
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.CorrelationId);
       sut.Should().NotThrow<PoezdOperationException>();
-      context = CreateContextWithout(ContextKeys.Application.CausationId);
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.CausationId);
       sut.Should().NotThrow<PoezdOperationException>();
-      context = CreateContextWithout(ContextKeys.Broker.ReceivedOnUtc);
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.ReceivedOnUtc);
       sut.Should().NotThrow<PoezdOperationException>();
     }
 
     [Fact]
     public void when_executed_with_3_handlers_it_should_execute_them_in_parallel()
     {
-      var container = CreateContainerWithLogging();
+      var container = Logging.CreateContainerWithLogging();
       var step = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
         new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
-      var handlers = CreateHandlerDescriptors(
+      var handlers = VentureContextTools.CreateHandlerDescriptors(
         new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
         new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
         new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)));
-      var context = CreateFilledContext(new Message02(), handlers);
+      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
 
       Func<Task> sut = () => step.Execute(context);
       sut.ExecutionTime().Should().BeCloseTo(TimeSpan.FromMilliseconds(value: 100), TimeSpan.FromMilliseconds(value: 50));
@@ -117,12 +112,12 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public async Task when_executed_it_should_log_start_end_finish_of_each_handler()
     {
-      var container = CreateContainerWithLogging();
-      var handlers = CreateHandlerDescriptors(
+      var container = Logging.CreateContainerWithLogging();
+      var handlers = VentureContextTools.CreateHandlerDescriptors(
         new MessageHandler(),
         new MessageHandler(),
         new MessageHandler());
-      var context = CreateFilledContext(new Message02(), handlers);
+      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
 
       var sut = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
@@ -141,12 +136,12 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public async Task when_executed_and_one_of_handlers_throws_it_should_log_exception_but_other_should_be_successive()
     {
-      var container = CreateContainerWithLogging();
-      var handlers = CreateHandlerDescriptors(
+      var container = Logging.CreateContainerWithLogging();
+      var handlers = VentureContextTools.CreateHandlerDescriptors(
         new MessageHandler(),
         new MessageHandler(),
         new ThrowingHandler());
-      var context = CreateFilledContext(new Message02(), handlers);
+      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
 
       var sut = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
@@ -159,85 +154,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
       logs.Count(log => log.StartsWith("Finish to execute a message handler")).Should().Be(expected: 2);
       logs.Should().Contain(log => log.StartsWith("Exception thrown during execution of message handler"));
-    }
-
-    private static IEnumerable<HandlerDescriptor> CreateHandlerDescriptors(params IHandleMessageOfType<Message02>[] handlers) =>
-      handlers.Select(
-        handler => new HandlerDescriptor(
-          handler.GetType(),
-          (message, ventureContext) => handler.Handle((Message02) message, ventureContext)));
-
-
-    private IPocket CreateContextWithout(string itemKey)
-    {
-      var context = CreateFilledContext(new Message02(), new HandlerDescriptor[0]);
-      context.TryRemove(itemKey);
-      return context;
-    }
-
-
-    private IPocket CreateFilledContext(object message, IEnumerable<HandlerDescriptor> handlers)
-    {
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Application.MessagePayload, message)
-        .Put(ContextKeys.Application.MessageType, message.GetType())
-        .Put(ContextKeys.Application.MessageId, Guid.NewGuid().ToString("N"))
-        .Put(ContextKeys.Application.CorrelationId, Guid.NewGuid().ToString("N"))
-        .Put(ContextKeys.Application.CausationId, Guid.NewGuid().ToString("N"))
-        .Put(ContextKeys.Broker.QueueName, "case.facts.tasks.v1")
-        .Put(ContextKeys.Application.Handlers, handlers)
-        .Put(ContextKeys.Broker.ReceivedOnUtc, DateTimeOffset.UtcNow);
-
-
-      return context;
-    }
-
-    private static Container CreateContainerWithLogging()
-    {
-      var container = new Container();
-      container.RegisterInstance(GetLoggerFactory());
-      container.Register(
-        typeof(ILogger<>),
-        typeof(Logger<>),
-        Lifestyle.Singleton);
-      return container;
-    }
-
-    private static ILoggerFactory GetLoggerFactory() =>
-      new LoggerFactory().AddSerilog(
-        new LoggerConfiguration()
-          .WriteTo.InMemory()
-          .MinimumLevel.Verbose()
-          .CreateLogger());
-
-    private class MessageHandler : IHandleMessageOfType<Message02>
-    {
-      public bool IsExecuted { get; private set; }
-
-      public Task Handle(Message02 message, VentureContext context)
-      {
-        IsExecuted = true;
-        return Task.CompletedTask;
-      }
-    }
-
-    private class ThrowingHandler : IHandleMessageOfType<Message02>
-    {
-      public Task Handle(Message02 message, VentureContext context) => throw new Exception(TestFail);
-
-      private const string TestFail = "test fail";
-    }
-
-    private class DelayedMessageHandler : IHandleMessageOfType<Message02>
-    {
-      public DelayedMessageHandler(TimeSpan timeout)
-      {
-        _timeout = timeout;
-      }
-
-      public Task Handle(Message02 message, VentureContext context) => Task.Delay(_timeout);
-
-      private readonly TimeSpan _timeout;
     }
   }
 }

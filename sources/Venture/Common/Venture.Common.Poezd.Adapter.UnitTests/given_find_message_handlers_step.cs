@@ -2,16 +2,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
+using Eshva.Common.TestTools;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Serilog;
 using Serilog.Sinks.InMemory;
-using SimpleInjector;
 using Venture.Common.Application.MessageHandling;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
@@ -20,15 +17,14 @@ using Xunit;
 
 namespace Venture.Common.Poezd.Adapter.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_find_message_handlers_step
   {
     [Fact]
     public async Task when_executed_with_message_type_within_context_it_should_find_handlers_for_this_message_and_store_them_in_context()
     {
-      var container = CreateContainerWithLogging();
+      var container = Logging.CreateContainerWithLogging();
 
-      var handlersRegistry = new VentureServiceHandlersRegistry(new[] { typeof(Message01Handler).Assembly }, typeof(Message01).Namespace);
+      var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}, typeof(Message01).Namespace);
       var handlers = handlersRegistry.HandlersGroupedByMessageType[typeof(Message01)];
       foreach (var handler in handlers)
       {
@@ -51,7 +47,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_constructed_without_handlers_registry_it_should_throw()
     {
-      var container = CreateContainerWithLogging();
+      var container = Logging.CreateContainerWithLogging();
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       // ReSharper disable once ObjectCreationAsStatement
       Action sut = () => new FindMessageHandlersStep(handlerRegistry: null, container);
@@ -63,38 +59,22 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new FindMessageHandlersStep(new VentureServiceHandlersRegistry(new[] { typeof(Message01Handler).Assembly }, typeof(Message01).Namespace), serviceProvider: null);
+      Action sut = () => new FindMessageHandlersStep(
+        new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}, typeof(Message01).Namespace),
+        serviceProvider: null);
       sut.Should().Throw<ArgumentNullException>("handlersRegistry is required");
     }
 
     [Fact]
     public void when_executed_without_context_it_should_throw()
     {
-      var container = CreateContainerWithLogging();
-      var handlersRegistry = new VentureServiceHandlersRegistry(new[] { typeof(Message01Handler).Assembly }, typeof(Message01).Namespace);
+      var container = Logging.CreateContainerWithLogging();
+      var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}, typeof(Message01).Namespace);
       var step = new FindMessageHandlersStep(handlersRegistry, container);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       Action sut = () => step.Execute(context: null);
       sut.Should().Throw<ArgumentNullException>("context is required");
     }
-
-    private static Container CreateContainerWithLogging()
-    {
-      var container = new Container();
-      container.RegisterInstance(GetLoggerFactory());
-      container.Register(
-        typeof(ILogger<>),
-        typeof(Logger<>),
-        Lifestyle.Singleton);
-      return container;
-    }
-
-    private static ILoggerFactory GetLoggerFactory() =>
-      new LoggerFactory().AddSerilog(
-        new LoggerConfiguration()
-          .WriteTo.InMemory()
-          .MinimumLevel.Verbose()
-          .CreateLogger());
   }
 }

@@ -1,14 +1,12 @@
 #region Usings
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FlatSharp;
 using FluentAssertions;
-using Venture.Common.Poezd.Adapter;
 using Venture.WorkPlanner.Messages.V1.Events;
 using Xunit;
 
@@ -16,7 +14,6 @@ using Xunit;
 
 namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_deserialize_message_step
   {
     [Fact]

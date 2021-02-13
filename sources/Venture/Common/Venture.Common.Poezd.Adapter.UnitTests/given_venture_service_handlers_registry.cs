@@ -1,16 +1,13 @@
 #region Usings
 
-using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
-using Venture.WorkPlanner.Messages.V1.Events;
 using Xunit;
 
 #endregion
 
 namespace Venture.Common.Poezd.Adapter.UnitTests
 {
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_venture_service_handlers_registry
   {
     [Fact]

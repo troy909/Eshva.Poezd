@@ -13,7 +13,7 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Executes all found message handlers, collects theirs commit decisions and stores them in the message handling context.

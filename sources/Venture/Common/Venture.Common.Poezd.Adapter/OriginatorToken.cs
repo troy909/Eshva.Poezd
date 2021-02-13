@@ -1,4 +1,4 @@
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Work Planner JWT token structure.

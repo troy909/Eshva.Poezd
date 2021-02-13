@@ -7,7 +7,7 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   public readonly struct HandlerDescriptor
   {

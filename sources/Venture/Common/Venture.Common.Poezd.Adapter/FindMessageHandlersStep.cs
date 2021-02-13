@@ -11,7 +11,7 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Finds all message handlers for a message stored as a POCO in the message handling context.

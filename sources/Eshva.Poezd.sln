@@ -51,13 +51,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.TestingTools
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.KafkaCoupling.UnitTests", "Eshva.Poezd.KafkaCoupling.UnitTests\Eshva.Poezd.KafkaCoupling.UnitTests.csproj", "{814EBF90-598E-41B5-AF38-3A75F2E0A388}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlanner.Adapter", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Adapter\Venture.CaseOffice.WorkPlanner.Adapter.csproj", "{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.WorkPlanner.Adapter", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Adapter\Venture.CaseOffice.WorkPlanner.Adapter.csproj", "{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlanner.Messages", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj", "{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.WorkPlanner.Messages", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj", "{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Common.UnitTests", "Eshva.Common.UnitTests\Eshva.Common.UnitTests.csproj", "{B07264FF-37AC-492C-B5BC-64ED7547D8F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Common.UnitTests", "Eshva.Common.UnitTests\Eshva.Common.UnitTests.csproj", "{B07264FF-37AC-492C-B5BC-64ED7547D8F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.WorkPlanner.Adapter.UnitTests", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Adapter.UnitTests\Venture.CaseOffice.WorkPlanner.Adapter.UnitTests.csproj", "{5A858335-7E9C-4CB6-A891-A21C7E6508D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.WorkPlanner.Adapter.UnitTests", "Venture\CaseOffice\Venture.CaseOffice.WorkPlanner.Adapter.UnitTests\Venture.CaseOffice.WorkPlanner.Adapter.UnitTests.csproj", "{5A858335-7E9C-4CB6-A891-A21C7E6508D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.Poezd.Adapter", "Venture\Common\Venture.Common.Poezd.Adapter\Venture.Common.Poezd.Adapter.csproj", "{0810CA03-EEA3-4714-B753-FF67F969E85E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.Poezd.Adapter.UnitTests", "Venture\Common\Venture.Common.Poezd.Adapter.UnitTests\Venture.Common.Poezd.Adapter.UnitTests.csproj", "{2C4588F0-7DC4-4127-9528-B70253C25E2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +161,14 @@ Global
 		{5A858335-7E9C-4CB6-A891-A21C7E6508D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A858335-7E9C-4CB6-A891-A21C7E6508D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A858335-7E9C-4CB6-A891-A21C7E6508D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0810CA03-EEA3-4714-B753-FF67F969E85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0810CA03-EEA3-4714-B753-FF67F969E85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0810CA03-EEA3-4714-B753-FF67F969E85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0810CA03-EEA3-4714-B753-FF67F969E85E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C4588F0-7DC4-4127-9528-B70253C25E2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4588F0-7DC4-4127-9528-B70253C25E2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4588F0-7DC4-4127-9528-B70253C25E2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4588F0-7DC4-4127-9528-B70253C25E2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +192,8 @@ Global
 		{B6C10250-B8C2-4FDD-A44E-50C5C9114FF7} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
 		{8114BB6B-0387-4EC5-8FAF-4C698FDFFFF0} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
 		{5A858335-7E9C-4CB6-A891-A21C7E6508D2} = {B5C1E7B7-C9BE-4DC4-A124-24F402EC6F04}
+		{0810CA03-EEA3-4714-B753-FF67F969E85E} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
+		{2C4588F0-7DC4-4127-9528-B70253C25E2E} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

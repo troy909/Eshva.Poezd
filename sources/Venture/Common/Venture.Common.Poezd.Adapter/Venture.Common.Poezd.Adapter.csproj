@@ -10,9 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
-    <ProjectReference Include="..\..\Common\Venture.Common.Poezd.Adapter\Venture.Common.Poezd.Adapter.csproj" />
-    <ProjectReference Include="..\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj" />
-    <ProjectReference Include="..\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj" />
+    <ProjectReference Include="..\..\CaseOffice\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj" />
+    <ProjectReference Include="..\Venture.Common.Application\Venture.Common.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,12 +15,12 @@ using Serilog;
 using Serilog.Sinks.InMemory;
 using SimpleInjector;
 using Venture.Common.Application.MessageHandling;
-using Venture.WorkPlanner.Messages.V1.Events;
+using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
+namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_execute_message_handlers_step
@@ -36,14 +36,11 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       var handler1 = new MessageHandler();
       var handler2 = new MessageHandler();
       var handler3 = new MessageHandler();
-      var handlers = new Func<object, VentureContext, Task>[]
-      {
-        (message, ventureContext) => handler1.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler2.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler3.Handle((TaskCreated) message, ventureContext)
-      };
-
-      var context = CreateFilledContext(new TaskCreated(), handlers);
+      var handlers = CreateHandlerDescriptors(
+        handler1,
+        handler2,
+        handler3);
+      var context = CreateFilledContext(new Message02(), handlers);
 
       await sut.Execute(context);
 
@@ -62,14 +59,15 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
         new ParallelHandlersExecutionPolicy(new NullLogger<ParallelHandlersExecutionPolicy>()));
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("logger"));
     }
+
     [Fact]
     public void when_constructed_without_handlers_execution_policy_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       Action sut = () => new ExecuteMessageHandlersStep(
-        logger: new NullLogger<ExecuteMessageHandlersStep>(),
-        null);
-      sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("logger"));
+        new NullLogger<ExecuteMessageHandlersStep>(),
+        executionPolicy: null);
+      sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("executionPolicy"));
     }
 
     [Fact]
@@ -106,39 +104,25 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       var step = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
         new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
-
-      var handler1 = new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100));
-      var handler2 = new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 200));
-      var handler3 = new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 300));
-      var handlers = new Func<object, VentureContext, Task>[]
-      {
-        (message, ventureContext) => handler1.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler2.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler3.Handle((TaskCreated) message, ventureContext)
-      };
-
-      var context = CreateFilledContext(new TaskCreated(), handlers);
+      var handlers = CreateHandlerDescriptors(
+        new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
+        new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
+        new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)));
+      var context = CreateFilledContext(new Message02(), handlers);
 
       Func<Task> sut = () => step.Execute(context);
-      sut.ExecutionTime().Should().BeCloseTo(TimeSpan.FromMilliseconds(value: 300), TimeSpan.FromMilliseconds(value: 50));
+      sut.ExecutionTime().Should().BeCloseTo(TimeSpan.FromMilliseconds(value: 100), TimeSpan.FromMilliseconds(value: 50));
     }
 
     [Fact]
     public async Task when_executed_it_should_log_start_end_finish_of_each_handler()
     {
       var container = CreateContainerWithLogging();
-
-      var handler1 = new MessageHandler();
-      var handler2 = new MessageHandler();
-      var handler3 = new MessageHandler();
-      var handlers = new Func<object, VentureContext, Task>[]
-      {
-        (message, ventureContext) => handler1.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler2.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler3.Handle((TaskCreated) message, ventureContext)
-      };
-
-      var context = CreateFilledContext(new TaskCreated(), handlers);
+      var handlers = CreateHandlerDescriptors(
+        new MessageHandler(),
+        new MessageHandler(),
+        new MessageHandler());
+      var context = CreateFilledContext(new Message02(), handlers);
 
       var sut = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
@@ -146,30 +130,23 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
 
       await sut.Execute(context);
       var logs = InMemorySink.Instance.LogEvents.Select(log => log.RenderMessage()).ToArray();
-      logs.Should().Contain(log => log.Equals("Started to execute a message handler #1."));
-      logs.Should().Contain(log => log.Equals("Started to execute a message handler #2."));
-      logs.Should().Contain(log => log.Equals("Started to execute a message handler #3."));
-      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler #1 in "));
-      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler #2 in "));
-      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler #3 in "));
+      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
+      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
+      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
+      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler"));
+      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler"));
+      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler"));
     }
 
     [Fact]
     public async Task when_executed_and_one_of_handlers_throws_it_should_log_exception_but_other_should_be_successive()
     {
       var container = CreateContainerWithLogging();
-
-      var handler1 = new MessageHandler();
-      var handler2 = new MessageHandler();
-      var handler3 = new ThrowingHandler();
-      var handlers = new Func<object, VentureContext, Task>[]
-      {
-        (message, ventureContext) => handler1.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler2.Handle((TaskCreated) message, ventureContext),
-        (message, ventureContext) => handler3.Handle((TaskCreated) message, ventureContext)
-      };
-
-      var context = CreateFilledContext(new TaskCreated(), handlers);
+      var handlers = CreateHandlerDescriptors(
+        new MessageHandler(),
+        new MessageHandler(),
+        new ThrowingHandler());
+      var context = CreateFilledContext(new Message02(), handlers);
 
       var sut = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
@@ -177,23 +154,29 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
 
       await sut.Execute(context);
       var logs = InMemorySink.Instance.LogEvents.Select(log => log.RenderMessage()).ToArray();
-      logs.Should().Contain(log => log.Equals("Started to execute a message handler #1."));
-      logs.Should().Contain(log => log.Equals("Started to execute a message handler #2."));
-      logs.Should().Contain(log => log.Equals("Started to execute a message handler #3."));
-      logs.Count(log => log.StartsWith("Finish to execute a message handler #")).Should().Be(expected: 2);
-      logs.Should().Contain(log => log.StartsWith("Exception thrown during execution of message handler #"));
+      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
+      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
+      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
+      logs.Count(log => log.StartsWith("Finish to execute a message handler")).Should().Be(expected: 2);
+      logs.Should().Contain(log => log.StartsWith("Exception thrown during execution of message handler"));
     }
+
+    private static IEnumerable<HandlerDescriptor> CreateHandlerDescriptors(params IHandleMessageOfType<Message02>[] handlers) =>
+      handlers.Select(
+        handler => new HandlerDescriptor(
+          handler.GetType(),
+          (message, ventureContext) => handler.Handle((Message02) message, ventureContext)));
 
 
     private IPocket CreateContextWithout(string itemKey)
     {
-      var context = CreateFilledContext(new TaskCreated(), new Func<object, VentureContext, Task>[0]);
+      var context = CreateFilledContext(new Message02(), new HandlerDescriptor[0]);
       context.TryRemove(itemKey);
       return context;
     }
 
 
-    private IPocket CreateFilledContext(object message, IEnumerable<Func<object, VentureContext, Task>> handlers)
+    private IPocket CreateFilledContext(object message, IEnumerable<HandlerDescriptor> handlers)
     {
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Application.MessagePayload, message)
@@ -227,32 +210,32 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
           .MinimumLevel.Verbose()
           .CreateLogger());
 
-    private class MessageHandler : IHandleMessageOfType<TaskCreated>
+    private class MessageHandler : IHandleMessageOfType<Message02>
     {
       public bool IsExecuted { get; private set; }
 
-      public Task Handle(TaskCreated message, VentureContext context)
+      public Task Handle(Message02 message, VentureContext context)
       {
         IsExecuted = true;
         return Task.CompletedTask;
       }
     }
 
-    private class ThrowingHandler : IHandleMessageOfType<TaskCreated>
+    private class ThrowingHandler : IHandleMessageOfType<Message02>
     {
-      public Task Handle(TaskCreated message, VentureContext context) => throw new Exception(TestFail);
+      public Task Handle(Message02 message, VentureContext context) => throw new Exception(TestFail);
 
       private const string TestFail = "test fail";
     }
 
-    private class DelayedMessageHandler : IHandleMessageOfType<TaskCreated>
+    private class DelayedMessageHandler : IHandleMessageOfType<Message02>
     {
       public DelayedMessageHandler(TimeSpan timeout)
       {
         _timeout = timeout;
       }
 
-      public Task Handle(TaskCreated message, VentureContext context) => Task.Delay(_timeout);
+      public Task Handle(Message02 message, VentureContext context) => Task.Delay(_timeout);
 
       private readonly TimeSpan _timeout;
     }

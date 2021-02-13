@@ -13,12 +13,12 @@ using Serilog;
 using Serilog.Sinks.InMemory;
 using SimpleInjector;
 using Venture.Common.Application.MessageHandling;
-using Venture.WorkPlanner.Messages.V1.Events;
+using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
+namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_find_message_handlers_step
@@ -28,8 +28,8 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     {
       var container = CreateContainerWithLogging();
 
-      var handlersRegistry = new WorkPlannerHandlersRegistry();
-      var handlers = handlersRegistry.HandlersGroupedByMessageType[typeof(TaskCreated)];
+      var handlersRegistry = new VentureServiceHandlersRegistry(new[] { typeof(Message01Handler).Assembly }, typeof(Message01).Namespace);
+      var handlers = handlersRegistry.HandlersGroupedByMessageType[typeof(Message01)];
       foreach (var handler in handlers)
       {
         container.Register(handler);
@@ -37,15 +37,15 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
 
       var sut = new FindMessageHandlersStep(handlersRegistry, container);
       var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Application.MessageType, typeof(TaskCreated));
+      context.Put(ContextKeys.Application.MessageType, typeof(Message01));
 
       await sut.Execute(context);
 
-      var foundHandlers = context.TakeOrNull<IEnumerable<Func<object, VentureContext, Task>>>(ContextKeys.Application.Handlers);
-      var taskCreatedHandler = foundHandlers.Single();
-      taskCreatedHandler.Should().BeOfType<Func<object, VentureContext, Task>>("should find the handler for the message");
-      await taskCreatedHandler(new TaskCreated(), new VentureContext());
-      InMemorySink.Instance.LogEvents.Should().Contain(@event => @event.MessageTemplate.Text.Contains(nameof(TaskCreated)));
+      var foundHandlers = context.TakeOrNull<IEnumerable<HandlerDescriptor>>(ContextKeys.Application.Handlers);
+      var singleHandler = foundHandlers.Single();
+      singleHandler.Should().BeOfType<HandlerDescriptor>("should find the handler for the message");
+      await singleHandler.OnHandle(new Message01(), new VentureContext());
+      InMemorySink.Instance.LogEvents.Should().Contain(@event => @event.MessageTemplate.Text.Contains(nameof(Message01)));
     }
 
     [Fact]
@@ -63,7 +63,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new FindMessageHandlersStep(new WorkPlannerHandlersRegistry(), serviceProvider: null);
+      Action sut = () => new FindMessageHandlersStep(new VentureServiceHandlersRegistry(new[] { typeof(Message01Handler).Assembly }, typeof(Message01).Namespace), serviceProvider: null);
       sut.Should().Throw<ArgumentNullException>("handlersRegistry is required");
     }
 
@@ -71,7 +71,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     public void when_executed_without_context_it_should_throw()
     {
       var container = CreateContainerWithLogging();
-      var handlersRegistry = new WorkPlannerHandlersRegistry();
+      var handlersRegistry = new VentureServiceHandlersRegistry(new[] { typeof(Message01Handler).Assembly }, typeof(Message01).Namespace);
       var step = new FindMessageHandlersStep(handlersRegistry, container);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.

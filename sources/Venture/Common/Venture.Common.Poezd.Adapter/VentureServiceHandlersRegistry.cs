@@ -6,23 +6,19 @@ using System.Linq;
 using System.Reflection;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
-using Venture.CaseOffice.Application;
 using Venture.Common.Application.MessageHandling;
-using Venture.WorkPlanner.Messages.V1.Events;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
-  public class WorkPlannerHandlersRegistry : IHandlerRegistry
+  public class VentureServiceHandlersRegistry : IHandlerRegistry
   {
-    public WorkPlannerHandlersRegistry()
+    public VentureServiceHandlersRegistry(IEnumerable<Assembly> messageHandlersAssemblies, string messagesNamespace)
     {
-      var messageHandlersAssemblies = new[] {Assembly.GetAssembly(typeof(AssemblyTag))};
-
       HandlersGroupedByMessageType = messageHandlersAssemblies
         .GetHandlersGroupedByMessageType(typeof(IHandleMessageOfType<>))
-        .Where(pair => pair.Key.FullName!.StartsWith(typeof(TaskCreated).Namespace!))
+        .Where(pair => pair.Key.FullName!.StartsWith(messagesNamespace))
         .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 

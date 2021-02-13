@@ -10,7 +10,7 @@ using Xunit;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
+namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class given_message_type_registry

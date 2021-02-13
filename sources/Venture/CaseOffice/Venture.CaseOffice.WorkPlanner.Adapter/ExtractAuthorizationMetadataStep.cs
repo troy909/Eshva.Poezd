@@ -6,7 +6,7 @@ using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Extracts authorization metadata from API message metadata stored as <see cref="OriginatorToken" />.

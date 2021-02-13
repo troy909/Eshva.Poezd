@@ -8,6 +8,7 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FlatSharp;
 using FluentAssertions;
+using Venture.Common.Poezd.Adapter;
 using Venture.WorkPlanner.Messages.V1.Events;
 using Xunit;
 

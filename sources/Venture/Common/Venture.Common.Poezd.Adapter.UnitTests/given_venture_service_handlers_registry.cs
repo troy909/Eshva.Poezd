@@ -11,7 +11,7 @@ using Xunit;
 namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public class given_work_planner_handlers_registry
+  public class given_venture_service_handlers_registry
   {
     [Fact]
     public void when_created_it_should_provide_handler_types_grouped_by_handled_message_type()

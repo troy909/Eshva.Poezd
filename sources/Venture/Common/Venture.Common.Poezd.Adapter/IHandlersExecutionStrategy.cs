@@ -8,11 +8,11 @@ using Venture.Common.Application.MessageHandling;
 
 namespace Venture.Common.Poezd.Adapter
 {
-  public interface IHandlersExecutionPolicy
+  public interface IHandlersExecutionStrategy
   {
     Task ExecuteHandlers(
       IEnumerable<HandlerDescriptor> handlers,
       object message,
-      VentureContext messageHandlingContext);
+      VentureContext context);
   }
 }

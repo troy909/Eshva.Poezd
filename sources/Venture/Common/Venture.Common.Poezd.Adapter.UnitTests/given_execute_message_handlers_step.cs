@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
 using Eshva.Common.TestTools;
@@ -10,7 +9,6 @@ using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Serilog.Sinks.InMemory;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
@@ -26,7 +24,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var container = Logging.CreateContainerWithLogging();
       var sut = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
-        new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
+        new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>()));
 
       var handler1 = new MessageHandler();
       var handler2 = new MessageHandler();
@@ -39,7 +37,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       await sut.Execute(context);
 
-      // check results
       handler1.IsExecuted.Should().BeTrue("handler #1 should be called");
       handler2.IsExecuted.Should().BeTrue("handler #2 should be called");
       handler3.IsExecuted.Should().BeTrue("handler #3 should be called");
@@ -48,21 +45,21 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_constructed_without_logger_it_should_throw()
     {
-      // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => new ExecuteMessageHandlersStep(
         logger: null,
-        new ParallelHandlersExecutionPolicy(new NullLogger<ParallelHandlersExecutionPolicy>()));
+        new ParallelHandlersExecutionStrategy(new NullLogger<ParallelHandlersExecutionStrategy>()));
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("logger"));
     }
 
     [Fact]
     public void when_constructed_without_handlers_execution_policy_it_should_throw()
     {
-      // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => new ExecuteMessageHandlersStep(
         new NullLogger<ExecuteMessageHandlersStep>(),
-        executionPolicy: null);
-      sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("executionPolicy"));
+        executionStrategy: null);
+      sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("executionStrategy"));
     }
 
     [Fact]
@@ -71,10 +68,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var container = Logging.CreateContainerWithLogging();
       var step = new ExecuteMessageHandlersStep(
         container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
-        new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
+        new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>()));
 
       IPocket context = null;
-      // ReSharper disable once AccessToModifiedClosure - it's a test.
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Func<Task> sut = () => step.Execute(context!);
       context = VentureContextTools.CreateContextWithout(ContextKeys.Application.MessageType);
       sut.Should().Throw<PoezdOperationException>();
@@ -90,70 +87,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().NotThrow<PoezdOperationException>();
       context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.ReceivedOnUtc);
       sut.Should().NotThrow<PoezdOperationException>();
-    }
-
-    [Fact]
-    public void when_executed_with_3_handlers_it_should_execute_them_in_parallel()
-    {
-      var container = Logging.CreateContainerWithLogging();
-      var step = new ExecuteMessageHandlersStep(
-        container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
-        new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
-      var handlers = VentureContextTools.CreateHandlerDescriptors(
-        new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
-        new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
-        new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)));
-      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
-
-      Func<Task> sut = () => step.Execute(context);
-      sut.ExecutionTime().Should().BeCloseTo(TimeSpan.FromMilliseconds(value: 100), TimeSpan.FromMilliseconds(value: 50));
-    }
-
-    [Fact]
-    public async Task when_executed_it_should_log_start_end_finish_of_each_handler()
-    {
-      var container = Logging.CreateContainerWithLogging();
-      var handlers = VentureContextTools.CreateHandlerDescriptors(
-        new MessageHandler(),
-        new MessageHandler(),
-        new MessageHandler());
-      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
-
-      var sut = new ExecuteMessageHandlersStep(
-        container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
-        new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
-
-      await sut.Execute(context);
-      var logs = InMemorySink.Instance.LogEvents.Select(log => log.RenderMessage()).ToArray();
-      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
-      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
-      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
-      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler"));
-      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler"));
-      logs.Should().Contain(log => log.StartsWith("Finish to execute a message handler"));
-    }
-
-    [Fact]
-    public async Task when_executed_and_one_of_handlers_throws_it_should_log_exception_but_other_should_be_successive()
-    {
-      var container = Logging.CreateContainerWithLogging();
-      var handlers = VentureContextTools.CreateHandlerDescriptors(
-        new MessageHandler(),
-        new MessageHandler(),
-        new ThrowingHandler());
-      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
-
-      var sut = new ExecuteMessageHandlersStep(
-        container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
-        new ParallelHandlersExecutionPolicy(container.GetInstance<ILogger<ParallelHandlersExecutionPolicy>>()));
-
-      await sut.Execute(context);
-      var logs = InMemorySink.Instance.LogEvents.Select(log => log.RenderMessage()).ToArray();
-      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
-      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
-      logs.Should().Contain(log => log.StartsWith("Started to execute a message handler"));
-      logs.Count(log => log.StartsWith("Finish to execute a message handler")).Should().Be(expected: 2);
-      logs.Should().Contain(log => log.StartsWith("Exception thrown during execution of message handler"));
     }
   }
 }

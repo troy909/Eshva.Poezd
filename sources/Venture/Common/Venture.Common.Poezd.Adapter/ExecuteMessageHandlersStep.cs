@@ -22,10 +22,10 @@ namespace Venture.Common.Poezd.Adapter
   {
     public ExecuteMessageHandlersStep(
       [NotNull] ILogger<ExecuteMessageHandlersStep> logger,
-      [NotNull] IHandlersExecutionPolicy executionPolicy)
+      [NotNull] IHandlersExecutionStrategy executionStrategy)
     {
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-      _executionPolicy = executionPolicy ?? throw new ArgumentNullException(nameof(executionPolicy));
+      _executionStrategy = executionStrategy ?? throw new ArgumentNullException(nameof(executionStrategy));
     }
 
     /// <inheritdoc />
@@ -39,7 +39,7 @@ namespace Venture.Common.Poezd.Adapter
         var message = context.TakeOrThrow<object>(ContextKeys.Application.MessagePayload);
         var messageHandlingContext = CreateMessageHandlingContext(context);
 
-        return _executionPolicy.ExecuteHandlers(
+        return _executionStrategy.ExecuteHandlers(
           handlers,
           message,
           messageHandlingContext);
@@ -66,7 +66,7 @@ namespace Venture.Common.Poezd.Adapter
       return messageHandlingContext;
     }
 
-    private readonly IHandlersExecutionPolicy _executionPolicy;
+    private readonly IHandlersExecutionStrategy _executionStrategy;
     private readonly ILogger<ExecuteMessageHandlersStep> _logger;
   }
 }

@@ -1,14 +1,13 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
-using Eshva.Common.TestTools;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Venture.Common.Application.MessageHandling;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
@@ -19,12 +18,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
   public class given_execute_message_handlers_step
   {
     [Fact]
-    public async Task when_executed_with_filled_context_it_should_execute_all_handlers_in_it()
+    public async Task when_executed_with_filled_context_it_should_execute_all_handlers()
     {
-      var container = Logging.CreateContainerWithLogging();
-      var sut = new ExecuteMessageHandlersStep(
-        container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
-        new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>()));
+      var sut = new ExecuteMessageHandlersStep(new ExecutionStrategy());
 
       var handler1 = new MessageHandler();
       var handler2 = new MessageHandler();
@@ -43,35 +39,21 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     }
 
     [Fact]
-    public void when_constructed_without_logger_it_should_throw()
-    {
-      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
-      Action sut = () => new ExecuteMessageHandlersStep(
-        logger: null,
-        new ParallelHandlersExecutionStrategy(new NullLogger<ParallelHandlersExecutionStrategy>()));
-      sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("logger"));
-    }
-
-    [Fact]
     public void when_constructed_without_handlers_execution_policy_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
-      Action sut = () => new ExecuteMessageHandlersStep(
-        new NullLogger<ExecuteMessageHandlersStep>(),
-        executionStrategy: null);
+      Action sut = () => new ExecuteMessageHandlersStep(executionStrategy: null);
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("executionStrategy"));
     }
 
     [Fact]
     public void when_executed_without_required_context_items_it_should_throw()
     {
-      var container = Logging.CreateContainerWithLogging();
-      var step = new ExecuteMessageHandlersStep(
-        container.GetInstance<ILogger<ExecuteMessageHandlersStep>>(),
-        new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>()));
+      var step = new ExecuteMessageHandlersStep(new ExecutionStrategy());
 
       IPocket context = null;
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
+      // ReSharper disable once AccessToModifiedClosure - it's a way to test.
       Func<Task> sut = () => step.Execute(context!);
       context = VentureContextTools.CreateContextWithout(ContextKeys.Application.MessageType);
       sut.Should().Throw<PoezdOperationException>();
@@ -87,6 +69,20 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().NotThrow<PoezdOperationException>();
       context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.ReceivedOnUtc);
       sut.Should().NotThrow<PoezdOperationException>();
+    }
+
+    public class ExecutionStrategy : IHandlersExecutionStrategy
+    {
+      public async Task ExecuteHandlers(
+        IEnumerable<HandlerDescriptor> handlers,
+        object message,
+        VentureContext context)
+      {
+        foreach (var handler in handlers)
+        {
+          await handler.OnHandle(message, context);
+        }
+      }
     }
   }
 }

@@ -8,7 +8,6 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 using Venture.Common.Application.MessageHandling;
 
 #endregion
@@ -20,11 +19,8 @@ namespace Venture.Common.Poezd.Adapter
   /// </summary>
   public class ExecuteMessageHandlersStep : IStep
   {
-    public ExecuteMessageHandlersStep(
-      [NotNull] ILogger<ExecuteMessageHandlersStep> logger,
-      [NotNull] IHandlersExecutionStrategy executionStrategy)
+    public ExecuteMessageHandlersStep([NotNull] IHandlersExecutionStrategy executionStrategy)
     {
-      _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       _executionStrategy = executionStrategy ?? throw new ArgumentNullException(nameof(executionStrategy));
     }
 
@@ -67,6 +63,5 @@ namespace Venture.Common.Poezd.Adapter
     }
 
     private readonly IHandlersExecutionStrategy _executionStrategy;
-    private readonly ILogger<ExecuteMessageHandlersStep> _logger;
   }
 }

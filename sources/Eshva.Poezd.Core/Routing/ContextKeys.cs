@@ -16,7 +16,6 @@ namespace Eshva.Poezd.Core.Routing
   /// your own message handling context in application layer and copy required items from broker message handling context
   /// into it.
   /// </remarks>
-  /// TODO: Refine where should be stored each item. Now here are some duplicates.
   public static class ContextKeys
   {
     public static class Broker
@@ -25,7 +24,7 @@ namespace Eshva.Poezd.Core.Routing
       /// The key of message payload as received from message broker.
       /// </summary>
       /// <value>
-      /// The value is byte[].
+      /// The value is a <see cref="byte[]" />.
       /// </value>
       public const string MessagePayload = Prefix + "message-payload";
 
@@ -33,41 +32,64 @@ namespace Eshva.Poezd.Core.Routing
       /// The key of message metadata as received from message broker.
       /// </summary>
       /// <value>
-      /// The value is IDictionary&lt;string, string&gt;.
+      /// The value is a IDictionary&lt;string, string&gt; />.
       /// </value>
       public const string MessageMetadata = Prefix + "message-metadata";
 
+      /// <summary>
+      /// Broker ID from configuration.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="string" />.
+      /// </value>
       public const string Id = Prefix + "id";
+
+      /// <summary>
+      /// The name of the queue/topic the message in this context came from.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="string" />.
+      /// </value>
       public const string QueueName = Prefix + "queue-name";
+
+      /// <summary>
+      /// Date/time the message in this context received.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="System.DateTimeOffset" />.
+      /// </value>
       public const string ReceivedOnUtc = Prefix + "received-on-utc";
+
+      /// <summary>
+      /// The broker configuration.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="Eshva.Poezd.Core.Configuration.MessageBrokerConfiguration" />.
+      /// </value>
       public const string Configuration = Prefix + "configuration";
+
       private const string Prefix = "broker-";
     }
 
     public static class PublicApi
     {
       /// <summary>
-      /// The key of external service message payload extracted from message broker payload.
+      /// Public API ID from configuration.
       /// </summary>
       /// <value>
-      /// The value is byte[].
+      /// The value is a <see cref="string" />.
       /// </value>
-      public const string MessagePayload = Prefix + "message-payload";
-
-      /// <summary>
-      /// The key of external service message metadata extracted from broker message payload.
-      /// </summary>
-      /// <value>
-      /// The value is IDictionary&lt;string, strung&gt;.
-      /// </value>
-      public const string MessageMetadata = Prefix + "message-metadata";
-
-      public const string MessageId = Prefix + "message-id";
-
       public const string Id = Prefix + "id";
 
+      /// <summary>
+      /// The configuration of public API.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="Eshva.Poezd.Core.Configuration.PublicApiConfiguration" />
+      /// </value>
       public const string Configuration = Prefix + "configuration";
-      private const string Prefix = "external-service-";
+
+      private const string Prefix = "public-api-";
     }
 
     /// <summary>
@@ -130,16 +152,15 @@ namespace Eshva.Poezd.Core.Routing
       /// </value>
       public const string CausationId = Prefix + "correlation-id";
 
-      private const string Prefix = "application-";
-
       /// <summary>
       /// The key of message handler list for the current message.
       /// </summary>
       /// <value>
-      /// The type of value depends on Poezd to service adapter. In the simplest variation in could be
-      /// IEnumerable&lt;Func&lt;object, YourContextType, Task&gt;&gt;.
+      /// The type of value depends on Poezd to service adapter.
       /// </value>
       public const string Handlers = Prefix + "handlers";
+
+      private const string Prefix = "application-";
     }
   }
 }

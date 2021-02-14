@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Threading;
 using Confluent.Kafka;
 using Eshva.Common.TestTools;
 using Eshva.Poezd.Core.Configuration;
@@ -43,6 +44,15 @@ namespace Venture.IntegrationTests
     public static string GetRandomString() => StringCreator.Get(length: 10);
 
     public static string GetRandomTopic(string prefix = TopicPrefix) => $"{prefix}-{GetRandomString()}";
+
+    public static SemaphoreSlim AddTestFinishSemaphore(Container container)
+    {
+      container.RegisterSingleton<FinishTestPipeFitter>();
+      container.Register<FinishTestStep>(Lifestyle.Scoped);
+      var testIsFinished = new FinishTestStep.Properties();
+      container.RegisterInstance(testIsFinished);
+      return testIsFinished.Semaphore;
+    }
 
     private static Container AddRouter<TIngressEnterPipeline, TIngressExitPipeline>(
       this Container container,

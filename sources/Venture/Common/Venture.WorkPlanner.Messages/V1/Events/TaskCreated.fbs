@@ -1,8 +1,8 @@
-include "../../Common/uuid.fbs";
+include "../../Types/uuid.fbs";
 
 namespace Venture.WorkPlanner.Messages.V1.Events;
 
 table TaskCreated (PrecompiledSerializer) {
-  TaskId:Venture.WorkPlanner.Messages.Common.uuid;
+  TaskId:Venture.WorkPlanner.Messages.Types.uuid;
   TaskType:string;
 }

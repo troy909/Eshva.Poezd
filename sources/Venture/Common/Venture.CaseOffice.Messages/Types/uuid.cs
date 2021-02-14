@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Venture.WorkPlanner.Messages.Common
+namespace Venture.CaseOffice.Messages.Types
 {
   public partial class uuid
   {

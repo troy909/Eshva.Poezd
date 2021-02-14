@@ -9,7 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Venture.Common.Application\Venture.Common.Application.csproj" /> <ProjectReference Include="..\Venture.CaseOffice.Domain\Venture.CaseOffice.Domain.csproj" /> <ProjectReference Include="..\Venture.CaseOffice.Public\Venture.CaseOffice.Public.csproj" /> <ProjectReference Include="..\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj" />
+    <ProjectReference Include="..\..\Common\Venture.Common.Application\Venture.Common.Application.csproj" />
+    <ProjectReference Include="..\..\Common\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj" /> <ProjectReference Include="..\Venture.CaseOffice.Domain\Venture.CaseOffice.Domain.csproj" /> <ProjectReference Include="..\Venture.CaseOffice.Public\Venture.CaseOffice.Public.csproj" />
   </ItemGroup>
 
   <ItemGroup>

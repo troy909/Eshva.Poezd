@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FlatSharpSchema Include="Types/uuid.fbs" />
+    <FlatSharpSchema Include="V1/Events/TaskCreated.fbs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FlatSharp.Compiler" Version="4.1.0">
+      <PrivateAssets>all</PrivateAssets> <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FlatSharp.Runtime" Version="4.1.0" />
+  </ItemGroup>
+
+</Project>

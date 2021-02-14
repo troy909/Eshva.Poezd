@@ -65,15 +65,12 @@ namespace Venture.IntegrationTests
       var counter = new CounterStep.Properties();
       container.RegisterInstance(counter);
 
-      container.RegisterSingleton<FinishTestPipeFitter>();
-      container.Register<FinishTestStep>(Lifestyle.Scoped);
-      var testIsFinished = new FinishTestStep.Properties();
-      container.RegisterInstance(testIsFinished);
+      var testIsFinished = RoutingTests.AddTestFinishSemaphore(container);
 
-      var messageRouter = container.GetMessageRouter();
-      await messageRouter.Start(timeout);
+      var router = container.GetMessageRouter();
+      await router.Start(timeout);
 
-      await testIsFinished.Semaphore.WaitAsync(timeout);
+      await testIsFinished.WaitAsync(timeout);
       counter.Counter.Should().Be(expected: 1, "one message has been sent");
     }
 

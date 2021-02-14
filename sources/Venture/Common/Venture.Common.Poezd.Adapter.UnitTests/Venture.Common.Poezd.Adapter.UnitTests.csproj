@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CaseOffice\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj" />
     <ProjectReference Include="..\Venture.Common.Poezd.Adapter\Venture.Common.Poezd.Adapter.csproj" />
   </ItemGroup>
 

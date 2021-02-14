@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
-    <ProjectReference Include="..\..\CaseOffice\Venture.CaseOffice.WorkPlanner.Messages\Venture.CaseOffice.WorkPlanner.Messages.csproj" />
     <ProjectReference Include="..\Venture.Common.Application\Venture.Common.Application.csproj" />
+    <ProjectReference Include="..\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj" />
   </ItemGroup>
 
   <ItemGroup>

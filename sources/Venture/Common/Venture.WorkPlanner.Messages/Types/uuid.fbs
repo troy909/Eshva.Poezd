@@ -1,4 +1,4 @@
-namespace Venture.WorkPlanner.Messages.Common;
+namespace Venture.WorkPlanner.Messages.Types;
 
 table uuid (PrecompiledSerializer) {
   value:[ubyte] (VectorType:"Array");

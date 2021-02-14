@@ -7,11 +7,12 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class PublicApi1QueueNamePatternsProvider : IQueueNamePatternsProvider
+  public class VentureQueueNamePatternsProvider : IQueueNamePatternsProvider
   {
     public IEnumerable<string> GetQueueNamePatterns()
     {
-      yield return "^some-";
+      yield return "^venture.commands..*";
+      yield return "^venture.facts..*";
     }
   }
 }

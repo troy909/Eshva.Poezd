@@ -18,6 +18,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       handlers.Select(
         handler => new HandlerDescriptor(
           handler.GetType(),
+          typeof(Message02),
           (message, ventureContext) => handler.Handle((Message02) message, ventureContext)));
 
     public static IPocket CreateContextWithout(string itemKey)

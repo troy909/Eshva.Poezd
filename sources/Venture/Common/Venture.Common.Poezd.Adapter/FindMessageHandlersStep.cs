@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
@@ -30,26 +31,29 @@ namespace Venture.Common.Poezd.Adapter
       if (context == null) throw new ArgumentNullException(nameof(context));
 
       var messageType = context.TakeOrThrow<Type>(ContextKeys.Application.MessageType);
-      var handlerTypes = _handlerRegistry.HandlersGroupedByMessageType[messageType];
-
-      var handlers = handlerTypes
-        .Select(handlerType => _serviceProvider.GetService(handlerType))
-        .Where(handler => handler != null)
-        .Select(handler => MakeHandlerDescriptor(handler, messageType));
-
+      var handlers = GetHandlersForMessageType(messageType);
       context.Put(ContextKeys.Application.Handlers, handlers);
       return Task.CompletedTask;
     }
 
+    private IEnumerable<HandlerDescriptor> GetHandlersForMessageType(Type messageType) =>
+      _handlerRegistry.HandlersGroupedByMessageType[messageType]
+        .Select(handlerType => _serviceProvider.GetService(handlerType))
+        .Where(handler => handler != null)
+        .Select(handler => MakeHandlerDescriptor(handler, messageType));
+
     private static HandlerDescriptor MakeHandlerDescriptor(object handler, Type messageType)
     {
-      var type = handler.GetType();
-      var handleMethod = type.GetMethod(
+      var handlerType = handler.GetType();
+      var handleMethod = handlerType.GetMethod(
         nameof(IHandleMessageOfType<object>.Handle),
         new[] {messageType, typeof(VentureContext)});
       Func<object, VentureContext, Task> onHandle = (message, context) => (Task) handleMethod!.Invoke(handler, new[] {message, context});
 
-      return new HandlerDescriptor(type, onHandle);
+      return new HandlerDescriptor(
+        handlerType,
+        messageType,
+        onHandle);
     }
 
     private readonly IHandlerRegistry _handlerRegistry;

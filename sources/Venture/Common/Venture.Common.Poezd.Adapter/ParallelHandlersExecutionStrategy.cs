@@ -46,7 +46,7 @@ namespace Venture.Common.Poezd.Adapter
     {
       _logger.LogDebug(
         "Executing a message handler of type {HandlerType}.",
-        handler.Type.FullName);
+        handler.HandlerType.FullName);
 
       var stopwatch = Stopwatch.StartNew();
       try
@@ -58,7 +58,7 @@ namespace Venture.Common.Poezd.Adapter
         _logger.LogError(
           exception,
           "An error occurred during a message handler execution of type {HandlerType}.",
-          handler.Type.FullName);
+          handler.HandlerType.FullName);
         context.Abort();
         throw;
       }
@@ -67,7 +67,7 @@ namespace Venture.Common.Poezd.Adapter
         stopwatch.Stop();
         _logger.LogDebug(
           "Executed a message handler of type {HandlerType} in {Elapsed} milliseconds.",
-          handler.Type.FullName,
+          handler.HandlerType.FullName,
           stopwatch.ElapsedMilliseconds);
       }
     }

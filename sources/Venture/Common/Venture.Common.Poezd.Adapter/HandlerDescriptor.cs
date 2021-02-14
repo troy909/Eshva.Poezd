@@ -15,22 +15,14 @@ namespace Venture.Common.Poezd.Adapter
 
     public HandlerDescriptor(
       [NotNull] Type type,
-      [NotNull] Func<object, VentureContext, Task> onHandle,
-      [CanBeNull] Func<object, VentureContext, Task> onCommit = null,
-      [CanBeNull] Func<object, VentureContext, Task> onCompensate = null)
+      [NotNull] Func<object, VentureContext, Task> onHandle)
     {
       Type = type ?? throw new ArgumentNullException(nameof(type));
       OnHandle = onHandle ?? throw new ArgumentNullException(nameof(onHandle));
-      OnCommit = onCommit ?? Nope;
-      OnCompensate = onCompensate ?? Nope;
     }
 
     public Type Type { get; }
 
     public Func<object, VentureContext, Task> OnHandle { get; }
-
-    public Func<object, VentureContext, Task> OnCommit { get; }
-
-    public Func<object, VentureContext, Task> OnCompensate { get; }
   }
 }

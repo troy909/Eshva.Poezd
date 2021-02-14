@@ -9,11 +9,22 @@ using SimpleInjector;
 
 namespace Eshva.Common.TestTools
 {
-  public class Logging
+  public static class Logging
   {
+    // TODO: Replace using of this method with AddLogging.
     public static Container CreateContainerWithLogging()
     {
       var container = new Container();
+      container.RegisterInstance(GetLoggerFactory());
+      container.Register(
+        typeof(ILogger<>),
+        typeof(Logger<>),
+        Lifestyle.Singleton);
+      return container;
+    }
+
+    public static Container AddLogging(this Container container)
+    {
       container.RegisterInstance(GetLoggerFactory());
       container.Register(
         typeof(ILogger<>),

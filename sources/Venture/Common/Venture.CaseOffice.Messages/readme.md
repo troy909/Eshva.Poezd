@@ -1,4 +1,4 @@
-# Message schemas for Work Planner service API
+# Message schemas for Case Office service API
 In this folder you should place FlatBuffers schemas of Work Planner's API message types. In your `.csproj` for every schema file you should add a line like in the following code sample.
 ```xml
 <ItemGroup>

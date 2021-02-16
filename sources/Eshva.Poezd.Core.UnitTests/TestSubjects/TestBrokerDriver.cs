@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 
 #endregion
-
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
@@ -28,8 +26,10 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {
       if (_isMessageConsumingStarted)
+      {
         throw new InvalidOperationException(
           $"{nameof(TestBrokerDriver)} is started already. You can subscribe to queues only before driver is started.");
+      }
 
       SubscribedQueueNamePatters = queueNamePatterns;
 
@@ -41,7 +41,6 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public Task Publish(byte[] brokerPayload, IReadOnlyDictionary<string, string> brokerMetadata) => throw new NotImplementedException();
 
     public void Dispose() { }
-
 
     // ReSharper disable once NotAccessedField.Local In a real world driver configuration will be used in StartConsumeMessages().
     private TestBrokerDriverConfiguration _configuration;

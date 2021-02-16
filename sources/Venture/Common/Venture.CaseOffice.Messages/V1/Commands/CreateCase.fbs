@@ -6,4 +6,5 @@ table CreateCase (PrecompiledSerializer) {
   CaseId:Venture.CaseOffice.Messages.Types.uuid;
   CaseType:string;
   Reason:string;
+  SubjectId:Venture.CaseOffice.Messages.Types.uuid;
 }

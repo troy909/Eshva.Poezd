@@ -11,8 +11,6 @@ namespace Venture.Common.Poezd.Adapter
 {
   public readonly struct HandlerDescriptor
   {
-    private static readonly Func<object, VentureContext, Task> Nope = (message, context) => Task.CompletedTask;
-
     public HandlerDescriptor(
       [NotNull] Type type,
       [NotNull] Type messageType,

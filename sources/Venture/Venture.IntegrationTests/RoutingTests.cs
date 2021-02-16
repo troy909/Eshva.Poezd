@@ -34,7 +34,7 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<KafkaDriverFactory>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
       container.RegisterSingleton<PublicApi1QueueNamePatternsProvider>();
-      container.RegisterSingleton<PublicApi1HandlerRegistry>();
+      container.RegisterSingleton<EmptyHandlerRegistry>();
 
       return container;
     }
@@ -88,7 +88,7 @@ namespace Venture.IntegrationTests
         ApiVersionRequest = true,
         ClientId = "case-office-service-client",
         GroupId = Guid.NewGuid().ToString("N"),
-        EnableAutoCommit = false,
+        EnableAutoCommit = true,
         FetchWaitMaxMs = 5,
         FetchErrorBackoffMs = 5,
         QueuedMinMessages = 1000,

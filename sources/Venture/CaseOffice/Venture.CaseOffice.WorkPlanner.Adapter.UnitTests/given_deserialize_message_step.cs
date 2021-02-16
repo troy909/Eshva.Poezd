@@ -7,6 +7,7 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FlatSharp;
 using FluentAssertions;
+using Venture.Common.Poezd.Adapter;
 using Venture.WorkPlanner.Messages.V1.Events;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     [Fact]
     public async Task when_executed_with_broker_message_and_message_type_name_withing_context_it_should_store_deserialized_message()
     {
-      var sut = new DeserializeMessageStep();
+      var sut = new DeserializeMessageStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
 
       const string expectedTaskType = "DocumentCollectionTask";
@@ -39,7 +40,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     [Fact]
     public void when_executed_with_broker_message_but_without_message_type_name_within_context_it_should_throw()
     {
-      var step = new DeserializeMessageStep();
+      var step = new DeserializeMessageStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
 
       const string expectedTaskType = "DocumentCollectionTask";
@@ -55,7 +56,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     [Fact]
     public void when_executed_with_message_type_name_but_without_broker_message_within_context_it_should_throw()
     {
-      var step = new DeserializeMessageStep();
+      var step = new DeserializeMessageStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Application.MessageTypeName, typeof(TaskCreated).FullName!);
 
@@ -68,7 +69,8 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     public void when_executed_without_context_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute it's a test
-      Func<Task> sut = async () => await new DeserializeMessageStep().Execute(context: null);
+      Func<Task> sut = async () =>
+        await new DeserializeMessageStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)})).Execute(context: null);
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"), "context must be specified");
     }
 

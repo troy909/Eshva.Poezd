@@ -8,9 +8,9 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class PublicApi1HandlerRegistry : IHandlerRegistry
+  public class EmptyHandlerRegistry : IHandlerRegistry
   {
-    public PublicApi1HandlerRegistry()
+    public EmptyHandlerRegistry()
     {
       HandlersGroupedByMessageType = new Dictionary<Type, Type[]>
       {

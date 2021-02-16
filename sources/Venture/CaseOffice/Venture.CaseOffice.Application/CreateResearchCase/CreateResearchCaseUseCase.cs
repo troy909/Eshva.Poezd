@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Venture.CaseOffice.Application.Queries;
 using Venture.CaseOffice.Domain;
-using Venture.CaseOffice.Public;
+using Venture.CaseOffice.Messages.V1.Commands;
 using Venture.Common.Application.MessageHandling;
 using Venture.Common.Application.Storage;
 
 #endregion
-
 
 namespace Venture.CaseOffice.Application.CreateResearchCase
 {

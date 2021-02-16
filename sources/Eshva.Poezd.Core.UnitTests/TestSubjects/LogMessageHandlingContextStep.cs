@@ -2,7 +2,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Eshva.Common;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
@@ -10,7 +9,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 #endregion
-
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
@@ -25,8 +23,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     {
       _logger.LogInformation(nameof(LogMessageHandlingContextStep));
       _logger.LogDebug(
-        $"A message from queue with name '{context.GetContextVariable<string>(ContextKeys.Broker.QueueName)}' from " +
-        $" {context.GetContextVariable<string>(ContextKeys.Broker.Id)} has been received.");
+        $"A message from queue with name '{context.TakeOrThrow<string>(ContextKeys.Broker.QueueName)}' from " +
+        $" {context.TakeOrThrow<string>(ContextKeys.Broker.Id)} has been received.");
       return Task.CompletedTask;
     }
 

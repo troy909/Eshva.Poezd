@@ -7,6 +7,8 @@ using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
+using Venture.Common.Poezd.Adapter;
+using Venture.WorkPlanner.Messages;
 using Venture.WorkPlanner.Messages.V1.Events;
 using Xunit;
 
@@ -19,12 +21,12 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     [Fact]
     public async Task when_executed_with_context_containing_message_type_within_broker_message_metadata_it_should_store_it_in_context()
     {
-      var sut = new ExtractMessageTypeStep();
+      var sut = new ExtractMessageTypeStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
       const string expectedTypeName = "Venture.WorkPlanner.Messages.V1.Events.TaskCreated";
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{WorkPlannerApi.Headers.MessageTypeName, expectedTypeName}});
+        new Dictionary<string, string> {{Api.Headers.MessageTypeName, expectedTypeName}});
 
       await sut.Execute(context);
 
@@ -37,7 +39,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_missing_message_type_within_broker_message_metadata_it_should_throw()
     {
-      var step = new ExtractMessageTypeStep();
+      var step = new ExtractMessageTypeStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string>());
 
@@ -48,21 +50,21 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_wrong_message_type_within_broker_message_metadata_it_should_throw()
     {
-      var step = new ExtractMessageTypeStep();
+      var step = new ExtractMessageTypeStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
 
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{WorkPlannerApi.Headers.MessageTypeName, null}});
+      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{Api.Headers.MessageTypeName, null}});
       Func<Task> sut = () => step.Execute(context);
 
       sut.Should().Throw<PoezdSkipMessageException>("messages of unknown type should be skipped");
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{WorkPlannerApi.Headers.MessageTypeName, string.Empty}});
+        new Dictionary<string, string> {{Api.Headers.MessageTypeName, string.Empty}});
       sut = () => step.Execute(context);
       sut.Should().Throw<PoezdSkipMessageException>("messages of unknown type should be skipped");
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{WorkPlannerApi.Headers.MessageTypeName, WhitespaceString}});
+        new Dictionary<string, string> {{Api.Headers.MessageTypeName, WhitespaceString}});
       sut = () => step.Execute(context);
       sut.Should().Throw<PoezdSkipMessageException>("messages of unknown type should be skipped");
     }
@@ -70,10 +72,10 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_unknown_message_type_within_broker_message_metadata_it_should_throw_skip_message_exception()
     {
-      var step = new ExtractMessageTypeStep();
+      var step = new ExtractMessageTypeStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
 
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{WorkPlannerApi.Headers.MessageTypeName, "unknown"}});
+      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{Api.Headers.MessageTypeName, "unknown"}});
       Func<Task> sut = () => step.Execute(context);
 
       sut.Should().Throw<PoezdSkipMessageException>();
@@ -83,7 +85,8 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
     public void when_executed_without_context_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute it's a test
-      Func<Task> sut = async () => await new ExtractMessageTypeStep().Execute(context: null);
+      Func<Task> sut = async () =>
+        await new ExtractMessageTypeStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)})).Execute(context: null);
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"), "context must be specified");
     }
 

@@ -1,7 +1,15 @@
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.CaseOffice.Messages
 {
-  public static class WorkPlannerApi
+  /// <summary>
+  /// Case Office messages assembly tag.
+  /// </summary>
+  /// <remarks>
+  /// Used to identify this assembly when searching for types in this assembly with reflection.
+  /// </remarks>
+  public static class Api
   {
+    public const string V1Namespace = "Venture.CaseOffice.Messages.V1";
+
     /// <summary>
     /// The header keys that uses the Work Planner service for a message metadata in Kafka message headers.
     /// </summary>

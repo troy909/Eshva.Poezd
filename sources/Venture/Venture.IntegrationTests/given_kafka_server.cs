@@ -50,15 +50,18 @@ namespace Venture.IntegrationTests
         api => api.WithId("case-office")
           .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
           .WithIngressPipelineConfigurator<EmptyPipeFitter>()
-          .WithHandlerRegistry<PublicApi1HandlerRegistry>());
+          .WithHandlerRegistry<EmptyHandlerRegistry>());
 
       var topic = RoutingTests.GetRandomTopic();
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-      await using var kafkaTestContext = _kafkaTestContextFactory.Create<string>(timeout);
+      await using var kafkaTestContext = _kafkaTestContextFactory.Create<byte[]>(timeout);
       await kafkaTestContext.CreateTopics(topic);
 
-      var expectedValue = RoutingTests.GetRandomString();
+      var expectedValue = new byte[10];
+      new Random().NextBytes(expectedValue);
       await kafkaTestContext.Produce(topic, expectedValue);
+      // var expectedValue = RoutingTests.GetRandomString();
+      // await kafkaTestContext.Produce(topic, expectedValue);
 
       container.RegisterSingleton<MessageCountingPipeFitter>();
       container.Register<CounterStep>(Lifestyle.Scoped);

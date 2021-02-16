@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
-using JetBrains.Annotations;
+using Venture.WorkPlanner.Messages;
 
 #endregion
 
@@ -18,20 +18,20 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter
   /// </summary>
   public class ExtractRelationMetadataStep : IStep
   {
-    public Task Execute([NotNull] IPocket context)
+    public Task Execute(IPocket context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
       if (!context.TryTake<Dictionary<string, string>>(ContextKeys.Broker.MessageMetadata, out var metadata))
         return Task.CompletedTask;
 
-      if (metadata.TryGetValue(WorkPlannerApi.Headers.MessageId, out var messageId))
+      if (metadata.TryGetValue(Api.Headers.MessageId, out var messageId))
         context.Put(ContextKeys.Application.MessageId, messageId);
 
-      if (metadata.TryGetValue(WorkPlannerApi.Headers.CorrelationId, out var correlationId))
+      if (metadata.TryGetValue(Api.Headers.CorrelationId, out var correlationId))
         context.Put(ContextKeys.Application.CorrelationId, correlationId);
 
-      if (metadata.TryGetValue(WorkPlannerApi.Headers.CausationId, out var causationId))
+      if (metadata.TryGetValue(Api.Headers.CausationId, out var causationId))
         context.Put(ContextKeys.Application.CorrelationId, causationId);
 
       return Task.CompletedTask;

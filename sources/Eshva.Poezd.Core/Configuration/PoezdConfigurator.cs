@@ -12,14 +12,6 @@ namespace Eshva.Poezd.Core.Configuration
   {
     public MessageRouterConfiguration Configuration { get; } = new MessageRouterConfiguration();
 
-    public PoezdConfigurator WithMessageHandling([NotNull] Action<MessageHandlingConfigurator> configurator)
-    {
-      if (configurator == null) throw new ArgumentNullException(nameof(configurator));
-
-      configurator(new MessageHandlingConfigurator(Configuration.MessageHandling));
-      return this;
-    }
-
     public PoezdConfigurator AddMessageBroker([NotNull] Action<MessageBrokerConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));

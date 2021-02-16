@@ -24,7 +24,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = Logging.CreateContainerWithLogging();
 
-      var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}, typeof(Message01).Namespace);
+      var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly});
       var handlers = handlersRegistry.HandlersGroupedByMessageType[typeof(Message01)];
       foreach (var handler in handlers)
       {
@@ -60,7 +60,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       // ReSharper disable once ObjectCreationAsStatement
       Action sut = () => new FindMessageHandlersStep(
-        new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}, typeof(Message01).Namespace),
+        new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}),
         serviceProvider: null);
       sut.Should().Throw<ArgumentNullException>("handlersRegistry is required");
     }
@@ -69,7 +69,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public void when_executed_without_context_it_should_throw()
     {
       var container = Logging.CreateContainerWithLogging();
-      var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}, typeof(Message01).Namespace);
+      var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly});
       var step = new FindMessageHandlersStep(handlersRegistry, container);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.

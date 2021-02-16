@@ -14,11 +14,10 @@ namespace Venture.Common.Poezd.Adapter
 {
   public class VentureServiceHandlersRegistry : IHandlerRegistry
   {
-    public VentureServiceHandlersRegistry(IEnumerable<Assembly> messageHandlersAssemblies, string messagesNamespace)
+    public VentureServiceHandlersRegistry(IEnumerable<Assembly> messageHandlersAssemblies)
     {
       HandlersGroupedByMessageType = messageHandlersAssemblies
         .GetHandlersGroupedByMessageType(typeof(IHandleMessageOfType<>))
-        .Where(pair => pair.Key.FullName!.StartsWith(messagesNamespace))
         .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 

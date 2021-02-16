@@ -1,9 +1,12 @@
 #region Usings
 
 using System;
+using System.Linq;
+using System.Reflection;
 using Eshva.Poezd.Core.Common;
 using FlatSharp;
 using FluentAssertions;
+using Venture.WorkPlanner.Messages;
 using Venture.WorkPlanner.Messages.V1.Events;
 using Xunit;
 
@@ -16,7 +19,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_requested_registered_message_type_it_should_match_its_full_name_to_type_object()
     {
-      var sut = new MessageTypeRegistry();
+      var sut = CreateMessageTypeRegistry();
       var expectedType = typeof(TaskCreated);
       sut.GetType(expectedType.FullName!).Should().Be(expectedType, "the message type should be found by its full name");
     }
@@ -24,7 +27,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_parsing_registered_message_type_it_should_parse_it_to_object()
     {
-      var sut = new MessageTypeRegistry();
+      var sut = CreateMessageTypeRegistry();
       const string expectedTaskType = "some message type";
       var serializedMessage = CreateSerializedMessage(Guid.Empty, expectedTaskType);
 
@@ -36,7 +39,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_parsing_unknown_message_type_it_should_throw()
     {
-      var registry = new MessageTypeRegistry();
+      var registry = CreateMessageTypeRegistry();
       var serializedMessage = CreateSerializedMessage(Guid.Empty, string.Empty);
       Action sut = () => registry.Parse("unknown message type", serializedMessage);
 
@@ -46,7 +49,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_parsing_broken_message_payload_it_should_throw()
     {
-      var registry = new MessageTypeRegistry();
+      var registry = CreateMessageTypeRegistry();
       var randomBytes = new byte[10];
       new Random().NextBytes(randomBytes);
       Action sut = () => registry.Parse(typeof(TaskCreated).FullName!, randomBytes);
@@ -57,7 +60,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_parsing_wrong_type_name_it_should_throw()
     {
-      var registry = new MessageTypeRegistry();
+      var registry = CreateMessageTypeRegistry();
       var serializedMessage = CreateSerializedMessage(Guid.Empty, string.Empty);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
@@ -78,7 +81,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_parsing_with_no_message_payload_specified_it_should_throw()
     {
-      var registry = new MessageTypeRegistry();
+      var registry = CreateMessageTypeRegistry();
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       Action sut = () => registry.Parse(typeof(TaskCreated).FullName!, bytes: null);
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("bytes"));
@@ -87,7 +90,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_requested_not_existing_message_type_it_should_throw()
     {
-      Action sut = () => new MessageTypeRegistry().GetType("it is a not existing message type name");
+      Action sut = () => CreateMessageTypeRegistry().GetType("it is a not existing message type name");
       sut.Should().Throw<InvalidOperationException>("such message type is not exists in the message assembly");
     }
 
@@ -95,18 +98,25 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public void when_requested_wrong_type_name_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
-      Action sut = () => new MessageTypeRegistry().GetType(messageTypeName: null);
+      Action sut = () => CreateMessageTypeRegistry().GetType(messageTypeName: null);
       sut.Should().Throw<ArgumentNullException>().Where(
         exception => exception.ParamName.Equals("messageTypeName"),
         "null is wrong type name");
-      sut = () => new MessageTypeRegistry().GetType("");
+      sut = () => CreateMessageTypeRegistry().GetType("");
       sut.Should().Throw<ArgumentNullException>().Where(
         exception => exception.ParamName.Equals("messageTypeName"),
         "an empty string is wrong type name");
-      sut = () => new MessageTypeRegistry().GetType(WhitespaceString);
+      sut = () => CreateMessageTypeRegistry().GetType(WhitespaceString);
       sut.Should().Throw<ArgumentNullException>().Where(
         exception => exception.ParamName.Equals("messageTypeName"),
         "a whitespace string is wrong type name");
+    }
+
+    private static MessageTypesRegistry CreateMessageTypeRegistry()
+    {
+      var messagesAssembly = Assembly.GetAssembly(typeof(Api));
+      var messageTypes = messagesAssembly!.ExportedTypes.Where(type => type.Namespace!.StartsWith(Api.V1Namespace));
+      return new MessageTypesRegistry(messageTypes);
     }
 
     private static byte[] CreateSerializedMessage(Guid expectedId, string expectedTaskType)

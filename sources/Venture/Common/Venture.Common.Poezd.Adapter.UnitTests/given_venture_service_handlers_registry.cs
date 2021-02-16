@@ -13,7 +13,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_created_it_should_provide_handler_types_grouped_by_handled_message_type()
     {
-      var sut = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}, typeof(Message01).Namespace);
+      var sut = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly});
       sut.HandlersGroupedByMessageType.ContainsKey(typeof(Message01)).Should()
         .BeTrue($"there is at least one handler for {nameof(Message01)} event");
     }

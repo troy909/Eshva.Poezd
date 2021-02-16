@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Eshva.Poezd.Core.Activation;
+using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
@@ -14,7 +14,6 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 #endregion
-
 
 namespace Eshva.Poezd.Core.Routing
 {
@@ -76,7 +75,7 @@ namespace Eshva.Poezd.Core.Routing
       using (_diContainerAdapter.BeginScope())
       {
         MessageHandlingPipeline pipeline;
-        var messageHandlingContext = new MessageHandlingContext();
+        var messageHandlingContext = new ConcurrentPocket();
         try
         {
           var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
@@ -84,7 +83,8 @@ namespace Eshva.Poezd.Core.Routing
 
           pipeline = BuildIngressPipeline(messageBroker, publicApi);
 
-          messageHandlingContext.Put(ContextKeys.Broker.Id, brokerId)
+          messageHandlingContext
+            .Put(ContextKeys.Broker.Id, brokerId)
             .Put(ContextKeys.Broker.MessageMetadata, brokerMetadata)
             .Put(ContextKeys.Broker.MessagePayload, brokerPayload)
             .Put(ContextKeys.Broker.QueueName, queueName)
@@ -111,7 +111,6 @@ namespace Eshva.Poezd.Core.Routing
           _logger.LogError(
             exception,
             "An error occurred during message handling. See inner exception to find details about the error.");
-          messageHandlingContext.Rollback();
           return Task.CompletedTask;
         }
       }

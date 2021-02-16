@@ -22,9 +22,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Service", "Venture\CaseOffice\Venture.CaseOffice.Service\Venture.CaseOffice.Service.csproj", "{81E4C566-E3F2-4E1C-92A0-FB5073FA8C1D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{DA7B0FDC-3612-4FBB-8C17-D169B54871AE}"
-	ProjectSection(SolutionItems) = preProject
-		Venture\Common\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj = Venture\Common\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Application", "Venture\Common\Venture.Common.Application\Venture.Common.Application.csproj", "{A88021C0-3349-4D1A-A8B7-24B2D9375813}"
 EndProject

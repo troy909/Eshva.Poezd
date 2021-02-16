@@ -31,7 +31,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public static VentureContext CreateFilledContext(object message, IEnumerable<HandlerDescriptor> handlers)
     {
       var context = new VentureContext();
-      context.Put(ContextKeys.Application.MessagePayload, message)
+      context
+        .Put(ContextKeys.Application.MessagePayload, message)
         .Put(ContextKeys.Application.MessageType, message.GetType())
         .Put(ContextKeys.Application.MessageId, Guid.NewGuid().ToString("N"))
         .Put(ContextKeys.Application.CorrelationId, Guid.NewGuid().ToString("N"))
@@ -39,7 +40,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         .Put(ContextKeys.Broker.QueueName, "case.facts.tasks.v1")
         .Put(ContextKeys.Application.Handlers, handlers)
         .Put(ContextKeys.Broker.ReceivedOnUtc, DateTimeOffset.UtcNow);
-
 
       return context;
     }

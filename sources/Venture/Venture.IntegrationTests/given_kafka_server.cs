@@ -10,6 +10,7 @@ using SimpleInjector;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;
+using Xunit.Abstractions;
 
 #endregion
 
@@ -18,9 +19,10 @@ namespace Venture.IntegrationTests
   [Collection(KafkaSetupCollection.Name)]
   public sealed class given_kafka_server
   {
-    public given_kafka_server(KafkaSetupContainerAsyncFixture fixture)
+    public given_kafka_server(KafkaSetupContainerAsyncFixture fixture, ITestOutputHelper testOutput)
     {
       if (fixture == null) throw new ArgumentNullException(nameof(fixture));
+      _testOutput = testOutput;
 
       _kafkaTestContextFactory = new KafkaTestContextFactory(fixture.KafkaContainerConfiguration.BootstrapServers);
     }
@@ -50,7 +52,8 @@ namespace Venture.IntegrationTests
         api => api.WithId("case-office")
           .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
           .WithIngressPipelineConfigurator<EmptyPipeFitter>()
-          .WithHandlerRegistry<EmptyHandlerRegistry>());
+          .WithHandlerRegistry<EmptyHandlerRegistry>(),
+        _testOutput);
 
       var topic = RoutingTests.GetRandomTopic();
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
@@ -78,5 +81,6 @@ namespace Venture.IntegrationTests
     }
 
     private readonly KafkaTestContextFactory _kafkaTestContextFactory;
+    private readonly ITestOutputHelper _testOutput;
   }
 }

@@ -148,7 +148,7 @@ namespace Eshva.Poezd.Core.UnitTests
       new LoggerFactory().AddSerilog(
         new LoggerConfiguration()
           .WriteTo.InMemory()
-          .WriteTo.XunitTestOutput(_testOutputHelper)
+          .WriteTo.TestOutput(_testOutputHelper)
           .MinimumLevel.Verbose()
           .CreateLogger());
 

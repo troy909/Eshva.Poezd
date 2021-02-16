@@ -9,14 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Pipeline;
 using SimpleInjector;
-using Venture.CaseOffice.Application;
 using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
-using Venture.CaseOffice.WorkPlanner.Adapter;
 using Venture.Common.Poezd.Adapter;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;
+using Xunit.Abstractions;
 
 #endregion
 
@@ -25,9 +24,10 @@ namespace Venture.IntegrationTests
   [Collection(KafkaSetupCollection.Name)]
   public class given_case_office_service
   {
-    public given_case_office_service(KafkaSetupContainerAsyncFixture fixture)
+    public given_case_office_service(KafkaSetupContainerAsyncFixture fixture, ITestOutputHelper testOutput)
     {
       if (fixture == null) throw new ArgumentNullException(nameof(fixture));
+      _testOutput = testOutput;
 
       _kafkaTestContextFactory = new KafkaTestContextFactory(fixture.KafkaContainerConfiguration.BootstrapServers);
     }
@@ -41,7 +41,8 @@ namespace Venture.IntegrationTests
           .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
           .WithIngressPipelineConfigurator<EmptyPipeFitter>()
           // .WithIngressPipelineConfigurator<IngressPipeFitter>()
-          .WithHandlerRegistry<VentureServiceHandlersRegistry>());
+          .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
+        _testOutput);
       container.RegisterSingleton<VentureQueueNamePatternsProvider>();
       AddIngressPipeline(container);
       container.RegisterInstance(CreateMessageTypeRegistry());
@@ -114,5 +115,6 @@ namespace Venture.IntegrationTests
     private static byte[] StringToBytes(string value) => Encoding.UTF8.GetBytes(value);
 
     private readonly KafkaTestContextFactory _kafkaTestContextFactory;
+    private readonly ITestOutputHelper _testOutput;
   }
 }

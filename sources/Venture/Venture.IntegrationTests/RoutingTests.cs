@@ -13,6 +13,7 @@ using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Venture.IntegrationTests.TestSubjects;
+using Xunit.Abstractions;
 
 #endregion
 
@@ -20,13 +21,15 @@ namespace Venture.IntegrationTests
 {
   public static class RoutingTests
   {
-    public static Container SetupContainer<TIngressEnterPipeline, TIngressExitPipeline>(Action<PublicApiConfigurator> configureApi)
+    public static Container SetupContainer<TIngressEnterPipeline, TIngressExitPipeline>(
+      Action<PublicApiConfigurator> configureApi,
+      ITestOutputHelper testOutput)
       where TIngressEnterPipeline : IPipeFitter
       where TIngressExitPipeline : IPipeFitter
     {
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-      container.AddLogging().AddRouter<TIngressEnterPipeline, TIngressExitPipeline>(configureApi);
+      container.AddLogging(testOutput).AddRouter<TIngressEnterPipeline, TIngressExitPipeline>(configureApi);
 
       container.RegisterInstance<IServiceProvider>(container);
       container.RegisterSingleton<RegexQueueNameMatcher>();

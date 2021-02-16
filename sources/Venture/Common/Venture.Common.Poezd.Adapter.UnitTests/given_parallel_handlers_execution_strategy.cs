@@ -9,8 +9,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Serilog.Events;
 using Serilog.Sinks.InMemory;
+using SimpleInjector;
+using SimpleInjector.Lifestyles;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
+using Xunit.Abstractions;
 
 #endregion
 
@@ -18,6 +21,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   public class given_parallel_handlers_execution_strategy
   {
+    public given_parallel_handlers_execution_strategy(ITestOutputHelper testOutput)
+    {
+      _testOutput = testOutput;
+    }
+
     [Fact]
     public async Task when_executed_with_few_handlers_it_should_execute_all_of_them()
     {
@@ -45,7 +53,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_few_handlers_it_should_execute_them_in_parallel()
     {
-      var container = Logging.CreateContainerWithLogging();
+      var container = new Container();
+      container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      container.AddLogging(_testOutput);
       var strategy = new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>());
       var handlers = VentureContextTools.CreateHandlerDescriptors(
         new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
@@ -91,7 +101,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_handlers_it_should_log_execution_progress()
     {
-      var container = Logging.CreateContainerWithLogging();
+      var container = new Container();
+      container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      container.AddLogging(_testOutput);
       var handlers = VentureContextTools.CreateHandlerDescriptors(
         new MessageHandler(),
         new ThrowingHandler(),
@@ -120,13 +132,15 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         .Where(log => log.Level == LogEventLevel.Error)
         .Select(log => log.RenderMessage())
         .Count(log => log.StartsWith("An error occurred during a message handler execution of type"))
-        .Should().Be(2, "for each failed handler should be logged an error");
+        .Should().Be(expected: 2, "for each failed handler should be logged an error");
     }
 
     [Fact]
     public void when_executed_without_handlers_it_should_throw()
     {
-      var container = Logging.CreateContainerWithLogging();
+      var container = new Container();
+      container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      container.AddLogging(_testOutput);
       var strategy = new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>());
       var handlers = VentureContextTools.CreateHandlerDescriptors(new MessageHandler()).ToArray();
       var message = new Message02();
@@ -143,7 +157,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_without_message_it_should_throw()
     {
-      var container = Logging.CreateContainerWithLogging();
+      var container = new Container();
+      container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      container.AddLogging(_testOutput);
       var strategy = new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>());
       var handlers = VentureContextTools.CreateHandlerDescriptors(new MessageHandler()).ToArray();
       var message = new Message02();
@@ -160,7 +176,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_without_context_it_should_throw()
     {
-      var container = Logging.CreateContainerWithLogging();
+      var container = new Container();
+      container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      container.AddLogging(_testOutput);
       var strategy = new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>());
       var handlers = VentureContextTools.CreateHandlerDescriptors(new MessageHandler()).ToArray();
       var message = new Message02();
@@ -177,8 +195,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public void when_constructed_without_logger_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
+      // ReSharper disable once ObjectCreationAsStatement
       Action sut = () => new ParallelHandlersExecutionStrategy(logger: null);
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("logger"));
     }
+
+    private readonly ITestOutputHelper _testOutput;
   }
 }

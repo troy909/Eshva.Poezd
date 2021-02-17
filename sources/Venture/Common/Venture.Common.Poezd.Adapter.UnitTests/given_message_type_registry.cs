@@ -114,8 +114,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
     private static MessageTypesRegistry CreateMessageTypeRegistry()
     {
-      var messagesAssembly = Assembly.GetAssembly(typeof(Api));
-      var messageTypes = messagesAssembly!.ExportedTypes.Where(type => type.Namespace!.StartsWith(Api.V1Namespace));
+      var messagesAssembly = Assembly.GetAssembly(typeof(WorkPlannerApi));
+      var messageTypes = messagesAssembly!.ExportedTypes.Where(type => type.Namespace!.StartsWith(WorkPlannerApi.V1Namespace));
       return new MessageTypesRegistry(messageTypes);
     }
 

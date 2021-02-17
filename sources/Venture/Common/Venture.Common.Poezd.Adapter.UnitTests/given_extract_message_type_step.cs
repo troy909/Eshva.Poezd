@@ -7,14 +7,12 @@ using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
-using Venture.Common.Poezd.Adapter;
-using Venture.WorkPlanner.Messages;
 using Venture.WorkPlanner.Messages.V1.Events;
 using Xunit;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
+namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   public class given_extract_message_type_step
   {
@@ -26,7 +24,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       const string expectedTypeName = "Venture.WorkPlanner.Messages.V1.Events.TaskCreated";
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{Api.Headers.MessageTypeName, expectedTypeName}});
+        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}});
 
       await sut.Execute(context);
 
@@ -53,18 +51,18 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       var step = new ExtractMessageTypeStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
 
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{Api.Headers.MessageTypeName, null}});
+      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, null}});
       Func<Task> sut = () => step.Execute(context);
 
       sut.Should().Throw<PoezdSkipMessageException>("messages of unknown type should be skipped");
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{Api.Headers.MessageTypeName, string.Empty}});
+        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, string.Empty}});
       sut = () => step.Execute(context);
       sut.Should().Throw<PoezdSkipMessageException>("messages of unknown type should be skipped");
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{Api.Headers.MessageTypeName, WhitespaceString}});
+        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, WhitespaceString}});
       sut = () => step.Execute(context);
       sut.Should().Throw<PoezdSkipMessageException>("messages of unknown type should be skipped");
     }
@@ -75,7 +73,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       var step = new ExtractMessageTypeStep(new MessageTypesRegistry(new[] {typeof(TaskCreated)}));
       var context = new ConcurrentPocket();
 
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{Api.Headers.MessageTypeName, "unknown"}});
+      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, "unknown"}});
       Func<Task> sut = () => step.Execute(context);
 
       sut.Should().Throw<PoezdSkipMessageException>();

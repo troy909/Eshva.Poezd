@@ -1,4 +1,4 @@
-namespace Venture.WorkPlanner.Messages
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Work Planner messages assembly tag.
@@ -6,10 +6,8 @@ namespace Venture.WorkPlanner.Messages
   /// <remarks>
   /// Used to identify this assembly when searching for types in this assembly with reflection.
   /// </remarks>
-  public static class Api
+  public static class VentureApi
   {
-    public const string V1Namespace = "Venture.WorkPlanner.Messages.V1";
-
     /// <summary>
     /// The header keys that uses the Work Planner service for a message metadata in Kafka message headers.
     /// </summary>

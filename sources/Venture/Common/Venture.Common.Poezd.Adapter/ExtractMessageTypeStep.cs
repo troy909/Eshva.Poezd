@@ -8,12 +8,10 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
-using Venture.Common.Poezd.Adapter;
-using Venture.WorkPlanner.Messages;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Extracts message type from message broker headers and sets appropriate metadata in the message handling context.
@@ -33,7 +31,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter
       if (!context.TryTake<Dictionary<string, string>>(ContextKeys.Broker.MessageMetadata, out var metadata))
         return Task.CompletedTask;
 
-      if (metadata.TryGetValue(Api.Headers.MessageTypeName, out var messageTypeName))
+      if (metadata.TryGetValue(VentureApi.Headers.MessageTypeName, out var messageTypeName))
       {
         if (string.IsNullOrWhiteSpace(messageTypeName))
         {

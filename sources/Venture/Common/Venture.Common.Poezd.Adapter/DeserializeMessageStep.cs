@@ -7,11 +7,10 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
-using Venture.Common.Poezd.Adapter;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Deserializes message POCO from broker message serialized as FlatBuffers-table using type extracted earlier.

@@ -4,11 +4,10 @@ using System;
 using System.Collections.Generic;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
-using Venture.Common.Poezd.Adapter;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter
+namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
   /// Work Planner service API ingress pipe fitter.

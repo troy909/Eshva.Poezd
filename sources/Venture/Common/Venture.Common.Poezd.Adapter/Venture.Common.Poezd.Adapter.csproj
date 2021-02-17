@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -11,7 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
     <ProjectReference Include="..\Venture.Common.Application\Venture.Common.Application.csproj" />
-    <ProjectReference Include="..\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj" />
   </ItemGroup>
 
   <ItemGroup>

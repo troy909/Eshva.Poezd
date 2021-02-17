@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
-using Venture.WorkPlanner.Messages;
 using Xunit;
 
 #endregion
 
-namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
+namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   public class given_extract_relation_metadata_step
   {
@@ -23,7 +22,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       const string expectedId = "expected";
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{Api.Headers.MessageId, expectedId}});
+        new Dictionary<string, string> {{VentureApi.Headers.MessageId, expectedId}});
       await sut.Execute(context);
 
       context.TakeOrNull<string>(ContextKeys.Application.MessageId).Should().Be(expectedId, "this header should be copied");
@@ -48,7 +47,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       const string expectedCorrelationId = "expected";
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{Api.Headers.CorrelationId, expectedCorrelationId}});
+        new Dictionary<string, string> {{VentureApi.Headers.CorrelationId, expectedCorrelationId}});
       await sut.Execute(context);
 
       context.TakeOrNull<string>(ContextKeys.Application.CorrelationId).Should().Be(expectedCorrelationId, "this header should be copied");
@@ -73,7 +72,7 @@ namespace Venture.CaseOffice.WorkPlanner.Adapter.UnitTests
       const string expectedCausationId = "expected";
       context.Put(
         ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{Api.Headers.CausationId, expectedCausationId}});
+        new Dictionary<string, string> {{VentureApi.Headers.CausationId, expectedCausationId}});
       await sut.Execute(context);
 
       context.TakeOrNull<string>(ContextKeys.Application.CausationId).Should().Be(expectedCausationId, "this header should be copied");

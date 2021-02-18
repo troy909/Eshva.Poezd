@@ -1,7 +1,6 @@
 #region Usings
 
-using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
 
@@ -11,16 +10,10 @@ namespace Eshva.Poezd.Core.Pipeline
 {
   public interface IPipeline
   {
-    IPipeline Append(IStep step);
+    [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+    IPipeline Append([JetBrains.Annotations.NotNull] IStep step);
 
-    IPipeline Append(IEnumerable<IStep> steps);
-
-    void InsertBefore(IStep step);
-
-    void InsertAfter(IStep step);
-
-    void Remove(Type stepType);
-
-    Task Execute(IPocket context);
+    [JetBrains.Annotations.NotNull]
+    Task Execute([JetBrains.Annotations.NotNull] IPocket context);
   }
 }

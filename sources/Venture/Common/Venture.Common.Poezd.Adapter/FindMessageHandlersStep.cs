@@ -36,11 +36,12 @@ namespace Venture.Common.Poezd.Adapter
       return Task.CompletedTask;
     }
 
-    private IEnumerable<HandlerDescriptor> GetHandlersForMessageType(Type messageType) =>
+    private HandlerDescriptor[] GetHandlersForMessageType(Type messageType) =>
       _handlerRegistry.HandlersGroupedByMessageType[messageType]
         .Select(handlerType => _serviceProvider.GetService(handlerType))
         .Where(handler => handler != null)
-        .Select(handler => MakeHandlerDescriptor(handler, messageType));
+        .Select(handler => MakeHandlerDescriptor(handler, messageType))
+        .ToArray();
 
     private static HandlerDescriptor MakeHandlerDescriptor(object handler, Type messageType)
     {

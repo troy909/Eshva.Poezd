@@ -166,13 +166,13 @@ namespace Eshva.Poezd.Core.Routing
       /// <value>
       /// The value is a <see cref="string" />.
       /// </value>
-      public const string CausationId = Prefix + "correlation-id";
+      public const string CausationId = Prefix + "causation-id";
 
       /// <summary>
       /// The key of message handler list for the current message.
       /// </summary>
       /// <value>
-      /// The type of value depends on Poezd to service adapter.
+      /// The type of value depends on Poezd service adapter.
       /// </value>
       public const string Handlers = Prefix + "handlers";
 

@@ -31,7 +31,7 @@ namespace Venture.Common.Poezd.Adapter
         context.Put(ContextKeys.Application.CorrelationId, correlationId);
 
       if (metadata.TryGetValue(VentureApi.Headers.CausationId, out var causationId))
-        context.Put(ContextKeys.Application.CorrelationId, causationId);
+        context.Put(ContextKeys.Application.CausationId, causationId);
 
       return Task.CompletedTask;
     }

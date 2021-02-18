@@ -7,7 +7,6 @@ using Xunit;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.UnitTests
 {
   public sealed class given_wildcard_queue_name_matcher

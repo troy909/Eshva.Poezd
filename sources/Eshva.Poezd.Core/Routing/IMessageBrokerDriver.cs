@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Routing
 {
   public interface IMessageBrokerDriver : IDisposable

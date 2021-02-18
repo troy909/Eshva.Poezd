@@ -6,7 +6,6 @@ using Venture.CaseOffice.Application.Queries;
 
 #endregion
 
-
 namespace Venture.CaseOffice.ReadModelStorage.Redis.ResearchCase
 {
   public class IsItResearchCaseTypeQuery : IIsItResearchCaseTypeQuery

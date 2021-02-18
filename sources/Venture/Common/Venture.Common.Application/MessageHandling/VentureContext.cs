@@ -5,7 +5,6 @@ using Eshva.Common.Collections;
 
 #endregion
 
-
 namespace Venture.Common.Application.MessageHandling
 {
   /// <summary>

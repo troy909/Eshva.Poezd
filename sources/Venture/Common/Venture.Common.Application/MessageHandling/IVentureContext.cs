@@ -4,7 +4,6 @@ using Eshva.Common.Collections;
 
 #endregion
 
-
 namespace Venture.Common.Application.MessageHandling
 {
   public interface IVentureContext : IPocket

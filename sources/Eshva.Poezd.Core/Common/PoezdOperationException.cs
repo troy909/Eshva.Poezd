@@ -6,7 +6,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Common
 {
   public sealed class PoezdOperationException : PoezdException

@@ -158,7 +158,6 @@ namespace Eshva.Common.UnitTests
       };
       sut.Put(nameOfThing, thingItself);
 
-
       sut.TakeOrPut(nameOfThing, thingFactory).Should().BeSameAs(thingItself, "the thing lies in the pocket");
       isFactoryCalled.Should().BeFalse("the think was already stored in the pocket");
     }
@@ -253,7 +252,6 @@ namespace Eshva.Common.UnitTests
         exception => exception.ParamName == "thingFactory",
         "null is not a valid thing factory");
     }
-
 
     private const string WhiteSpaceString = " \n\t\r";
   }

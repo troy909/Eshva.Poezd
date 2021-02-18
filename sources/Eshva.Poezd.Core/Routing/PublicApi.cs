@@ -32,10 +32,10 @@ namespace Eshva.Poezd.Core.Routing
 
     public IMessageTypesRegistry MessageTypesRegistry { get; }
 
-    public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
-
     [NotNull]
     public static IPublicApi Empty { get; } = new EmptyPublicApi();
+
+    public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
 
     private IPipeFitter GetIngressPipeFitter(IServiceProvider serviceProvider)
     {

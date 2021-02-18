@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 #endregion
 
-
 namespace Venture.Common.Infrastructure.Redis
 {
   public interface IRedisConnectionFactory

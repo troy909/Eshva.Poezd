@@ -8,7 +8,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Configuration
 {
   public sealed class MessageBrokerConfigurator
@@ -62,7 +61,7 @@ namespace Eshva.Poezd.Core.Configuration
       var configuration =
         Activator.CreateInstance(typeof(TConfiguration)) ??
         throw new PoezdConfigurationException($"Can not create a driver configuration instance of type {typeof(TConfiguration).FullName}");
-      var driverConfigurator = 
+      var driverConfigurator =
         (TConfigurator) Activator.CreateInstance(typeof(TConfigurator), configuration) ??
         throw new PoezdConfigurationException($"Can not create a driver configurator instance of type {typeof(TConfigurator).FullName}");
       _configuration.DriverConfiguration = configuration;

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Routing
 {
   public interface IMessageRouter

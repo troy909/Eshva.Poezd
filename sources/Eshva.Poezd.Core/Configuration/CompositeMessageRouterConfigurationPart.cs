@@ -5,7 +5,6 @@ using System.Linq;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Configuration
 {
   public abstract class CompositeMessageRouterConfigurationPart : IMessageRouterConfigurationPart

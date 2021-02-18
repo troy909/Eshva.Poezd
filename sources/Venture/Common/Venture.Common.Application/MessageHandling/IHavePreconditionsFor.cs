@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 #endregion
 
-
 namespace Venture.Common.Application.MessageHandling
 {
   public interface IHavePreconditionsFor<in TMessage> where TMessage : class

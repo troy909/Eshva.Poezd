@@ -11,7 +11,6 @@ using Venture.CaseOffice.Service.Bootstrapping;
 
 #endregion
 
-
 namespace Venture.CaseOffice.Service
 {
   public class Startup

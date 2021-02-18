@@ -12,7 +12,7 @@ namespace Venture.IntegrationTests.TestSubjects
     public IEnumerable<string> GetQueueNamePatterns()
     {
       // IMPORTANT: All topics should exist to subscribe to any of them. Otherwise no messages received if you subscribe to a few.
-      return new[] { @"^venture\.(commands|facts)\..*" };
+      return new[] {@"^venture\.(commands|facts)\..*"};
     }
   }
 }

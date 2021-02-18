@@ -8,7 +8,6 @@ using SimpleInjector.Lifestyles;
 
 #endregion
 
-
 namespace Eshva.Poezd.SimpleInjectorCoupling
 {
   public sealed class SimpleInjectorAdapter : IDiContainerAdapter

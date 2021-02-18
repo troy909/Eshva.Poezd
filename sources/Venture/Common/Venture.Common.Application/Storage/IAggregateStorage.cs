@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 #endregion
 
-
 namespace Venture.Common.Application.Storage
 {
   public interface IAggregateStorage<TAggregate> where TAggregate : class

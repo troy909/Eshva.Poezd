@@ -6,7 +6,6 @@ using Eshva.Poezd.Core.Configuration;
 
 #endregion
 
-
 namespace Eshva.Poezd.RabbitMqCoupling
 {
   public static class RabbitMqConfigurationExtensions

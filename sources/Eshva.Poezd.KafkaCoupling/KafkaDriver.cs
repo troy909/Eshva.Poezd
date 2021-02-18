@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -37,7 +36,6 @@ namespace Eshva.Poezd.KafkaCoupling
       _configuration = configuration as KafkaDriverConfiguration ?? throw new ArgumentException(
         $"The value of {nameof(configuration)} parameter should be of type {typeof(KafkaDriverConfiguration).FullName}.");
       if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-
 
       if (_isInitialized)
         throw new PoezdOperationException($"Kafka driver for broker with ID '{_brokerId}' is already initialized.");
@@ -207,9 +205,7 @@ namespace Eshva.Poezd.KafkaCoupling
     private void ConsumerOnError(IConsumer<Ignore, byte[]> consumer, Error error)
     {
       if (!error.IsFatal)
-      {
         _logger.LogWarning("Consumer error: @{Error}. No action required.", error);
-      }
       else
       {
         var values = consumer.Assignment;
@@ -240,8 +236,9 @@ namespace Eshva.Poezd.KafkaCoupling
       }
     }
 
-    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<KafkaDriver> _logger;
+
+    private readonly IServiceProvider _serviceProvider;
     private string _brokerId;
     private KafkaDriverConfiguration _configuration;
     private IConsumer<Ignore, byte[]> _consumer;

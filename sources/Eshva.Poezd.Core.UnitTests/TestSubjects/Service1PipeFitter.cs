@@ -7,7 +7,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   [UsedImplicitly]

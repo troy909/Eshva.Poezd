@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Venture.Common.Application.MessageHandling
 {
   /// <summary>

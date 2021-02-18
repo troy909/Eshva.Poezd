@@ -7,7 +7,6 @@ using Venture.Common.Infrastructure.Redis;
 
 #endregion
 
-
 namespace Venture.CaseOffice.ReadModelStorage.Redis.JusticeCase
 {
   public class IsJusticeCaseExistsQuery : IIsJusticeCaseExistsQuery

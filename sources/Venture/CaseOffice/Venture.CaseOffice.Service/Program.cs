@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 
 #endregion
 
-
 namespace Venture.CaseOffice.Service
 {
   public class Program

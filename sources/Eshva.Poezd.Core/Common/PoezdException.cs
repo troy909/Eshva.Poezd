@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Common
 {
   public abstract class PoezdException : ApplicationException

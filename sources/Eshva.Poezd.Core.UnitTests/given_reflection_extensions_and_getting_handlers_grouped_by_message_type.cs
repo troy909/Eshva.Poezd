@@ -91,7 +91,6 @@ namespace Eshva.Poezd.Core.UnitTests
 
     private class H22 : IHandler<M2>, IHandler<M3>, IAdditionalContract { }
 
-
     private class M1 { }
 
     private class M2 { }

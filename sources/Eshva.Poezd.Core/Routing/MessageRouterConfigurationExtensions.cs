@@ -5,7 +5,6 @@ using Eshva.Poezd.Core.Configuration;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Routing
 {
   public static class MessageRouterConfigurationExtensions

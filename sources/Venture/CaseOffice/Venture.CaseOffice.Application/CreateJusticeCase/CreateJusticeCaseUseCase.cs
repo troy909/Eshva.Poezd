@@ -11,7 +11,6 @@ using Venture.Common.Application.Storage;
 
 #endregion
 
-
 namespace Venture.CaseOffice.Application.CreateJusticeCase
 {
   public sealed class CreateJusticeCaseUseCase :

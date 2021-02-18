@@ -18,7 +18,6 @@ namespace Venture.Common.TestingTools.Kafka
 
     public string BootstrapServers => $"localhost:{BootstrapPort}";
 
-
     public override IReadOnlyCollection<KeyValuePair<string, string>> GetVariables() => new[]
     {
       new KeyValuePair<string, string>(

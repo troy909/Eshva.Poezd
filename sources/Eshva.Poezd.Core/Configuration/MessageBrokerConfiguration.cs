@@ -7,7 +7,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Configuration
 {
   public sealed class MessageBrokerConfiguration : CompositeMessageRouterConfigurationPart
@@ -40,7 +39,7 @@ namespace Eshva.Poezd.Core.Configuration
       if (QueueNameMatcherType == null) yield return $"Queue name matcher type should be set for message broker with ID '{Id}'.";
       if (IngressEnterPipelineConfiguratorType == null)
         yield return $"Ingress enter pipeline configurator type should be set for message broker with ID '{Id}'.";
-      if (IngressExitPipelineConfiguratorType== null)
+      if (IngressExitPipelineConfiguratorType == null)
         yield return $"Ingress exit pipeline configurator type should be set for message broker with ID '{Id}'.";
       if (DriverFactoryType == null) yield return $"Message broker driver factory type should be set for message broker with ID '{Id}'.";
     }

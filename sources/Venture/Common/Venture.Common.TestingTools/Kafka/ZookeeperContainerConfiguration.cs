@@ -19,7 +19,6 @@ namespace Venture.Common.TestingTools.Kafka
       new KeyValuePair<string, string>("ALLOW_ANONYMOUS_LOGIN", "true")
     };
 
-
     public override ushort[] GetExposedPorts() => new[] {ExposedHttpPort};
 
     public override IReadOnlyCollection<IProvidePortBindings.PortBinding> GetPortBindings() => new[]

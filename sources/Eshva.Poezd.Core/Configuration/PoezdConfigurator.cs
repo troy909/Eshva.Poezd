@@ -5,7 +5,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Configuration
 {
   public sealed class PoezdConfigurator

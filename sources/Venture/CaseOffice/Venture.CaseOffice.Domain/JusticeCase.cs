@@ -4,7 +4,6 @@ using System;
 
 #endregion
 
-
 namespace Venture.CaseOffice.Domain
 {
   public class JusticeCase

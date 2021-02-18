@@ -1,7 +1,4 @@
 namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
 {
-  public class Message01
-  {
-    
-  }
+  public class Message01 { }
 }

@@ -63,6 +63,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Messages
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.WorkPlanner.Messages", "Venture\Common\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj", "{60088E61-7622-4301-BC3B-4A8C4D70694D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.CaseOffice.Messages.UnitTests", "Venture\CaseOffice\Venture.CaseOffice.Messages.UnitTests\Venture.CaseOffice.Messages.UnitTests.csproj", "{17BB56F2-3DEA-4954-B507-2260171DCD18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,10 @@ Global
 		{60088E61-7622-4301-BC3B-4A8C4D70694D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60088E61-7622-4301-BC3B-4A8C4D70694D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60088E61-7622-4301-BC3B-4A8C4D70694D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17BB56F2-3DEA-4954-B507-2260171DCD18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17BB56F2-3DEA-4954-B507-2260171DCD18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17BB56F2-3DEA-4954-B507-2260171DCD18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17BB56F2-3DEA-4954-B507-2260171DCD18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,6 +200,7 @@ Global
 		{2C4588F0-7DC4-4127-9528-B70253C25E2E} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 		{BE2BD5D5-6009-4091-A134-7A1945124436} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 		{60088E61-7622-4301-BC3B-4A8C4D70694D} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
+		{17BB56F2-3DEA-4954-B507-2260171DCD18} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

@@ -2,7 +2,7 @@ include "../../Types/uuid.fbs";
 
 namespace Venture.CaseOffice.Messages.V1.Commands;
 
-table CreateCase (PrecompiledSerializer) {
+table CreateCase {
   CaseId:Venture.CaseOffice.Messages.Types.uuid;
   CaseType:string;
   Reason:string;

@@ -91,6 +91,7 @@ namespace Eshva.Poezd.Core.Routing
             .Put(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
             .Put(ContextKeys.Broker.Configuration, messageBroker.Configuration)
             .Put(ContextKeys.PublicApi.Id, publicApi.Id)
+            .Put(ContextKeys.PublicApi.MessageTypesRegistry, publicApi.MessageTypesRegistry)
             .Put(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
         }
         catch (Exception exception)

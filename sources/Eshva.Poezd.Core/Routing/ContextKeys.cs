@@ -85,9 +85,17 @@ namespace Eshva.Poezd.Core.Routing
       /// The configuration of public API.
       /// </summary>
       /// <value>
-      /// The value is a <see cref="Eshva.Poezd.Core.Configuration.PublicApiConfiguration" />
+      /// The value is a <see cref="Eshva.Poezd.Core.Configuration.PublicApiConfiguration" />.
       /// </value>
       public const string Configuration = Prefix + "configuration";
+
+      /// <summary>
+      /// The message type registry of public API.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IMessageTypesRegistry" />.
+      /// </value>
+      public const string MessageTypesRegistry = Prefix + "message-types-registry";
 
       private const string Prefix = "public-api-";
     }
@@ -120,6 +128,14 @@ namespace Eshva.Poezd.Core.Routing
       /// The value is a <see cref="string" />.
       /// </value>
       public const string MessageTypeName = Prefix + "message-type-name";
+
+      /// <summary>
+      /// The key of application message type descriptor used for serialization and parsing messages of this type.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IMessageTypeDescriptor{TMessageType}" />
+      /// </value>
+      public const string MessageTypeDescriptor = Prefix + "message-type-descriptor";
 
       /// <summary>
       /// The key of the message ID.

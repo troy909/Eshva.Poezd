@@ -1,12 +1,13 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
+using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
 
 #endregion
-
 
 namespace Eshva.Poezd.Core.Pipeline
 {
@@ -27,6 +28,13 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <exception cref="ArgumentNullException">
     /// The message handling context isn't provided.
     /// </exception>
+    /// <exception cref="KeyNotFoundException">
+    /// A required context item isn't found.
+    /// </exception>
+    /// <exception cref="PoezdOperationException">
+    /// An error occurred during step execution.
+    /// </exception>
+    [NotNull]
     Task Execute([NotNull] IPocket context);
   }
 }

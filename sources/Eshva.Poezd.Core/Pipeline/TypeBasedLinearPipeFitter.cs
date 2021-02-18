@@ -7,7 +7,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Pipeline
 {
   public abstract class TypeBasedLinearPipeFitter : IPipeFitter
@@ -25,6 +24,11 @@ namespace Eshva.Poezd.Core.Pipeline
       }
     }
 
+    /// <summary>
+    /// Returns an ordered list of step types.
+    /// </summary>
+    /// <returns></returns>
+    [NotNull]
     protected abstract IEnumerable<Type> GetStepTypes();
 
     private static Exception MakeException(Type stepType) =>

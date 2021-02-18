@@ -6,7 +6,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Configuration
 {
   public sealed class PublicApiConfigurator
@@ -42,6 +41,12 @@ namespace Eshva.Poezd.Core.Configuration
       where TQueueNamePatternsProvider : IQueueNamePatternsProvider
     {
       _configuration.QueueNamePatternsProviderType = typeof(TQueueNamePatternsProvider);
+      return this;
+    }
+
+    public PublicApiConfigurator WithMessageTypesRegistry<TMessageRegistry>()
+    {
+      _configuration.MessageTypesRegistryType = typeof(TMessageRegistry);
       return this;
     }
 

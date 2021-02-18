@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Eshva.Poezd.Core.Pipeline;
 using FluentAssertions;
 using SimpleInjector;
+using Venture.CaseOffice.Messages;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;
@@ -52,6 +53,7 @@ namespace Venture.IntegrationTests
         api => api.WithId("case-office")
           .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
           .WithIngressPipelineConfigurator<EmptyPipeFitter>()
+          .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
           .WithHandlerRegistry<EmptyHandlerRegistry>(),
         _testOutput);
 
@@ -67,6 +69,7 @@ namespace Venture.IntegrationTests
       // await kafkaTestContext.Produce(topic, expectedValue);
 
       container.RegisterSingleton<MessageCountingPipeFitter>();
+      container.RegisterSingleton<CaseOfficeMessageTypesRegistry>();
       container.Register<CounterStep>(Lifestyle.Scoped);
       var counter = new CounterStep.Properties();
       container.RegisterInstance(counter);

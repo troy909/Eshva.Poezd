@@ -10,10 +10,10 @@ using JetBrains.Annotations;
 namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
-  /// Work Planner service API ingress pipe fitter.
+  /// A Venture service ingress message handling pipe fitter.
   /// </summary>
   /// <remarks>
-  /// Work Planner service API contract:
+  /// A Venture service contract:
   /// <list type="bullet">
   /// <item>
   /// <descriptin>uses Kafka to send/receive messages;</descriptin>
@@ -22,24 +22,19 @@ namespace Venture.Common.Poezd.Adapter
   /// <descriptin>publishes events of its aggregates to topics named <c>case.facts.[aggregate-name].v1</c>;</descriptin>
   /// </item>
   /// <item>
-  /// <descriptin>sends message type in a broker header named <c>Type</c>;</descriptin>
+  /// <descriptin>sends message type in a broker header named <c>type</c>;</descriptin>
   /// </item>
   /// <item>
   /// <descriptin>serializes its messages using FlatBuffers;</descriptin>
   /// </item>
   /// <item>
-  /// <descriptin>sends correlation ID in a broker header named <c>CorrelationId</c>;</descriptin>
+  /// <descriptin>sends message ID in a broker header named <c>id</c>;</descriptin>
   /// </item>
   /// <item>
-  /// <descriptin>sends causation ID in a broker header named <c>CausationId</c>;</descriptin>
+  /// <descriptin>sends correlation ID in a broker header named <c>correlation-id</c>;</descriptin>
   /// </item>
   /// <item>
-  /// <descriptin>all its events contains <c>Metadata</c> and <c>Payload</c> fields;</descriptin>
-  /// </item>
-  /// <item>
-  /// <descriptin>
-  /// its message <c>Metadata</c> field contains <c>CorrelationId</c>, <c>CausationId</c>, <c>OriginatorToken</c> if known;
-  /// </descriptin>
+  /// <descriptin>sends causation ID in a broker header named <c>causation-id</c>;</descriptin>
   /// </item>
   /// <item>
   /// <descriptin>
@@ -51,15 +46,15 @@ namespace Venture.Common.Poezd.Adapter
   /// </item>
   /// </list>
   /// </remarks>
-  public sealed class IngressPipeFitter : TypeBasedLinearPipeFitter
+  public sealed class VentureIngressPipeFitter : TypeBasedLinearPipeFitter
   {
-    public IngressPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public VentureIngressPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {
       yield return typeof(ExtractRelationMetadataStep);
       yield return typeof(ExtractMessageTypeStep);
-      yield return typeof(DeserializeMessageStep);
+      yield return typeof(ParseBrokerMessageStep);
       yield return typeof(ExtractAuthorizationMetadataStep);
       yield return typeof(FindMessageHandlersStep);
       yield return typeof(ExecuteMessageHandlersStep);

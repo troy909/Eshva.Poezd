@@ -1,7 +1,13 @@
+#region Usings
+
+using JetBrains.Annotations;
+
+#endregion
+
 namespace Eshva.Poezd.Core.Pipeline
 {
   public interface IPipeFitter
   {
-    void Setup(IPipeline pipeline);
+    void Setup([NotNull] IPipeline pipeline);
   }
 }

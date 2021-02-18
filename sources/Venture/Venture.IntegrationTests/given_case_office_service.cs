@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,12 +38,16 @@ namespace Venture.IntegrationTests
           .WithId("case-office")
           .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
           .WithIngressPipelineConfigurator<EmptyPipeFitter>()
-          // .WithIngressPipelineConfigurator<IngressPipeFitter>()
+          // .WithIngressPipelineConfigurator<VentureIngressPipeFitter>()
+          .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
         _testOutput);
       container.RegisterSingleton<VentureQueueNamePatternsProvider>();
       AddIngressPipeline(container);
-      container.RegisterInstance(CreateMessageTypeRegistry());
+      var registry = new CaseOfficeMessageTypesRegistry();
+      registry.Initialize();
+      container.RegisterInstance((MessageTypesRegistry) registry);
+      container.RegisterSingleton<CaseOfficeMessageTypesRegistry>();
 
       const string topic = "venture.commands.case-office.v1";
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
@@ -57,9 +59,9 @@ namespace Venture.IntegrationTests
       var router = container.GetMessageRouter();
       await router.Start(timeout);
 
-      var command = new CreateCase {CaseId = Guid.NewGuid(), CaseType = "law", Reason = "some reason", SubjectId = Guid.NewGuid()};
-      var serialized = container.GetInstance<MessageTypesRegistry>().Serialize(command.GetType().FullName!, command);
+      var (command, serialized) = CreateSerializedMessage();
       var headers = CreateHeaders(command.GetType());
+
       await kafkaTestContext.Produce(
         topic,
         serialized,
@@ -69,14 +71,25 @@ namespace Venture.IntegrationTests
       // TODO: assert
     }
 
+    private static (CreateCase, byte[]) CreateSerializedMessage()
+    {
+      var registry = new CaseOfficeMessageTypesRegistry();
+      registry.Initialize();
+      var descriptor = registry.GetDescriptor<CreateCase>(typeof(CreateCase).FullName!);
+      var serialized = new byte[1024];
+      var message = new CreateCase {CaseId = Guid.NewGuid(), CaseType = "law", Reason = "some reason", SubjectId = Guid.NewGuid()};
+      descriptor.Serialize(message, serialized);
+      return (message, serialized);
+    }
+
     private static void AddIngressPipeline(Container container)
     {
       // TODO: I need to test this pipeline itself because for the moment it fails.
       /*
-      container.RegisterSingleton<IngressPipeFitter>();
+      container.RegisterSingleton<VentureIngressPipeFitter>();
       container.Register<ExtractRelationMetadataStep>(Lifestyle.Scoped);
       container.Register<ExtractMessageTypeStep>(Lifestyle.Scoped);
-      container.Register<DeserializeMessageStep>(Lifestyle.Scoped);
+      container.Register<ParseBrokerMessageStep>(Lifestyle.Scoped);
       container.Register<ExtractAuthorizationMetadataStep>(Lifestyle.Scoped);
       container.Register<FindMessageHandlersStep>(Lifestyle.Scoped);
       container.Register<ExecuteMessageHandlersStep>(Lifestyle.Scoped);
@@ -93,21 +106,14 @@ namespace Venture.IntegrationTests
     */
     }
 
-    private static MessageTypesRegistry CreateMessageTypeRegistry()
-    {
-      var messagesAssembly = Assembly.GetAssembly(typeof(Api));
-      var messageTypes = messagesAssembly!.ExportedTypes.Where(type => type.Namespace!.StartsWith(Api.V1Namespace));
-      return new MessageTypesRegistry(messageTypes);
-    }
-
     private static Dictionary<string, byte[]> CreateHeaders(Type messageType)
     {
       var headers = new Dictionary<string, byte[]>
       {
-        {Api.Headers.MessageTypeName, StringToBytes(messageType.FullName)},
-        {Api.Headers.MessageId, StringToBytes(Guid.NewGuid().ToString("N"))},
-        {Api.Headers.CorrelationId, StringToBytes(Guid.NewGuid().ToString("N"))},
-        {Api.Headers.CausationId, StringToBytes(Guid.NewGuid().ToString("N"))}
+        {VentureApi.Headers.MessageTypeName, StringToBytes(messageType.FullName)},
+        {VentureApi.Headers.MessageId, StringToBytes(Guid.NewGuid().ToString("N"))},
+        {VentureApi.Headers.CorrelationId, StringToBytes(Guid.NewGuid().ToString("N"))},
+        {VentureApi.Headers.CausationId, StringToBytes(Guid.NewGuid().ToString("N"))}
       };
       return headers;
     }

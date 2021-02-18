@@ -10,7 +10,6 @@ using JetBrains.Annotations;
 
 #endregion
 
-
 namespace Eshva.Poezd.Core.Routing
 {
   public sealed class MessageBroker : IDisposable
@@ -31,19 +30,26 @@ namespace Eshva.Poezd.Core.Routing
       IngressExitPipeFitter = GetIngressExitPipelineConfigurator(serviceProvider);
     }
 
+    [NotNull]
     public IMessageBrokerDriver Driver { get; }
 
+    [NotNull]
     public string Id => Configuration.Id;
 
+    [NotNull]
     public IReadOnlyCollection<IPublicApi> PublicApis { get; }
 
+    [NotNull]
     public object DriverConfiguration => Configuration.DriverConfiguration;
 
+    [NotNull]
     public MessageBrokerConfiguration Configuration { get; }
 
-    public IPipeFitter IngressEnterPipeFitter { get; set; }
+    [NotNull]
+    public IPipeFitter IngressEnterPipeFitter { get; }
 
-    public IPipeFitter IngressExitPipeFitter { get; set; }
+    [NotNull]
+    public IPipeFitter IngressExitPipeFitter { get; }
 
     public void Dispose()
     {
@@ -55,7 +61,7 @@ namespace Eshva.Poezd.Core.Routing
       var publicApi = PublicApis.FirstOrDefault(
         api => api.GetQueueNamePatterns()
           .Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
-      return publicApi ?? PublicApi.Empty;
+      return publicApi ?? PublicApi.Empty; // TODO: Do I need an empty API here at all?
     }
 
     private IPipeFitter GetIngressEnterPipelineConfigurator(IServiceProvider serviceProvider)

@@ -102,18 +102,21 @@ namespace Eshva.Poezd.Core.UnitTests
                     .WithId("api-1")
                     .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
                     .WithIngressPipelineConfigurator<Service1PipeFitter>()
+                    .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
                   api => api
                     .WithId("api-2")
                     .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
                     .WithIngressPipelineConfigurator<Service2PipeFitter>()
+                    .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
                   api => api
                     .WithId("cdc-notifications")
                     .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
                     .WithIngressPipelineConfigurator<CdcNotificationsPipeFitter>()
+                    .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
@@ -123,6 +126,7 @@ namespace Eshva.Poezd.Core.UnitTests
         typeof(Logger<>),
         Lifestyle.Singleton);
 
+      container.RegisterSingleton<EmptyMessageTypesRegistry>();
       container.RegisterSingleton<TestBrokerDriverFactory>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<Service1QueueNamePatternsProvider>();

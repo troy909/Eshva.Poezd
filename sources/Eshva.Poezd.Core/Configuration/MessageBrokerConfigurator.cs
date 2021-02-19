@@ -37,13 +37,13 @@ namespace Eshva.Poezd.Core.Configuration
 
     public MessageBrokerConfigurator WithIngressEnterPipelineConfigurator<TConfigurator>() where TConfigurator : IPipeFitter
     {
-      _configuration.IngressEnterPipelineConfiguratorType = typeof(TConfigurator);
+      _configuration.IngressEnterPipeFitterType = typeof(TConfigurator);
       return this;
     }
 
     public MessageBrokerConfigurator WithIngressExitPipelineConfigurator<TConfigurator>() where TConfigurator : IPipeFitter
     {
-      _configuration.IngressExitPipelineConfiguratorType = typeof(TConfigurator);
+      _configuration.IngressExitPipeFitterType = typeof(TConfigurator);
       return this;
     }
 

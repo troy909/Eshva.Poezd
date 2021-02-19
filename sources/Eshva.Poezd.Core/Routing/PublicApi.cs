@@ -40,7 +40,7 @@ namespace Eshva.Poezd.Core.Routing
     private IPipeFitter GetIngressPipeFitter(IServiceProvider serviceProvider)
     {
       var pipeFitter = (IPipeFitter) serviceProvider.GetService(
-        Configuration.IngressPipelineConfiguratorType,
+        Configuration.IngressPipeFitterType,
         type => new PoezdOperationException(
           $"Can not get an instance of public API ingress pipeline configurator of type '{type.FullName}'." +
           "You should register this type in DI-container."));

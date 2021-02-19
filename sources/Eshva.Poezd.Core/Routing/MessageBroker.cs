@@ -67,7 +67,7 @@ namespace Eshva.Poezd.Core.Routing
     private IPipeFitter GetIngressEnterPipelineConfigurator(IServiceProvider serviceProvider)
     {
       return (IPipeFitter) serviceProvider.GetService(
-        Configuration.IngressEnterPipelineConfiguratorType,
+        Configuration.IngressEnterPipeFitterType,
         type => new PoezdConfigurationException(
           $"Can not get instance of the message broker ingress enter pipeline configurator of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
@@ -76,7 +76,7 @@ namespace Eshva.Poezd.Core.Routing
     private IPipeFitter GetIngressExitPipelineConfigurator(IServiceProvider serviceProvider)
     {
       return (IPipeFitter) serviceProvider.GetService(
-        Configuration.IngressExitPipelineConfiguratorType,
+        Configuration.IngressExitPipeFitterType,
         type => new PoezdConfigurationException(
           $"Can not get instance of the message broker ingress exit pipeline configurator of type '{type.FullName}'. " +
           "You should register this type in DI-container."));

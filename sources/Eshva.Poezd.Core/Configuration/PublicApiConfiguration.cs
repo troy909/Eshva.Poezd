@@ -7,25 +7,49 @@ using System.Collections.Generic;
 
 namespace Eshva.Poezd.Core.Configuration
 {
+  /// <summary>
+  /// Configuration of a public API.
+  /// </summary>
   public sealed class PublicApiConfiguration : IMessageRouterConfigurationPart
   {
+    /// <summary>
+    /// Gets ID of the public API.
+    /// </summary>
     public string Id { get; internal set; }
 
-    public Type IngressPipelineConfiguratorType { get; set; }
+    /// <summary>
+    /// Gets the ingress pipe fitter type.
+    /// </summary>
+    public Type IngressPipeFitterType { get; internal set; }
 
-    public Type HandlerRegistryType { get; set; }
+    /// <summary>
+    /// Gets the handler registry type.
+    /// </summary>
+    public Type HandlerRegistryType { get; internal set; }
 
-    public Type QueueNamePatternsProviderType { get; set; }
+    /// <summary>
+    /// Gets the queue name patterns provider type.
+    /// </summary>
+    public Type QueueNamePatternsProviderType { get; internal set; }
 
-    public Type MessageTypesRegistryType { get; set; }
+    /// <summary>
+    /// Gets the massage types registry type.
+    /// </summary>
+    public Type MessageTypesRegistryType { get; internal set; }
 
+    /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
-      if (string.IsNullOrWhiteSpace(Id)) yield return "Public API ID should be set.";
-      if (IngressPipelineConfiguratorType == null) yield return "Pipeline configurator type should be set.";
-      if (HandlerRegistryType == null) yield return "Handler factory type should be set.";
-      if (QueueNamePatternsProviderType == null) yield return "Queue name patterns provider type should be set.";
-      if (MessageTypesRegistryType == null) yield return "Message registry type should be set.";
+      if (string.IsNullOrWhiteSpace(Id))
+        yield return "ID of the public API should be specified.";
+      if (IngressPipeFitterType == null)
+        yield return $"The pipeline fitter configurator type should be set for the public API with ID '{Id}'.";
+      if (HandlerRegistryType == null)
+        yield return $"The handler factory type should be set for the public API with ID '{Id}'.";
+      if (QueueNamePatternsProviderType == null)
+        yield return $"The queue name patterns provider type should be set for the public API with ID '{Id}'.";
+      if (MessageTypesRegistryType == null)
+        yield return $"The message registry type should be set for the public API with ID '{Id}'.";
     }
   }
 }

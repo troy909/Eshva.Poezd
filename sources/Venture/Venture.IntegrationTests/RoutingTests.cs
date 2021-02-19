@@ -76,8 +76,8 @@ namespace Venture.IntegrationTests
                     .WithCommitPeriod(commitPeriod: 1)
                     .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
                 .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                .WithIngressEnterPipelineConfigurator<TIngressEnterPipeline>()
-                .WithIngressExitPipelineConfigurator<TIngressExitPipeline>()
+                .WithIngressEnterPipeFitter<TIngressEnterPipeline>()
+                .WithIngressExitPipeFitter<TIngressExitPipeline>()
                 .AddPublicApi(configureApi)));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));

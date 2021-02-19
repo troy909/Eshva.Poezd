@@ -95,8 +95,8 @@ namespace Eshva.Poezd.Core.UnitTests
                 .WithDriver<TestBrokerDriverFactory, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
                   driver => driver.WithSomeSetting(TestBrokerDriverSettings))
                 .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                .WithIngressEnterPipelineConfigurator<SampleBrokerPipeFitter>()
-                .WithIngressExitPipelineConfigurator<EmptyPipeFitter>()
+                .WithIngressEnterPipeFitter<SampleBrokerPipeFitter>()
+                .WithIngressExitPipeFitter<EmptyPipeFitter>()
                 .AddPublicApi(
                   api => api
                     .WithId("api-1")

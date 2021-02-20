@@ -52,7 +52,7 @@ namespace Venture.IntegrationTests
       var container = RoutingTests.SetupContainer<MessageCountingPipeFitter, FinishTestPipeFitter>(
         api => api.WithId("case-office")
           .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
-          .WithIngressPipelineConfigurator<EmptyPipeFitter>()
+          .WithIngressPipeFitter<EmptyPipeFitter>()
           .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
           .WithHandlerRegistry<EmptyHandlerRegistry>(),
         _testOutput);

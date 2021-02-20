@@ -101,21 +101,21 @@ namespace Eshva.Poezd.Core.UnitTests
                   api => api
                     .WithId("api-1")
                     .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
-                    .WithIngressPipelineConfigurator<Service1PipeFitter>()
+                    .WithIngressPipeFitter<Service1PipeFitter>()
                     .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
                   api => api
                     .WithId("api-2")
                     .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
-                    .WithIngressPipelineConfigurator<Service2PipeFitter>()
+                    .WithIngressPipeFitter<Service2PipeFitter>()
                     .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
                   api => api
                     .WithId("cdc-notifications")
                     .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
-                    .WithIngressPipelineConfigurator<CdcNotificationsPipeFitter>()
+                    .WithIngressPipeFitter<CdcNotificationsPipeFitter>()
                     .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())));
 

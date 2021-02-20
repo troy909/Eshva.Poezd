@@ -37,8 +37,8 @@ namespace Venture.IntegrationTests
         api => api
           .WithId("case-office")
           .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
-          .WithIngressPipelineConfigurator<EmptyPipeFitter>()
-          // .WithIngressPipelineConfigurator<VentureIngressPipeFitter>()
+          .WithIngressPipeFitter<EmptyPipeFitter>()
+          // .WithIngressPipeFitter<VentureIngressPipeFitter>()
           .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
         _testOutput);

@@ -117,11 +117,11 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    public static MessageRouterConfiguration Configure([NotNull] Action<PoezdConfigurator> configurator)
+    public static MessageRouterConfiguration Configure([NotNull] Action<MessageRouterConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
 
-      var poezdConfigurator = new PoezdConfigurator();
+      var poezdConfigurator = new MessageRouterConfigurator();
       configurator(poezdConfigurator);
       return poezdConfigurator.Configuration;
     }

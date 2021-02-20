@@ -21,6 +21,9 @@ namespace Eshva.Poezd.Core.Configuration
     /// <param name="configuration">
     /// Message broker configuration object.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Configuration object is not specified.
+    /// </exception>
     public MessageBrokerConfigurator([NotNull] MessageBrokerConfiguration configuration)
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -78,8 +81,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// </summary>
     /// <remarks>
     /// The Poezd router uses a fitter of this type to add steps into ingress pipeline generated for each incoming message.
-    /// Steps
-    /// will be added in the very beginning of pipeline in front of public API related steps.
+    /// Steps will be added in the very beginning of pipeline in front of public API related steps.
     /// </remarks>
     /// <typeparam name="TConfigurator">
     /// The ingress enter pipe fitter type.
@@ -99,8 +101,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// </summary>
     /// <remarks>
     /// The Poezd router uses a fitter of this type to add steps into ingress pipeline generated for each incoming message.
-    /// Steps
-    /// will be added in the very end of pipeline in just after of public API related steps.
+    /// Steps will be added in the very end of pipeline in just after of public API related steps.
     /// </remarks>
     /// <typeparam name="TConfigurator">
     /// The ingress exit pipe fitter type.

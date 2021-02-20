@@ -8,6 +8,7 @@ using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 #endregion
@@ -118,12 +119,14 @@ namespace Eshva.Poezd.Core.UnitTests
       sut.Should().Throw<ArgumentNullException>();
     }
 
-    public class QueueNameMatcher : IQueueNameMatcher
+    [UsedImplicitly]
+    private class QueueNameMatcher : IQueueNameMatcher
     {
       public bool DoesMatch(string queueName, string queueNamePattern) => true;
     }
 
-    public class PipeFitter : IPipeFitter
+    [UsedImplicitly]
+    private class PipeFitter : IPipeFitter
     {
       public void Setup(IPipeline pipeline)
       {
@@ -131,12 +134,13 @@ namespace Eshva.Poezd.Core.UnitTests
       }
     }
 
-    public class DriverFactory : IMessageBrokerDriverFactory
+    private class DriverFactory : IMessageBrokerDriverFactory
     {
       public IMessageBrokerDriver Create() => new Driver();
     }
 
-    public class Driver : IMessageBrokerDriver
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
+    private class Driver : IMessageBrokerDriver
     {
       public bool IsDisposed { get; private set; }
 

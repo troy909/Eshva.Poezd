@@ -21,7 +21,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
   public class given_ingress_pipe_fitter_and_generated_pipeline
   {
     [Fact]
-    public void when_setup_pipeline_it_should_contain_expected_steps_in_expected_order1()
+    public void when_append_steps_into_pipeline_it_should_contain_expected_steps_in_expected_order1()
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
@@ -29,7 +29,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       using (AsyncScopedLifestyle.BeginScope(container))
       {
-        sut.Setup(pipeline);
+        sut.AppendStepsInto(pipeline);
       }
 
       pipeline.Steps.Select(step => step.GetType()).Should().Equal(
@@ -46,7 +46,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     }
 
     [Fact]
-    public async Task when_setup_pipeline_it_should_handle_message_expected_way()
+    public async Task when_append_steps_into_pipeline_it_should_handle_message_expected_way()
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
@@ -55,7 +55,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var context = CreateContext();
       await using (AsyncScopedLifestyle.BeginScope(container))
       {
-        sut.Setup(pipeline);
+        sut.AppendStepsInto(pipeline);
         await pipeline.Execute(context);
       }
 
@@ -72,7 +72,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     }
 
     [Fact]
-    public void when_setup_pipeline_without_service_provider_it_should_fail()
+    public void when_append_steps_into_pipeline_without_service_provider_it_should_fail()
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       // ReSharper disable once ObjectCreationAsStatement
@@ -92,7 +92,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       Func<Task> sut = () => pipeline.Execute(context: null);
       await using (AsyncScopedLifestyle.BeginScope(container))
       {
-        pipeFitter.Setup(pipeline);
+        pipeFitter.AppendStepsInto(pipeline);
         sut.Should().Throw<ArgumentNullException>("context is required");
       }
     }

@@ -11,8 +11,12 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// Message handling pipeline using a linked list.
+  /// </summary>
   public sealed class MessageHandlingPipeline : IPipeline
   {
+    /// <inheritdoc />
     public IPipeline Append([NotNull] IStep step)
     {
       if (step == null) throw new ArgumentNullException(nameof(step));
@@ -26,6 +30,7 @@ namespace Eshva.Poezd.Core.Pipeline
       return this;
     }
 
+    /// <inheritdoc />
     public async Task Execute(IPocket context) // TODO: Add a cancellation token.
     {
       if (context == null) throw new ArgumentNullException(nameof(context));

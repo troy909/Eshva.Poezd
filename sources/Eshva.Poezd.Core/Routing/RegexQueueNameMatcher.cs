@@ -23,13 +23,13 @@ namespace Eshva.Poezd.Core.Routing
 
       if (!queueNamePattern.StartsWith(value: '^')) return queueName.Equals(queueNamePattern, StringComparison.InvariantCulture);
 
-      var regex = KnownRegex.GetOrAdd(
+      var regex = _knownRegex.GetOrAdd(
         queueNamePattern,
         pattern => new Regex(queueNamePattern, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant));
       return regex.IsMatch(queueName);
     }
 
-    private readonly ConcurrentDictionary<string, Regex> KnownRegex = new ConcurrentDictionary<string, Regex>();
+    private readonly ConcurrentDictionary<string, Regex> _knownRegex = new ConcurrentDictionary<string, Regex>();
     private const string NotWhitespace = "Value cannot be null or whitespace.";
   }
 }

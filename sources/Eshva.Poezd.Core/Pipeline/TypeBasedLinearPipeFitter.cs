@@ -9,14 +9,27 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// Pipe fitter which configuration based on specifying ordered list of step types.
+  /// </summary>
   public abstract class TypeBasedLinearPipeFitter : IPipeFitter
   {
+    /// <summary>
+    /// Constructs an instance of pipe fitter.
+    /// </summary>
+    /// <param name="serviceProvider">
+    /// Service provider used for constructing steps instances.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Service provider is not specified.
+    /// </exception>
     protected TypeBasedLinearPipeFitter([NotNull] IServiceProvider serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
-    public void Setup(IPipeline pipeline)
+    /// <inheritdoc />
+    public void AppendStepsInto(IPipeline pipeline)
     {
       foreach (var stepType in GetStepTypes())
       {
@@ -27,7 +40,9 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <summary>
     /// Returns an ordered list of step types.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// Ordered list of step types.
+    /// </returns>
     [NotNull]
     protected abstract IEnumerable<Type> GetStepTypes();
 

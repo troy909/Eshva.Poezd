@@ -7,11 +7,30 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// Extensions for <see cref="IServiceProvider" />.
+  /// </summary>
   public static class ServiceProviderExtensions
   {
-    public static TService GetService<TService>(this IServiceProvider serviceProvider) =>
-      (TService) serviceProvider.GetService(typeof(TService));
-
+    /// <summary>
+    /// Gets service by its service type. If service isn't found returns exception object made with
+    /// <paramref name="makeException" />.
+    /// </summary>
+    /// <param name="serviceProvider">
+    /// The service provider.
+    /// </param>
+    /// <param name="serviceType">
+    /// The type of service that should be gotten.
+    /// </param>
+    /// <param name="makeException">
+    /// Functor to make exception object in case the service isn't found.
+    /// </param>
+    /// <returns>
+    /// An instance of required service or exception object.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// One of arguments is not specified.
+    /// </exception>
     public static object GetService(
       this IServiceProvider serviceProvider,
       [NotNull] Type serviceType,

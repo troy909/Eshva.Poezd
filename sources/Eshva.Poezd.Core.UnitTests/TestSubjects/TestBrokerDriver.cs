@@ -38,7 +38,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       return Task.CompletedTask;
     }
 
-    public Task Publish(byte[] brokerPayload, IReadOnlyDictionary<string, string> brokerMetadata) => throw new NotImplementedException();
+    public Task Publish(byte[] payload, IReadOnlyDictionary<string, string> metadata) => throw new NotImplementedException();
 
     public void Dispose() { }
 

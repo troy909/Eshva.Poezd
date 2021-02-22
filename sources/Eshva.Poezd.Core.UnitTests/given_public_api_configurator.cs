@@ -111,7 +111,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [UsedImplicitly]
     private class PipeFitter : IPipeFitter
     {
-      public void Setup(IPipeline pipeline)
+      public void AppendStepsInto(IPipeline pipeline)
       {
         throw new NotImplementedException();
       }

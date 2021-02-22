@@ -128,7 +128,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [UsedImplicitly]
     private class PipeFitter : IPipeFitter
     {
-      public void Setup(IPipeline pipeline)
+      public void AppendStepsInto(IPipeline pipeline)
       {
         throw new NotImplementedException();
       }
@@ -169,7 +169,7 @@ namespace Eshva.Poezd.Core.UnitTests
         return Task.CompletedTask;
       }
 
-      public Task Publish(byte[] brokerPayload, IReadOnlyDictionary<string, string> brokerMetadata)
+      public Task Publish(byte[] payload, IReadOnlyDictionary<string, string> metadata)
       {
         IsMessagePublished = true;
         return Task.CompletedTask;

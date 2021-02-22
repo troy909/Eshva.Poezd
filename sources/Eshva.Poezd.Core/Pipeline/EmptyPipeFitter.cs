@@ -1,7 +1,11 @@
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// Pipe fitter producing no steps.
+  /// </summary>
   public class EmptyPipeFitter : IPipeFitter
   {
-    public void Setup(IPipeline pipeline) { }
+    /// <inheritdoc />
+    public void AppendStepsInto(IPipeline pipeline) { }
   }
 }

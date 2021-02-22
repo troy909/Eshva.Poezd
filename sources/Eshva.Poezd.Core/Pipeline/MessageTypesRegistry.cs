@@ -9,6 +9,9 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// Base for public API message types registry.
+  /// </summary>
   public abstract class MessageTypesRegistry : IMessageTypesRegistry
   {
     /// <inheritdoc />

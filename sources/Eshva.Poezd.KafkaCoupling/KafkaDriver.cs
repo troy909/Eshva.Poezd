@@ -15,22 +15,38 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
+  /// <summary>
+  /// Kafka driver.
+  /// </summary>
   public class KafkaDriver : IMessageBrokerDriver
   {
+    /// <summary>
+    /// Constructs a new instance of kafka driver.
+    /// </summary>
+    /// <param name="serviceProvider">
+    /// Service provider.
+    /// </param>
+    /// <param name="logger">
+    /// Logger.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// One of argument is not specified.
+    /// </exception>
     public KafkaDriver([NotNull] IServiceProvider serviceProvider, [NotNull] ILogger<KafkaDriver> logger)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    /// <inheritdoc />
     public void Initialize(
       IMessageRouter messageRouter,
       string brokerId,
-      [NotNull] object configuration)
+      object configuration)
     {
       _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
 
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(brokerId));
+      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
       _brokerId = brokerId;
 
       _configuration = configuration as KafkaDriverConfiguration ?? throw new ArgumentException(
@@ -46,19 +62,23 @@ namespace Eshva.Poezd.KafkaCoupling
       _isInitialized = true;
     }
 
+    /// <inheritdoc />
     public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {
       if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can consume messages.");
 
       if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
+      var patterns = queueNamePatterns.ToArray();
+      if (!patterns.Any()) throw new ArgumentException("List of patterns contains no patterns. It should contain at least one pattern.");
 
-      _consumer.Subscribe(queueNamePatterns);
+      _consumer.Subscribe(patterns);
 
       Consume(OnMessageReceived, cancellationToken);
       return Task.CompletedTask;
     }
 
-    public Task Publish(byte[] brokerPayload, IReadOnlyDictionary<string, string> brokerMetadata)
+    /// <inheritdoc />
+    public Task Publish(byte[] payload, IReadOnlyDictionary<string, string> metadata)
     {
       if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can publish messages.");
       // TODO: Add message publishing.
@@ -66,6 +86,7 @@ namespace Eshva.Poezd.KafkaCoupling
       return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
       try
@@ -90,7 +111,7 @@ namespace Eshva.Poezd.KafkaCoupling
 
     private async Task OnMessageReceived(ConsumeResult<Ignore, byte[]> consumeResult)
     {
-      // TODO: handle in parallel.
+      // TODO: handle in parallel? No we need a strategy.
       if (!(_serviceProvider.GetService(_configuration.HeaderValueParserType) is IHeaderValueParser parser))
       {
         throw new PoezdOperationException(
@@ -237,7 +258,6 @@ namespace Eshva.Poezd.KafkaCoupling
     }
 
     private readonly ILogger<KafkaDriver> _logger;
-
     private readonly IServiceProvider _serviceProvider;
     private string _brokerId;
     private KafkaDriverConfiguration _configuration;

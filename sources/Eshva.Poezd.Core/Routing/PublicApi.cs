@@ -12,8 +12,23 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /// <summary>
+  /// Public API.
+  /// </summary>
   public sealed class PublicApi : IPublicApi
   {
+    /// <summary>
+    /// Constructs a new instance of public API.
+    /// </summary>
+    /// <param name="configuration">
+    /// The public API configuration.
+    /// </param>
+    /// <param name="serviceProvider">
+    /// Service provider.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// One of arguments is not specified.
+    /// </exception>
     public PublicApi([NotNull] PublicApiConfiguration configuration, [NotNull] IServiceProvider serviceProvider)
     {
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -24,17 +39,25 @@ namespace Eshva.Poezd.Core.Routing
       IngressPipeFitter = GetIngressPipeFitter(serviceProvider);
     }
 
+    /// <inheritdoc />
     public string Id => Configuration.Id;
 
+    /// <inheritdoc />
     public PublicApiConfiguration Configuration { get; }
 
+    /// <inheritdoc />
     public IPipeFitter IngressPipeFitter { get; }
 
+    /// <inheritdoc />
     public IMessageTypesRegistry MessageTypesRegistry { get; }
 
+    /// <summary>
+    /// A stab public API.
+    /// </summary>
     [NotNull]
     public static IPublicApi Empty { get; } = new EmptyPublicApi();
 
+    /// <inheritdoc />
     public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
 
     private IPipeFitter GetIngressPipeFitter(IServiceProvider serviceProvider)

@@ -17,8 +17,23 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /// <summary>
+  /// The Poezd message router. The core part of Poezd.
+  /// </summary>
   public sealed class MessageRouter : IMessageRouter
   {
+    /// <summary>
+    /// Constructs a new instance of message router.
+    /// </summary>
+    /// <param name="configuration">
+    /// The message router configuration.
+    /// </param>
+    /// <param name="diContainerAdapter">
+    /// DI-container adapter.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// One of arguments is not specified.
+    /// </exception>
     internal MessageRouter(
       [NotNull] MessageRouterConfiguration configuration,
       [NotNull] IDiContainerAdapter diContainerAdapter)
@@ -29,8 +44,10 @@ namespace Eshva.Poezd.Core.Routing
                 throw new ArgumentException($"Can not get {nameof(ILogger<MessageRouter>)} implementation from the service provider.");
     }
 
+    /// <inheritdoc />
     public IReadOnlyCollection<MessageBroker> Brokers => _brokers.AsReadOnly();
 
+    /// <inheritdoc />
     public async Task Start(CancellationToken cancellationToken = default)
     {
       if (_isStarted) throw new PoezdOperationException("The router is started already.");
@@ -60,15 +77,16 @@ namespace Eshva.Poezd.Core.Routing
       _isStarted = true;
     }
 
+    /// <inheritdoc />
     public Task RouteIncomingMessage(
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
-      byte[] brokerPayload,
-      IReadOnlyDictionary<string, string> brokerMetadata)
+      byte[] payload,
+      IReadOnlyDictionary<string, string> metadata)
     {
-      if (brokerPayload == null) throw new ArgumentNullException(nameof(brokerPayload));
-      if (brokerMetadata == null) throw new ArgumentNullException(nameof(brokerMetadata));
+      if (payload == null) throw new ArgumentNullException(nameof(payload));
+      if (metadata == null) throw new ArgumentNullException(nameof(metadata));
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentException(NotWhitespace, nameof(brokerId));
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentException(NotWhitespace, nameof(queueName));
 
@@ -85,8 +103,8 @@ namespace Eshva.Poezd.Core.Routing
 
           messageHandlingContext
             .Put(ContextKeys.Broker.Id, brokerId)
-            .Put(ContextKeys.Broker.MessageMetadata, brokerMetadata)
-            .Put(ContextKeys.Broker.MessagePayload, brokerPayload)
+            .Put(ContextKeys.Broker.MessageMetadata, metadata)
+            .Put(ContextKeys.Broker.MessagePayload, payload)
             .Put(ContextKeys.Broker.QueueName, queueName)
             .Put(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
             .Put(ContextKeys.Broker.Configuration, messageBroker.Configuration)
@@ -117,6 +135,18 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
+    /// <summary>
+    /// Provides the message router configuration.
+    /// </summary>
+    /// <param name="configurator">
+    /// The message router configurator.
+    /// </param>
+    /// <returns>
+    /// Message router configuration.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Configurator is not specified.
+    /// </exception>
     public static MessageRouterConfiguration Configure([NotNull] Action<MessageRouterConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
@@ -162,9 +192,9 @@ namespace Eshva.Poezd.Core.Routing
     private static MessageHandlingPipeline BuildIngressPipeline(MessageBroker messageBroker, IPublicApi publicApi)
     {
       var pipeline = new MessageHandlingPipeline();
-      messageBroker.IngressEnterPipeFitter.Setup(pipeline);
-      publicApi.IngressPipeFitter.Setup(pipeline);
-      messageBroker.IngressExitPipeFitter.Setup(pipeline);
+      messageBroker.IngressEnterPipeFitter.AppendStepsInto(pipeline);
+      publicApi.IngressPipeFitter.AppendStepsInto(pipeline);
+      messageBroker.IngressExitPipeFitter.AppendStepsInto(pipeline);
       return pipeline;
     }
 

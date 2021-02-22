@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// A step of broker message handling pipeline.
+  /// A step of message handling pipeline.
   /// </summary>
   public interface IStep
   {

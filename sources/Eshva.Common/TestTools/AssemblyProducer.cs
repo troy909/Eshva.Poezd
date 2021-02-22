@@ -24,14 +24,14 @@ namespace Eshva.Common.TestTools
     /// <summary>
     /// Compiles provided into an assembly.
     /// </summary>
+    /// <param name="assemblyName">
+    /// Target assembly name.
+    /// </param>
     /// <param name="code">
     /// Compiling code.
     /// </param>
     /// <param name="referencedAssemblyLocations">
     /// Locations of assemblies containing types referenced from provided code.
-    /// </param>
-    /// <param name="assemblyName">
-    /// Target assembly name.
     /// </param>
     /// <returns>
     /// Generated assembly object if compilation was successful.
@@ -44,45 +44,145 @@ namespace Eshva.Common.TestTools
     /// </exception>
     [NotNull]
     public Assembly MakeAssembly(
+      [NotNull] string assemblyName,
       [NotNull] string code,
-      [NotNull] IEnumerable<string> referencedAssemblyLocations,
-      [NotNull] string assemblyName)
+      [NotNull] IEnumerable<string> referencedAssemblyLocations)
     {
       if (referencedAssemblyLocations == null) throw new ArgumentNullException(nameof(referencedAssemblyLocations));
       if (string.IsNullOrWhiteSpace(code)) throw new ArgumentNullException(nameof(code));
       if (string.IsNullOrWhiteSpace(assemblyName)) throw new ArgumentNullException(nameof(assemblyName));
 
       return MakeAssembly(
+        assemblyName,
         new[] {code},
-        referencedAssemblyLocations,
-        assemblyName);
+        referencedAssemblyLocations);
     }
 
+    /// <summary>
+    /// Compiles provided into an assembly.
+    /// </summary>
+    /// <param name="assemblyName">
+    /// Target assembly name.
+    /// </param>
+    /// <param name="code">
+    /// Compiling code.
+    /// </param>
+    /// <param name="referencedAssemblyLocations">
+    /// Locations of assemblies containing types referenced from provided code.
+    /// </param>
+    /// <param name="outputStream">
+    /// Stream to write the generated assembly in.
+    /// </param>
+    /// <returns>
+    /// Generated assembly object if compilation was successful.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// One of parameters is null, an empty or a whitespace string.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// An error occurred during compilation or assembly generation.
+    /// </exception>
     [NotNull]
     public Assembly MakeAssembly(
+      [NotNull] string assemblyName,
+      [NotNull] string code,
+      [NotNull] IEnumerable<string> referencedAssemblyLocations,
+      [NotNull] Stream outputStream)
+    {
+      return MakeAssembly(
+        assemblyName,
+        new[] {code},
+        referencedAssemblyLocations,
+        outputStream);
+    }
+
+    /// <summary>
+    /// Compiles provided into an assembly.
+    /// </summary>
+    /// <param name="assemblyName">
+    /// Target assembly name.
+    /// </param>
+    /// <param name="codeParts">
+    /// Compiling code parts.
+    /// </param>
+    /// <param name="referencedAssemblyLocations">
+    /// Locations of assemblies containing types referenced from provided code.
+    /// </param>
+    /// <returns>
+    /// Generated assembly object if compilation was successful.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// One of parameters is null, an empty or a whitespace string.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// An error occurred during compilation or assembly generation.
+    /// </exception>
+    [NotNull]
+    public Assembly MakeAssembly(
+      [NotNull] string assemblyName,
+      [NotNull] IEnumerable<string> codeParts,
+      [NotNull] IEnumerable<string> referencedAssemblyLocations)
+    {
+      using var outputStream = new MemoryStream();
+      return MakeAssembly(
+        assemblyName,
+        codeParts,
+        referencedAssemblyLocations,
+        outputStream);
+    }
+
+    /// <summary>
+    /// Compiles provided into an assembly.
+    /// </summary>
+    /// <param name="assemblyName">
+    /// Target assembly name.
+    /// </param>
+    /// <param name="codeParts">
+    /// Compiling code parts.
+    /// </param>
+    /// <param name="referencedAssemblyLocations">
+    /// Locations of assemblies containing types referenced from provided code.
+    /// </param>
+    /// <param name="outputStream">
+    /// Stream to write the generated assembly in.
+    /// </param>
+    /// <returns>
+    /// Generated assembly object if compilation was successful.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// One of parameters is null, an empty or a whitespace string.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// An error occurred during compilation or assembly generation.
+    /// </exception>
+    [NotNull]
+    public Assembly MakeAssembly(
+      [NotNull] string assemblyName,
       [NotNull] IEnumerable<string> codeParts,
       [NotNull] IEnumerable<string> referencedAssemblyLocations,
-      [NotNull] string assemblyName)
+      [NotNull] Stream outputStream)
     {
+      if (string.IsNullOrWhiteSpace(assemblyName)) throw new ArgumentNullException(nameof(assemblyName));
       if (codeParts == null) throw new ArgumentNullException(nameof(codeParts));
+      if (referencedAssemblyLocations == null) throw new ArgumentNullException(nameof(referencedAssemblyLocations));
+      if (outputStream == null) throw new ArgumentNullException(nameof(outputStream));
       var codePartsArray = codeParts.ToArray();
       if (!codePartsArray.Any()) throw new ArgumentException("You should provide at least one code part.", nameof(codeParts));
-      if (referencedAssemblyLocations == null) throw new ArgumentNullException(nameof(referencedAssemblyLocations));
-      if (string.IsNullOrWhiteSpace(assemblyName)) throw new ArgumentNullException(nameof(assemblyName));
 
       EmitResult result;
       try
       {
-        using var assemblyStream = new MemoryStream();
-        result = GenerateAssembly(
+        var compilation = GenerateAssembly(
+          assemblyName,
           codePartsArray,
-          referencedAssemblyLocations,
-          assemblyName).Emit(assemblyStream);
+          referencedAssemblyLocations);
+        result = compilation.Emit(outputStream);
 
         if (result.Success)
         {
-          assemblyStream.Seek(offset: 0, SeekOrigin.Begin);
-          return new InternalAssemblyLoadContext().LoadFromStream(assemblyStream);
+          outputStream.Seek(offset: 0, SeekOrigin.Begin);
+          var assembly = new InternalAssemblyLoadContext().LoadFromStream(outputStream);
+          return assembly;
         }
       }
       catch (Exception exception)
@@ -100,9 +200,9 @@ namespace Eshva.Common.TestTools
     }
 
     private static CSharpCompilation GenerateAssembly(
+      string assemblyName,
       IEnumerable<string> codeParts,
-      IEnumerable<string> referencedAssemblyLocations,
-      string assemblyName)
+      IEnumerable<string> referencedAssemblyLocations)
     {
       var options = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp8);
       var syntaxTrees = codeParts.Select(codePart => SyntaxFactory.ParseSyntaxTree(codePart, options));

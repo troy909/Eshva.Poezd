@@ -1,6 +1,9 @@
 #region Usings
 
 using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Eshva.Common.TestTools;
 using FluentAssertions;
 using Xunit;
@@ -20,12 +23,12 @@ namespace Eshva.Common.UnitTests
       var code =
         @$"using System; namespace {testEventClassNamespace} {{ public class {testEventClassName} {{ public Guid Id {{get; set;}} }} }}";
       var references = new[] {typeof(object).Assembly.Location};
-      const string assemblyName = "Test.dll";
+      const string assemblyName = "TestAssembly";
 
       var assembly = sut.MakeAssembly(
+        assemblyName,
         code,
-        references,
-        assemblyName);
+        references);
 
       assembly.GetName().Name.Should().Be(assemblyName, "assembly should have expected name");
       var testEvent = assembly.CreateInstance($"{testEventClassNamespace}.{testEventClassName}");
@@ -46,12 +49,12 @@ namespace Eshva.Common.UnitTests
       var code2 =
         @$"using System; namespace {testEventClassNamespace} {{ public class {testEvent2ClassName} {{ public Guid Id {{get; set;}} }} }}";
       var references = new[] {typeof(object).Assembly.Location};
-      const string assemblyName = "Test.dll";
+      const string assemblyName = "TestAssembly";
 
       var assembly = sut.MakeAssembly(
-        new []{code1, code2},
-        references,
-        assemblyName);
+        assemblyName,
+        new[] {code1, code2},
+        references);
 
       assembly.GetName().Name.Should().Be(assemblyName, "assembly should have expected name");
       var testEvent1 = assembly.CreateInstance($"{testEventClassNamespace}.{testEvent1ClassName}");
@@ -65,17 +68,66 @@ namespace Eshva.Common.UnitTests
     }
 
     [Fact]
+    public void when_required_to_reference_another_self_made_assembly_it_should_be_possible()
+    {
+      var sut = new AssemblyProducer();
+      const string myNamespace = "Test";
+      const string interfaceName = "IMyInterface";
+      const string className = "MyClassName";
+      var interfaceAssemblyCode =
+        @$"using System; namespace {myNamespace} {{ public interface {interfaceName} {{ }} }}";
+      var classAssemblyCode =
+        @$"using System; namespace {myNamespace} {{ public class {className} : {interfaceName} {{ }} }}";
+      var references = new[] {typeof(object).Assembly.Location};
+
+      var interfaceAssemblyName = FileSystem.GenerateRandomFileName("InterfaceAssembly");
+      var interfaceAssemblyPath = FileSystem.CreateTempFilePath(interfaceAssemblyName, "dll");
+      Assembly interfaceAssembly;
+      using (var interfaceAssemblyStream = File.Create(interfaceAssemblyPath))
+      {
+        interfaceAssembly = sut.MakeAssembly(
+          interfaceAssemblyName,
+          new[] {interfaceAssemblyCode},
+          references,
+          interfaceAssemblyStream);
+      }
+
+      interfaceAssembly.ExportedTypes.Select(type => type.FullName)
+        .Should().Contain($"{myNamespace}.{interfaceName}", "interface type should be found");
+
+      var classAssemblyName = FileSystem.GenerateRandomFileName("ClassAssembly");
+      var classAssemblyPath = FileSystem.CreateTempFilePath(classAssemblyName, "dll");
+      using (var classAssemblyStream = File.Create(classAssemblyPath))
+      {
+        sut.MakeAssembly(
+          classAssemblyName,
+          new[] {classAssemblyCode},
+          references.Concat(new[] {interfaceAssemblyPath}),
+          classAssemblyStream);
+      }
+
+      var classAssembly = Assembly.LoadFrom(classAssemblyPath);
+      classAssembly.ExportedTypes.Select(type => type.FullName)
+        .Should().Contain($"{myNamespace}.{className}", "class type should be found");
+
+      // IMPORTANT: Unfortunately I can't delete files of assemblies that loaded into the current application domain.
+      // The best way to mitigate this problem I can see is by deleting assembly files from prior test runs.
+      FileSystem.DeleteIfPossibleTempFilesWithPattern($"{interfaceAssemblyName}*.dll");
+      FileSystem.DeleteIfPossibleTempFilesWithPattern($"{classAssemblyName}*.dll");
+    }
+
+    [Fact]
     public void when_provided_code_with_errors_it_should_fail_with_list_of_errors()
     {
       var assemblyProducer = new AssemblyProducer();
       const string code = @"using System; namespace Test {{ public class Event { public UnknownType Id {get; set;} } }";
       var references = new[] {typeof(object).Assembly.Location, typeof(Console).Assembly.Location};
-      const string assemblyName = "Test.dll";
+      const string assemblyName = "TestAssembly";
 
       Action sut = () => assemblyProducer.MakeAssembly(
+        assemblyName,
         code,
-        references,
-        assemblyName);
+        references);
 
       sut.Should().Throw<InvalidOperationException>("the code provided isn't compilable")
         .Where(exception => exception.Message.Contains("CS0246"), "exception message should contain expected error");
@@ -86,15 +138,15 @@ namespace Eshva.Common.UnitTests
     {
       var assemblyProducer = new AssemblyProducer();
       var references = new[] {typeof(object).Assembly.Location, typeof(Console).Assembly.Location};
-      const string assemblyName = "Test.dll";
+      const string assemblyName = "TestAssembly";
 
       string code = null;
       // ReSharper disable once AccessToModifiedClosure - it's a way to test.
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => assemblyProducer.MakeAssembly(
+        assemblyName,
         code,
-        references,
-        assemblyName);
+        references);
 
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("code"));
       code = string.Empty;
@@ -114,9 +166,9 @@ namespace Eshva.Common.UnitTests
       // ReSharper disable once AccessToModifiedClosure - it's a way to test.
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => assemblyProducer.MakeAssembly(
+        assemblyName,
         code,
-        references,
-        assemblyName);
+        references);
 
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("assemblyName"));
       assemblyName = string.Empty;
@@ -130,13 +182,13 @@ namespace Eshva.Common.UnitTests
     {
       var assemblyProducer = new AssemblyProducer();
       const string code = @"using System; namespace Test {{ public class Event { public Guid Id {get; set;} } }";
-      const string assemblyName = "Test.dll";
+      const string assemblyName = "TestAssembly";
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => assemblyProducer.MakeAssembly(
+        assemblyName,
         code,
-        referencedAssemblyLocations: null,
-        assemblyName);
+        referencedAssemblyLocations: null);
 
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("referencedAssemblyLocations"));
     }

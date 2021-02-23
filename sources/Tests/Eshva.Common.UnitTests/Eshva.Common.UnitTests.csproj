@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eshva.Common\Eshva.Common.csproj" />
+    <ProjectReference Include="..\..\Eshva.Common\Eshva.Common.csproj" />
   </ItemGroup>
 
 </Project>

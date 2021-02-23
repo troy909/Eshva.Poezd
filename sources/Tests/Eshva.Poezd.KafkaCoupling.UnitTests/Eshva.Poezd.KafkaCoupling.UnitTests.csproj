@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj" />
+    <ProjectReference Include="..\..\Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj" />
   </ItemGroup>
 
 </Project>

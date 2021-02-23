@@ -42,8 +42,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
-    <ProjectReference Include="..\Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj" />
+    <ProjectReference Include="..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
+    <ProjectReference Include="..\..\Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj" />
   </ItemGroup>
 
 </Project>

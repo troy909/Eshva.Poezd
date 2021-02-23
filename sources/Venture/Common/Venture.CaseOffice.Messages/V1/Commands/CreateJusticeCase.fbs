@@ -2,9 +2,8 @@ include "../../Types/uuid.fbs";
 
 namespace Venture.CaseOffice.Messages.V1.Commands;
 
-table CreateCase {
-  CaseId:Venture.CaseOffice.Messages.Types.uuid;
-  CaseType:string;
+table CreateJusticeCase {
   Reason:string;
   SubjectId:Venture.CaseOffice.Messages.Types.uuid;
+  ResposibleId:Venture.CaseOffice.Messages.Types.uuid;
 }

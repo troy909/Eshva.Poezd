@@ -2,12 +2,14 @@
 
 using System;
 using System.Collections.Generic;
-using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
-namespace Venture.IntegrationTests.TestSubjects
+namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// A stab for handler registry.
+  /// </summary>
   public class EmptyHandlerRegistry : IHandlerRegistry
   {
     public EmptyHandlerRegistry()
@@ -18,6 +20,7 @@ namespace Venture.IntegrationTests.TestSubjects
       };
     }
 
+    /// <inheritdoc />
     public IReadOnlyDictionary<Type, Type[]> HandlersGroupedByMessageType { get; }
   }
 }

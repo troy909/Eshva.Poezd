@@ -97,6 +97,14 @@ namespace Eshva.Poezd.Core.Routing
       /// </value>
       public const string MessageTypesRegistry = Prefix + "message-types-registry";
 
+      /// <summary>
+      /// The handlers registry of public API.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IHandlerRegistry"/>.
+      /// </value>
+      public const string HandlerRegistry = Prefix + "handler-registry";
+
       private const string Prefix = "public-api-";
     }
 

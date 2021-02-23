@@ -24,7 +24,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       registry.Initialize();
 
       var context = new ConcurrentPocket();
-      const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateCase";
+      const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateJusticeCase";
       context.Put(ContextKeys.PublicApi.MessageTypesRegistry, registry);
       context.Put(
         ContextKeys.Broker.MessageMetadata,
@@ -36,7 +36,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       context.TakeOrNull<string>(ContextKeys.Application.MessageTypeName)
         .Should().Be(expectedTypeName, "this header should be copied");
       context.TakeOrNull<Type>(ContextKeys.Application.MessageType)
-        .Should().Be(typeof(CreateCase), "message type should be recognized by its name");
+        .Should().Be(typeof(CreateJusticeCase), "message type should be recognized by its name");
     }
 
     [Fact]

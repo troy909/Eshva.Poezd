@@ -41,9 +41,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         container.Register(handler);
       }
 
-      var sut = new FindMessageHandlersStep(handlersRegistry, container);
+      var sut = new FindMessageHandlersStep(container);
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Application.MessageType, typeof(Message01));
+      context.Put(ContextKeys.PublicApi.HandlerRegistry, handlersRegistry);
 
       await sut.Execute(context);
 
@@ -55,24 +56,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     }
 
     [Fact]
-    public void when_constructed_without_handlers_registry_it_should_throw()
-    {
-      var container = new Container();
-      container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-      container.AddLogging(_testOutput); // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
-      // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new FindMessageHandlersStep(handlerRegistry: null, container);
-      sut.Should().Throw<ArgumentNullException>("handlersRegistry is required");
-    }
-
-    [Fact]
     public void when_constructed_without_service_provider_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new FindMessageHandlersStep(
-        new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly}),
-        serviceProvider: null);
+      Action sut = () => new FindMessageHandlersStep(serviceProvider: null);
       sut.Should().Throw<ArgumentNullException>("handlersRegistry is required");
     }
 
@@ -82,13 +70,15 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
       container.AddLogging(_testOutput);
-      var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(Message01Handler).Assembly});
-      var step = new FindMessageHandlersStep(handlersRegistry, container);
+      var step = new FindMessageHandlersStep(container);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       Action sut = () => step.Execute(context: null);
       sut.Should().Throw<ArgumentNullException>("context is required");
     }
+
+    // TODO: Add test for handler registry missing.
+    // TODO: Add test for message type missing.
 
     private readonly ITestOutputHelper _testOutput;
   }

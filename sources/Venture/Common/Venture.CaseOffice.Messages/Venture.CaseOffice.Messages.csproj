@@ -6,8 +6,10 @@
 
   <ItemGroup>
     <FlatSharpSchema Include="Types/uuid.fbs" />
-    <FlatSharpSchema Include="V1/Commands/CreateCase.fbs" />
-    <FlatSharpSchema Include="V1/Events/CaseCreated.fbs" />
+    <FlatSharpSchema Include="V1/Commands/CreateJusticeCase.fbs" />
+    <FlatSharpSchema Include="V1/Commands/CreateResearchCase.fbs" />
+    <FlatSharpSchema Include="V1/Events/JusticeCaseCreated.fbs" />
+    <FlatSharpSchema Include="V1/Events/ResearchCaseCreated.fbs" />
   </ItemGroup>
 
   <ItemGroup>

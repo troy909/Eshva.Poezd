@@ -1,0 +1,10 @@
+include "../../Types/uuid.fbs";
+
+namespace Venture.CaseOffice.Messages.V1.Events;
+
+table JusticeCaseCreated {
+  CaseId:Venture.CaseOffice.Messages.Types.uuid;
+  Reason:string;
+  SubjectId:Venture.CaseOffice.Messages.Types.uuid;
+  ResposibleId:Venture.CaseOffice.Messages.Types.uuid;
+}

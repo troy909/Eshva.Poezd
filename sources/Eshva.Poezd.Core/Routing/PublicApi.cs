@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
@@ -36,6 +35,7 @@ namespace Eshva.Poezd.Core.Routing
 
       _queueNamePatternsProvider = GetQueueNamePatternsProvider(serviceProvider);
       MessageTypesRegistry = GetMessageTypesRegistry(serviceProvider);
+      HandlerRegistry = GetHandlerRegistry(serviceProvider);
       IngressPipeFitter = GetIngressPipeFitter(serviceProvider);
     }
 
@@ -50,6 +50,9 @@ namespace Eshva.Poezd.Core.Routing
 
     /// <inheritdoc />
     public IMessageTypesRegistry MessageTypesRegistry { get; }
+
+    /// <inheritdoc />
+    public IHandlerRegistry HandlerRegistry { get; }
 
     /// <summary>
     /// A stab public API.
@@ -90,19 +93,17 @@ namespace Eshva.Poezd.Core.Routing
       return registry;
     }
 
+    private IHandlerRegistry GetHandlerRegistry(IServiceProvider serviceProvider)
+    {
+      var registry = (IHandlerRegistry) serviceProvider.GetService(
+        Configuration.HandlerRegistryType,
+        type => new PoezdOperationException(
+          $"Can not get an instance of handler registry of type '{type.FullName}'. " +
+          "You should register this type in DI-container."));
+      return registry;
+    }
+
     private readonly IQueueNamePatternsProvider _queueNamePatternsProvider;
 
-    private class EmptyPublicApi : IPublicApi
-    {
-      public string Id => typeof(EmptyPublicApi).FullName!;
-
-      public PublicApiConfiguration Configuration => new PublicApiConfiguration();
-
-      public IPipeFitter IngressPipeFitter { get; } = new EmptyPipeFitter();
-
-      public IMessageTypesRegistry MessageTypesRegistry { get; } = new EmptyMessageTypesRegistry();
-
-      public IEnumerable<string> GetQueueNamePatterns() => Enumerable.Empty<string>();
-    }
   }
 }

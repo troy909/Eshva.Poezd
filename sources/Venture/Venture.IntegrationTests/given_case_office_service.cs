@@ -7,8 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Pipeline;
 using SimpleInjector;
+using Venture.CaseOffice.Application;
+using Venture.CaseOffice.Domain;
 using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
+using Venture.Common.Application.Storage;
 using Venture.Common.Poezd.Adapter;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
@@ -38,7 +41,7 @@ namespace Venture.IntegrationTests
           .WithId("case-office")
           .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
           .WithIngressPipeFitter<EmptyPipeFitter>()
-          // .WithIngressPipeFitter<VentureIngressPipeFitter>()
+          .WithIngressPipeFitter<VentureIngressPipeFitter>()
           .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
         _testOutput);
@@ -46,8 +49,7 @@ namespace Venture.IntegrationTests
       AddIngressPipeline(container);
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
-      container.RegisterInstance((MessageTypesRegistry) registry);
-      container.RegisterSingleton<CaseOfficeMessageTypesRegistry>();
+      container.RegisterInstance(registry);
 
       const string topic = "venture.commands.case-office.v1";
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
@@ -71,13 +73,13 @@ namespace Venture.IntegrationTests
       // TODO: assert
     }
 
-    private static (CreateCase, byte[]) CreateSerializedMessage()
+    private static (CreateJusticeCase, byte[]) CreateSerializedMessage()
     {
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
-      var descriptor = registry.GetDescriptor<CreateCase>(typeof(CreateCase).FullName!);
+      var descriptor = registry.GetDescriptor<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
       var serialized = new byte[1024];
-      var message = new CreateCase {CaseId = Guid.NewGuid(), CaseType = "law", Reason = "some reason", SubjectId = Guid.NewGuid()};
+      var message = new CreateJusticeCase {Reason = "some reason", SubjectId = Guid.NewGuid(), ResposibleId = Guid.NewGuid()};
       descriptor.Serialize(message, serialized);
       return (message, serialized);
     }
@@ -85,8 +87,10 @@ namespace Venture.IntegrationTests
     private static void AddIngressPipeline(Container container)
     {
       // TODO: I need to test this pipeline itself because for the moment it fails.
-      /*
       container.RegisterSingleton<VentureIngressPipeFitter>();
+      container.Register<IHandlersExecutionStrategy, ParallelHandlersExecutionStrategy>();
+      container.RegisterSingleton<IAggregateStorage<ResearchCase>, AlmostRealAggregateStorage<ResearchCase>>();
+      container.RegisterSingleton<IAggregateStorage<JusticeCase>, AlmostRealAggregateStorage<JusticeCase>>();
       container.Register<ExtractRelationMetadataStep>(Lifestyle.Scoped);
       container.Register<ExtractMessageTypeStep>(Lifestyle.Scoped);
       container.Register<ParseBrokerMessageStep>(Lifestyle.Scoped);
@@ -96,14 +100,11 @@ namespace Venture.IntegrationTests
 
       var handlersRegistry = new VentureServiceHandlersRegistry(new[] {typeof(AssemblyTag).Assembly});
       container.RegisterInstance(handlersRegistry);
-      */
-      /*
-      var handlers = handlersRegistry.HandlersGroupedByMessageType[typeof(CreateCase)];
+      var handlers = handlersRegistry.HandlersGroupedByMessageType[typeof(CreateJusticeCase)];
       foreach (var handler in handlers)
       {
         container.Register(handler);
       }
-    */
     }
 
     private static Dictionary<string, byte[]> CreateHeaders(Type messageType)

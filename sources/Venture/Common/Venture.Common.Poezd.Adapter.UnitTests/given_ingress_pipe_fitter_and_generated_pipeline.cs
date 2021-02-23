@@ -114,6 +114,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var typesRegistry = new MessageTypesRegistry1();
       typesRegistry.Initialize();
       context.Put(ContextKeys.PublicApi.MessageTypesRegistry, typesRegistry);
+
+      var handlerRegistry = new HandlerRegistry();
+      context.Put(ContextKeys.PublicApi.HandlerRegistry, handlerRegistry);
+
       return context;
     }
 

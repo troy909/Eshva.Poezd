@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
@@ -19,9 +18,8 @@ namespace Venture.Common.Poezd.Adapter
   /// </summary>
   public class FindMessageHandlersStep : IStep
   {
-    public FindMessageHandlersStep([NotNull] IHandlerRegistry handlerRegistry, [NotNull] IServiceProvider serviceProvider)
+    public FindMessageHandlersStep([NotNull] IServiceProvider serviceProvider)
     {
-      _handlerRegistry = handlerRegistry ?? throw new ArgumentNullException(nameof(handlerRegistry));
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
@@ -30,14 +28,15 @@ namespace Venture.Common.Poezd.Adapter
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
+      var handlerRegistry = context.TakeOrThrow<IHandlerRegistry>(ContextKeys.PublicApi.HandlerRegistry);
       var messageType = context.TakeOrThrow<Type>(ContextKeys.Application.MessageType);
-      var handlers = GetHandlersForMessageType(messageType);
+      var handlers = GetHandlersForMessageType(messageType, handlerRegistry);
       context.Put(ContextKeys.Application.Handlers, handlers);
       return Task.CompletedTask;
     }
 
-    private HandlerDescriptor[] GetHandlersForMessageType(Type messageType) =>
-      _handlerRegistry.HandlersGroupedByMessageType[messageType]
+    private HandlerDescriptor[] GetHandlersForMessageType(Type messageType, IHandlerRegistry handlerRegistry) =>
+      handlerRegistry.HandlersGroupedByMessageType[messageType]
         .Select(handlerType => _serviceProvider.GetService(handlerType))
         .Where(handler => handler != null)
         .Select(handler => MakeHandlerDescriptor(handler, messageType))
@@ -57,7 +56,6 @@ namespace Venture.Common.Poezd.Adapter
         onHandle);
     }
 
-    private readonly IHandlerRegistry _handlerRegistry;
     private readonly IServiceProvider _serviceProvider;
   }
 }

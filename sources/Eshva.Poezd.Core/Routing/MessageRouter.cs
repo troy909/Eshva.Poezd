@@ -52,7 +52,7 @@ namespace Eshva.Poezd.Core.Routing
     {
       if (_isStarted) throw new PoezdOperationException("The router is started already.");
 
-      ValidateConfiguration();
+      EnsureConfigurationValid();
 
       try
       {
@@ -110,6 +110,7 @@ namespace Eshva.Poezd.Core.Routing
             .Put(ContextKeys.Broker.Configuration, messageBroker.Configuration)
             .Put(ContextKeys.PublicApi.Id, publicApi.Id)
             .Put(ContextKeys.PublicApi.MessageTypesRegistry, publicApi.MessageTypesRegistry)
+            .Put(ContextKeys.PublicApi.HandlerRegistry, publicApi.HandlerRegistry)
             .Put(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
         }
         catch (Exception exception)
@@ -156,7 +157,7 @@ namespace Eshva.Poezd.Core.Routing
       return poezdConfigurator.Configuration;
     }
 
-    private void ValidateConfiguration()
+    private void EnsureConfigurationValid()
     {
       var configurationErrors = _configuration.Validate().ToList();
       if (!configurationErrors.Any()) return;

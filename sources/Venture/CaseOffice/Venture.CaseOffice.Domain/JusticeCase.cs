@@ -11,20 +11,27 @@ namespace Venture.CaseOffice.Domain
     public JusticeCase(
       Guid caseId,
       Guid subjectId,
-      string reason)
+      string reason,
+      Guid responsibleId)
     {
-      _caseId = caseId;
-      _subjectId = subjectId;
-      _reason = reason;
+      CaseId = caseId;
+      SubjectId = subjectId;
+      Reason = reason;
+      ResponsibleId = responsibleId;
     }
 
-    private readonly Guid _caseId;
-    private readonly string _reason;
-    private readonly Guid _subjectId;
+    public Guid CaseId { get; }
+
+    public string Reason { get; }
+
+    public Guid ResponsibleId { get; }
+
+    public Guid SubjectId { get; }
 
     public static readonly JusticeCase None = new JusticeCase(
       Guid.Empty,
       Guid.Empty,
-      string.Empty);
+      string.Empty,
+      Guid.Empty);
   }
 }

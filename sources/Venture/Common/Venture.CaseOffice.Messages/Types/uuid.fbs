@@ -1,5 +1,5 @@
 namespace Venture.CaseOffice.Messages.Types;
 
-table uuid (PrecompiledSerializer) {
+table uuid {
   value:[ubyte] (VectorType:"Array");
 }

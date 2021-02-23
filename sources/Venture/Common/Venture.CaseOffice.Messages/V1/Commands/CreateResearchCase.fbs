@@ -1,0 +1,8 @@
+include "../../Types/uuid.fbs";
+
+namespace Venture.CaseOffice.Messages.V1.Commands;
+
+table CreateResearchCase {
+  Reason:string;
+  KnowledgeArea:string;
+}

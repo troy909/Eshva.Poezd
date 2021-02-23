@@ -127,6 +127,7 @@ namespace Eshva.Poezd.Core.UnitTests
         Lifestyle.Singleton);
 
       container.RegisterSingleton<EmptyMessageTypesRegistry>();
+      container.RegisterSingleton<NoneHandlerRegistry>();
       container.RegisterSingleton<TestBrokerDriverFactory>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<Service1QueueNamePatternsProvider>();

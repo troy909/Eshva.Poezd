@@ -12,4 +12,9 @@
     <ProjectReference Include="..\..\Common\Venture.Common.Infrastructure\Venture.Common.Infrastructure.csproj" /> <ProjectReference Include="..\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="JusticeCase\" />
+    <Folder Include="ResearchCase\" />
+  </ItemGroup>
+
 </Project>

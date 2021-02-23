@@ -63,7 +63,7 @@ namespace Venture.Common.TestingTools.Kafka
 
     public ConsumeResult<Ignore, TValue> Consume(string topicName)
     {
-      if (string.IsNullOrWhiteSpace(topicName)) throw new ArgumentException("Value cannot be null or whitespace.", nameof(topicName));
+      if (string.IsNullOrWhiteSpace(topicName)) throw new ArgumentNullException(nameof(topicName));
 
       EnsureConsumer();
       return _consumer.Consume(_cancellationToken);
@@ -73,7 +73,15 @@ namespace Venture.Common.TestingTools.Kafka
     {
       if (_adminClient != null)
       {
-        if (_createdTopics.Any()) await _adminClient.DeleteTopicsAsync(_createdTopics);
+        try
+        {
+          if (_createdTopics.Any()) await _adminClient.DeleteTopicsAsync(_createdTopics);
+        }
+        catch (DeleteTopicsException)
+        {
+          // Ignore topic deleting errors.
+        }
+
         _adminClient?.Dispose();
       }
 

@@ -9,22 +9,24 @@ namespace Venture.CaseOffice.Domain
   public class ResearchCase
   {
     public ResearchCase(
-      Guid caseId,
-      Guid subjectId,
-      string reason)
+      Guid id,
+      string reason,
+      string knowledgeArea)
     {
-      _caseId = caseId;
-      _subjectId = subjectId;
-      _reason = reason;
+      Id = id;
+      Reason = reason;
+      KnowledgeArea = knowledgeArea;
     }
 
-    private readonly Guid _caseId;
-    private readonly string _reason;
-    private readonly Guid _subjectId;
+    public Guid Id { get; }
+
+    public string Reason { get; }
+
+    public string KnowledgeArea { get; }
 
     public static readonly ResearchCase None = new ResearchCase(
       Guid.Empty,
-      Guid.Empty,
+      string.Empty,
       string.Empty);
   }
 }

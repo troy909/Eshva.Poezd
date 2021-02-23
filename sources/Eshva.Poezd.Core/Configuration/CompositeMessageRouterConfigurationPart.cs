@@ -14,7 +14,7 @@ namespace Eshva.Poezd.Core.Configuration
   public abstract class CompositeMessageRouterConfigurationPart : IMessageRouterConfigurationPart
   {
     /// <inheritdoc />
-    public IEnumerable<string> Validate() => ValidateItself().Union(GetChildConfigurations().SelectMany(part => part.Validate()));
+    public IEnumerable<string> Validate() => ValidateItself().Concat(GetChildConfigurations().SelectMany(part => part.Validate()));
 
     /// <summary>
     /// Validates the configuration object itself.

@@ -39,6 +39,12 @@ namespace Eshva.Poezd.Core.Routing
     IMessageTypesRegistry MessageTypesRegistry { get; }
 
     /// <summary>
+    /// Gets the handlers registry.
+    /// </summary>
+    [NotNull]
+    IHandlerRegistry HandlerRegistry { get; }
+
+    /// <summary>
     /// Gets queue name patterns.
     /// </summary>
     /// <returns>

@@ -2,10 +2,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Pipeline;
+using FluentAssertions;
+using RandomStringCreator;
 using SimpleInjector;
 using Venture.CaseOffice.Application;
 using Venture.CaseOffice.Domain;
@@ -61,7 +64,9 @@ namespace Venture.IntegrationTests
       var router = container.GetMessageRouter();
       await router.Start(timeout);
 
-      var (command, serialized) = CreateSerializedMessage();
+      var stringCreator = new StringCreator();
+      var expectedReason = stringCreator.Get(length: 10);
+      var (command, serialized) = CreateSerializedMessage(expectedReason);
       var headers = CreateHeaders(command.GetType());
 
       await kafkaTestContext.Produce(
@@ -70,16 +75,19 @@ namespace Venture.IntegrationTests
         headers);
 
       await testIsFinished.WaitAsync(timeout);
+      var justiceCaseStorage = (IAggregateStorageTestBackdoor<JusticeCase>) container.GetInstance<IAggregateStorage<JusticeCase>>();
+      justiceCaseStorage.GetAll().Should().HaveCount(expected: 1);
+      justiceCaseStorage.GetAll().Single().Reason.Should().Be(expectedReason);
       // TODO: assert
     }
 
-    private static (CreateJusticeCase, byte[]) CreateSerializedMessage()
+    private static (CreateJusticeCase, byte[]) CreateSerializedMessage(string expectedReason)
     {
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
       var descriptor = registry.GetDescriptor<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
       var serialized = new byte[1024];
-      var message = new CreateJusticeCase {Reason = "some reason", SubjectId = Guid.NewGuid(), ResposibleId = Guid.NewGuid()};
+      var message = new CreateJusticeCase {Reason = expectedReason, SubjectId = Guid.NewGuid(), ResposibleId = Guid.NewGuid()};
       descriptor.Serialize(message, serialized);
       return (message, serialized);
     }

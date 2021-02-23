@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 #endregion
@@ -17,7 +18,10 @@ namespace Venture.Common.Application.Storage
   /// <typeparam name="TAggregate">
   /// An aggregate type to store and retrieve.
   /// </typeparam>
-  public sealed class AlmostRealAggregateStorage<TAggregate> : IAggregateStorage<TAggregate> where TAggregate : class
+  public sealed class AlmostRealAggregateStorage<TAggregate> :
+    IAggregateStorage<TAggregate>,
+    IAggregateStorageTestBackdoor<TAggregate>
+    where TAggregate : class
   {
     /// <inheritdoc />
     public Task<TAggregate> Read(Guid aggregateId)
@@ -42,8 +46,21 @@ namespace Venture.Common.Application.Storage
       return Task.CompletedTask;
     }
 
+    public IEnumerable<TAggregate> GetAll()
+    {
+      var aggregateType = typeof(TAggregate);
+      if (!AggregateTypeStreams.TryGetValue(aggregateType, out var aggregateStreams))
+        throw new KeyNotFoundException($"Aggregates of type {aggregateType.FullName} not stored in this storage.");
+      return aggregateStreams.Select(pair => (TAggregate) pair.Value);
+    }
+
     // ReSharper disable once StaticMemberInGenericType - it's just an in-memory stab.
     private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<Guid, object>> AggregateTypeStreams =
       new ConcurrentDictionary<Type, ConcurrentDictionary<Guid, object>>();
+  }
+
+  public interface IAggregateStorageTestBackdoor<out TAggregate> where TAggregate : class
+  {
+    IEnumerable<TAggregate> GetAll();
   }
 }

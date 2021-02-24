@@ -101,7 +101,7 @@ namespace Eshva.Poezd.Core.Routing
       /// The handlers registry of public API.
       /// </summary>
       /// <value>
-      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IHandlerRegistry"/>.
+      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IHandlerRegistry" />.
       /// </value>
       public const string HandlerRegistry = Prefix + "handler-registry";
 

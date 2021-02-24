@@ -28,16 +28,16 @@ namespace Venture.Common.Application.Storage
     /// An aggregate Id which state to retrieve.
     /// </param>
     /// <returns>
-    /// A task of aggregate instance with the current state of aggregate with ID <paramref name="aggregateId"/>.
+    /// A task of aggregate instance with the current state of aggregate with ID <paramref name="aggregateId" />.
     /// </returns>
     /// <exception cref="System.Collections.Generic.KeyNotFoundException">
-    /// An aggregate with ID <paramref name="aggregateId"/> is not found in the underlying storage.
+    /// An aggregate with ID <paramref name="aggregateId" /> is not found in the underlying storage.
     /// </exception>
     [NotNull]
     Task<TAggregate> Read(Guid aggregateId);
 
     /// <summary>
-    /// Stores the <paramref name="aggregate"/> state into underlying storage.
+    /// Stores the <paramref name="aggregate" /> state into underlying storage.
     /// </summary>
     /// <remarks>
     /// In a real adapter:
@@ -46,10 +46,10 @@ namespace Venture.Common.Application.Storage
     /// * Each aggregate type should have an ID property of AggregateTypeId type. So there should not be aggregateId parameter.
     /// </remarks>
     /// <param name="aggregateId">
-    /// ID of aggregate which state to be stored from <paramref name="aggregate"/> instance.
+    /// ID of aggregate which state to be stored from <paramref name="aggregate" /> instance.
     /// </param>
     /// <param name="aggregate">
-    /// Aggregate instance which state should be stored for aggregate with <paramref name="aggregateId"/>.
+    /// Aggregate instance which state should be stored for aggregate with <paramref name="aggregateId" />.
     /// </param>
     /// <returns>
     /// A task that could be used to wait for storing is finished.

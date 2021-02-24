@@ -46,6 +46,6 @@ namespace Eshva.Poezd.Core.Pipeline
 
     private IStep GetStepOfType(Type stepType) => _steps.FirstOrDefault(step => step.GetType() == stepType);
 
-    private readonly LinkedList<IStep> _steps = new LinkedList<IStep>();
+    private readonly LinkedList<IStep> _steps = new();
   }
 }

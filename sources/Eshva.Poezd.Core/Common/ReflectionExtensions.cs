@@ -46,9 +46,7 @@ namespace Eshva.Poezd.Core.Common
       }
 
       if (messageHandlerInterface.GetGenericArguments().Length != 1)
-      {
         throw new ArgumentException("Message handler interface should have exactly 1 generic argument.");
-      }
 
       var allHandlerTypes = messageHandlersAssemblies.SelectMany(assembly => assembly.GetTypes())
         .Where(

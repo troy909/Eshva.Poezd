@@ -38,7 +38,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
       var sut = registry.GetDescriptor<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
-      var message = new CreateJusticeCase {SubjectId = Guid.NewGuid(), Reason = "some reason", ResposibleId= Guid.NewGuid()};
+      var message = new CreateJusticeCase {SubjectId = Guid.NewGuid(), Reason = "some reason", ResposibleId = Guid.NewGuid()};
       using var bufferOwner = MemoryPool<byte>.Shared.Rent();
       var buffer = bufferOwner.Memory;
 

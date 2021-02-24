@@ -84,6 +84,6 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => _publicApis.AsReadOnly();
 
-    private readonly List<PublicApiConfiguration> _publicApis = new List<PublicApiConfiguration>();
+    private readonly List<PublicApiConfiguration> _publicApis = new();
   }
 }

@@ -18,7 +18,7 @@ namespace Eshva.Poezd.Core.Routing
     public string Id => typeof(EmptyPublicApi).FullName!;
 
     /// <inheritdoc />
-    public PublicApiConfiguration Configuration => new PublicApiConfiguration();
+    public PublicApiConfiguration Configuration => new();
 
     /// <inheritdoc />
     public IPipeFitter IngressPipeFitter { get; } = new EmptyPipeFitter();

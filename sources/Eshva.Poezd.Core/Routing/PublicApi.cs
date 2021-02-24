@@ -104,6 +104,5 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     private readonly IQueueNamePatternsProvider _queueNamePatternsProvider;
-
   }
 }

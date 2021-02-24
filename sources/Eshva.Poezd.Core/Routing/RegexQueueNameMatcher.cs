@@ -29,7 +29,7 @@ namespace Eshva.Poezd.Core.Routing
       return regex.IsMatch(queueName);
     }
 
-    private readonly ConcurrentDictionary<string, Regex> _knownRegex = new ConcurrentDictionary<string, Regex>();
+    private readonly ConcurrentDictionary<string, Regex> _knownRegex = new();
     private const string NotWhitespace = "Value cannot be null or whitespace.";
   }
 }

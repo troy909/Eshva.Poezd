@@ -16,7 +16,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// Gets the message router configuration object handled by this configurator.
     /// </summary>
     [NotNull]
-    public MessageRouterConfiguration Configuration { get; } = new MessageRouterConfiguration();
+    public MessageRouterConfiguration Configuration { get; } = new();
 
     /// <summary>
     /// Adds a message broker handled by configuring message router.

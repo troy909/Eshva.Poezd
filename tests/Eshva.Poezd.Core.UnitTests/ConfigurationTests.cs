@@ -59,7 +59,7 @@ namespace Eshva.Poezd.Core.UnitTests
     public static MessageRouterConfiguration CreateMessageRouterConfiguration()
     {
       var configuration = new MessageRouterConfiguration();
-      configuration.AddBroker(ConfigurationTests.CreateMessageBrokerConfiguration());
+      configuration.AddBroker(CreateMessageBrokerConfiguration());
       return configuration;
     }
   }

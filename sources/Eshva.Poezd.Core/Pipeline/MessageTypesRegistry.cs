@@ -77,7 +77,7 @@ namespace Eshva.Poezd.Core.Pipeline
       _descriptors.Add(messageTypeName, descriptor);
     }
 
-    private readonly Dictionary<string, object> _descriptors = new Dictionary<string, object>();
-    private readonly Dictionary<string, Type> _types = new Dictionary<string, Type>();
+    private readonly Dictionary<string, object> _descriptors = new();
+    private readonly Dictionary<string, Type> _types = new();
   }
 }

@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <Description>Toolkit for asynchronous interactions between applications</Description>
+    <Authors>Mike Eshva</Authors>
+    <Company />
+    <LangVersion>latest</LangVersion>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Product>Eshva.Poezd</Product>
+    <Copyright>Mike Eshva</Copyright>
+    <PackageProjectUrl>https://github.com/Eshva/Eshva.Poezd</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Eshva/Eshva.Poezd</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>async, buses, mda, message-driven architecture, microservices</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+</Project>

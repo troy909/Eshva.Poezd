@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FlatSharpSchema Include="Types/uuid.fbs" />
+    <FlatSharpSchema Include="V1/Commands/CreateJusticeCase.fbs" />
+    <FlatSharpSchema Include="V1/Commands/CreateResearchCase.fbs" />
+    <FlatSharpSchema Include="V1/Events/JusticeCaseCreated.fbs" />
+    <FlatSharpSchema Include="V1/Events/ResearchCaseCreated.fbs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FlatSharp" Version="4.2.4" />
+    <PackageReference Include="FlatSharp.Compiler" Version="4.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FlatSharp.Runtime" Version="4.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
+  </ItemGroup>
+</Project>

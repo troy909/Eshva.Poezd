@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
+    <PackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.91" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Venture.CaseOffice.Messages\Venture.CaseOffice.Messages.csproj" />
+    <ProjectReference Include="..\..\Common\Venture.Common.Application\Venture.Common.Application.csproj" />
+    <ProjectReference Include="..\..\Common\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj" />
+    <ProjectReference Include="..\Venture.CaseOffice.Domain\Venture.CaseOffice.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
+</Project>

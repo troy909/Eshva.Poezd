@@ -199,7 +199,7 @@ namespace Eshva.Poezd.Core.Routing
       return pipeline;
     }
 
-    private readonly List<MessageBroker> _brokers = new List<MessageBroker>();
+    private readonly List<MessageBroker> _brokers = new();
     private readonly MessageRouterConfiguration _configuration;
     private readonly IDiContainerAdapter _diContainerAdapter;
     private readonly ILogger<MessageRouter> _logger;

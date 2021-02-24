@@ -2,36 +2,28 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TestSubjects\HandlerInterfaces.cs" />
-    <Compile Remove="TestSubjects\MessageHandlers1.cs" />
-    <Compile Remove="TestSubjects\MessageHandlers2.cs" />
-    <Compile Remove="TestSubjects\MessageHandlers3.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="TestSubjects\HandlerInterfaces.cs" />
-    <EmbeddedResource Include="TestSubjects\MessageHandlers3.cs" />
-    <EmbeddedResource Include="TestSubjects\MessageHandlers2.cs" />
-    <EmbeddedResource Include="TestSubjects\MessageHandlers1.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Eshva.Common.Testing" Version="1.1.0" />
+    <PackageReference Include="FlatSharp" Version="4.2.4" />
+    <PackageReference Include="FlatSharp.Compiler" Version="4.2.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FlatSharp.Runtime" Version="4.2.4" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
-    <PackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.91" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.InMemory" Version="0.6.0" />
-    <PackageReference Include="Serilog.Sinks.InMemory.Assertions" Version="0.6.0" />
     <PackageReference Include="Serilog.Sinks.XUnit" Version="2.0.4" />
-    <PackageReference Include="SimpleInjector" Version="5.2.1" /> <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="SimpleInjector" Version="5.2.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -43,8 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
-    <ProjectReference Include="..\..\sources\Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj" />
+    <ProjectReference Include="..\Venture.CaseOffice.Messages\Venture.CaseOffice.Messages.csproj" />
+    <ProjectReference Include="..\Venture.Common.Poezd.Adapter\Venture.Common.Poezd.Adapter.csproj" />
+    <ProjectReference Include="..\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj" />
   </ItemGroup>
 
 </Project>

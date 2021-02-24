@@ -32,8 +32,10 @@
     <ProjectReference Include="..\..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
     <ProjectReference Include="..\..\Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj" />
     <ProjectReference Include="..\..\Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj" />
-    <ProjectReference Include="..\CaseOffice\Venture.CaseOffice.WorkPlanner.Adapter\Venture.CaseOffice.WorkPlanner.Adapter.csproj" />
+    <ProjectReference Include="..\CaseOffice\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj" />
+    <ProjectReference Include="..\CaseOffice\Venture.CaseOffice.Domain\Venture.CaseOffice.Domain.csproj" />
     <ProjectReference Include="..\Common\Venture.CaseOffice.Messages\Venture.CaseOffice.Messages.csproj" />
+    <ProjectReference Include="..\Common\Venture.Common.Poezd.Adapter\Venture.Common.Poezd.Adapter.csproj" />
     <ProjectReference Include="..\Common\Venture.Common.TestingTools\Venture.Common.TestingTools.csproj" />
   </ItemGroup>
 

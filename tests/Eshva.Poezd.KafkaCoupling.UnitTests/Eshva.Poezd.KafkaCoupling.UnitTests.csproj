@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FlatSharp" Version="4.2.3" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Serilog.Sinks.XUnit" Version="2.0.4" />
@@ -23,15 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Venture.Common.Poezd.Adapter\Venture.Common.Poezd.Adapter.csproj" />
-    <ProjectReference Include="..\Venture.CaseOffice.Application\Venture.CaseOffice.Application.csproj" />
-    <ProjectReference Include="..\Venture.CaseOffice.WorkPlanner.Adapter\Venture.CaseOffice.WorkPlanner.Adapter.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-      <HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\3.1.10\ref\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\sources\Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj" />
   </ItemGroup>
 
 </Project>

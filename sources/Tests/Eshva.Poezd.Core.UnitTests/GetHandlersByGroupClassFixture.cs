@@ -3,12 +3,14 @@
 using System;
 using System.IO;
 using System.Reflection;
-using Eshva.Common.TestTools;
+using Eshva.Common.Testing;
+using JetBrains.Annotations;
 
 #endregion
 
 namespace Eshva.Poezd.Core.UnitTests
 {
+  [UsedImplicitly]
   public class GetHandlersByGroupClassFixture : IDisposable
   {
     public GetHandlersByGroupClassFixture()

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Eshva.Common.Testing" Version="1.1.0" />
     <PackageReference Include="FlatSharp" Version="4.2.3" />
     <PackageReference Include="FlatSharp.Compiler" Version="4.2.3">
       <PrivateAssets>all</PrivateAssets>

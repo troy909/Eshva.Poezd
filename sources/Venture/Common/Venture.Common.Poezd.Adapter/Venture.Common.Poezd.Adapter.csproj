@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Eshva.Common.Tpl" Version="1.1.0" />
     <PackageReference Include="FlatSharp" Version="4.2.3" />
   </ItemGroup>
 

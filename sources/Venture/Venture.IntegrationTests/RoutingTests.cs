@@ -3,7 +3,7 @@
 using System;
 using System.Threading;
 using Confluent.Kafka;
-using Eshva.Common.TestTools;
+using Eshva.Common.Testing;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
@@ -85,7 +85,7 @@ namespace Venture.IntegrationTests
     }
 
     private static ConsumerConfig CreateConsumerConfig() =>
-      new ConsumerConfig
+      new()
       {
         BootstrapServers = "localhost:9092",
         ApiVersionRequest = true,
@@ -120,6 +120,6 @@ namespace Venture.IntegrationTests
     }
 
     private const string TopicPrefix = @"some";
-    private static readonly StringCreator StringCreator = new StringCreator();
+    private static readonly StringCreator StringCreator = new();
   }
 }

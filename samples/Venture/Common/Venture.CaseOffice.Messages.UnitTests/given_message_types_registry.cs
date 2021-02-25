@@ -19,7 +19,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     {
       var sut = new CaseOfficeMessageTypesRegistry();
       sut.Initialize();
-      sut.GetType(typeof(CreateJusticeCase).FullName!).Should().NotBeNull("type is known");
+      sut.GetMessageTypeByItsMessageTypeName(typeof(CreateJusticeCase).FullName!).Should().NotBeNull("type is known");
     }
 
     [Fact]
@@ -27,7 +27,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     {
       var sut = new CaseOfficeMessageTypesRegistry();
       sut.Initialize();
-      sut.GetDescriptor<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!).Should()
+      sut.GetDescriptorByMessageTypeName<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!).Should()
         .NotBeNull("descriptor is present").And
         .BeAssignableTo<IMessageTypeDescriptor<CreateJusticeCase>>("descriptor should support typed contract");
     }
@@ -37,7 +37,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     {
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
-      var sut = registry.GetDescriptor<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
+      var sut = registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
       var message = new CreateJusticeCase {SubjectId = Guid.NewGuid(), Reason = "some reason", ResposibleId = Guid.NewGuid()};
       using var bufferOwner = MemoryPool<byte>.Shared.Rent();
       var buffer = bufferOwner.Memory;
@@ -54,7 +54,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     public void when_registry_not_initialized_and_clr_type_for_known_message_type_requested_it_should_fail()
     {
       var registry = new CaseOfficeMessageTypesRegistry();
-      Action sut = () => registry.GetType(typeof(CreateJusticeCase).FullName!);
+      Action sut = () => registry.GetMessageTypeByItsMessageTypeName(typeof(CreateJusticeCase).FullName!);
       sut.Should().Throw<PoezdOperationException>("without initialization registry can not serve");
     }
 
@@ -62,7 +62,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     public void when_registry_not_initialized_and_descriptor_for_known_message_type_requested_it_should_fail()
     {
       var registry = new CaseOfficeMessageTypesRegistry();
-      Action sut = () => registry.GetDescriptor<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
+      Action sut = () => registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
       sut.Should().Throw<PoezdOperationException>("without initialization registry can not serve");
     }
   }

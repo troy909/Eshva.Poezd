@@ -33,6 +33,11 @@ namespace Eshva.Poezd.Core.Routing
     IPipeFitter IngressPipeFitter { get; }
 
     /// <summary>
+    /// Gets the egress pipe fitter.
+    /// </summary>
+    IPipeFitter EgressPipeFitter { get; }
+
+    /// <summary>
     /// Gets the message type registry.
     /// </summary>
     [NotNull]

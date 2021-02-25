@@ -32,6 +32,10 @@ namespace Eshva.Poezd.Core.UnitTests
         .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.QueueNameMatcherType = null)
         .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.EgressEnterPipeFitterType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.EgressExitPipeFitterType = null)
+        .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateMessageBrokerConfiguration(shouldAddPublicApi: false)
         .Validate().Should().HaveCount(expected: 1);
     }

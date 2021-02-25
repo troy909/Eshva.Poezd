@@ -46,6 +46,8 @@ namespace Eshva.Poezd.Core.Routing
       _queueNameMatcher = (IQueueNameMatcher) serviceProvider.GetService(configuration.QueueNameMatcherType);
       IngressEnterPipeFitter = GetIngressEnterPipeFitter(serviceProvider);
       IngressExitPipeFitter = GetIngressExitPipeFitter(serviceProvider);
+      EgressEnterPipeFitter = GetEgressEnterPipeFitter(serviceProvider);
+      EgressExitPipeFitter = GetEgressExitPipeFitter(serviceProvider);
     }
 
     /// <summary>
@@ -90,6 +92,18 @@ namespace Eshva.Poezd.Core.Routing
     [NotNull]
     public IPipeFitter IngressExitPipeFitter { get; }
 
+    /// <summary>
+    /// Gets egress enter pipe fitter. Configures the very beginning of egress pipeline.
+    /// </summary>
+    [NotNull]
+    public IPipeFitter EgressEnterPipeFitter { get; }
+
+    /// <summary>
+    /// Gets egress exit pipe fitter. Configures the very end of egress pipeline.
+    /// </summary>
+    [NotNull]
+    public IPipeFitter EgressExitPipeFitter { get; }
+
     /// <inheritdoc />
     public void Dispose()
     {
@@ -122,7 +136,7 @@ namespace Eshva.Poezd.Core.Routing
       return (IPipeFitter) serviceProvider.GetService(
         Configuration.IngressEnterPipeFitterType,
         type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker ingress enter pipeline configurator of type '{type.FullName}'. " +
+          $"Can not get instance of the message broker ingress enter pipe fitter of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
     }
 
@@ -131,7 +145,25 @@ namespace Eshva.Poezd.Core.Routing
       return (IPipeFitter) serviceProvider.GetService(
         Configuration.IngressExitPipeFitterType,
         type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker ingress exit pipeline configurator of type '{type.FullName}'. " +
+          $"Can not get instance of the message broker ingress exit pipe fitter of type '{type.FullName}'. " +
+          "You should register this type in DI-container."));
+    }
+
+    private IPipeFitter GetEgressEnterPipeFitter(IServiceProvider serviceProvider)
+    {
+      return (IPipeFitter) serviceProvider.GetService(
+        Configuration.EgressEnterPipeFitterType,
+        type => new PoezdConfigurationException(
+          $"Can not get instance of the message broker egress enter pipe fitter of type '{type.FullName}'. " +
+          "You should register this type in DI-container."));
+    }
+
+    private IPipeFitter GetEgressExitPipeFitter(IServiceProvider serviceProvider)
+    {
+      return (IPipeFitter) serviceProvider.GetService(
+        Configuration.EgressExitPipeFitterType,
+        type => new PoezdConfigurationException(
+          $"Can not get instance of the message broker egress exit pipe fitter of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
     }
 

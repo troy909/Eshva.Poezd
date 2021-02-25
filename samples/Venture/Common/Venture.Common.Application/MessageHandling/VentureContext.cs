@@ -57,7 +57,7 @@ namespace Venture.Common.Application.MessageHandling
       /// The message ID.
       /// </summary>
       /// <value>
-      /// The value is a <see cref="Guid" />.
+      /// The value is a <see cref="string" />.
       /// </value>
       public const string MessageId = "MessageId";
 

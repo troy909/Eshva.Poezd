@@ -21,15 +21,18 @@ namespace Venture.IntegrationTests
 {
   public static class RoutingTests
   {
-    public static Container SetupContainer<TIngressEnterPipeline, TIngressExitPipeline>(
+    public static Container SetupContainer<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
       Action<PublicApiConfigurator> configureApi,
       ITestOutputHelper testOutput)
       where TIngressEnterPipeline : IPipeFitter
       where TIngressExitPipeline : IPipeFitter
+      where TEgressEnterPipeline : IPipeFitter
+      where TEgressExitPipeline : IPipeFitter
     {
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-      container.AddLogging(testOutput).AddRouter<TIngressEnterPipeline, TIngressExitPipeline>(configureApi);
+      container.AddLogging(testOutput)
+        .AddRouter<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(configureApi);
 
       container.RegisterInstance<IServiceProvider>(container);
       container.RegisterSingleton<RegexQueueNameMatcher>();
@@ -57,11 +60,13 @@ namespace Venture.IntegrationTests
       return testIsFinished.Semaphore;
     }
 
-    private static Container AddRouter<TIngressEnterPipeline, TIngressExitPipeline>(
+    private static Container AddRouter<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
       this Container container,
       Action<PublicApiConfigurator> configureApi)
       where TIngressEnterPipeline : IPipeFitter
       where TIngressExitPipeline : IPipeFitter
+      where TEgressEnterPipeline : IPipeFitter
+      where TEgressExitPipeline : IPipeFitter
     {
       var messageRouterConfiguration =
         MessageRouter.Configure(
@@ -78,6 +83,8 @@ namespace Venture.IntegrationTests
                 .WithQueueNameMatcher<RegexQueueNameMatcher>()
                 .WithIngressEnterPipeFitter<TIngressEnterPipeline>()
                 .WithIngressExitPipeFitter<TIngressExitPipeline>()
+                .WithEgressEnterPipeFitter<TEgressEnterPipeline>()
+                .WithEgressExitPipeFitter<TEgressExitPipeline>()
                 .AddPublicApi(configureApi)));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));

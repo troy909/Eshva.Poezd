@@ -28,7 +28,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Broker.MessagePayload, messageBytes);
       context.Put(ContextKeys.Application.MessageType, messageType);
-      context.Put(ContextKeys.Application.MessageTypeDescriptor, registry.GetDescriptor<CreateJusticeCase>(messageType.FullName!));
+      context.Put(
+        ContextKeys.Application.MessageTypeDescriptor,
+        registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!));
 
       var sut = new ParseBrokerMessageStep();
       await sut.Execute(context);
@@ -48,7 +50,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var messageType = typeof(CreateJusticeCase);
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Broker.MessagePayload, messageBytes);
-      context.Put(ContextKeys.Application.MessageTypeDescriptor, registry.GetDescriptor<CreateJusticeCase>(messageType.FullName!));
+      context.Put(
+        ContextKeys.Application.MessageTypeDescriptor,
+        registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!));
 
       var step = new ParseBrokerMessageStep();
       Func<Task> sut = () => step.Execute(context);
@@ -65,7 +69,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var messageType = typeof(CreateJusticeCase);
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Application.MessageType, messageType);
-      context.Put(ContextKeys.Application.MessageTypeDescriptor, registry.GetDescriptor<CreateJusticeCase>(messageType.FullName!));
+      context.Put(
+        ContextKeys.Application.MessageTypeDescriptor,
+        registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!));
 
       var step = new ParseBrokerMessageStep();
       Func<Task> sut = () => step.Execute(context);

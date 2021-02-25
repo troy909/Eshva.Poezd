@@ -37,6 +37,7 @@ namespace Eshva.Poezd.Core.Routing
       MessageTypesRegistry = GetMessageTypesRegistry(serviceProvider);
       HandlerRegistry = GetHandlerRegistry(serviceProvider);
       IngressPipeFitter = GetIngressPipeFitter(serviceProvider);
+      EgressPipeFitter = GetEgressPipeFitter(serviceProvider);
     }
 
     /// <inheritdoc />
@@ -47,6 +48,9 @@ namespace Eshva.Poezd.Core.Routing
 
     /// <inheritdoc />
     public IPipeFitter IngressPipeFitter { get; }
+
+    /// <inheritdoc />
+    public IPipeFitter EgressPipeFitter { get; }
 
     /// <inheritdoc />
     public IMessageTypesRegistry MessageTypesRegistry { get; }
@@ -68,7 +72,17 @@ namespace Eshva.Poezd.Core.Routing
       var pipeFitter = (IPipeFitter) serviceProvider.GetService(
         Configuration.IngressPipeFitterType,
         type => new PoezdOperationException(
-          $"Can not get an instance of public API ingress pipeline configurator of type '{type.FullName}'." +
+          $"Can not get an instance of public API ingress pipe fitter of type '{type.FullName}'." +
+          "You should register this type in DI-container."));
+      return pipeFitter;
+    }
+
+    private IPipeFitter GetEgressPipeFitter(IServiceProvider serviceProvider)
+    {
+      var pipeFitter = (IPipeFitter) serviceProvider.GetService(
+        Configuration.EgressPipeFitter,
+        type => new PoezdOperationException(
+          $"Can not get an instance of public API egress pipe fitter of type '{type.FullName}'." +
           "You should register this type in DI-container."));
       return pipeFitter;
     }

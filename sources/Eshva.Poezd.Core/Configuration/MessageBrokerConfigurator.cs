@@ -117,6 +117,46 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     /// <summary>
+    /// Sets the egress enter pipe fitter type.
+    /// </summary>
+    /// <remarks>
+    /// The Poezd router uses a fitter of this type to add steps into egress pipeline generated for each outgoing message.
+    /// Steps will be added in the very beginning of pipeline in front of public API related steps.
+    /// </remarks>
+    /// <typeparam name="TConfigurator">
+    /// The egress enter pipe fitter type.
+    /// </typeparam>
+    /// <returns>
+    /// This configurator object.
+    /// </returns>
+    [NotNull]
+    public MessageBrokerConfigurator WithEgressEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    {
+      _configuration.EgressEnterPipeFitterType = typeof(TConfigurator);
+      return this;
+    }
+
+    /// <summary>
+    /// Sets the egress exit pipe fitter type.
+    /// </summary>
+    /// <remarks>
+    /// The Poezd router uses a fitter of this type to add steps into egress pipeline generated for each outgoing message.
+    /// Steps will be added in the very end of pipeline in just after of public API related steps.
+    /// </remarks>
+    /// <typeparam name="TConfigurator">
+    /// The egress exit pipe fitter type.
+    /// </typeparam>
+    /// <returns>
+    /// This configurator object.
+    /// </returns>
+    [NotNull]
+    public MessageBrokerConfigurator WithEgressExitPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    {
+      _configuration.EgressExitPipeFitterType = typeof(TConfigurator);
+      return this;
+    }
+
+    /// <summary>
     /// Sets the queue name matcher type.
     /// </summary>
     /// <remarks>

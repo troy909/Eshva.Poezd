@@ -49,13 +49,15 @@ namespace Venture.IntegrationTests
     [Fact]
     public async Task when_message_published_to_kafka_topic_it_should_be_received_by_properly_configured_poezd()
     {
-      var container = RoutingTests.SetupContainer<MessageCountingPipeFitter, FinishTestPipeFitter>(
-        api => api.WithId("case-office")
-          .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
-          .WithIngressPipeFitter<EmptyPipeFitter>()
-          .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
-          .WithHandlerRegistry<EmptyHandlerRegistry>(),
-        _testOutput);
+      var container = RoutingTests
+        .SetupContainer<MessageCountingPipeFitter, FinishTestPipeFitter, MessageCountingPipeFitter, FinishTestPipeFitter>(
+          api => api.WithId("case-office")
+            .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
+            .WithIngressPipeFitter<EmptyPipeFitter>()
+            .WithEgressPipeFitter<EmptyPipeFitter>()
+            .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
+            .WithHandlerRegistry<EmptyHandlerRegistry>(),
+          _testOutput);
 
       var topic = RoutingTests.GetRandomTopic();
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;

@@ -24,6 +24,9 @@ namespace Eshva.Poezd.Core.Routing
     public IPipeFitter IngressPipeFitter { get; } = new EmptyPipeFitter();
 
     /// <inheritdoc />
+    public IPipeFitter EgressPipeFitter { get; } = new EmptyPipeFitter();
+
+    /// <inheritdoc />
     public IMessageTypesRegistry MessageTypesRegistry { get; } = new EmptyMessageTypesRegistry();
 
     /// <inheritdoc />

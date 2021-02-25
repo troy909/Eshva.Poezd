@@ -38,7 +38,7 @@ namespace Eshva.Poezd.Core.Routing
     Task Start(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Router incoming message to message handlers. Used by broker drivers.
+    /// Route an incoming message to message handlers. Used by broker drivers.
     /// </summary>
     /// <param name="brokerId">
     /// The message broker ID from which the message is arrived.
@@ -69,5 +69,37 @@ namespace Eshva.Poezd.Core.Routing
       DateTimeOffset receivedOnUtc,
       byte[] payload,
       IReadOnlyDictionary<string, string> metadata);
+
+    /// <summary>
+    /// Route an outgoing message to message brokers queues/topics.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    /// The message type.
+    /// </typeparam>
+    /// <param name="message">
+    /// The message to route.
+    /// </param>
+    /// <param name="messageId">
+    /// The message ID that will be used in broker message headers.
+    /// </param>
+    /// <param name="correlationId">
+    /// The correlation ID that will be used in broker message headers.
+    /// </param>
+    /// <param name="causationId">
+    /// The causation ID that will be used in broker message headers.
+    /// </param>
+    /// <returns>
+    /// A task that can be used for waiting the message routing finished.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// The message is not specified.
+    /// </exception>
+    [NotNull]
+    Task RouteOutgoingMessage<TMessage>(
+      [NotNull] TMessage message,
+      string messageId = default,
+      string correlationId = default,
+      string causationId = default)
+      where TMessage : class;
   }
 }

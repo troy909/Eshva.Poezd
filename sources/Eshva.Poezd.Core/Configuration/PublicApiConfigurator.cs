@@ -11,6 +11,7 @@ namespace Eshva.Poezd.Core.Configuration
   /// <summary>
   /// Public API configurator.
   /// </summary>
+  /// TODO: Forbid to call any With... method more than once for all configurators.
   public sealed class PublicApiConfigurator
   {
     /// <summary>
@@ -69,6 +70,12 @@ namespace Eshva.Poezd.Core.Configuration
       where TConfigurator : IPipeFitter
     {
       _configuration.IngressPipeFitterType = typeof(TConfigurator);
+      return this;
+    }
+
+    public PublicApiConfigurator WithEgressPipeFitter<TConfigurator>()
+    {
+      _configuration.EgressPipeFitter = typeof(TConfigurator);
       return this;
     }
 

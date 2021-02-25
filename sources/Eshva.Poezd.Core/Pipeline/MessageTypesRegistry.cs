@@ -15,38 +15,48 @@ namespace Eshva.Poezd.Core.Pipeline
   public abstract class MessageTypesRegistry : IMessageTypesRegistry
   {
     /// <inheritdoc />
-    public Type GetType(string messageTypeName)
+    public Type GetMessageTypeByItsMessageTypeName(string messageTypeName)
     {
       if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
 
-      if (_types.Count == 0)
-      {
-        throw new PoezdOperationException(
-          $"The registry isn't initialized. You have to call {nameof(Initialize)} method before you can use this registry.");
-      }
+      EnsureInitialized();
 
-      if (!_types.TryGetValue(messageTypeName, out var type))
+      if (!_typeNameToType.TryGetValue(messageTypeName, out var type))
         throw new KeyNotFoundException($"Message of type '{messageTypeName}' is unknown.");
 
       return type;
     }
 
     /// <inheritdoc />
-    public IMessageTypeDescriptor<TMessageType> GetDescriptor<TMessageType>(string messageTypeName) where TMessageType : class
+    public string GetMessageTypeNameByItsMessageType<TMessage>() => _typeToTypeName[typeof(TMessage)];
+
+    /// <inheritdoc />
+    public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName) where TMessage : class
     {
       if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
 
-      if (_descriptors.Count == 0)
-      {
-        throw new PoezdOperationException(
-          $"The registry isn't initialized. You have to call {nameof(Initialize)} method before you can use this registry.");
-      }
+      EnsureInitialized();
 
-      if (!_descriptors.TryGetValue(messageTypeName, out var descriptor))
+      if (!_typeNameToDescriptor.TryGetValue(messageTypeName, out var descriptor))
         throw new KeyNotFoundException($"Message of type '{messageTypeName}' is unknown.");
 
-      return (IMessageTypeDescriptor<TMessageType>) descriptor;
+      return (IMessageTypeDescriptor<TMessage>) descriptor;
     }
+
+    /// <inheritdoc />
+    public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class
+    {
+      EnsureInitialized();
+
+      var messageType = typeof(TMessage);
+      if (!_typeToDescriptor.TryGetValue(messageType, out var descriptor))
+        throw new KeyNotFoundException($"Message of type '{messageType.FullName}' is unknown.");
+
+      return (IMessageTypeDescriptor<TMessage>) descriptor;
+    }
+
+    /// <inheritdoc />
+    public bool DoesOwn<TMessage>() where TMessage : class => _typeToDescriptor.ContainsKey(typeof(TMessage));
 
     /// <summary>
     /// In derived types should be overridden an create message types descriptors and add them using
@@ -73,11 +83,24 @@ namespace Eshva.Poezd.Core.Pipeline
       if (messageType == null) throw new ArgumentNullException(nameof(messageType));
       if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
 
-      _types.Add(messageTypeName, messageType);
-      _descriptors.Add(messageTypeName, descriptor);
+      _typeNameToType.Add(messageTypeName, messageType);
+      _typeToTypeName.Add(messageType, messageTypeName);
+      _typeNameToDescriptor.Add(messageTypeName, descriptor);
+      _typeToDescriptor.Add(messageType, descriptor);
     }
 
-    private readonly Dictionary<string, object> _descriptors = new();
-    private readonly Dictionary<string, Type> _types = new();
+    private void EnsureInitialized()
+    {
+      if (_typeNameToDescriptor.Count == 0)
+      {
+        throw new PoezdOperationException(
+          $"The registry isn't initialized. You have to call {nameof(Initialize)} method before you can use this registry.");
+      }
+    }
+
+    private readonly Dictionary<string, object> _typeNameToDescriptor = new();
+    private readonly Dictionary<string, Type> _typeNameToType = new();
+    private readonly Dictionary<Type, object> _typeToDescriptor = new();
+    private readonly Dictionary<Type, string> _typeToTypeName = new();
   }
 }

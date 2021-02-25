@@ -1,4 +1,4 @@
-﻿#region Usings
+#region Usings
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,10 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <param name="messageTypeName"></param>
     /// <returns></returns>
     [NotNull]
-    Type GetType([NotNull] string messageTypeName);
+    Type GetMessageTypeByItsMessageTypeName([NotNull] string messageTypeName);
+
+    // TODO: Write documentation.
+    [NotNull] string GetMessageTypeNameByItsMessageType<TMessage>();
 
     /// <summary>
     /// Matches message type taken from broker message headers to the message type object.
@@ -37,6 +40,21 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Message type isn't belongs to this public API.
     /// </exception>
     [NotNull]
-    IMessageTypeDescriptor<TMessageType> GetDescriptor<TMessageType>([NotNull] string messageTypeName) where TMessageType : class;
+    IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>([NotNull] string messageTypeName) where TMessage : class;
+
+    /// TODO: Write documentation.
+    [NotNull]
+    IMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class;
+
+    /// <summary>
+    /// Checks if message of <typeparamref name="TMessage" /> belongs to this public API.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    /// The type of message.
+    /// </typeparam>
+    /// <returns>
+    /// Returns <c>true</c> if message belongs to this public API, <c>false</c> otherwise.
+    /// </returns>
+    bool DoesOwn<TMessage>() where TMessage : class;
   }
 }

@@ -23,6 +23,11 @@ namespace Eshva.Poezd.Core.Configuration
     public Type IngressPipeFitterType { get; internal set; }
 
     /// <summary>
+    /// Gets the egress pipe fitter type.
+    /// </summary>
+    public Type EgressPipeFitter { get; internal set; }
+
+    /// <summary>
     /// Gets the handler registry type.
     /// </summary>
     public Type HandlerRegistryType { get; internal set; }
@@ -43,7 +48,9 @@ namespace Eshva.Poezd.Core.Configuration
       if (string.IsNullOrWhiteSpace(Id))
         yield return "ID of the public API should be specified.";
       if (IngressPipeFitterType == null)
-        yield return $"The pipeline fitter configurator type should be set for the public API with ID '{Id}'.";
+        yield return $"The ingress pipe fitter type should be set for the public API with ID '{Id}'.";
+      if (EgressPipeFitter == null)
+        yield return $"The egress pipe fitter type should be set for the public API with ID '{Id}'.";
       if (HandlerRegistryType == null)
         yield return $"The handler factory type should be set for the public API with ID '{Id}'.";
       if (QueueNamePatternsProviderType == null)

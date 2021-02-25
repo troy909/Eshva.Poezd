@@ -151,6 +151,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       private class Descriptor : IMessageTypeDescriptor<Message1>
       {
+        public IReadOnlyCollection<string> QueueNames { get; } = new string[0];
+
+        public Func<Message1, object> GetKey { get; } = _ => typeof(Message1).FullName;
+
         public Message1 Parse(Memory<byte> bytes) => new Message1();
 
         // ReSharper disable once RedundantAssignment

@@ -101,6 +101,8 @@ namespace Eshva.Poezd.Core.Routing
 
           pipeline = BuildIngressPipeline(messageBroker, publicApi);
 
+          // TODO: Replace all ContextKeys.Broker.* with ContextKeys.Broker.Itself.
+          // TODO: Replace all ContextKeys.PublicApi.* with ContextKeys.PublicApi.Itself.
           messageHandlingContext
             .Put(ContextKeys.Broker.Id, brokerId)
             .Put(ContextKeys.Broker.MessageMetadata, metadata)
@@ -115,9 +117,7 @@ namespace Eshva.Poezd.Core.Routing
         }
         catch (Exception exception)
         {
-          _logger.LogError(
-            exception,
-            "An error occurred during preparing to handle a message. See inner exception to find details about the error.");
+          _logger.LogError(exception, "An error occurred during preparing to handle an incoming message.");
           throw;
         }
 
@@ -128,11 +128,58 @@ namespace Eshva.Poezd.Core.Routing
         }
         catch (Exception exception)
         {
-          _logger.LogError(
-            exception,
-            "An error occurred during message handling. See inner exception to find details about the error.");
-          return Task.CompletedTask;
+          _logger.LogError(exception, "An error occurred during incoming message handling.");
+          throw;
         }
+      }
+    }
+
+    /// <inheritdoc />
+    public Task RouteOutgoingMessage<TMessage>(
+      TMessage message,
+      string messageId = default,
+      string correlationId = default,
+      string causationId = default)
+      where TMessage : class
+    {
+      var messageHandlingContext = new ConcurrentPocket();
+
+      MessageHandlingPipeline pipeline;
+      try
+      {
+        using (_diContainerAdapter.BeginScope())
+        {
+          var publicApi = _brokers.SelectMany(broker => broker.PublicApis).Single(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
+          var messageBroker = _brokers.Single(broker => broker.PublicApis.Contains(publicApi));
+          var messageType = message.GetType();
+          var messageTypeName = publicApi.MessageTypesRegistry.GetMessageTypeNameByItsMessageType<TMessage>();
+
+          pipeline = BuildEgressPipeline(messageBroker, publicApi);
+          messageHandlingContext
+            .Put(ContextKeys.Broker.Itself, messageBroker)
+            .Put(ContextKeys.PublicApi.Itself, messageBroker)
+            .Put(ContextKeys.Application.MessagePayload, message)
+            .Put(ContextKeys.Application.MessageType, messageType)
+            .Put(ContextKeys.Application.MessageTypeName, messageTypeName);
+          if (!string.IsNullOrWhiteSpace(messageId)) messageHandlingContext.Put(ContextKeys.Application.MessageId, messageId);
+          if (!string.IsNullOrWhiteSpace(correlationId)) messageHandlingContext.Put(ContextKeys.Application.CorrelationId, correlationId);
+          if (!string.IsNullOrWhiteSpace(causationId)) messageHandlingContext.Put(ContextKeys.Application.CausationId, causationId);
+        }
+      }
+      catch (Exception exception)
+      {
+        _logger.LogError(exception, "An error occurred during preparing to handle an outgoing message.");
+        throw;
+      }
+
+      try
+      {
+        return pipeline.Execute(messageHandlingContext);
+      }
+      catch (Exception exception)
+      {
+        _logger.LogError(exception, "An error occurred during outgoing message handling.");
+        throw;
       }
     }
 
@@ -196,6 +243,15 @@ namespace Eshva.Poezd.Core.Routing
       messageBroker.IngressEnterPipeFitter.AppendStepsInto(pipeline);
       publicApi.IngressPipeFitter.AppendStepsInto(pipeline);
       messageBroker.IngressExitPipeFitter.AppendStepsInto(pipeline);
+      return pipeline;
+    }
+
+    private static MessageHandlingPipeline BuildEgressPipeline(MessageBroker messageBroker, IPublicApi publicApi)
+    {
+      var pipeline = new MessageHandlingPipeline();
+      messageBroker.EgressEnterPipeFitter.AppendStepsInto(pipeline);
+      publicApi.EgressPipeFitter.AppendStepsInto(pipeline);
+      messageBroker.EgressExitPipeFitter.AppendStepsInto(pipeline);
       return pipeline;
     }
 

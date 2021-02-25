@@ -30,14 +30,24 @@ namespace Eshva.Poezd.Core.Configuration
     public Type QueueNameMatcherType { get; internal set; }
 
     /// <summary>
-    /// Gets the ingress pipe fitter type.
+    /// Gets the ingress enter pipe fitter type.
     /// </summary>
     public Type IngressEnterPipeFitterType { get; internal set; }
 
     /// <summary>
-    /// Gets the ingress pipe fitter type.
+    /// Gets the ingress exit pipe fitter type.
     /// </summary>
     public Type IngressExitPipeFitterType { get; internal set; }
+
+    /// <summary>
+    /// Gets the egress enter pipe fitter type.
+    /// </summary>
+    public Type EgressEnterPipeFitterType { get; internal set; }
+
+    /// <summary>
+    /// Gets the egress exit pipe fitter type.
+    /// </summary>
+    public Type EgressExitPipeFitterType { get; internal set; }
 
     /// <summary>
     /// Gets the driver factory type.
@@ -75,6 +85,10 @@ namespace Eshva.Poezd.Core.Configuration
         yield return $"The ingress enter pipe fitter type should be set for the message broker with ID '{Id}'.";
       if (IngressExitPipeFitterType == null)
         yield return $"The ingress exit pipe fitter type should be set for the message broker with ID '{Id}'.";
+      if (EgressEnterPipeFitterType == null)
+        yield return $"The egress enter pipe fitter type should be set for the message broker with ID '{Id}'.";
+      if (EgressExitPipeFitterType == null)
+        yield return $"The egress exit pipe fitter type should be set for the message broker with ID '{Id}'.";
       if (DriverFactoryType == null)
         yield return $"The message broker driver factory type should be set for the message broker with ID '{Id}'.";
       if (DriverConfiguration == null)

@@ -7,7 +7,7 @@ using Eshva.Poezd.Core.Configuration;
 
 namespace Eshva.Poezd.Core.UnitTests
 {
-  public class ConfigurationTests
+  public static class ConfigurationTests
   {
     public static MessageBrokerConfiguration CreateMessageBrokerConfiguration(bool shouldAddPublicApi = true)
     {
@@ -19,7 +19,9 @@ namespace Eshva.Poezd.Core.UnitTests
         Id = "id",
         IngressEnterPipeFitterType = someType,
         IngressExitPipeFitterType = someType,
-        QueueNameMatcherType = someType
+        QueueNameMatcherType = someType,
+        EgressEnterPipeFitterType = someType,
+        EgressExitPipeFitterType = someType
       };
 
       if (shouldAddPublicApi) sut.AddPublicApi(CreatePublicApiConfiguration());
@@ -43,7 +45,8 @@ namespace Eshva.Poezd.Core.UnitTests
         Id = "id",
         IngressPipeFitterType = someType,
         MessageTypesRegistryType = someType,
-        QueueNamePatternsProviderType = someType
+        QueueNamePatternsProviderType = someType,
+        EgressPipeFitter = someType
       };
 
       return configuration;

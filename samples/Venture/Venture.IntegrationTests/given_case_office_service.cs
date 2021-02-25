@@ -39,12 +39,13 @@ namespace Venture.IntegrationTests
     [Fact]
     public async Task when_create_case_command_received_it_should_create_case_in_store()
     {
-      var container = RoutingTests.SetupContainer<EmptyPipeFitter, FinishTestPipeFitter>(
+      var container = RoutingTests.SetupContainer<EmptyPipeFitter, FinishTestPipeFitter, EmptyPipeFitter, FinishTestPipeFitter>(
         api => api
           .WithId("case-office")
           .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
           .WithIngressPipeFitter<EmptyPipeFitter>()
           .WithIngressPipeFitter<VentureIngressPipeFitter>()
+          .WithEgressPipeFitter<EmptyPipeFitter>()
           .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
         _testOutput);
@@ -85,7 +86,7 @@ namespace Venture.IntegrationTests
     {
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
-      var descriptor = registry.GetDescriptor<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
+      var descriptor = registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
       var serialized = new byte[1024];
       var message = new CreateJusticeCase {Reason = expectedReason, SubjectId = Guid.NewGuid(), ResposibleId = Guid.NewGuid()};
       descriptor.Serialize(message, serialized);

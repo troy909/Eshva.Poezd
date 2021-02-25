@@ -97,11 +97,14 @@ namespace Eshva.Poezd.Core.UnitTests
                 .WithQueueNameMatcher<RegexQueueNameMatcher>()
                 .WithIngressEnterPipeFitter<SampleBrokerPipeFitter>()
                 .WithIngressExitPipeFitter<EmptyPipeFitter>()
+                .WithEgressEnterPipeFitter<EmptyPipeFitter>()
+                .WithEgressExitPipeFitter<EmptyPipeFitter>()
                 .AddPublicApi(
                   api => api
                     .WithId("api-1")
                     .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
                     .WithIngressPipeFitter<Service1PipeFitter>()
+                    .WithEgressPipeFitter<EmptyPipeFitter>()
                     .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
@@ -109,6 +112,7 @@ namespace Eshva.Poezd.Core.UnitTests
                     .WithId("api-2")
                     .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
                     .WithIngressPipeFitter<Service2PipeFitter>()
+                    .WithEgressPipeFitter<EmptyPipeFitter>()
                     .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())
                 .AddPublicApi(
@@ -116,6 +120,7 @@ namespace Eshva.Poezd.Core.UnitTests
                     .WithId("cdc-notifications")
                     .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
                     .WithIngressPipeFitter<CdcNotificationsPipeFitter>()
+                    .WithEgressPipeFitter<EmptyPipeFitter>()
                     .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
                     .WithHandlerRegistry<NoneHandlerRegistry>())));
 

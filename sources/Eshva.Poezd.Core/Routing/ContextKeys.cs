@@ -18,8 +18,19 @@ namespace Eshva.Poezd.Core.Routing
   /// </remarks>
   public static class ContextKeys
   {
+    /// <summary>
+    /// Keys to message handling context belong to message broker.
+    /// </summary>
     public static class Broker
     {
+      /// <summary>
+      /// The key of the broker object itself.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="MessageBroker" />.
+      /// </value>
+      public const string Itself = Prefix + "itself";
+
       /// <summary>
       /// The key of message payload as received from message broker.
       /// </summary>
@@ -71,8 +82,19 @@ namespace Eshva.Poezd.Core.Routing
       private const string Prefix = "broker-";
     }
 
+    /// <summary>
+    /// Keys to message handling context belong to public API.
+    /// </summary>
     public static class PublicApi
     {
+      /// <summary>
+      /// The key of the public API object itself.
+      /// </summary>
+      /// <value>
+      /// The value is a <see cref="IPublicApi" />.
+      /// </value>
+      public const string Itself = Prefix + "itself";
+
       /// <summary>
       /// Public API ID from configuration.
       /// </summary>
@@ -109,7 +131,7 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <summary>
-    /// Standard for this library keys of application metadata in a message handling context.
+    /// Keys to message handling context belong to application.
     /// </summary>
     public static class Application
     {
@@ -141,7 +163,7 @@ namespace Eshva.Poezd.Core.Routing
       /// The key of application message type descriptor used for serialization and parsing messages of this type.
       /// </summary>
       /// <value>
-      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IMessageTypeDescriptor{TMessageType}" />
+      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IMessageTypeDescriptor{TMessage}" />
       /// </value>
       public const string MessageTypeDescriptor = Prefix + "message-type-descriptor";
 

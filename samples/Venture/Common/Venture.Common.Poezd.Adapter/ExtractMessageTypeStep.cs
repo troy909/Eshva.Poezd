@@ -46,10 +46,10 @@ namespace Venture.Common.Poezd.Adapter
 
       try
       {
-        var messageType = messageTypesRegistry.GetType(messageTypeName);
+        var messageType = messageTypesRegistry.GetMessageTypeByItsMessageTypeName(messageTypeName);
         context.Put(ContextKeys.Application.MessageType, messageType);
 
-        var getDescriptorMethod = typeof(IMessageTypesRegistry).GetMethod(nameof(IMessageTypesRegistry.GetDescriptor))!
+        var getDescriptorMethod = typeof(IMessageTypesRegistry).GetMethod(nameof(IMessageTypesRegistry.GetDescriptorByMessageTypeName))!
           .MakeGenericMethod(messageType);
 
         var descriptor = getDescriptorMethod.Invoke(messageTypesRegistry, new object?[] {messageTypeName});

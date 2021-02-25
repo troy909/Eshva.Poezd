@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 
 #endregion
 
@@ -15,19 +16,30 @@ namespace Eshva.Poezd.Core.Pipeline
   public class EmptyMessageTypesRegistry : IMessageTypesRegistry
   {
     /// <inheritdoc />
-    public Type GetType(string messageTypeName) => GetType();
+    public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) => GetType();
+
+    public string GetMessageTypeNameByItsMessageType<TMessage>() => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public IMessageTypeDescriptor<TMessageType> GetDescriptor<TMessageType>(string messageTypeName)
-      where TMessageType : class =>
-      new EmptyMessageTypeDescriptor<TMessageType>();
+    public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
+      where TMessage : class =>
+      new EmptyMessageTypeDescriptor<TMessage>();
 
-    private class EmptyMessageTypeDescriptor<TMessageType> : IMessageTypeDescriptor<TMessageType> where TMessageType : class
+    public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class =>
+      new EmptyMessageTypeDescriptor<TMessage>();
+
+    public bool DoesOwn<TMessage>() where TMessage : class => false;
+
+    private class EmptyMessageTypeDescriptor<TMessage> : IMessageTypeDescriptor<TMessage> where TMessage : class
     {
-      public TMessageType Parse(Memory<byte> bytes) => Activator.CreateInstance<TMessageType>();
+      public IReadOnlyCollection<string> QueueNames { get; } = new string[0];
+
+      public Func<TMessage, object> GetKey { get; } = _ => typeof(TMessage).FullName;
+
+      public TMessage Parse(Memory<byte> bytes) => Activator.CreateInstance<TMessage>();
 
       // ReSharper disable once RedundantAssignment
-      public int Serialize(TMessageType message, Span<byte> buffer)
+      public int Serialize(TMessage message, Span<byte> buffer)
       {
         // ReSharper disable once RedundantAssignment
         buffer = new byte[0];

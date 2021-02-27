@@ -52,6 +52,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.KafkaCoupling.U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Messages.UnitTests", "samples\Venture\Common\Venture.CaseOffice.Messages.UnitTests\Venture.CaseOffice.Messages.UnitTests.csproj", "{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.Application.UnitTests", "Venture.Common.Application.UnitTests\Venture.Common.Application.UnitTests.csproj", "{24400E98-D54C-4C25-A853-139C4006F19E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,10 @@ Global
 		{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24400E98-D54C-4C25-A853-139C4006F19E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24400E98-D54C-4C25-A853-139C4006F19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24400E98-D54C-4C25-A853-139C4006F19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24400E98-D54C-4C25-A853-139C4006F19E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,6 +150,7 @@ Global
 		{5310501E-C533-4982-92E7-E77624CC0F45} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 		{513BA58C-AE6F-4EB0-98DC-FD8A632078C5} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 		{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
+		{24400E98-D54C-4C25-A853-139C4006F19E} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

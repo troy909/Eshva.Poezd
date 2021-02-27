@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Application.MessageHandling
+namespace Venture.Common.Application.MessagePublishing
 {
   /// <summary>
   /// Contract of the message publisher for Venture product.
@@ -34,7 +34,10 @@ namespace Venture.Common.Application.MessageHandling
     /// <returns>
     /// The task that could be used to wait when publish is finished.
     /// </returns>
+    /// <exception cref="System.ArgumentNullException">
+    /// The message is not specified.
+    /// </exception>
     [NotNull]
-    Task Publish<TMessage>([NotNull] TMessage message, [NotNull] VentureIncomingMessageHandlingContext context) where TMessage : class;
+    Task Publish<TMessage>([NotNull] TMessage message, [NotNull] VentureOutgoingMessageHandlingContext context) where TMessage : class;
   }
 }

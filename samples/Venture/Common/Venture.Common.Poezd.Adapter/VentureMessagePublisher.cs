@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.MessagePublishing;
 
 #endregion
 
@@ -21,7 +21,7 @@ namespace Venture.Common.Poezd.Adapter
     }
 
     /// <inheritdoc />
-    public Task Publish<TMessage>(TMessage message, VentureIncomingMessageHandlingContext context) where TMessage : class
+    public Task Publish<TMessage>(TMessage message, VentureOutgoingMessageHandlingContext context) where TMessage : class
     {
       if (message == null) throw new ArgumentNullException(nameof(message));
       if (context == null) throw new ArgumentNullException(nameof(context));

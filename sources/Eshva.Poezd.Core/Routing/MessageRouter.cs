@@ -11,7 +11,6 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 
 #endregion
 
@@ -40,8 +39,6 @@ namespace Eshva.Poezd.Core.Routing
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       _diContainerAdapter = diContainerAdapter ?? throw new ArgumentNullException(nameof(diContainerAdapter));
-      _logger = (ILogger<MessageRouter>) _diContainerAdapter.GetService(typeof(ILogger<MessageRouter>)) ??
-                throw new ArgumentException($"Can not get {nameof(ILogger<MessageRouter>)} implementation from the service provider.");
     }
 
     /// <inheritdoc />
@@ -87,49 +84,33 @@ namespace Eshva.Poezd.Core.Routing
     {
       if (payload == null) throw new ArgumentNullException(nameof(payload));
       if (metadata == null) throw new ArgumentNullException(nameof(metadata));
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentException(NotWhitespace, nameof(brokerId));
-      if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentException(NotWhitespace, nameof(queueName));
+      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
+      if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
 
       using (_diContainerAdapter.BeginScope())
       {
-        MessageHandlingPipeline pipeline;
-        var messageHandlingContext = new ConcurrentPocket();
-        try
-        {
-          var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
-          var publicApi = messageBroker.GetApiByQueueName(queueName);
+        var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
+        var publicApi = messageBroker.GetApiByQueueName(queueName);
 
-          pipeline = BuildIngressPipeline(messageBroker, publicApi);
-
-          // TODO: Replace all ContextKeys.Broker.* with ContextKeys.Broker.Itself.
-          // TODO: Replace all ContextKeys.PublicApi.* with ContextKeys.PublicApi.Itself.
-          messageHandlingContext
-            .Put(ContextKeys.Broker.Id, brokerId)
-            .Put(ContextKeys.Broker.MessageMetadata, metadata)
-            .Put(ContextKeys.Broker.MessagePayload, payload)
-            .Put(ContextKeys.Broker.QueueName, queueName)
-            .Put(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
-            .Put(ContextKeys.Broker.Configuration, messageBroker.Configuration)
-            .Put(ContextKeys.PublicApi.Id, publicApi.Id)
-            .Put(ContextKeys.PublicApi.MessageTypesRegistry, publicApi.MessageTypesRegistry)
-            .Put(ContextKeys.PublicApi.HandlerRegistry, publicApi.HandlerRegistry)
-            .Put(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
-        }
-        catch (Exception exception)
-        {
-          _logger.LogError(exception, "An error occurred during preparing to handle an incoming message.");
-          throw;
-        }
+        var messageHandlingContext = BuildIngressMessageHandlingContext(
+          messageBroker,
+          publicApi,
+          payload,
+          metadata,
+          queueName,
+          receivedOnUtc);
+        var pipeline = BuildIngressPipeline(messageBroker, publicApi);
 
         try
         {
-          // TODO: Add timeout as a cancellation token and configuration of it using router configuration fluent interface.
+          // TODO: Add timeout as a cancellation token and configuration its using router configuration fluent interface.
           return pipeline.Execute(messageHandlingContext);
         }
         catch (Exception exception)
         {
-          _logger.LogError(exception, "An error occurred during incoming message handling.");
-          throw;
+          throw new PoezdOperationException(
+            "An error occurred during incoming message handling. Inspect the inner exceptions for more details.",
+            exception);
         }
       }
     }
@@ -137,49 +118,37 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public Task RouteOutgoingMessage<TMessage>(
       TMessage message,
-      string messageId = default,
       string correlationId = default,
-      string causationId = default)
+      string causationId = default,
+      string messageId = default)
       where TMessage : class
     {
-      var messageHandlingContext = new ConcurrentPocket();
+      var publicApi = _brokers.SelectMany(broker => broker.PublicApis).Single(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
+      var messageBroker = _brokers.Single(broker => broker.PublicApis.Contains(publicApi));
 
-      MessageHandlingPipeline pipeline;
-      try
+      using (_diContainerAdapter.BeginScope())
       {
-        using (_diContainerAdapter.BeginScope())
+        var context = BuildEgressMessageHandlingContext(
+          message,
+          messageBroker,
+          publicApi,
+          correlationId,
+          causationId,
+          messageId);
+
+        var pipeline = BuildEgressPipeline(messageBroker, publicApi);
+
+        try
         {
-          var publicApi = _brokers.SelectMany(broker => broker.PublicApis).Single(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
-          var messageBroker = _brokers.Single(broker => broker.PublicApis.Contains(publicApi));
-          var messageType = message.GetType();
-          var messageTypeName = publicApi.MessageTypesRegistry.GetMessageTypeNameByItsMessageType<TMessage>();
-
-          pipeline = BuildEgressPipeline(messageBroker, publicApi);
-          messageHandlingContext
-            .Put(ContextKeys.Broker.Itself, messageBroker)
-            .Put(ContextKeys.PublicApi.Itself, messageBroker)
-            .Put(ContextKeys.Application.MessagePayload, message)
-            .Put(ContextKeys.Application.MessageType, messageType)
-            .Put(ContextKeys.Application.MessageTypeName, messageTypeName);
-          if (!string.IsNullOrWhiteSpace(messageId)) messageHandlingContext.Put(ContextKeys.Application.MessageId, messageId);
-          if (!string.IsNullOrWhiteSpace(correlationId)) messageHandlingContext.Put(ContextKeys.Application.CorrelationId, correlationId);
-          if (!string.IsNullOrWhiteSpace(causationId)) messageHandlingContext.Put(ContextKeys.Application.CausationId, causationId);
+          // TODO: Add timeout as a cancellation token and configuration its using router configuration fluent interface.
+          return pipeline.Execute(context);
         }
-      }
-      catch (Exception exception)
-      {
-        _logger.LogError(exception, "An error occurred during preparing to handle an outgoing message.");
-        throw;
-      }
-
-      try
-      {
-        return pipeline.Execute(messageHandlingContext);
-      }
-      catch (Exception exception)
-      {
-        _logger.LogError(exception, "An error occurred during outgoing message handling.");
-        throw;
+        catch (Exception exception)
+        {
+          throw new PoezdOperationException(
+            "An error occurred during outgoing message handling. Inspect the inner exceptions for more details.",
+            exception);
+        }
       }
     }
 
@@ -202,6 +171,113 @@ namespace Eshva.Poezd.Core.Routing
       var poezdConfigurator = new MessageRouterConfigurator();
       configurator(poezdConfigurator);
       return poezdConfigurator.Configuration;
+    }
+
+    private static ConcurrentPocket BuildIngressMessageHandlingContext(
+      MessageBroker messageBroker,
+      IPublicApi publicApi,
+      byte[] payload,
+      IReadOnlyDictionary<string, string> metadata,
+      string queueName,
+      DateTimeOffset receivedOnUtc)
+    {
+      try
+      {
+        var context = new ConcurrentPocket();
+        // TODO: Replace all ContextKeys.Broker.* with ContextKeys.Broker.Itself.
+        // TODO: Replace all ContextKeys.PublicApi.* with ContextKeys.PublicApi.Itself.
+        context
+          .Put(ContextKeys.Broker.Id, messageBroker.Id)
+          .Put(ContextKeys.Broker.MessageMetadata, metadata)
+          .Put(ContextKeys.Broker.MessagePayload, payload)
+          .Put(ContextKeys.Broker.QueueName, queueName)
+          .Put(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
+          .Put(ContextKeys.Broker.Configuration, messageBroker.Configuration)
+          .Put(ContextKeys.PublicApi.Id, publicApi.Id)
+          .Put(ContextKeys.PublicApi.MessageTypesRegistry, publicApi.MessageTypesRegistry)
+          .Put(ContextKeys.PublicApi.HandlerRegistry, publicApi.HandlerRegistry)
+          .Put(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
+        return context;
+      }
+      catch (Exception exception)
+      {
+        throw new PoezdOperationException(
+          "An error occurred during building an ingress message handling context. Inspect the inner exceptions for more details.",
+          exception);
+      }
+    }
+
+    private static MessageHandlingPipeline BuildIngressPipeline(MessageBroker messageBroker, IPublicApi publicApi)
+    {
+      try
+      {
+        var pipeline = new MessageHandlingPipeline();
+        messageBroker.IngressEnterPipeFitter.AppendStepsInto(pipeline);
+        publicApi.IngressPipeFitter.AppendStepsInto(pipeline);
+        messageBroker.IngressExitPipeFitter.AppendStepsInto(pipeline);
+        return pipeline;
+      }
+      catch (Exception exception)
+      {
+        throw new PoezdOperationException(
+          "An error occurred during building an ingress pipeline. Inspect the inner exceptions for more details.",
+          exception);
+      }
+    }
+
+    private static IPocket BuildEgressMessageHandlingContext<TMessage>(
+      TMessage message,
+      MessageBroker messageBroker,
+      IPublicApi publicApi,
+      string correlationId,
+      string causationId,
+      string messageId)
+      where TMessage : class
+    {
+      try
+      {
+        var context = new ConcurrentPocket();
+        var messageType = message.GetType();
+        var messageTypeName = publicApi.MessageTypesRegistry.GetMessageTypeNameByItsMessageType<TMessage>();
+        context
+          .Put(ContextKeys.Broker.Itself, messageBroker)
+          .Put(ContextKeys.PublicApi.Itself, messageBroker)
+          .Put(ContextKeys.Application.MessagePayload, message)
+          .Put(ContextKeys.Application.MessageType, messageType)
+          .Put(ContextKeys.Application.MessageTypeName, messageTypeName);
+        if (!string.IsNullOrWhiteSpace(messageId)) context.Put(ContextKeys.Application.MessageId, messageId);
+        if (!string.IsNullOrWhiteSpace(correlationId)) context.Put(ContextKeys.Application.CorrelationId, correlationId);
+        if (!string.IsNullOrWhiteSpace(causationId)) context.Put(ContextKeys.Application.CausationId, causationId);
+
+        return context;
+      }
+      catch (Exception exception)
+      {
+        throw new PoezdOperationException(
+          "An error occurred during building an egress message handling context. Inspect the inner exceptions for more details.",
+          exception);
+      }
+    }
+
+    private MessageHandlingPipeline BuildEgressPipeline(
+      MessageBroker messageBroker,
+      IPublicApi publicApi)
+    {
+      try
+      {
+        var pipeline = new MessageHandlingPipeline();
+        messageBroker.EgressEnterPipeFitter.AppendStepsInto(pipeline);
+        publicApi.EgressPipeFitter.AppendStepsInto(pipeline);
+        messageBroker.EgressExitPipeFitter.AppendStepsInto(pipeline);
+
+        return pipeline;
+      }
+      catch (Exception exception)
+      {
+        throw new PoezdOperationException(
+          "An error occurred during building an egress pipeline. Inspect the inner exceptions for more details.",
+          exception);
+      }
     }
 
     private void EnsureConfigurationValid()
@@ -237,30 +313,9 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    private static MessageHandlingPipeline BuildIngressPipeline(MessageBroker messageBroker, IPublicApi publicApi)
-    {
-      var pipeline = new MessageHandlingPipeline();
-      messageBroker.IngressEnterPipeFitter.AppendStepsInto(pipeline);
-      publicApi.IngressPipeFitter.AppendStepsInto(pipeline);
-      messageBroker.IngressExitPipeFitter.AppendStepsInto(pipeline);
-      return pipeline;
-    }
-
-    private static MessageHandlingPipeline BuildEgressPipeline(MessageBroker messageBroker, IPublicApi publicApi)
-    {
-      var pipeline = new MessageHandlingPipeline();
-      messageBroker.EgressEnterPipeFitter.AppendStepsInto(pipeline);
-      publicApi.EgressPipeFitter.AppendStepsInto(pipeline);
-      messageBroker.EgressExitPipeFitter.AppendStepsInto(pipeline);
-      return pipeline;
-    }
-
     private readonly List<MessageBroker> _brokers = new();
     private readonly MessageRouterConfiguration _configuration;
     private readonly IDiContainerAdapter _diContainerAdapter;
-    private readonly ILogger<MessageRouter> _logger;
-
     private bool _isStarted;
-    private const string NotWhitespace = "Value cannot be null or whitespace.";
   }
 }

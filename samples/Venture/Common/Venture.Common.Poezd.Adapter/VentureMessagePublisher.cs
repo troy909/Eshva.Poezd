@@ -29,9 +29,9 @@ namespace Venture.Common.Poezd.Adapter
 
       return _messageRouter.RouteOutgoingMessage(
         message,
-        context.TakeOrPut(VentureContext.Keys.MessageId, () => Guid.NewGuid().ToString("N")),
         context.TakeOrThrow<string>(VentureContext.Keys.CorrelationId),
-        context.TakeOrThrow<string>(VentureContext.Keys.CausationId));
+        context.TakeOrThrow<string>(VentureContext.Keys.CausationId),
+        context.TakeOrPut(VentureContext.Keys.MessageId, () => Guid.NewGuid().ToString("N")));
     }
 
     private readonly IMessageRouter _messageRouter;

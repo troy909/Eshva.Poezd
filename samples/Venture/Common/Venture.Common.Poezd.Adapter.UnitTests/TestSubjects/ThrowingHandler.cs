@@ -8,9 +8,9 @@ using Venture.Common.Application.MessageHandling;
 
 namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
 {
-  public class ThrowingHandler : IHandleMessageOfType<Message02>
+  public class ThrowingHandler : IMessageHandler<Message02>
   {
-    public Task Handle(Message02 message, VentureContext context) => throw new Exception(TestFail);
+    public Task Handle(Message02 message, VentureIncomingMessageHandlingContext context) => throw new Exception(TestFail);
 
     private const string TestFail = "test fail";
   }

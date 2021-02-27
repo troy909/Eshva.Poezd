@@ -8,14 +8,14 @@ using Venture.Common.Application.MessageHandling;
 
 namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
 {
-  public class DelayedMessageHandler : IHandleMessageOfType<Message02>
+  public class DelayedMessageHandler : IMessageHandler<Message02>
   {
     public DelayedMessageHandler(TimeSpan timeout)
     {
       _timeout = timeout;
     }
 
-    public Task Handle(Message02 message, VentureContext context) => Task.Delay(_timeout);
+    public Task Handle(Message02 message, VentureIncomingMessageHandlingContext context) => Task.Delay(_timeout);
 
     private readonly TimeSpan _timeout;
   }

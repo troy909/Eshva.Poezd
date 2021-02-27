@@ -10,16 +10,20 @@ namespace Venture.Common.Application.MessageHandling
   /// <summary>
   /// Marker interface for a general message handler in the application.
   /// </summary>
-  /// <typeparam name="TMessage"></typeparam>
-  [UsedImplicitly(ImplicitUseTargetFlags.Itself | ImplicitUseTargetFlags.WithInheritors)]
-  public interface IHandleMessageOfType<in TMessage>
+  /// <remarks>
+  /// Each handler class can implement this interface many types for every handled message type.
+  /// </remarks>
+  /// <typeparam name="TMessage">
+  /// The type of handling message.
+  /// </typeparam>
+  [UsedImplicitly]
+  public interface IMessageHandler<in TMessage>
   {
     /// <summary>
     /// Handles a message of <typeparamref name="TMessage" /> type.
     /// </summary>
     /// <remarks>
-    /// The same message object contained in the <paramref name="context" /> with the key
-    /// <see cref="VentureContext.Keys.Message" />.
+    /// The same message object contained within the <paramref name="context" />.
     /// </remarks>
     /// <param name="message">
     /// The message object.
@@ -30,6 +34,7 @@ namespace Venture.Common.Application.MessageHandling
     /// <returns>
     /// A task object that can be used to wait for message to be handled.
     /// </returns>
-    Task Handle([NotNull] TMessage message, [NotNull] VentureContext context);
+    // ReSharper disable once UnusedParameter.Global - could be used in a real application.
+    Task Handle([NotNull] TMessage message, [NotNull] VentureIncomingMessageHandlingContext context);
   }
 }

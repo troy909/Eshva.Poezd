@@ -14,7 +14,7 @@ namespace Venture.Common.Poezd.Adapter
     public HandlerDescriptor(
       [NotNull] Type type,
       [NotNull] Type messageType,
-      [NotNull] Func<object, VentureContext, Task> onHandle)
+      [NotNull] Func<object, VentureIncomingMessageHandlingContext, Task> onHandle)
     {
       HandlerType = type ?? throw new ArgumentNullException(nameof(type));
       MessageType = messageType ?? throw new ArgumentNullException(nameof(messageType));
@@ -25,6 +25,6 @@ namespace Venture.Common.Poezd.Adapter
 
     public Type MessageType { get; }
 
-    public Func<object, VentureContext, Task> OnHandle { get; }
+    public Func<object, VentureIncomingMessageHandlingContext, Task> OnHandle { get; }
   }
 }

@@ -51,8 +51,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var foundHandlers = context.TakeOrNull<IEnumerable<HandlerDescriptor>>(ContextKeys.Application.Handlers);
       var singleHandler = foundHandlers.Single();
       singleHandler.Should().BeOfType<HandlerDescriptor>("should find the handler for the message");
-      await singleHandler.OnHandle(new Message01(), new VentureContext());
-      InMemorySink.Instance.LogEvents.Should().Contain(@event => @event.MessageTemplate.Text.Contains(nameof(Message01)));
     }
 
     [Fact]

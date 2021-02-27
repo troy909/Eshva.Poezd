@@ -17,7 +17,7 @@ namespace Venture.Common.Poezd.Adapter
     public VentureServiceHandlersRegistry(IEnumerable<Assembly> messageHandlersAssemblies)
     {
       HandlersGroupedByMessageType = messageHandlersAssemblies
-        .GetHandlersGroupedByMessageType(typeof(IHandleMessageOfType<>))
+        .GetHandlersGroupedByMessageType(typeof(IMessageHandler<>))
         .ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 

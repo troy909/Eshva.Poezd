@@ -7,11 +7,11 @@ using Venture.Common.Application.MessageHandling;
 
 namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
 {
-  public class MessageHandler : IHandleMessageOfType<Message02>
+  public class MessageHandler : IMessageHandler<Message02>
   {
     public bool IsExecuted { get; private set; }
 
-    public Task Handle(Message02 message, VentureContext context)
+    public Task Handle(Message02 message, VentureIncomingMessageHandlingContext context)
     {
       IsExecuted = true;
       return Task.CompletedTask;

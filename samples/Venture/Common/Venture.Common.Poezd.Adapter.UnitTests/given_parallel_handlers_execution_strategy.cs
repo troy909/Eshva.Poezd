@@ -37,7 +37,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         handler2,
         handler3).ToArray();
       var message = new Message02();
-      var context = VentureContextTools.CreateFilledContext(message, handlers);
+      var context = VentureContextTools.CreateFilledVentureContext(message);
       var sut = new ParallelHandlersExecutionStrategy(NullLogger<ParallelHandlersExecutionStrategy>.Instance);
 
       await sut.ExecuteHandlers(
@@ -65,7 +65,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100)),
         new DelayedMessageHandler(TimeSpan.FromMilliseconds(value: 100))).ToArray();
       var message = new Message02();
-      var context = VentureContextTools.CreateFilledContext(message, handlers);
+      var context = VentureContextTools.CreateFilledVentureContext(message);
 
       Func<Task> sut = () => strategy.ExecuteHandlers(
         handlers,
@@ -86,7 +86,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         new ThrowingHandler(),
         new ThrowingHandler()).ToArray();
       var message = new Message02();
-      var context = VentureContextTools.CreateFilledContext(message, handlers);
+      var context = VentureContextTools.CreateFilledVentureContext(message);
       var strategy = new ParallelHandlersExecutionStrategy(NullLogger<ParallelHandlersExecutionStrategy>.Instance);
 
       Func<Task> sut = () => strategy.ExecuteHandlers(
@@ -109,7 +109,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         new ThrowingHandler(),
         new ThrowingHandler()).ToArray();
       var message = new Message02();
-      var context = VentureContextTools.CreateFilledContext(message, handlers);
+      var context = VentureContextTools.CreateFilledVentureContext(message);
       var strategy = new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>());
 
       Func<Task> sut = () => strategy.ExecuteHandlers(
@@ -142,9 +142,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
       container.AddLogging(_testOutput);
       var strategy = new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>());
-      var handlers = VentureContextTools.CreateHandlerDescriptors(new MessageHandler()).ToArray();
       var message = new Message02();
-      var context = VentureContextTools.CreateFilledContext(message, handlers);
+      var context = VentureContextTools.CreateFilledVentureContext(message);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Func<Task> sut = () => strategy.ExecuteHandlers(
@@ -163,7 +162,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var strategy = new ParallelHandlersExecutionStrategy(container.GetInstance<ILogger<ParallelHandlersExecutionStrategy>>());
       var handlers = VentureContextTools.CreateHandlerDescriptors(new MessageHandler()).ToArray();
       var message = new Message02();
-      var context = VentureContextTools.CreateFilledContext(message, handlers);
+      var context = VentureContextTools.CreateFilledVentureContext(message);
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Func<Task> sut = () => strategy.ExecuteHandlers(

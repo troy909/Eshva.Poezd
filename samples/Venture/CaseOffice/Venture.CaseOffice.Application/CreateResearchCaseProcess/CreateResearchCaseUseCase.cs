@@ -12,7 +12,7 @@ using Venture.Common.Application.Storage;
 
 namespace Venture.CaseOffice.Application.CreateResearchCaseProcess
 {
-  public sealed class CreateResearchCaseUseCase : IHandleMessageOfType<CreateResearchCase>
+  public sealed class CreateResearchCaseUseCase : IMessageHandler<CreateResearchCase>
   {
     public CreateResearchCaseUseCase(
       IAggregateStorage<ResearchCase> researchCaseStorage,
@@ -22,7 +22,7 @@ namespace Venture.CaseOffice.Application.CreateResearchCaseProcess
       _logger = logger;
     }
 
-    public async Task Handle(CreateResearchCase message, VentureContext context)
+    public async Task Handle(CreateResearchCase message, VentureIncomingMessageHandlingContext context)
     {
       var researchCase = new ResearchCase(
         Guid.NewGuid(),
@@ -32,12 +32,10 @@ namespace Venture.CaseOffice.Application.CreateResearchCaseProcess
       try
       {
         await _researchCaseStorage.Write(researchCase.Id, researchCase);
-        context.Commit();
       }
       catch (Exception exception)
       {
         _logger.LogError(exception, "fail");
-        context.Abort();
       }
     }
 

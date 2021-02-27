@@ -12,7 +12,7 @@ namespace Venture.CaseOffice.Application.BindTaskToRequirement
   /// <summary>
   /// Binds a task created in the Work Planner to the case requirement it planned for.
   /// </summary>
-  public class BindTaskToClaim : IHandleMessageOfType<TaskCreated>
+  public class BindTaskToClaim : IMessageHandler<TaskCreated>
   {
     public BindTaskToClaim(ILogger<BindTaskToClaim> logger)
     {
@@ -20,7 +20,7 @@ namespace Venture.CaseOffice.Application.BindTaskToRequirement
     }
 
     /// <inheritdoc />
-    public Task Handle(TaskCreated message, VentureContext context)
+    public Task Handle(TaskCreated message, VentureIncomingMessageHandlingContext context)
     {
       _logger.LogDebug($"Handling event {typeof(TaskCreated)}.");
       return Task.CompletedTask;

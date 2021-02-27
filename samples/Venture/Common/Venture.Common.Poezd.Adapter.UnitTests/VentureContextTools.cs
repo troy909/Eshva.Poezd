@@ -14,7 +14,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 {
   public static class VentureContextTools
   {
-    public static IEnumerable<HandlerDescriptor> CreateHandlerDescriptors(params IHandleMessageOfType<Message02>[] handlers) =>
+    public static IEnumerable<HandlerDescriptor> CreateHandlerDescriptors(params IMessageHandler<Message02>[] handlers) =>
       handlers.Select(
         handler => new HandlerDescriptor(
           handler.GetType(),
@@ -23,14 +23,14 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
     public static IPocket CreateContextWithout(string itemKey)
     {
-      var context = CreateFilledContext(new Message02(), new HandlerDescriptor[0]);
+      var context = CreateFilledPoezdContext(new Message02(), new HandlerDescriptor[0]);
       context.TryRemove(itemKey);
       return context;
     }
 
-    public static VentureContext CreateFilledContext(object message, IEnumerable<HandlerDescriptor> handlers)
+    public static IPocket CreateFilledPoezdContext(object message, IEnumerable<HandlerDescriptor> handlers)
     {
-      var context = new VentureContext();
+      var context = new ConcurrentPocket();
       context
         .Put(ContextKeys.Application.MessagePayload, message)
         .Put(ContextKeys.Application.MessageType, message.GetType())
@@ -43,5 +43,15 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       return context;
     }
+
+    public static VentureIncomingMessageHandlingContext CreateFilledVentureContext(object message) =>
+      new VentureIncomingMessageHandlingContext(
+        message,
+        message.GetType(),
+        "case.facts.tasks.v1",
+        DateTimeOffset.UtcNow,
+        Guid.NewGuid().ToString("N"),
+        Guid.NewGuid().ToString("N"),
+        Guid.NewGuid().ToString("N"));
   }
 }

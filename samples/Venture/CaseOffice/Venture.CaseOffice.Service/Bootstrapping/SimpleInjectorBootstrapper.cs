@@ -30,12 +30,12 @@ namespace Venture.CaseOffice.Service.Bootstrapping
     {
       var messageHandlersAssemblies = new[] {typeof(CaseOfficeApplicationAssemblyTag).Assembly};
       var serviceTypes = container.GetMessageHandlersTypes(messageHandlersAssemblies).ToArray();
-      container.Collection.Register(typeof(IHandleMessageOfType<>), serviceTypes);
+      container.Collection.Register(typeof(IMessageHandler<>), serviceTypes);
     }
 
     private static IEnumerable<Type> GetMessageHandlersTypes(this Container container, IEnumerable<Assembly> assemblies) =>
       container.GetTypesToRegister(
-        typeof(IHandleMessageOfType<>),
+        typeof(IMessageHandler<>),
         assemblies,
         new TypesToRegisterOptions
         {

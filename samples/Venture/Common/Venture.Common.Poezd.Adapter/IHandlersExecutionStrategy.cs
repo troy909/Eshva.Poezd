@@ -13,6 +13,6 @@ namespace Venture.Common.Poezd.Adapter
     Task ExecuteHandlers(
       IEnumerable<HandlerDescriptor> handlers,
       object message,
-      VentureContext context);
+      VentureIncomingMessageHandlingContext context);
   }
 }

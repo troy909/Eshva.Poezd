@@ -12,7 +12,7 @@ using Venture.Common.Application.Storage;
 
 namespace Venture.CaseOffice.Application.CreateJusticeCaseProcess
 {
-  public sealed class CreateJusticeCaseUseCase : IHandleMessageOfType<CreateJusticeCase>
+  public sealed class CreateJusticeCaseUseCase : IMessageHandler<CreateJusticeCase>
   {
     public CreateJusticeCaseUseCase(
       IAggregateStorage<JusticeCase> justiceCaseStorage,
@@ -22,7 +22,7 @@ namespace Venture.CaseOffice.Application.CreateJusticeCaseProcess
       _logger = logger;
     }
 
-    public async Task Handle(CreateJusticeCase message, VentureContext context)
+    public async Task Handle(CreateJusticeCase message, VentureIncomingMessageHandlingContext context)
     {
       var justiceCase = new JusticeCase(
         Guid.NewGuid(),
@@ -33,12 +33,10 @@ namespace Venture.CaseOffice.Application.CreateJusticeCaseProcess
       try
       {
         await _justiceCaseStorage.Write(justiceCase.CaseId, justiceCase);
-        context.Commit();
       }
       catch (Exception exception)
       {
         _logger.LogError(exception, "fail");
-        context.Abort();
       }
     }
 

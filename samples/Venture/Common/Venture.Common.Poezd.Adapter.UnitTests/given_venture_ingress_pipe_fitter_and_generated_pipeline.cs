@@ -19,7 +19,7 @@ using Xunit;
 
 namespace Venture.Common.Poezd.Adapter.UnitTests
 {
-  public class given_ingress_pipe_fitter_and_generated_pipeline
+  public class given_venture_ingress_pipe_fitter_and_generated_pipeline
   {
     [Fact]
     public void when_append_steps_into_pipeline_it_should_contain_expected_steps_in_expected_order1()
@@ -103,6 +103,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Broker.MessagePayload, new byte[1]);
       context.Put(ContextKeys.Broker.QueueName, "queue name");
+      context.Put(ContextKeys.Broker.ReceivedOnUtc, DateTimeOffset.UtcNow);
       context.Put(
         ContextKeys.Broker.MessageMetadata,
         new Dictionary<string, string>
@@ -198,9 +199,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       public bool IsExecuted { get; set; }
     }
 
-    public class Massage1Handler : IHandleMessageOfType<Message1>
+    public class Massage1Handler : IMessageHandler<Message1>
     {
-      public Task Handle(Message1 message, VentureContext context)
+      public Task Handle(Message1 message, VentureIncomingMessageHandlingContext context)
       {
         message.IsExecuted = true;
         return Task.CompletedTask;
@@ -212,7 +213,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       public async Task ExecuteHandlers(
         IEnumerable<HandlerDescriptor> handlers,
         object message,
-        VentureContext context)
+        VentureIncomingMessageHandlingContext context)
       {
         foreach (var handler in handlers)
         {

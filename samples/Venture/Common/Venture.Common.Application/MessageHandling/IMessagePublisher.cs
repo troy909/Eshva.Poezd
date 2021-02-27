@@ -35,6 +35,6 @@ namespace Venture.Common.Application.MessageHandling
     /// The task that could be used to wait when publish is finished.
     /// </returns>
     [NotNull]
-    Task Publish<TMessage>([NotNull] TMessage message, [NotNull] VentureContext context) where TMessage : class;
+    Task Publish<TMessage>([NotNull] TMessage message, [NotNull] VentureIncomingMessageHandlingContext context) where TMessage : class;
   }
 }

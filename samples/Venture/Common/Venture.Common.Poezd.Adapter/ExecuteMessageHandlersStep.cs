@@ -46,20 +46,21 @@ namespace Venture.Common.Poezd.Adapter
       }
     }
 
-    private static VentureContext CreateMessageHandlingContext(IPocket context)
+    private static VentureIncomingMessageHandlingContext CreateMessageHandlingContext(IPocket context)
     {
-      var messageHandlingContext = new VentureContext();
-      messageHandlingContext.Put(VentureContext.Keys.Message, context.TakeOrThrow<object>(ContextKeys.Application.MessagePayload));
-      messageHandlingContext.Put(VentureContext.Keys.MessageType, context.TakeOrThrow<Type>(ContextKeys.Application.MessageType));
-      messageHandlingContext.Put(VentureContext.Keys.MessageId, context.TakeOrNull<string>(ContextKeys.Application.MessageId));
-      messageHandlingContext.Put(VentureContext.Keys.CorrelationId, context.TakeOrNull<string>(ContextKeys.Application.CorrelationId));
-      messageHandlingContext.Put(VentureContext.Keys.CausationId, context.TakeOrNull<string>(ContextKeys.Application.CausationId));
-      messageHandlingContext.Put(VentureContext.Keys.SourceTopic, context.TakeOrThrow<string>(ContextKeys.Broker.QueueName));
+      if (!context.TryTake<DateTimeOffset>(ContextKeys.Broker.ReceivedOnUtc, out var receivedOnUtc))
+        throw new KeyNotFoundException($"Can not find {ContextKeys.Broker.ReceivedOnUtc} context item.");
 
-      if (context.TryTake<DateTimeOffset>(ContextKeys.Broker.ReceivedOnUtc, out var receivedOnUtc))
-        messageHandlingContext.Put(VentureContext.Keys.ReceivedOnUtc, receivedOnUtc);
+      var ventureContext = new VentureIncomingMessageHandlingContext(
+        context.TakeOrThrow<object>(ContextKeys.Application.MessagePayload),
+        context.TakeOrThrow<Type>(ContextKeys.Application.MessageType),
+        context.TakeOrThrow<string>(ContextKeys.Broker.QueueName),
+        receivedOnUtc,
+        context.TakeOrNull<string>(ContextKeys.Application.CorrelationId),
+        context.TakeOrNull<string>(ContextKeys.Application.CausationId),
+        context.TakeOrNull<string>(ContextKeys.Application.MessageId));
 
-      return messageHandlingContext;
+      return ventureContext;
     }
 
     private readonly IHandlersExecutionStrategy _executionStrategy;

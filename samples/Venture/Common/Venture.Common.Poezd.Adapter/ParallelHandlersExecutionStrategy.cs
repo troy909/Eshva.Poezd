@@ -24,7 +24,7 @@ namespace Venture.Common.Poezd.Adapter
     public async Task ExecuteHandlers(
       [NotNull] IEnumerable<HandlerDescriptor> handlers,
       [NotNull] object message,
-      [NotNull] VentureContext context)
+      [NotNull] VentureIncomingMessageHandlingContext context)
     {
       if (handlers == null) throw new ArgumentNullException(nameof(handlers));
       if (message == null) throw new ArgumentNullException(nameof(message));
@@ -42,7 +42,7 @@ namespace Venture.Common.Poezd.Adapter
     private async Task ExecuteHandler(
       HandlerDescriptor handler,
       object message,
-      VentureContext context)
+      VentureIncomingMessageHandlingContext context)
     {
       _logger.LogDebug(
         "Executing a message handler of type {HandlerType}.",
@@ -59,7 +59,6 @@ namespace Venture.Common.Poezd.Adapter
           exception,
           "An error occurred during a message handler execution of type {HandlerType}.",
           handler.HandlerType.FullName);
-        context.Abort();
         throw;
       }
       finally

@@ -29,7 +29,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         handler1,
         handler2,
         handler3);
-      var context = VentureContextTools.CreateFilledContext(new Message02(), handlers);
+      var context = VentureContextTools.CreateFilledPoezdContext(new Message02(), handlers);
 
       await sut.Execute(context);
 
@@ -42,6 +42,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public void when_constructed_without_handlers_execution_policy_it_should_throw()
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
+      // ReSharper disable once ObjectCreationAsStatement
       Action sut = () => new ExecuteMessageHandlersStep(executionStrategy: null);
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("executionStrategy"));
     }
@@ -61,22 +62,22 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().Throw<PoezdOperationException>();
       context = VentureContextTools.CreateContextWithout(ContextKeys.Application.Handlers);
       sut.Should().Throw<PoezdOperationException>();
+      context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.ReceivedOnUtc);
+      sut.Should().Throw<PoezdOperationException>();
       context = VentureContextTools.CreateContextWithout(ContextKeys.Application.MessageId);
       sut.Should().NotThrow<PoezdOperationException>();
       context = VentureContextTools.CreateContextWithout(ContextKeys.Application.CorrelationId);
       sut.Should().NotThrow<PoezdOperationException>();
       context = VentureContextTools.CreateContextWithout(ContextKeys.Application.CausationId);
       sut.Should().NotThrow<PoezdOperationException>();
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.ReceivedOnUtc);
-      sut.Should().NotThrow<PoezdOperationException>();
     }
 
-    public class ExecutionStrategy : IHandlersExecutionStrategy
+    private class ExecutionStrategy : IHandlersExecutionStrategy
     {
       public async Task ExecuteHandlers(
         IEnumerable<HandlerDescriptor> handlers,
         object message,
-        VentureContext context)
+        VentureIncomingMessageHandlingContext context)
       {
         foreach (var handler in handlers)
         {

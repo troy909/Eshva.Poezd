@@ -44,7 +44,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var sut = new FindMessageHandlersStep(container);
       var context = new ConcurrentPocket();
       context.Put(ContextKeys.Application.MessageType, typeof(Message01));
-      context.Put(ContextKeys.PublicApi.HandlerRegistry, handlersRegistry);
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {HandlerRegistry = handlersRegistry});
 
       await sut.Execute(context);
 

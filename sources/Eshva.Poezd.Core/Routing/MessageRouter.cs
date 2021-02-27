@@ -184,19 +184,13 @@ namespace Eshva.Poezd.Core.Routing
       try
       {
         var context = new ConcurrentPocket();
-        // TODO: Replace all ContextKeys.Broker.* with ContextKeys.Broker.Itself.
-        // TODO: Replace all ContextKeys.PublicApi.* with ContextKeys.PublicApi.Itself.
         context
-          .Put(ContextKeys.Broker.Id, messageBroker.Id)
           .Put(ContextKeys.Broker.MessageMetadata, metadata)
           .Put(ContextKeys.Broker.MessagePayload, payload)
           .Put(ContextKeys.Broker.QueueName, queueName)
           .Put(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
-          .Put(ContextKeys.Broker.Configuration, messageBroker.Configuration)
-          .Put(ContextKeys.PublicApi.Id, publicApi.Id)
-          .Put(ContextKeys.PublicApi.MessageTypesRegistry, publicApi.MessageTypesRegistry)
-          .Put(ContextKeys.PublicApi.HandlerRegistry, publicApi.HandlerRegistry)
-          .Put(ContextKeys.PublicApi.Configuration, publicApi.Configuration);
+          .Put(ContextKeys.Broker.Itself, messageBroker)
+          .Put(ContextKeys.PublicApi.Itself, publicApi);
         return context;
       }
       catch (Exception exception)

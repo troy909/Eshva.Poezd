@@ -9,6 +9,7 @@ using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
+using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
 #endregion
@@ -25,7 +26,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       var context = new ConcurrentPocket();
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateJusticeCase";
-      context.Put(ContextKeys.PublicApi.MessageTypesRegistry, registry);
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
       context.Put(
         ContextKeys.Broker.MessageMetadata,
         new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}});
@@ -45,7 +46,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
       var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.MessageTypesRegistry, registry);
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
       context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string>());
       var step = new ExtractMessageTypeStep();
 
@@ -59,7 +60,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var registry = new CaseOfficeMessageTypesRegistry();
       registry.Initialize();
       var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.MessageTypesRegistry, registry);
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
       var step = new ExtractMessageTypeStep();
 
       // ReSharper disable once JoinDeclarationAndInitializer - it's a way to test.
@@ -91,7 +92,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       registry.Initialize();
       var step = new ExtractMessageTypeStep();
       var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.MessageTypesRegistry, registry);
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
 
       context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, "unknown"}});
       Func<Task> sut = () => step.Execute(context);
@@ -126,5 +127,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     }
 
     private const string WhitespaceString = " \t\n\r";
+
   }
 }

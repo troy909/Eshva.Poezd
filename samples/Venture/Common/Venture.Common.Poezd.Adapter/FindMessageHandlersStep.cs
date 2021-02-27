@@ -14,7 +14,7 @@ using Venture.Common.Application.MessageHandling;
 namespace Venture.Common.Poezd.Adapter
 {
   /// <summary>
-  /// Finds all message handlers for a message stored as a POCO in the message handling context.
+  /// Finds all message handlers for a message object stored in a message handling context item.
   /// </summary>
   public class FindMessageHandlersStep : IStep
   {
@@ -28,7 +28,8 @@ namespace Venture.Common.Poezd.Adapter
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
-      var handlerRegistry = context.TakeOrThrow<IHandlerRegistry>(ContextKeys.PublicApi.HandlerRegistry);
+      var publicApi = context.TakeOrThrow<IPublicApi>(ContextKeys.PublicApi.Itself);
+      var handlerRegistry = publicApi.HandlerRegistry;
       var messageType = context.TakeOrThrow<Type>(ContextKeys.Application.MessageType);
       var handlers = GetHandlersForMessageType(messageType, handlerRegistry);
       context.Put(ContextKeys.Application.Handlers, handlers);

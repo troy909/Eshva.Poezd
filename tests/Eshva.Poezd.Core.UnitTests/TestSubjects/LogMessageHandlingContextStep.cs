@@ -24,7 +24,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       _logger.LogInformation(nameof(LogMessageHandlingContextStep));
       _logger.LogDebug(
         $"A message from queue with name '{context.TakeOrThrow<string>(ContextKeys.Broker.QueueName)}' from " +
-        $" {context.TakeOrThrow<string>(ContextKeys.Broker.Id)} has been received.");
+        $" {context.TakeOrThrow<MessageBroker>(ContextKeys.Broker.Itself).Id} has been received.");
       return Task.CompletedTask;
     }
 

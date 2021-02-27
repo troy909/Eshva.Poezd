@@ -12,6 +12,7 @@ using FluentAssertions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Venture.Common.Application.MessageHandling;
+using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
 #endregion
@@ -68,7 +69,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       context.TakeOrThrow<string>(ContextKeys.Application.CorrelationId).Should().Be("VentureApi.Headers.CorrelationId");
       context.TakeOrThrow<string>(ContextKeys.Application.CausationId).Should().Be("VentureApi.Headers.CausationId");
       context.TakeOrThrow<Type>(ContextKeys.Application.MessageType).Should().Be(typeof(Message1));
-      context.TakeOrThrow<MessageTypesRegistry1>(ContextKeys.PublicApi.MessageTypesRegistry).Should().NotBeNull();
+      context.TakeOrThrow<IPublicApi>(ContextKeys.PublicApi.Itself).Should().NotBeNull();
     }
 
     [Fact]
@@ -113,10 +114,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         });
       var typesRegistry = new MessageTypesRegistry1();
       typesRegistry.Initialize();
-      context.Put(ContextKeys.PublicApi.MessageTypesRegistry, typesRegistry);
-
       var handlerRegistry = new HandlerRegistry();
-      context.Put(ContextKeys.PublicApi.HandlerRegistry, handlerRegistry);
+      context.Put(
+        ContextKeys.PublicApi.Itself,
+        new FakePublicApi {MessageTypesRegistry = typesRegistry, HandlerRegistry = handlerRegistry});
 
       return context;
     }

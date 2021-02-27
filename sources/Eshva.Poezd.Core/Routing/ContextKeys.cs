@@ -48,14 +48,6 @@ namespace Eshva.Poezd.Core.Routing
       public const string MessageMetadata = Prefix + "message-metadata";
 
       /// <summary>
-      /// Broker ID from configuration.
-      /// </summary>
-      /// <value>
-      /// The value is a <see cref="string" />.
-      /// </value>
-      public const string Id = Prefix + "id";
-
-      /// <summary>
       /// The name of the queue/topic the message in this context came from.
       /// </summary>
       /// <value>
@@ -70,14 +62,6 @@ namespace Eshva.Poezd.Core.Routing
       /// The value is a <see cref="System.DateTimeOffset" />.
       /// </value>
       public const string ReceivedOnUtc = Prefix + "received-on-utc";
-
-      /// <summary>
-      /// The broker configuration.
-      /// </summary>
-      /// <value>
-      /// The value is a <see cref="Eshva.Poezd.Core.Configuration.MessageBrokerConfiguration" />.
-      /// </value>
-      public const string Configuration = Prefix + "configuration";
 
       private const string Prefix = "broker-";
     }
@@ -94,38 +78,6 @@ namespace Eshva.Poezd.Core.Routing
       /// The value is a <see cref="IPublicApi" />.
       /// </value>
       public const string Itself = Prefix + "itself";
-
-      /// <summary>
-      /// Public API ID from configuration.
-      /// </summary>
-      /// <value>
-      /// The value is a <see cref="string" />.
-      /// </value>
-      public const string Id = Prefix + "id";
-
-      /// <summary>
-      /// The configuration of public API.
-      /// </summary>
-      /// <value>
-      /// The value is a <see cref="Eshva.Poezd.Core.Configuration.PublicApiConfiguration" />.
-      /// </value>
-      public const string Configuration = Prefix + "configuration";
-
-      /// <summary>
-      /// The message type registry of public API.
-      /// </summary>
-      /// <value>
-      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IMessageTypesRegistry" />.
-      /// </value>
-      public const string MessageTypesRegistry = Prefix + "message-types-registry";
-
-      /// <summary>
-      /// The handlers registry of public API.
-      /// </summary>
-      /// <value>
-      /// The value is a <see cref="Eshva.Poezd.Core.Pipeline.IHandlerRegistry" />.
-      /// </value>
-      public const string HandlerRegistry = Prefix + "handler-registry";
 
       private const string Prefix = "public-api-";
     }

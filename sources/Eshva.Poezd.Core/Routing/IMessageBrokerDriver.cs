@@ -72,19 +72,29 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Publishes a message using the broker client.
     /// </summary>
+    /// <param name="key">
+    /// The message broker key if required like in case of Kafka.
+    /// </param>
     /// <param name="payload">
-    /// Message payload.
+    /// The message broker payload.
     /// </param>
     /// <param name="metadata">
-    /// Message metadata.
+    /// The message broker metadata.
+    /// </param>
+    /// <param name="queueName">
+    /// The message broker queue/topic to which the message should be published.
     /// </param>
     /// <returns>
     /// A task that can be used for waiting when publishing finished.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// One of arguments is not specified.
+    /// One of arguments is <c>null</c>, an empty or a whitespace string.
     /// </exception>
     [NotNull]
-    Task Publish(byte[] payload, IReadOnlyDictionary<string, string> metadata);
+    Task Publish(
+      string key,
+      byte[] payload,
+      IReadOnlyDictionary<string, string> metadata,
+      string queueName);
   }
 }

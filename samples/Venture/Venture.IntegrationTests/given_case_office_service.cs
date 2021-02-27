@@ -16,6 +16,7 @@ using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
 using Venture.Common.Application.Storage;
 using Venture.Common.Poezd.Adapter;
+using Venture.Common.Poezd.Adapter.MessageHandling;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;
@@ -103,7 +104,6 @@ namespace Venture.IntegrationTests
       container.Register<ExtractRelationMetadataStep>(Lifestyle.Scoped);
       container.Register<ExtractMessageTypeStep>(Lifestyle.Scoped);
       container.Register<ParseBrokerMessageStep>(Lifestyle.Scoped);
-      container.Register<ExtractAuthorizationMetadataStep>(Lifestyle.Scoped);
       container.Register<FindMessageHandlersStep>(Lifestyle.Scoped);
       container.Register<ExecuteMessageHandlersStep>(Lifestyle.Scoped);
 

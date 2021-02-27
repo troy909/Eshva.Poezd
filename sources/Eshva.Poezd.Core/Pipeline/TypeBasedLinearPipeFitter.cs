@@ -29,11 +29,11 @@ namespace Eshva.Poezd.Core.Pipeline
     }
 
     /// <inheritdoc />
-    public void AppendStepsInto(IPipeline pipeline)
+    public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class
     {
       foreach (var stepType in GetStepTypes())
       {
-        pipeline.Append((IStep) _serviceProvider.GetService(stepType, MakeException));
+        pipeline.Append((IStep<TContext>) _serviceProvider.GetService(stepType, MakeException));
       }
     }
 

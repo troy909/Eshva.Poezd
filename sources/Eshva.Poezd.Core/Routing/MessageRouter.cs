@@ -116,7 +116,7 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public Task RouteOutgoingMessage<TMessage>(
+    public async Task RouteOutgoingMessage<TMessage>(
       TMessage message,
       string correlationId = default,
       string causationId = default,
@@ -141,7 +141,8 @@ namespace Eshva.Poezd.Core.Routing
         try
         {
           // TODO: Add timeout as a cancellation token and configuration its using router configuration fluent interface.
-          return pipeline.Execute(context);
+          await pipeline.Execute(context);
+          await PublishMessageWithDriver(messageBroker, context);
         }
         catch (Exception exception)
         {
@@ -150,6 +151,11 @@ namespace Eshva.Poezd.Core.Routing
             exception);
         }
       }
+    }
+
+    private Task PublishMessageWithDriver(MessageBroker messageBroker, MessagePublishingContext context)
+    {
+      return messageBroker.Driver.Publish(context.Key, context.Payload, context.Metadata, context.QueueName);
     }
 
     /// <summary>
@@ -183,6 +189,7 @@ namespace Eshva.Poezd.Core.Routing
     {
       try
       {
+        // TODO: Replace with a IncomingMessageHandlingContext similar to MessagePublishingContext.
         var context = new ConcurrentPocket();
         context
           .Put(ContextKeys.Broker.MessageMetadata, metadata)
@@ -219,7 +226,7 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    private static IPocket BuildEgressMessageHandlingContext<TMessage>(
+    private static MessagePublishingContext BuildEgressMessageHandlingContext<TMessage>(
       TMessage message,
       MessageBroker messageBroker,
       IPublicApi publicApi,
@@ -230,18 +237,18 @@ namespace Eshva.Poezd.Core.Routing
     {
       try
       {
-        var context = new ConcurrentPocket();
-        var messageType = message.GetType();
-        var messageTypeName = publicApi.MessageTypesRegistry.GetMessageTypeNameByItsMessageType<TMessage>();
-        context
-          .Put(ContextKeys.Broker.Itself, messageBroker)
-          .Put(ContextKeys.PublicApi.Itself, messageBroker)
-          .Put(ContextKeys.Application.MessagePayload, message)
-          .Put(ContextKeys.Application.MessageType, messageType)
-          .Put(ContextKeys.Application.MessageTypeName, messageTypeName);
-        if (!string.IsNullOrWhiteSpace(messageId)) context.Put(ContextKeys.Application.MessageId, messageId);
-        if (!string.IsNullOrWhiteSpace(correlationId)) context.Put(ContextKeys.Application.CorrelationId, correlationId);
-        if (!string.IsNullOrWhiteSpace(causationId)) context.Put(ContextKeys.Application.CausationId, causationId);
+        var context = new MessagePublishingContext
+        {
+          Message = message,
+          // TODO: Move into steps.
+          // MessageType = message.GetType(),
+          // MessageTypeName = publicApi.MessageTypesRegistry.GetMessageTypeNameByItsMessageType<TMessage>(),
+          Broker = messageBroker,
+          PublicApi = publicApi,
+          CorrelationId = correlationId,
+          CausationId = causationId,
+          MessageId = messageId
+        };
 
         return context;
       }
@@ -253,7 +260,7 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    private MessageHandlingPipeline BuildEgressPipeline(
+    private static MessageHandlingPipeline BuildEgressPipeline(
       MessageBroker messageBroker,
       IPublicApi publicApi)
     {

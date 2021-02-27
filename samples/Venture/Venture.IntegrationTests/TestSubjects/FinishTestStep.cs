@@ -9,7 +9,7 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class FinishTestStep : IStep
+  public class FinishTestStep : IStep<IPocket>
   {
     public FinishTestStep(Properties props)
     {

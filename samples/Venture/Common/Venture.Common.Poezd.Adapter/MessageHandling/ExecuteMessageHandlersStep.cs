@@ -12,12 +12,12 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter
+namespace Venture.Common.Poezd.Adapter.MessageHandling
 {
   /// <summary>
   /// Executes all found message handlers, collects theirs commit decisions and stores them in the message handling context.
   /// </summary>
-  public class ExecuteMessageHandlersStep : IStep
+  public class ExecuteMessageHandlersStep : IStep<IPocket>
   {
     public ExecuteMessageHandlersStep([NotNull] IHandlersExecutionStrategy executionStrategy)
     {

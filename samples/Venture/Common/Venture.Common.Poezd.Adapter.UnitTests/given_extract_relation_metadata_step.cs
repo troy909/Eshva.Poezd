@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
+using Venture.Common.Poezd.Adapter.MessageHandling;
 using Xunit;
 
 #endregion

@@ -9,13 +9,13 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter
+namespace Venture.Common.Poezd.Adapter.MessageHandling
 {
   /// <summary>
   /// Extracts correlation ID, causation ID from broker message headers and sets appropriate metadata in the message handling
   /// context.
   /// </summary>
-  public class ExtractRelationMetadataStep : IStep
+  public class ExtractRelationMetadataStep : IStep<IPocket>
   {
     public Task Execute(IPocket context)
     {

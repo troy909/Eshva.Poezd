@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
 
@@ -12,13 +11,16 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// A step of message handling pipeline.
+  /// A step of message processing pipeline.
   /// </summary>
-  public interface IStep
+  public interface IStep<in TContext> where TContext : class
   {
     /// <summary>
     /// Executes this step.
     /// </summary>
+    /// <typeparam name="TContext">
+    /// The type of message processing context.
+    /// </typeparam>
     /// <param name="context">
     /// Message handling context containing items required for handling a broker message.
     /// </param>
@@ -35,6 +37,6 @@ namespace Eshva.Poezd.Core.Pipeline
     /// An error occurred during step execution.
     /// </exception>
     [NotNull]
-    Task Execute([NotNull] IPocket context);
+    Task Execute([NotNull] TContext context);
   }
 }

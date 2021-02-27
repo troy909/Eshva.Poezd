@@ -8,7 +8,7 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class CounterStep : IStep
+  public class CounterStep : IStep<IPocket>
   {
     public CounterStep(Properties props)
     {

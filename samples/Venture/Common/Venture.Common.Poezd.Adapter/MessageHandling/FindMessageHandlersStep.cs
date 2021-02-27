@@ -11,12 +11,12 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter
+namespace Venture.Common.Poezd.Adapter.MessageHandling
 {
   /// <summary>
   /// Finds all message handlers for a message object stored in a message handling context item.
   /// </summary>
-  public class FindMessageHandlersStep : IStep
+  public class FindMessageHandlersStep : IStep<IPocket>
   {
     public FindMessageHandlersStep([NotNull] IServiceProvider serviceProvider)
     {

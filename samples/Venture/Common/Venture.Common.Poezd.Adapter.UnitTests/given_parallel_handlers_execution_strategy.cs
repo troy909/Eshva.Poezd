@@ -11,6 +11,7 @@ using Serilog.Events;
 using Serilog.Sinks.InMemory;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
+using Venture.Common.Poezd.Adapter.MessageHandling;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 using Xunit.Abstractions;

@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter
+namespace Venture.Common.Poezd.Adapter.MessageHandling
 {
   /// <summary>
   /// A Venture service ingress message handling pipe fitter.
@@ -55,7 +55,6 @@ namespace Venture.Common.Poezd.Adapter
       yield return typeof(ExtractRelationMetadataStep);
       yield return typeof(ExtractMessageTypeStep);
       yield return typeof(ParseBrokerMessageStep);
-      yield return typeof(ExtractAuthorizationMetadataStep);
       yield return typeof(FindMessageHandlersStep);
       yield return typeof(ExecuteMessageHandlersStep);
     }

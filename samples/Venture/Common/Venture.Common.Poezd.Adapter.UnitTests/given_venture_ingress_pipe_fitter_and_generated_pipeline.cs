@@ -12,6 +12,7 @@ using FluentAssertions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Venture.Common.Application.MessageHandling;
+using Venture.Common.Poezd.Adapter.MessageHandling;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
   public class given_venture_ingress_pipe_fitter_and_generated_pipeline
   {
     [Fact]
-    public void when_append_steps_into_pipeline_it_should_contain_expected_steps_in_expected_order1()
+    public void when_append_steps_into_pipeline_it_should_contain_expected_steps_in_expected_order()
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
@@ -39,7 +40,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
           typeof(ExtractRelationMetadataStep),
           typeof(ExtractMessageTypeStep),
           typeof(ParseBrokerMessageStep),
-          typeof(ExtractAuthorizationMetadataStep),
           typeof(FindMessageHandlersStep),
           typeof(ExecuteMessageHandlersStep)
         },
@@ -133,7 +133,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       container.Register<ExtractRelationMetadataStep>(Lifestyle.Scoped);
       container.Register<ExtractMessageTypeStep>(Lifestyle.Scoped);
       container.Register<ParseBrokerMessageStep>(Lifestyle.Scoped);
-      container.Register<ExtractAuthorizationMetadataStep>(Lifestyle.Scoped);
       container.Register<FindMessageHandlersStep>(Lifestyle.Scoped);
       container.Register<ExecuteMessageHandlersStep>(Lifestyle.Scoped);
       container.Register<Massage1Handler>(Lifestyle.Scoped);
@@ -175,11 +174,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         new Dictionary<Type, Type[]> {{typeof(Message1), new[] {typeof(Massage1Handler)}}});
     }
 
-    private class Pipeline : IPipeline
+    private class Pipeline : IPipeline<IPocket>
     {
-      public List<IStep> Steps { get; } = new List<IStep>();
+      public List<IStep<IPocket>> Steps { get; } = new List<IStep<IPocket>>();
 
-      public IPipeline Append(IStep step)
+      public IPipeline<IPocket> Append(IStep<IPocket> step)
       {
         Steps.Add(step);
         return this;

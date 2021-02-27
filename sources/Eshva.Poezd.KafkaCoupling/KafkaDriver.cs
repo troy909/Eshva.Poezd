@@ -78,7 +78,11 @@ namespace Eshva.Poezd.KafkaCoupling
     }
 
     /// <inheritdoc />
-    public Task Publish(byte[] payload, IReadOnlyDictionary<string, string> metadata)
+    public Task Publish(
+      string key,
+      byte[] payload,
+      IReadOnlyDictionary<string, string> metadata,
+      string queueName)
     {
       if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can publish messages.");
       // TODO: Add message publishing.

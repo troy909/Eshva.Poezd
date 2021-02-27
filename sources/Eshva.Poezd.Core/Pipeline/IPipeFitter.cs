@@ -20,6 +20,6 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <exception cref="System.ArgumentNullException">
     /// Pipeline object is not specified.
     /// </exception>
-    void AppendStepsInto([NotNull] IPipeline pipeline);
+    void AppendStepsInto<TContext>([NotNull] IPipeline<TContext> pipeline) where TContext : class;
   }
 }

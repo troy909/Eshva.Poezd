@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public sealed class CdcNotificationsCommitStep : IStep
+  public sealed class CdcNotificationsCommitStep : IStep<IPocket>
   {
     public CdcNotificationsCommitStep(ILogger<CdcNotificationsCommitStep> logger)
     {

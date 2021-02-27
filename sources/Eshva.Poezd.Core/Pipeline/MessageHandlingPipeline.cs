@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
-using JetBrains.Annotations;
 
 #endregion
 
@@ -14,10 +13,10 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// Message handling pipeline using a linked list.
   /// </summary>
-  public sealed class MessageHandlingPipeline : IPipeline
+  public sealed class MessageHandlingPipeline : IPipeline<IPocket>
   {
     /// <inheritdoc />
-    public IPipeline Append([NotNull] IStep step)
+    public IPipeline<IPocket> Append(IStep<IPocket> step)
     {
       if (step == null) throw new ArgumentNullException(nameof(step));
 
@@ -31,7 +30,8 @@ namespace Eshva.Poezd.Core.Pipeline
     }
 
     /// <inheritdoc />
-    public async Task Execute(IPocket context) // TODO: Add a cancellation token.
+    // TODO: Add a cancellation token.
+    public async Task Execute(IPocket context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
@@ -44,8 +44,8 @@ namespace Eshva.Poezd.Core.Pipeline
       }
     }
 
-    private IStep GetStepOfType(Type stepType) => _steps.FirstOrDefault(step => step.GetType() == stepType);
+    private IStep<IPocket> GetStepOfType(Type stepType) => _steps.FirstOrDefault(step => step.GetType() == stepType);
 
-    private readonly LinkedList<IStep> _steps = new();
+    private readonly LinkedList<IStep<IPocket>> _steps = new();
   }
 }

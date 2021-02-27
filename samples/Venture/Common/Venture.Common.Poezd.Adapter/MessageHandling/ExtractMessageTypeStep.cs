@@ -10,12 +10,12 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter
+namespace Venture.Common.Poezd.Adapter.MessageHandling
 {
   /// <summary>
   /// Extracts message type from message broker headers and puts message type related items into context.
   /// </summary>
-  public class ExtractMessageTypeStep : IStep
+  public class ExtractMessageTypeStep : IStep<IPocket>
   {
     /// <inheritdoc />
     public Task Execute(IPocket context)

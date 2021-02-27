@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public sealed class LogMessageHandlingContextStep : IStep
+  public sealed class LogMessageHandlingContextStep : IStep<IPocket>
   {
     public LogMessageHandlingContextStep([NotNull] ILogger<LogMessageHandlingContextStep> logger)
     {

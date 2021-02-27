@@ -6,6 +6,6 @@ namespace Eshva.Poezd.Core.Pipeline
   public class EmptyPipeFitter : IPipeFitter
   {
     /// <inheritdoc />
-    public void AppendStepsInto(IPipeline pipeline) { }
+    public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class { }
   }
 }

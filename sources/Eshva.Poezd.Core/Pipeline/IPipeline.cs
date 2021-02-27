@@ -1,7 +1,6 @@
 #region Usings
 
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
 
@@ -13,7 +12,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// Contract of message handling pipeline.
   /// </summary>
   [UsedImplicitly(ImplicitUseTargetFlags.Members)]
-  public interface IPipeline
+  public interface IPipeline<TContext> where TContext : class
   {
     /// <summary>
     /// Appends the <paramref name="step" /> at end of the pipeline.
@@ -28,7 +27,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// The context is not specified.
     /// </exception>
     [NotNull]
-    IPipeline Append([NotNull] IStep step);
+    IPipeline<TContext> Append([NotNull] IStep<TContext> step);
 
     /// <summary>
     /// Executes pipeline for the message which is included into the <paramref name="context" />.
@@ -46,6 +45,6 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Some error occurred during message handling. Inspect the inner exception for details.
     /// </exception>
     [NotNull]
-    Task Execute([NotNull] IPocket context);
+    Task Execute([NotNull] TContext context);
   }
 }

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public class DispatchMessageToHandlersStep : IStep
+  public class DispatchMessageToHandlersStep : IStep<IPocket>
   {
     public DispatchMessageToHandlersStep(ILogger<DispatchMessageToHandlersStep> logger)
     {

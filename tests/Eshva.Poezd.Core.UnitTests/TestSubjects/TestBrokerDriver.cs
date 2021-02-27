@@ -38,6 +38,13 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       return Task.CompletedTask;
     }
 
+    public Task Publish(
+      string key,
+      byte[] payload,
+      IReadOnlyDictionary<string, string> metadata,
+      string queueName) =>
+      throw new NotImplementedException();
+
     public Task Publish(byte[] payload, IReadOnlyDictionary<string, string> metadata) => throw new NotImplementedException();
 
     public void Dispose() { }

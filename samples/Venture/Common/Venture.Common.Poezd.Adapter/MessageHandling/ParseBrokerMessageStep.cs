@@ -8,12 +8,12 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter
+namespace Venture.Common.Poezd.Adapter.MessageHandling
 {
   /// <summary>
   /// Parses a message object from broker message.
   /// </summary>
-  public class ParseBrokerMessageStep : IStep
+  public class ParseBrokerMessageStep : IStep<IPocket>
   {
     /// <inheritdoc />
     public Task Execute(IPocket context)

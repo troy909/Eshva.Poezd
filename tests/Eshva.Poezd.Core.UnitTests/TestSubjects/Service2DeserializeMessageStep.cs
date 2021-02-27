@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public sealed class Service2DeserializeMessageStep : IStep
+  public sealed class Service2DeserializeMessageStep : IStep<IPocket>
   {
     public Service2DeserializeMessageStep(ILogger<Service2DeserializeMessageStep> logger)
     {

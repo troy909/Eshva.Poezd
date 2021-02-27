@@ -111,7 +111,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [UsedImplicitly]
     private class PipeFitter : IPipeFitter
     {
-      public void AppendStepsInto(IPipeline pipeline)
+      public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class
       {
         throw new NotImplementedException();
       }

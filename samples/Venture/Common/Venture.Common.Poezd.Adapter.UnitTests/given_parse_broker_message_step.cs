@@ -9,6 +9,7 @@ using FlatSharp;
 using FluentAssertions;
 using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
+using Venture.Common.Poezd.Adapter.MessageHandling;
 using Xunit;
 
 #endregion

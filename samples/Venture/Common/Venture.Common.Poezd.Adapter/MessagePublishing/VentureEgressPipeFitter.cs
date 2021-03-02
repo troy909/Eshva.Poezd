@@ -15,10 +15,10 @@ namespace Venture.Common.Poezd.Adapter.MessagePublishing
 
     protected override IEnumerable<Type> GetStepTypes()
     {
+      yield return typeof(ValidateMessagePublishingContextStep);
       yield return typeof(GetMessageKeyStep);
-      yield return typeof(GetMessageTypeStep);
       yield return typeof(GetTopicNameStep);
-      yield return typeof(GenerateBrokerMetadataStep);
+      yield return typeof(GetBrokerMetadataStep);
       yield return typeof(SerializeMessageStep);
     }
   }

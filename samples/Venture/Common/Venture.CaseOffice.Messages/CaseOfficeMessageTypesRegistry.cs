@@ -50,7 +50,7 @@ namespace Venture.CaseOffice.Messages
 
       public TMessage Parse(Memory<byte> bytes) => FlatBufferSerializer.Default.Parse<TMessage>(bytes);
 
-      public int Serialize(TMessage message, Span<byte> buffer) => FlatBufferSerializer.Default.Serialize(message, buffer);
+      public int Serialize(TMessage message, Memory<byte> buffer) => FlatBufferSerializer.Default.Serialize(message, buffer.Span);
 
       private readonly List<string> _queueNames = new List<string>(capacity: 1);
     }

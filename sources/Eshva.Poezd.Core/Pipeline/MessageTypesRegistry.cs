@@ -28,7 +28,7 @@ namespace Eshva.Poezd.Core.Pipeline
     }
 
     /// <inheritdoc />
-    public string GetMessageTypeNameByItsMessageType<TMessage>() => _typeToTypeName[typeof(TMessage)];
+    public string GetMessageTypeNameByItsMessageType(Type messageType) => _typeToTypeName[messageType];
 
     /// <inheritdoc />
     public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName) where TMessage : class

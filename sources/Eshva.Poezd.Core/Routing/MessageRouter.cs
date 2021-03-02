@@ -155,7 +155,7 @@ namespace Eshva.Poezd.Core.Routing
 
     private Task PublishMessageWithDriver(MessageBroker messageBroker, MessagePublishingContext context)
     {
-      return messageBroker.Driver.Publish(context.Key, context.Payload, context.Metadata, context.QueueName);
+      return messageBroker.Driver.Publish(context.Key, context.Payload, context.Metadata, context.QueueNames);
     }
 
     /// <summary>
@@ -240,9 +240,6 @@ namespace Eshva.Poezd.Core.Routing
         var context = new MessagePublishingContext
         {
           Message = message,
-          // TODO: Move into steps.
-          // MessageType = message.GetType(),
-          // MessageTypeName = publicApi.MessageTypesRegistry.GetMessageTypeNameByItsMessageType<TMessage>(),
           Broker = messageBroker,
           PublicApi = publicApi,
           CorrelationId = correlationId,

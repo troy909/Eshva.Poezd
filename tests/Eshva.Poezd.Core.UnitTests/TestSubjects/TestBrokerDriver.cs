@@ -39,10 +39,10 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     }
 
     public Task Publish(
-      string key,
+      byte[] key,
       byte[] payload,
       IReadOnlyDictionary<string, string> metadata,
-      string queueName) =>
+      IReadOnlyCollection<string> queueNames) =>
       throw new NotImplementedException();
 
     public Task Publish(byte[] payload, IReadOnlyDictionary<string, string> metadata) => throw new NotImplementedException();

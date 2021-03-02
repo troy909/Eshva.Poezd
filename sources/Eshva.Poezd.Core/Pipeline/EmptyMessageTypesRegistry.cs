@@ -18,16 +18,19 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <inheritdoc />
     public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) => GetType();
 
-    public string GetMessageTypeNameByItsMessageType<TMessage>() => throw new NotImplementedException();
+    /// <inheritdoc />
+    public string GetMessageTypeNameByItsMessageType(Type messageType) => throw new NotImplementedException();
 
     /// <inheritdoc />
     public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
       where TMessage : class =>
       new EmptyMessageTypeDescriptor<TMessage>();
 
+    /// <inheritdoc />
     public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class =>
       new EmptyMessageTypeDescriptor<TMessage>();
 
+    /// <inheritdoc />
     public bool DoesOwn<TMessage>() where TMessage : class => false;
 
     private class EmptyMessageTypeDescriptor<TMessage> : IMessageTypeDescriptor<TMessage> where TMessage : class
@@ -37,6 +40,8 @@ namespace Eshva.Poezd.Core.Pipeline
       public Func<TMessage, object> GetKey { get; } = _ => typeof(TMessage).FullName;
 
       public TMessage Parse(Memory<byte> bytes) => Activator.CreateInstance<TMessage>();
+
+      public int Serialize(TMessage message, Memory<byte> buffer) => throw new NotImplementedException();
 
       // ReSharper disable once RedundantAssignment
       public int Serialize(TMessage message, Span<byte> buffer)

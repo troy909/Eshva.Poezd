@@ -42,7 +42,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
       using var bufferOwner = MemoryPool<byte>.Shared.Rent();
       var buffer = bufferOwner.Memory;
 
-      var bytesSerialized = sut.Serialize(message, buffer.Span);
+      var bytesSerialized = sut.Serialize(message, buffer);
       bytesSerialized.Should().BeGreaterThan(expected: 0, "something should be serialized into byte buffer");
 
       var parsedMessage = sut.Parse(buffer);

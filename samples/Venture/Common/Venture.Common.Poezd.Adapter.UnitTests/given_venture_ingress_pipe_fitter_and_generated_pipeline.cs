@@ -158,6 +158,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
         public Message1 Parse(Memory<byte> bytes) => new Message1();
 
+        public int Serialize(Message1 message, Memory<byte> buffer) => throw new NotImplementedException();
+
         // ReSharper disable once RedundantAssignment
         public int Serialize(Message1 message, Span<byte> buffer)
         {

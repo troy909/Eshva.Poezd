@@ -14,35 +14,71 @@ namespace Eshva.Poezd.Core.Pipeline
   public interface IMessageTypesRegistry
   {
     /// <summary>
-    /// Gets CLR message type by broker message type.
+    /// Gets message CLR-type by message type name.
     /// </summary>
     /// <param name="messageTypeName"></param>
-    /// <returns></returns>
+    /// <returns>
+    /// The message CLR-type.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Message type name is <c>null</c>, an empty or a whitespace string.
+    /// </exception>
+    /// <exception cref="KeyNotFoundException">
+    /// Message type doesn't belongs to this public API.
+    /// </exception>
     [NotNull]
     Type GetMessageTypeByItsMessageTypeName([NotNull] string messageTypeName);
 
-    // TODO: Write documentation.
-    [NotNull] string GetMessageTypeNameByItsMessageType<TMessage>();
-
     /// <summary>
-    /// Matches message type taken from broker message headers to the message type object.
+    /// Gets message type name by CLR-message type.
     /// </summary>
-    /// <param name="messageTypeName">
-    /// Message type name as taken from a broker message.
+    /// <param name="messageType">
+    /// THe message type.
     /// </param>
     /// <returns>
-    /// The found message type object.
+    /// The message type name.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// The message type is null, an empty or whitespace string.
+    /// Message type is not specified.
     /// </exception>
     /// <exception cref="KeyNotFoundException">
-    /// Message type isn't belongs to this public API.
+    /// Message type doesn't belongs to this public API.
+    /// </exception>
+    [NotNull] string GetMessageTypeNameByItsMessageType(Type messageType);
+
+    /// <summary>
+    /// Gets message descriptor by message type name.
+    /// </summary>
+    /// <param name="messageTypeName">
+    /// Message type name from a broker message metadata.
+    /// </param>
+    /// <returns>
+    /// The found message descriptor.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// The message type name is <c>null</c>, an empty or a whitespace string.
+    /// </exception>
+    /// <exception cref="KeyNotFoundException">
+    /// Message type doesn't belongs to this public API.
     /// </exception>
     [NotNull]
     IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>([NotNull] string messageTypeName) where TMessage : class;
 
-    /// TODO: Write documentation.
+    /// <summary>
+    /// Gets message descriptor be the message CLR-Type.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    /// The message CLR-type.
+    /// </typeparam>
+    /// <returns>
+    /// The found message descriptor.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// The message type is not specified.
+    /// </exception>
+    /// <exception cref="KeyNotFoundException">
+    /// Message type doesn't belongs to this public API.
+    /// </exception>
     [NotNull]
     IMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class;
 
@@ -50,7 +86,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Checks if message of <typeparamref name="TMessage" /> belongs to this public API.
     /// </summary>
     /// <typeparam name="TMessage">
-    /// The type of message.
+    /// The message CLR-type.
     /// </typeparam>
     /// <returns>
     /// Returns <c>true</c> if message belongs to this public API, <c>false</c> otherwise.

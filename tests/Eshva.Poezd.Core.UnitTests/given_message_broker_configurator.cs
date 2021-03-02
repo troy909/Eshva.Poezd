@@ -170,10 +170,10 @@ namespace Eshva.Poezd.Core.UnitTests
       }
 
       public Task Publish(
-        string key,
+        byte[] key,
         byte[] payload,
         IReadOnlyDictionary<string, string> metadata,
-        string queueName)
+        IReadOnlyCollection<string> queueNames)
       {
         IsMessagePublished = true;
         return Task.CompletedTask;

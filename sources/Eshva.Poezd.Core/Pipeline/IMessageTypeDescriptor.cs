@@ -61,6 +61,6 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <exception cref="ArgumentNullException">
     /// The <paramref name="message" /> is not specified.
     /// </exception>
-    int Serialize([NotNull] TMessage message, Span<byte> buffer);
+    int Serialize([NotNull] TMessage message, Memory<byte> buffer);
   }
 }

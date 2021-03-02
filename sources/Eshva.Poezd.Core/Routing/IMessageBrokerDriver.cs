@@ -81,8 +81,8 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="metadata">
     /// The message broker metadata.
     /// </param>
-    /// <param name="queueName">
-    /// The message broker queue/topic to which the message should be published.
+    /// <param name="queueNames">
+    /// The message broker queue/topic names to which the message should be published.
     /// </param>
     /// <returns>
     /// A task that can be used for waiting when publishing finished.
@@ -92,9 +92,9 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     [NotNull]
     Task Publish(
-      string key,
+      byte[] key,
       byte[] payload,
       IReadOnlyDictionary<string, string> metadata,
-      string queueName);
+      IReadOnlyCollection<string> queueNames);
   }
 }

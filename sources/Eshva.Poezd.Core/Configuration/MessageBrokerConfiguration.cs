@@ -59,6 +59,9 @@ namespace Eshva.Poezd.Core.Configuration
     /// </summary>
     public object DriverConfiguration { get; internal set; }
 
+    public IngressConfiguration Ingress { get; internal set; }
+    public EgressConfiguration Egress { get; internal set; }
+
     /// <summary>
     /// Adds a public API configuration
     /// </summary>

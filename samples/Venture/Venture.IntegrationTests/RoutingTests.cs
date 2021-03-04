@@ -12,6 +12,8 @@ using Eshva.Poezd.SimpleInjectorCoupling;
 using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
+using Venture.CaseOffice.Messages;
+using Venture.Common.Poezd.Adapter.MessageHandling;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit.Abstractions;
 
@@ -86,6 +88,53 @@ namespace Venture.IntegrationTests
                 .WithEgressEnterPipeFitter<TEgressEnterPipeline>()
                 .WithEgressExitPipeFitter<TEgressExitPipeline>()
                 .AddPublicApi(configureApi)));
+
+      container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
+      return container;
+    }
+
+    private static Container AddRouter1<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
+      this Container container,
+      Action<PublicApiConfigurator> configureApi)
+      where TIngressEnterPipeline : IPipeFitter
+      where TIngressExitPipeline : IPipeFitter
+      where TEgressEnterPipeline : IPipeFitter
+      where TEgressExitPipeline : IPipeFitter
+    {
+      var messageRouterConfiguration =
+        MessageRouter.Configure(
+          router => router
+            .AddMessageBroker(
+              broker => broker
+                .WithId("venture-kafka")
+                .Ingress(
+                  ingress => ingress
+                    .WithKafkaDriver(
+                      driver => driver
+                        .WithConsumerConfig(CreateConsumerConfig())
+                        .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
+                    .WithEnterPipeFitter<TIngressEnterPipeline>()
+                    .WithExitPipeFitter<TIngressExitPipeline>()
+                    .WithQueueNameMatcher<RegexQueueNameMatcher>()
+                    .AddPublicApi(
+                      api => api
+                        .WithId("case-office-ingress")
+                        .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
+                        .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
+                        .WithHandlerRegistry<VentureServiceHandlersRegistry>()))
+                .Egress(
+                  egress => egress
+                    .WithKafkaDriver(
+                      driver => driver
+                        .WithProducerConfig(CreateProducerConfig()))
+                    .WithEnterPipeFitter<TEgressEnterPipeline>()
+                    .WithExitPipeFitter<TEgressExitPipeline>()
+                    .AddPublicApi(
+                      api => api
+                        .WithId("case-office-egress")
+                        .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageTypesRegistry<CaseOfficeEgressMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;

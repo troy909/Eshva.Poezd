@@ -1,34 +1,11 @@
-#region Usings
-
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
-#endregion
-
 namespace Eshva.Poezd.Core.Pipeline
 {
-  /// <summary>
-  /// Contract of a message types registry of an asynchronous public API.
-  /// </summary>
-  public interface IMessageTypesRegistry
+  public interface IEgressMessageTypesRegistry
   {
-    /// <summary>
-    /// Gets message CLR-type by message type name.
-    /// </summary>
-    /// <param name="messageTypeName"></param>
-    /// <returns>
-    /// The message CLR-type.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Message type name is <c>null</c>, an empty or a whitespace string.
-    /// </exception>
-    /// <exception cref="KeyNotFoundException">
-    /// Message type doesn't belongs to this public API.
-    /// </exception>
-    [NotNull]
-    Type GetMessageTypeByItsMessageTypeName([NotNull] string messageTypeName);
-
     /// <summary>
     /// Gets message type name by CLR-message type.
     /// </summary>
@@ -46,24 +23,6 @@ namespace Eshva.Poezd.Core.Pipeline
     /// </exception>
     [NotNull]
     string GetMessageTypeNameByItsMessageType(Type messageType);
-
-    /// <summary>
-    /// Gets message descriptor by message type name.
-    /// </summary>
-    /// <param name="messageTypeName">
-    /// Message type name from a broker message metadata.
-    /// </param>
-    /// <returns>
-    /// The found message descriptor.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// The message type name is <c>null</c>, an empty or a whitespace string.
-    /// </exception>
-    /// <exception cref="KeyNotFoundException">
-    /// Message type doesn't belongs to this public API.
-    /// </exception>
-    [NotNull]
-    IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>([NotNull] string messageTypeName) where TMessage : class;
 
     /// <summary>
     /// Gets message descriptor be the message CLR-Type.

@@ -175,11 +175,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
           "message is required");
     }
 
-    private static IPublicApi CreatePublicApi(bool shouldSetRegistry = true)
+    private static IEgressPublicApi CreatePublicApi(bool shouldSetRegistry = true)
     {
       var registryMock = new Mock<IMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetMessageTypeNameByItsMessageType(It.IsAny<Type>())).Returns(ExpectedMessageTypeName);
-      var publicApiMock = new Mock<IPublicApi>();
+      var publicApiMock = new Mock<IEgressPublicApi>();
       publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => shouldSetRegistry ? registryMock.Object : null);
       return publicApiMock.Object;
     }

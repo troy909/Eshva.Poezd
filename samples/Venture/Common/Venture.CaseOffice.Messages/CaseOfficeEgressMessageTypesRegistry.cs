@@ -1,3 +1,5 @@
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +7,8 @@ using Eshva.Poezd.Core.Pipeline;
 using FlatSharp;
 using Venture.CaseOffice.Messages.V1.Commands;
 using Venture.CaseOffice.Messages.V1.Events;
+
+#endregion
 
 namespace Venture.CaseOffice.Messages
 {

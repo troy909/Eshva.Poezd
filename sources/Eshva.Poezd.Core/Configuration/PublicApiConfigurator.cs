@@ -75,7 +75,7 @@ namespace Eshva.Poezd.Core.Configuration
 
     public PublicApiConfigurator WithEgressPipeFitter<TConfigurator>()
     {
-      _configuration.EgressPipeFitter = typeof(TConfigurator);
+      _configuration.EgressPipeFitterType = typeof(TConfigurator);
       return this;
     }
 

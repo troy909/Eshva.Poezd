@@ -9,7 +9,8 @@ namespace Eshva.Poezd.KafkaCoupling
     {
       var configuration = new EgressKafkaDriverConfiguration();
       configurator(new EgressKafkaDriverConfigurator(configuration));
-      ((IEgressDriverConfigurator) egress).Driver = new EgressKafkaDriver(configuration);
+      IEgressDriverConfigurator driverConfigurator = egress;
+      driverConfigurator.SetDriver(new EgressKafkaDriver(configuration));
       return egress;
     }
   }

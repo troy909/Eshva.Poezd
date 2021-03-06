@@ -46,7 +46,7 @@ namespace Eshva.Poezd.Core.UnitTests
         IngressPipeFitterType = someType,
         MessageTypesRegistryType = someType,
         QueueNamePatternsProviderType = someType,
-        EgressPipeFitter = someType
+        EgressPipeFitterType = someType
       };
 
       return configuration;

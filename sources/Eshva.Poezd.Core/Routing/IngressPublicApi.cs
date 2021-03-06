@@ -11,10 +11,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  /// <summary>
-  /// Public API.
-  /// </summary>
-  public sealed class PublicApi : IPublicApi
+  public class IngressPublicApi : IIngressPublicApi
   {
     /// <summary>
     /// Constructs a new instance of public API.
@@ -28,7 +25,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// One of arguments is not specified.
     /// </exception>
-    public PublicApi([NotNull] PublicApiConfiguration configuration, [NotNull] IServiceProvider serviceProvider)
+    public IngressPublicApi([NotNull] IngressPublicApiConfiguration configuration, [NotNull] IServiceProvider serviceProvider)
     {
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
@@ -36,21 +33,14 @@ namespace Eshva.Poezd.Core.Routing
       _queueNamePatternsProvider = GetQueueNamePatternsProvider(serviceProvider);
       MessageTypesRegistry = GetMessageTypesRegistry(serviceProvider);
       HandlerRegistry = GetHandlerRegistry(serviceProvider);
-      IngressPipeFitter = GetIngressPipeFitter(serviceProvider);
-      EgressPipeFitter = GetEgressPipeFitter(serviceProvider);
+      PipeFitter = GetIngressPipeFitter(serviceProvider);
     }
 
     /// <inheritdoc />
-    public string Id => Configuration.Id;
+    public IngressPublicApiConfiguration Configuration { get; }
 
     /// <inheritdoc />
-    public PublicApiConfiguration Configuration { get; }
-
-    /// <inheritdoc />
-    public IPipeFitter IngressPipeFitter { get; }
-
-    /// <inheritdoc />
-    public IPipeFitter EgressPipeFitter { get; }
+    public IPipeFitter PipeFitter { get; }
 
     /// <inheritdoc />
     public IMessageTypesRegistry MessageTypesRegistry { get; }
@@ -58,11 +48,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public IHandlerRegistry HandlerRegistry { get; }
 
-    /// <summary>
-    /// A stab public API.
-    /// </summary>
-    [NotNull]
-    public static IPublicApi Empty { get; } = new EmptyPublicApi();
+    public static IIngressPublicApi Empty { get; } = new EmptyIngressPublicApi();
 
     /// <inheritdoc />
     public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
@@ -70,31 +56,11 @@ namespace Eshva.Poezd.Core.Routing
     private IPipeFitter GetIngressPipeFitter(IServiceProvider serviceProvider)
     {
       var pipeFitter = (IPipeFitter) serviceProvider.GetService(
-        Configuration.IngressPipeFitterType,
+        Configuration.PipeFitterType,
         type => new PoezdOperationException(
           $"Can not get an instance of public API ingress pipe fitter of type '{type.FullName}'." +
           "You should register this type in DI-container."));
       return pipeFitter;
-    }
-
-    private IPipeFitter GetEgressPipeFitter(IServiceProvider serviceProvider)
-    {
-      var pipeFitter = (IPipeFitter) serviceProvider.GetService(
-        Configuration.EgressPipeFitterType,
-        type => new PoezdOperationException(
-          $"Can not get an instance of public API egress pipe fitter of type '{type.FullName}'." +
-          "You should register this type in DI-container."));
-      return pipeFitter;
-    }
-
-    private IQueueNamePatternsProvider GetQueueNamePatternsProvider(IServiceProvider serviceProvider)
-    {
-      var provider = (IQueueNamePatternsProvider) serviceProvider.GetService(
-        Configuration.QueueNamePatternsProviderType,
-        type => new PoezdOperationException(
-          $"Can not get an instance of queue name patterns provider of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-      return provider;
     }
 
     private IMessageTypesRegistry GetMessageTypesRegistry(IServiceProvider serviceProvider)
@@ -115,6 +81,16 @@ namespace Eshva.Poezd.Core.Routing
           $"Can not get an instance of handler registry of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
       return registry;
+    }
+
+    private IQueueNamePatternsProvider GetQueueNamePatternsProvider(IServiceProvider serviceProvider)
+    {
+      var provider = (IQueueNamePatternsProvider) serviceProvider.GetService(
+        Configuration.QueueNamePatternsProviderType,
+        type => new PoezdOperationException(
+          $"Can not get an instance of queue name patterns provider of type '{type.FullName}'. " +
+          "You should register this type in DI-container."));
+      return provider;
     }
 
     private readonly IQueueNamePatternsProvider _queueNamePatternsProvider;

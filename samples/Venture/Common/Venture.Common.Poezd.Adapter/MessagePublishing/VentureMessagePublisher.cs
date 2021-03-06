@@ -26,7 +26,7 @@ namespace Venture.Common.Poezd.Adapter.MessagePublishing
       if (message == null) throw new ArgumentNullException(nameof(message));
       if (context == null) throw new ArgumentNullException(nameof(context));
 
-      return _messageRouter.RouteOutgoingMessage(
+      return _messageRouter.RouteEgressMessage(
         message,
         context.CorrelationId,
         context.CausationId,

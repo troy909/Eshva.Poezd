@@ -15,7 +15,8 @@ namespace Eshva.Poezd.KafkaCoupling
     {
       var configuration = new IngressKafkaDriverConfiguration();
       configurator(new IngressKafkaDriverConfigurator(configuration));
-      ((IIngressDriverConfigurator) ingress).Driver = new IngressKafkaDriver(configuration);
+      IIngressDriverConfigurator driverConfigurator = ingress;
+      driverConfigurator.SetDriver(new IngressKafkaDriver(configuration));
       return ingress;
     }
   }

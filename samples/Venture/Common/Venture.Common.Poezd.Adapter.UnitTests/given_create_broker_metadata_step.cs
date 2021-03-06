@@ -51,11 +51,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"));
     }
 
-    private static IPublicApi CreatePublicApi()
+    private static IEgressPublicApi CreatePublicApi()
     {
       var registryMock = new Mock<IMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetMessageTypeNameByItsMessageType(It.IsAny<Type>())).Returns(ExpectedMessageTypeName);
-      var publicApiMock = new Mock<IPublicApi>();
+      var publicApiMock = new Mock<IEgressPublicApi>();
       publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
       return publicApiMock.Object;
     }

@@ -26,7 +26,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
 
     public Task Start(CancellationToken cancellationToken = default) => throw new InvalidOperationException();
 
-    public Task RouteIncomingMessage(
+    public Task RouteIngressMessage(
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
@@ -34,7 +34,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
       IReadOnlyDictionary<string, string> metadata) =>
       throw new InvalidOperationException();
 
-    public Task RouteOutgoingMessage<TMessage>(
+    public Task RouteEgressMessage<TMessage>(
       TMessage message,
       string correlationId = default,
       string causationId = default,

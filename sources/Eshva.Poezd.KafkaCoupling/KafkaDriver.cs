@@ -126,7 +126,7 @@ namespace Eshva.Poezd.KafkaCoupling
       var headers = consumeResult.Message.Headers.ToDictionary(
         header => header.Key,
         header => parser.Parser(header.GetValueBytes()));
-      await _messageRouter.RouteIncomingMessage(
+      await _messageRouter.RouteIngressMessage(
         _brokerId,
         consumeResult.Topic,
         consumeResult.Message.Timestamp.UtcDateTime,

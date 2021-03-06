@@ -1,6 +1,10 @@
+#region Usings
+
 using System;
 using Confluent.Kafka;
 using JetBrains.Annotations;
+
+#endregion
 
 namespace Eshva.Poezd.KafkaCoupling
 {

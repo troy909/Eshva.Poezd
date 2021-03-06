@@ -29,7 +29,7 @@ namespace Eshva.Poezd.Core.Configuration
     public IngressPublicApiConfigurator WithPipeFitter<TConfigurator>()
       where TConfigurator : IPipeFitter
     {
-      _configuration.IngressPipeFitterType = typeof(TConfigurator);
+      _configuration.PipeFitterType = typeof(TConfigurator);
       return this;
     }
 

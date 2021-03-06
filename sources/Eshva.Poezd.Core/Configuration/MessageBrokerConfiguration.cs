@@ -60,6 +60,7 @@ namespace Eshva.Poezd.Core.Configuration
     public object DriverConfiguration { get; internal set; }
 
     public IngressConfiguration Ingress { get; internal set; }
+
     public EgressConfiguration Egress { get; internal set; }
 
     /// <summary>

@@ -63,7 +63,7 @@ namespace Eshva.Poezd.Core.Routing
     /// One of arguments is null, an empty or a whitespace string.
     /// </exception>
     [NotNull]
-    Task RouteIncomingMessage(
+    Task RouteIngressMessage(
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
@@ -95,7 +95,7 @@ namespace Eshva.Poezd.Core.Routing
     /// The message is not specified.
     /// </exception>
     [NotNull]
-    Task RouteOutgoingMessage<TMessage>(
+    Task RouteEgressMessage<TMessage>(
       [NotNull] TMessage message,
       string correlationId = default,
       string causationId = default,

@@ -29,7 +29,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Gets/sets the public API CLR-object that will be rule the publishing process.
     /// </summary>
-    public IPublicApi PublicApi { get; set; }
+    public IEgressPublicApi PublicApi { get; set; }
 
     /// <summary>
     /// Gets/sets the correlation ID.

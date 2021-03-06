@@ -37,7 +37,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"));
     }
 
-    private static IPublicApi CreatePublicApi()
+    private static IEgressPublicApi CreatePublicApi()
     {
       var descriptorMock = new Mock<IMessageTypeDescriptor<Message1>>();
       descriptorMock.Setup(descriptor => descriptor.Serialize(It.IsAny<Message1>(), It.IsAny<Memory<byte>>()))
@@ -45,7 +45,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         .Returns(value: 777);
       var registryMock = new Mock<IMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetDescriptorByMessageType<Message1>()).Returns(descriptorMock.Object);
-      var publicApiMock = new Mock<IPublicApi>();
+      var publicApiMock = new Mock<IEgressPublicApi>();
       publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
       return publicApiMock.Object;
     }

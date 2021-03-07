@@ -49,7 +49,8 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
       var handleMethod = handlerType.GetMethod(
         nameof(IMessageHandler<object>.Handle),
         new[] {messageType, typeof(VentureIncomingMessageHandlingContext)});
-      Func<object, VentureIncomingMessageHandlingContext, Task> onHandle = (message, context) => (Task) handleMethod!.Invoke(handler, new[] {message, context});
+      Func<object, VentureIncomingMessageHandlingContext, Task> onHandle = (message, context) =>
+        (Task) handleMethod!.Invoke(handler, new[] {message, context});
 
       return new HandlerDescriptor(
         handlerType,

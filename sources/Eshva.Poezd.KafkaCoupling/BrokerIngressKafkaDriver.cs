@@ -53,7 +53,8 @@ namespace Eshva.Poezd.KafkaCoupling
       _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _logger = (ILogger<BrokerIngressKafkaDriver>) serviceProvider.GetService(typeof(ILogger<BrokerIngressKafkaDriver>)) ??
-                throw new PoezdConfigurationException($"Can not get a logger of type {typeof(ILogger<BrokerIngressKafkaDriver>).FullName}.");
+                throw new PoezdConfigurationException(
+                  $"Can not get a logger of type {typeof(ILogger<BrokerIngressKafkaDriver>).FullName}.");
 
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
       _brokerId = brokerId;

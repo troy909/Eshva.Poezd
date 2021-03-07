@@ -75,9 +75,9 @@ namespace Eshva.Poezd.KafkaCoupling
     }
 
     private readonly BrokerEgressKafkaDriverConfiguration _configuration;
-    private ILogger<IBrokerEgressDriver> _logger;
     private string _brokerId;
     private bool _isInitialized;
+    private ILogger<IBrokerEgressDriver> _logger;
     private IProducer<Null, byte[]> _producer;
   }
 }

@@ -9,7 +9,9 @@ namespace Eshva.Poezd.KafkaCoupling
 {
   public static class EgressConfiguratorExtensions
   {
-    public static BrokerEgressConfigurator WithKafkaDriver(this BrokerEgressConfigurator brokerEgress, Action<BrokerEgressKafkaDriverConfigurator> configurator)
+    public static BrokerEgressConfigurator WithKafkaDriver(
+      this BrokerEgressConfigurator brokerEgress,
+      Action<BrokerEgressKafkaDriverConfigurator> configurator)
     {
       var configuration = new BrokerEgressKafkaDriverConfiguration();
       configurator(new BrokerEgressKafkaDriverConfigurator(configuration));

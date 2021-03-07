@@ -1,4 +1,4 @@
-#region Usings
+﻿#region Usings
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,9 +19,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       byte[] key,
       byte[] payload,
       IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames)
-    {
-      return Task.CompletedTask;
-    }
+      IReadOnlyCollection<string> queueNames) =>
+      Task.CompletedTask;
   }
 }

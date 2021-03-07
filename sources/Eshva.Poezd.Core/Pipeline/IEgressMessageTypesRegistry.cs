@@ -1,6 +1,10 @@
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+
+#endregion
 
 namespace Eshva.Poezd.Core.Pipeline
 {

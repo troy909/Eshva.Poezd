@@ -43,7 +43,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{18170444
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{1C83D8D7-68AA-443D-80E0-4AC138A3FA2D}"
 	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
+		appveyor.yml = appveyor.yml
+		build.ps1 = build.ps1
+		sources\Directory.Build.props = sources\Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Core.UnitTests", "tests\Eshva.Poezd.Core.UnitTests\Eshva.Poezd.Core.UnitTests.csproj", "{5310501E-C533-4982-92E7-E77624CC0F45}"
@@ -52,7 +54,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.KafkaCoupling.U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Messages.UnitTests", "samples\Venture\Common\Venture.CaseOffice.Messages.UnitTests\Venture.CaseOffice.Messages.UnitTests.csproj", "{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.Application.UnitTests", "Venture.Common.Application.UnitTests\Venture.Common.Application.UnitTests.csproj", "{24400E98-D54C-4C25-A853-139C4006F19E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Application.UnitTests", "Venture.Common.Application.UnitTests\Venture.Common.Application.UnitTests.csproj", "{24400E98-D54C-4C25-A853-139C4006F19E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

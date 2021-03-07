@@ -113,7 +113,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
           {VentureApi.Headers.CausationId, "VentureApi.Headers.CausationId"},
           {VentureApi.Headers.MessageTypeName, nameof(Message1)}
         });
-      var typesRegistry = new MessageTypesRegistry1();
+      var typesRegistry = new IngressMessageTypesRegistry1();
       typesRegistry.Initialize();
       var handlerRegistry = new HandlerRegistry();
       context.Put(
@@ -139,7 +139,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       return container;
     }
 
-    private class MessageTypesRegistry1 : MessageTypesRegistry
+    private class IngressMessageTypesRegistry1 : IngressMessageTypesRegistry
     {
       public override void Initialize()
       {
@@ -150,7 +150,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
           new Descriptor());
       }
 
-      private class Descriptor : IMessageTypeDescriptor<Message1>
+      private class Descriptor : IIngressMessageTypeDescriptor<Message1>
       {
         public IReadOnlyCollection<string> QueueNames { get; } = new string[0];
 

@@ -32,7 +32,7 @@ namespace Eshva.Poezd.Core.Configuration
     private static EgressPublicApiConfiguration CreateValidEmpty() => new()
     {
       Id = "empty egress public API configuration",
-      MessageTypesRegistryType = typeof(EmptyMessageTypesRegistry),
+      MessageTypesRegistryType = typeof(EmptyEgressMessageTypesRegistry),
       PipeFitterType = typeof(EmptyPipeFitter)
     };
   }

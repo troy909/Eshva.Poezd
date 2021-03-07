@@ -54,10 +54,10 @@ namespace Venture.IntegrationTests
           api => api.WithId("ingress-case-office")
             .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
             .WithPipeFitter<EmptyPipeFitter>()
-            .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
+            .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
             .WithHandlerRegistry<EmptyHandlerRegistry>(),
           api => api.WithId("egress-case-office")
-            .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
+            .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()
             .WithPipeFitter<EmptyPipeFitter>(),
           _testOutput);
 
@@ -72,8 +72,9 @@ namespace Venture.IntegrationTests
       // var expectedValue = RoutingTests.GetRandomString();
       // await kafkaTestContext.Produce(topic, expectedValue);
 
+      container.RegisterSingleton<EmptyEgressMessageTypesRegistry>();
       container.RegisterSingleton<MessageCountingPipeFitter>();
-      container.RegisterSingleton<CaseOfficeMessageTypesRegistry>();
+      container.RegisterSingleton<CaseOfficeIngressMessageTypesRegistry>();
       container.Register<CounterStep>(Lifestyle.Scoped);
       var counter = new CounterStep.Properties();
       container.RegisterInstance(counter);

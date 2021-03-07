@@ -53,12 +53,14 @@ namespace Eshva.Poezd.Core.Routing
 
       try
       {
-        _brokers.ForEach(broker => broker.Initialize(this, broker.Id));
-        var startTasks = _brokers.Select(broker => broker.StartConsumeMessages(
-          broker.Ingress.PublicApis.SelectMany(api => api.GetQueueNamePatterns()),
-          cancellationToken));
+        InitializeMessageBrokers();
+
+        var starters = Brokers.Select(
+          broker => broker.StartConsumeMessages(
+            broker.Ingress.PublicApis.SelectMany(api => api.GetQueueNamePatterns()),
+            cancellationToken));
         // TODO: Are exceptions here handled correctly?
-        await Task.WhenAll(startTasks);
+        await Task.WhenAll(starters);
       }
       catch (Exception exception)
       {
@@ -168,6 +170,18 @@ namespace Eshva.Poezd.Core.Routing
       var poezdConfigurator = new MessageRouterConfigurator();
       configurator(poezdConfigurator);
       return poezdConfigurator.Configuration;
+    }
+
+    private void InitializeMessageBrokers()
+    {
+      _brokers.AddRange(
+        _configuration.Brokers.Select(
+          configuration =>
+          {
+            var broker = new MessageBroker(configuration, _diContainerAdapter);
+            broker.Initialize(this, configuration.Id);
+            return broker;
+          }));
     }
 
     private Task PublishMessageWithDriver(MessageBroker messageBroker, MessagePublishingContext context) => messageBroker.Publish(
@@ -285,7 +299,6 @@ namespace Eshva.Poezd.Core.Routing
 
       throw new PoezdConfigurationException(message.ToString());
     }
-
 
     private readonly List<MessageBroker> _brokers = new();
     private readonly MessageRouterConfiguration _configuration;

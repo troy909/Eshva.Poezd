@@ -30,7 +30,7 @@ namespace Eshva.Poezd.Core.Routing
     /// Gets the message type registry.
     /// </summary>
     [NotNull]
-    IMessageTypesRegistry MessageTypesRegistry { get; }
+    IIngressMessageTypesRegistry MessageTypesRegistry { get; }
 
     /// <summary>
     /// Gets the handlers registry.

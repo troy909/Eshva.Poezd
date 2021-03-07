@@ -24,7 +24,7 @@ namespace Eshva.Poezd.Core.Routing
 
     public IPipeFitter PipeFitter { get; }
 
-    public IMessageTypesRegistry MessageTypesRegistry { get; }
+    public IEgressMessageTypesRegistry MessageTypesRegistry { get; }
 
     private IPipeFitter GetPipeFitter(IServiceProvider serviceProvider)
     {
@@ -36,9 +36,9 @@ namespace Eshva.Poezd.Core.Routing
       return pipeFitter;
     }
 
-    private IMessageTypesRegistry GetMessageTypesRegistry(IServiceProvider serviceProvider)
+    private IEgressMessageTypesRegistry GetMessageTypesRegistry(IServiceProvider serviceProvider)
     {
-      var registry = (IMessageTypesRegistry) serviceProvider.GetService(
+      var registry = (IEgressMessageTypesRegistry) serviceProvider.GetService(
         Configuration.MessageTypesRegistryType,
         type => new PoezdOperationException(
           $"Can not get an instance of message types registry of type '{type.FullName}'. " +

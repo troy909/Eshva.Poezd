@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /*
   /// <summary>
   /// A stab message types registry.
   /// </summary>
@@ -52,4 +53,5 @@ namespace Eshva.Poezd.Core.Pipeline
       }
     }
   }
+*/
 }

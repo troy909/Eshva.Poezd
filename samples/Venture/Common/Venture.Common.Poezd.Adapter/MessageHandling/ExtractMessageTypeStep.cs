@@ -49,8 +49,9 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
         var messageType = messageTypesRegistry.GetMessageTypeByItsMessageTypeName(messageTypeName);
         context.Put(ContextKeys.Application.MessageType, messageType);
 
-        var getDescriptorMethod = typeof(IMessageTypesRegistry).GetMethod(nameof(IMessageTypesRegistry.GetDescriptorByMessageTypeName))!
-          .MakeGenericMethod(messageType);
+        var getDescriptorMethod =
+          typeof(IIngressMessageTypesRegistry).GetMethod(nameof(IIngressMessageTypesRegistry.GetDescriptorByMessageTypeName))!
+            .MakeGenericMethod(messageType);
 
         var descriptor = getDescriptorMethod.Invoke(messageTypesRegistry, new object?[] {messageTypeName});
         context.Put(ContextKeys.Application.MessageTypeDescriptor, descriptor!);

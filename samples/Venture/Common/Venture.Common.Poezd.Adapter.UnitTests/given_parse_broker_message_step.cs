@@ -22,7 +22,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public async Task when_executed_with_broker_message_and_message_type_name_withing_context_it_should_store_deserialized_message()
     {
       var (message, messageBytes) = CreateSerializedMessage();
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);
@@ -45,7 +45,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public void when_executed_with_broker_message_but_without_message_type_within_context_it_should_fail()
     {
       var (_, messageBytes) = CreateSerializedMessage();
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);
@@ -64,7 +64,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_message_type_but_without_broker_message_within_context_it_should_fail()
     {
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);
@@ -84,7 +84,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public void when_executed_with_message_type_and_message_payload_but_without_message_type_descriptor_within_context_it_should_fail()
     {
       var (_, messageBytes) = CreateSerializedMessage();
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);

@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /*
   /// <summary>
   /// Base for public API message types registry.
   /// </summary>
@@ -103,4 +104,5 @@ namespace Eshva.Poezd.Core.Pipeline
     private readonly Dictionary<Type, object> _typeToDescriptor = new();
     private readonly Dictionary<Type, string> _typeToTypeName = new();
   }
+*/
 }

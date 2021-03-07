@@ -39,9 +39,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
     private static IEgressPublicApi CreatePublicApi()
     {
-      var descriptorMock = new Mock<IMessageTypeDescriptor<Message1>>();
+      var descriptorMock = new Mock<IEgressMessageTypeDescriptor<Message1>>();
       descriptorMock.SetupGet(descriptor => descriptor.GetKey).Returns(() => message => new[] {message.Byte});
-      var registryMock = new Mock<IMessageTypesRegistry>();
+      var registryMock = new Mock<IEgressMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetDescriptorByMessageType<Message1>()).Returns(descriptorMock.Object);
       var publicApiMock = new Mock<IEgressPublicApi>();
       publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);

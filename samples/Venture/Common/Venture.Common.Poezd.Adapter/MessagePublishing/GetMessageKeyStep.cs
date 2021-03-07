@@ -27,7 +27,7 @@ namespace Venture.Common.Poezd.Adapter.MessagePublishing
       return Task.CompletedTask;
     }
 
-    private object GetKey<TMessage>(TMessage message, IMessageTypesRegistry registry) where TMessage : class =>
+    private object GetKey<TMessage>(TMessage message, IEgressMessageTypesRegistry registry) where TMessage : class =>
       registry.GetDescriptorByMessageType<TMessage>().GetKey(message);
 
     private static readonly MethodInfo GenericGetKey =

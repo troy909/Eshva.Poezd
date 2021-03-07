@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /*
   /// <summary>
   /// Contract of a message type descriptor that can serialize and parse messages of <typeparamref name="TMessage" />.
   /// </summary>
@@ -63,4 +64,5 @@ namespace Eshva.Poezd.Core.Pipeline
     /// </exception>
     int Serialize([NotNull] TMessage message, Memory<byte> buffer);
   }
+*/
 }

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Eshva.Poezd.Core.Pipeline;
+using Eshva.Poezd.Core.Routing;
 
 #endregion
 
@@ -41,7 +42,7 @@ namespace Eshva.Poezd.Core.Configuration
     {
       Id = "empty ingress public API configuration",
       HandlerRegistryType = typeof(EmptyHandlerRegistry),
-      MessageTypesRegistryType = typeof(EmptyMessageTypesRegistry),
+      MessageTypesRegistryType = typeof(EmptyIngressMessageTypesRegistry),
       PipeFitterType = typeof(EmptyPipeFitter),
       QueueNamePatternsProviderType = typeof(ProvidingNothingQueueNamePatternsProvider)
     };

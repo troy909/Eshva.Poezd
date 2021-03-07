@@ -19,7 +19,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
 
     public IPipeFitter PipeFitter { get; set; }
 
-    public IMessageTypesRegistry MessageTypesRegistry { get; set; }
+    public IIngressMessageTypesRegistry MessageTypesRegistry { get; set; }
 
     public IHandlerRegistry HandlerRegistry { get; set; }
 

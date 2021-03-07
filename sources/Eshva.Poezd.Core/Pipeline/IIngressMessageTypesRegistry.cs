@@ -1,6 +1,10 @@
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+
+#endregion
 
 namespace Eshva.Poezd.Core.Pipeline
 {
@@ -38,6 +42,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Message type doesn't belongs to this public API.
     /// </exception>
     [NotNull]
-    IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>([NotNull] string messageTypeName) where TMessage : class;
+    IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>([NotNull] string messageTypeName)
+      where TMessage : class;
   }
 }

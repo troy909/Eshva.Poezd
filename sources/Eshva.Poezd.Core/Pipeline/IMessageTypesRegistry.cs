@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /*
   /// <summary>
   /// Contract of a message types registry of an asynchronous public API.
   /// </summary>
@@ -94,4 +95,5 @@ namespace Eshva.Poezd.Core.Pipeline
     /// </returns>
     bool DoesOwn<TMessage>() where TMessage : class;
   }
+*/
 }

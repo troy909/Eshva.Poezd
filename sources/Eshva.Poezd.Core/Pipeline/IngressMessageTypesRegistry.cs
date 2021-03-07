@@ -1,7 +1,11 @@
+#region Usings
+
 using System;
 using System.Collections.Generic;
 using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
+
+#endregion
 
 namespace Eshva.Poezd.Core.Pipeline
 {
@@ -26,7 +30,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// </summary>
     public abstract void Initialize();
 
-    public IMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName) where TMessage : class
+    public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName) where TMessage : class
     {
       if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
 
@@ -35,7 +39,7 @@ namespace Eshva.Poezd.Core.Pipeline
       if (!_typeNameToDescriptor.TryGetValue(messageTypeName, out var descriptor))
         throw new KeyNotFoundException($"Message of type '{messageTypeName}' is unknown.");
 
-      return (IMessageTypeDescriptor<TMessage>) descriptor;
+      return (IIngressMessageTypeDescriptor<TMessage>) descriptor;
     }
 
     /// <summary>

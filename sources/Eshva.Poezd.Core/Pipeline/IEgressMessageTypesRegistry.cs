@@ -40,7 +40,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Message type doesn't belongs to this public API.
     /// </exception>
     [NotNull]
-    IMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class;
+    IEgressMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class;
 
     /// <summary>
     /// Checks if message of <typeparamref name="TMessage" /> belongs to this public API.

@@ -22,12 +22,12 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public async Task when_executed_with_context_containing_message_type_within_broker_message_metadata_it_should_store_it_in_context()
     {
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
 
       var context = new ConcurrentPocket();
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateJusticeCase";
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
       context.Put(
         ContextKeys.Broker.MessageMetadata,
         new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}});
@@ -44,10 +44,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_missing_message_type_within_broker_message_metadata_it_should_fail()
     {
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
       var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
       context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string>());
       var step = new ExtractMessageTypeStep();
 
@@ -58,10 +58,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_wrong_message_type_within_broker_message_metadata_it_should_fail()
     {
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
       var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
       var step = new ExtractMessageTypeStep();
 
       // ReSharper disable once JoinDeclarationAndInitializer - it's a way to test.
@@ -89,11 +89,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_unknown_message_type_within_broker_message_metadata_it_should_fail_skip_message_exception()
     {
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
       var step = new ExtractMessageTypeStep();
       var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi{MessageTypesRegistry = registry});
+      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
 
       context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, "unknown"}});
       Func<Task> sut = () => step.Execute(context);
@@ -104,7 +104,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_without_message_type_registry_it_should_fail()
     {
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
       var context = new ConcurrentPocket();
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateCase";
@@ -120,7 +120,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_without_context_it_should_fail()
     {
-      var registry = new CaseOfficeMessageTypesRegistry();
+      var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Func<Task> sut = async () => await new ExtractMessageTypeStep().Execute(context: null);
@@ -128,6 +128,5 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     }
 
     private const string WhitespaceString = " \t\n\r";
-
   }
 }

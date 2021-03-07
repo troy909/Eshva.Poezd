@@ -24,8 +24,8 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
       var messageType = context.TakeOrThrow<Type>(ContextKeys.Application.MessageType);
       var descriptor = context.TakeOrThrow<object>(ContextKeys.Application.MessageTypeDescriptor);
 
-      var descriptorType = typeof(IMessageTypeDescriptor<>).MakeGenericType(messageType);
-      var parseMethod = descriptorType.GetMethod(nameof(IMessageTypeDescriptor<object>.Parse));
+      var descriptorType = typeof(IIngressMessageTypeDescriptor<>).MakeGenericType(messageType);
+      var parseMethod = descriptorType.GetMethod(nameof(IIngressMessageTypeDescriptor<object>.Parse));
       Memory<byte> buffer = messagePayload;
       var message = parseMethod!.Invoke(descriptor, new object?[] {buffer});
       context.Put(ContextKeys.Application.MessagePayload, message!);

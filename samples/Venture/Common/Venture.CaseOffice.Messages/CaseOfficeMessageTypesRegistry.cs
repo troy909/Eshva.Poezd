@@ -12,6 +12,7 @@ using Venture.CaseOffice.Messages.V1.Events;
 
 namespace Venture.CaseOffice.Messages
 {
+  /*
   public sealed class CaseOfficeMessageTypesRegistry : MessageTypesRegistry
   {
     public override void Initialize()
@@ -72,4 +73,5 @@ namespace Venture.CaseOffice.Messages
       }
     }
   }
+*/
 }

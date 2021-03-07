@@ -46,6 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		appveyor.yml = appveyor.yml
 		build.ps1 = build.ps1
 		sources\Directory.Build.props = sources\Directory.Build.props
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Core.UnitTests", "tests\Eshva.Poezd.Core.UnitTests\Eshva.Poezd.Core.UnitTests.csproj", "{5310501E-C533-4982-92E7-E77624CC0F45}"

@@ -91,4 +91,4 @@ Build ".\Eshva.Poezd.sln" $versionSuffixOption
 
 Test ".\Eshva.Poezd.sln"
 
-MakePackage ".\sources\Eshva.Poezd\Eshva.Poezd.Core.csproj" $artifactsFolder $versionSuffixOption
+MakePackage ".\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" $artifactsFolder $versionSuffixOption

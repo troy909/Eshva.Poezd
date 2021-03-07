@@ -72,7 +72,7 @@ function Build($solutionFile, $versionSuffixOption) {
 }
 
 function Test($testProject) {
-  exec { & dotnet test $testProject --configuration Release --no-build --no-restore }
+  exec { & dotnet test $testProject --configuration Release --no-build --no-restore --nologo}
 }
 
 function MakePackage($packageProject, $artifactsFolder, $versionSuffixOption) {
@@ -89,6 +89,6 @@ PrintBuildInformation $versionSuffix
 CleanArtifacts $artifactsFolder
 Build ".\Eshva.Poezd.sln" $versionSuffixOption
 
-Test ".\Eshva.Poezd.sln"
+Get-ChildItem -Filter *.UnitTests.csproj -Recurse | foreach { Test $_.FullName }
 
 MakePackage ".\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" $artifactsFolder $versionSuffixOption

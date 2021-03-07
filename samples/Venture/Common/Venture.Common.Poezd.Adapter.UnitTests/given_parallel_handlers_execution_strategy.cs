@@ -51,11 +51,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       handler3.IsExecuted.Should().BeTrue("handler #3 should be called");
     }
 
-    /*
-    // TODO: On AppVeyor this test is blinking. I thing because of shared resources. This test shouldn't use time.
     [Fact(Skip = @"Unstable on AppVeyor")]
     public void when_executed_with_few_handlers_it_should_execute_them_in_parallel()
     {
+      // TODO: On AppVeyor this test is blinking. I thing because of shared resources. This test shouldn't use time.
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
       container.AddLogging(_testOutput);
@@ -81,7 +80,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
           TimeSpan.FromMilliseconds(value: 50),
           "should run simultaneously");
     }
-    */
 
     [Fact]
     public void when_executed_with_failing_handler_it_should_throw()

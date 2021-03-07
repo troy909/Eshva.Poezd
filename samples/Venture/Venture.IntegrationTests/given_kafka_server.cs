@@ -51,12 +51,14 @@ namespace Venture.IntegrationTests
     {
       var container = RoutingTests
         .SetupContainer<MessageCountingPipeFitter, FinishTestPipeFitter, MessageCountingPipeFitter, FinishTestPipeFitter>(
-          api => api.WithId("case-office")
+          api => api.WithId("ingress-case-office")
             .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
-            .WithIngressPipeFitter<EmptyPipeFitter>()
-            .WithEgressPipeFitter<EmptyPipeFitter>()
+            .WithPipeFitter<EmptyPipeFitter>()
             .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
             .WithHandlerRegistry<EmptyHandlerRegistry>(),
+          api => api.WithId("egress-case-office")
+            .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
+            .WithPipeFitter<EmptyPipeFitter>(),
           _testOutput);
 
       var topic = RoutingTests.GetRandomTopic();

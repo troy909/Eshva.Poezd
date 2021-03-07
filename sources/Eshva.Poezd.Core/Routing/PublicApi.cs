@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /*
   /// <summary>
   /// Public API.
   /// </summary>
@@ -119,4 +120,5 @@ namespace Eshva.Poezd.Core.Routing
 
     private readonly IQueueNamePatternsProvider _queueNamePatternsProvider;
   }
+*/
 }

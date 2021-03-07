@@ -9,32 +9,32 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class IngressConfigurator : IIngressDriverConfigurator
+  public class BrokerIngressConfigurator : IIngressDriverConfigurator
   {
-    public IngressConfigurator(IngressConfiguration configuration)
+    public BrokerIngressConfigurator([NotNull] BrokerIngressConfiguration configuration)
     {
-      _configuration = configuration;
+      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public IngressConfigurator WithEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    public BrokerIngressConfigurator WithEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
       _configuration.EnterPipeFitterType = typeof(TConfigurator);
       return this;
     }
 
-    public IngressConfigurator WithExitPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    public BrokerIngressConfigurator WithExitPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
       _configuration.ExitPipeFitterType = typeof(TConfigurator);
       return this;
     }
 
-    public IngressConfigurator WithQueueNameMatcher<TMatcher>() where TMatcher : IQueueNameMatcher
+    public BrokerIngressConfigurator WithQueueNameMatcher<TMatcher>() where TMatcher : IQueueNameMatcher
     {
       _configuration.QueueNameMatcherType = typeof(TMatcher);
       return this;
     }
 
-    public IngressConfigurator AddPublicApi([NotNull] Action<IngressPublicApiConfigurator> configurator)
+    public BrokerIngressConfigurator AddPublicApi([NotNull] Action<IngressPublicApiConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
 
@@ -49,6 +49,6 @@ namespace Eshva.Poezd.Core.Configuration
       _configuration.Driver = driver ?? throw new ArgumentNullException(nameof(driver));
     }
 
-    private readonly IngressConfiguration _configuration;
+    private readonly BrokerIngressConfiguration _configuration;
   }
 }

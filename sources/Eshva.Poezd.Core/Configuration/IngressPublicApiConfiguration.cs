@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
@@ -19,13 +20,15 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type MessageTypesRegistryType { get; set; }
 
+    public static IngressPublicApiConfiguration Empty { get; } = CreateValidEmpty();
+
     /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
       if (string.IsNullOrWhiteSpace(Id))
         yield return "ID of the public API should be specified.";
       if (PipeFitterType == null)
-        yield return $"The egress pipe fitter type should be set for the public API with ID '{Id}'.";
+        yield return $"The ingress pipe fitter type should be set for the public API with ID '{Id}'.";
       if (HandlerRegistryType == null)
         yield return $"The handler factory type should be set for the public API with ID '{Id}'.";
       if (QueueNamePatternsProviderType == null)
@@ -33,5 +36,14 @@ namespace Eshva.Poezd.Core.Configuration
       if (MessageTypesRegistryType == null)
         yield return $"The message registry type should be set for the public API with ID '{Id}'.";
     }
+
+    private static IngressPublicApiConfiguration CreateValidEmpty() => new()
+    {
+      Id = "empty ingress public API configuration",
+      HandlerRegistryType = typeof(EmptyHandlerRegistry),
+      MessageTypesRegistryType = typeof(EmptyMessageTypesRegistry),
+      PipeFitterType = typeof(EmptyPipeFitter),
+      QueueNamePatternsProviderType = typeof(ProvidingNothingQueueNamePatternsProvider)
+    };
   }
 }

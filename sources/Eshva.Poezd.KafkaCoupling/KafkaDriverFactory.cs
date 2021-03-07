@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
+  /*
   public class KafkaDriverFactory : IMessageBrokerDriverFactory
   {
     public KafkaDriverFactory([NotNull] IServiceProvider serviceProvider, [NotNull] ILogger<KafkaDriver> driverLogger)
@@ -22,4 +23,5 @@ namespace Eshva.Poezd.KafkaCoupling
     private readonly ILogger<KafkaDriver> _driverLogger;
     private readonly IServiceProvider _serviceProvider;
   }
+*/
 }

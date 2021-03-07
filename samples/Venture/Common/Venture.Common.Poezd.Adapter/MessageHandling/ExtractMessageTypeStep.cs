@@ -42,7 +42,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
           $"specified in the {VentureApi.Headers.MessageTypeName} Kafka header.");
       }
 
-      var messageTypesRegistry = context.TakeOrThrow<IPublicApi>(ContextKeys.PublicApi.Itself).MessageTypesRegistry;
+      var messageTypesRegistry = context.TakeOrThrow<IIngressPublicApi>(ContextKeys.PublicApi.Itself).MessageTypesRegistry;
 
       try
       {

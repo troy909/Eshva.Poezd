@@ -1,7 +1,11 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Eshva.Poezd.Core.Configuration;
+using Eshva.Poezd.Core.Routing;
 
 #endregion
 
@@ -9,22 +13,14 @@ namespace Eshva.Poezd.Core.UnitTests
 {
   public static class ConfigurationTests
   {
-    public static MessageBrokerConfiguration CreateMessageBrokerConfiguration(bool shouldAddPublicApi = true)
+    public static MessageBrokerConfiguration CreateMessageBrokerConfiguration()
     {
-      var someType = typeof(object);
       var sut = new MessageBrokerConfiguration
       {
-        DriverConfiguration = new object(),
-        DriverFactoryType = someType,
         Id = "id",
-        IngressEnterPipeFitterType = someType,
-        IngressExitPipeFitterType = someType,
-        QueueNameMatcherType = someType,
-        EgressEnterPipeFitterType = someType,
-        EgressExitPipeFitterType = someType
+        Ingress = BrokerIngressConfiguration.Empty,
+        Egress = BrokerEgressConfiguration.Empty
       };
-
-      if (shouldAddPublicApi) sut.AddPublicApi(CreatePublicApiConfiguration());
 
       return sut;
     }
@@ -36,25 +32,55 @@ namespace Eshva.Poezd.Core.UnitTests
       return configuration;
     }
 
-    public static PublicApiConfiguration CreatePublicApiConfiguration()
+    public static BrokerIngressConfiguration CreateBrokerIngressConfiguration(bool shouldAddPublicApis = true)
     {
       var someType = typeof(object);
-      var configuration = new PublicApiConfiguration
+      var configuration = new BrokerIngressConfiguration
       {
-        HandlerRegistryType = someType,
-        Id = "id",
-        IngressPipeFitterType = someType,
-        MessageTypesRegistryType = someType,
-        QueueNamePatternsProviderType = someType,
-        EgressPipeFitterType = someType
+        Driver = new StabBrokerIngressDriver(),
+        EnterPipeFitterType = someType,
+        ExitPipeFitterType = someType,
+        QueueNameMatcherType = someType
       };
+
+      if (shouldAddPublicApis) configuration.AddPublicApi(CreateIngressPublicApiConfiguration());
 
       return configuration;
     }
 
-    public static PublicApiConfiguration CreatePublicApiConfigurationWithout(Action<PublicApiConfiguration> updater)
+    public static BrokerIngressConfiguration CreateBrokerIngressConfigurationWithout(Action<BrokerIngressConfiguration> updater)
     {
-      var configuration = CreatePublicApiConfiguration();
+      var configuration = CreateBrokerIngressConfiguration();
+      updater(configuration);
+      return configuration;
+    }
+
+    public static IngressPublicApiConfiguration CreateIngressPublicApiConfiguration() => new IngressPublicApiConfiguration
+    {
+      HandlerRegistryType = typeof(object),
+      Id = "id",
+      PipeFitterType = typeof(object),
+      MessageTypesRegistryType = typeof(object),
+      QueueNamePatternsProviderType = typeof(object)
+    };
+
+    public static IngressPublicApiConfiguration CreateIngressPublicApiConfigurationWithout(Action<IngressPublicApiConfiguration> updater)
+    {
+      var configuration = CreateIngressPublicApiConfiguration();
+      updater(configuration);
+      return configuration;
+    }
+
+    public static EgressPublicApiConfiguration CreateEgressPublicApiConfiguration() => new EgressPublicApiConfiguration
+    {
+      Id = "id",
+      MessageTypesRegistryType = typeof(object),
+      PipeFitterType = typeof(object)
+    };
+
+    public static EgressPublicApiConfiguration CreateEgressPublicApiConfigurationWithout(Action<EgressPublicApiConfiguration> updater)
+    {
+      var configuration = CreateEgressPublicApiConfiguration();
       updater(configuration);
       return configuration;
     }
@@ -64,6 +90,25 @@ namespace Eshva.Poezd.Core.UnitTests
       var configuration = new MessageRouterConfiguration();
       configuration.AddBroker(CreateMessageBrokerConfiguration());
       return configuration;
+    }
+
+    private class StabBrokerIngressDriver : IIngressDriver
+    {
+      public void Dispose()
+      {
+        throw new NotImplementedException();
+      }
+
+      public void Initialize(
+        IMessageRouter messageRouter,
+        string brokerId,
+        IServiceProvider serviceProvider)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default) =>
+        throw new NotImplementedException();
     }
   }
 }

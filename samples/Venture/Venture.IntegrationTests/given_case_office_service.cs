@@ -42,12 +42,15 @@ namespace Venture.IntegrationTests
     {
       var container = RoutingTests.SetupContainer<EmptyPipeFitter, FinishTestPipeFitter, EmptyPipeFitter, FinishTestPipeFitter>(
         api => api
-          .WithId("case-office")
+          .WithId("ingress-case-office")
           .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
-          .WithIngressPipeFitter<VentureIngressPipeFitter>()
-          .WithEgressPipeFitter<EmptyPipeFitter>()
+          .WithPipeFitter<VentureIngressPipeFitter>()
           .WithMessageTypesRegistry<CaseOfficeMessageTypesRegistry>()
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
+        api => api
+          .WithId("egress-case-office")
+          .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
+          .WithPipeFitter<EmptyPipeFitter>(),
         _testOutput);
       container.RegisterSingleton<VentureQueueNamePatternsProvider>();
       AddIngressPipeline(container);

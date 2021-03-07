@@ -69,7 +69,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       context.TakeOrThrow<string>(ContextKeys.Application.CorrelationId).Should().Be("VentureApi.Headers.CorrelationId");
       context.TakeOrThrow<string>(ContextKeys.Application.CausationId).Should().Be("VentureApi.Headers.CausationId");
       context.TakeOrThrow<Type>(ContextKeys.Application.MessageType).Should().Be(typeof(Message1));
-      context.TakeOrThrow<IPublicApi>(ContextKeys.PublicApi.Itself).Should().NotBeNull();
+      context.TakeOrThrow<IIngressPublicApi>(ContextKeys.PublicApi.Itself).Should().NotBeNull();
     }
 
     [Fact]
@@ -158,10 +158,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
         public Message1 Parse(Memory<byte> bytes) => new Message1();
 
-        public int Serialize(Message1 message, Memory<byte> buffer) => throw new NotImplementedException();
-
-        // ReSharper disable once RedundantAssignment
-        public int Serialize(Message1 message, Span<byte> buffer)
+        public int Serialize(Message1 message, Memory<byte> buffer)
         {
           // ReSharper disable once RedundantAssignment
           buffer = new byte[1];

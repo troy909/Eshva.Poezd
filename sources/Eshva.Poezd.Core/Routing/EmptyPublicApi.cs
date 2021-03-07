@@ -9,6 +9,7 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /*
   /// <summary>
   /// A stab for public API.
   /// </summary>
@@ -35,4 +36,5 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public IEnumerable<string> GetQueueNamePatterns() => Enumerable.Empty<string>();
   }
+*/
 }

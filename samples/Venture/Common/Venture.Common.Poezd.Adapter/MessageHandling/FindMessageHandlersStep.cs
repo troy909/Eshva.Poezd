@@ -28,7 +28,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
-      var publicApi = context.TakeOrThrow<IPublicApi>(ContextKeys.PublicApi.Itself);
+      var publicApi = context.TakeOrThrow<IIngressPublicApi>(ContextKeys.PublicApi.Itself);
       var handlerRegistry = publicApi.HandlerRegistry;
       var messageType = context.TakeOrThrow<Type>(ContextKeys.Application.MessageType);
       var handlers = GetHandlersForMessageType(messageType, handlerRegistry);

@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /*
   /// <summary>
   /// Contract of message broker driver.
   /// </summary>
@@ -97,4 +98,5 @@ namespace Eshva.Poezd.Core.Routing
       IReadOnlyDictionary<string, string> metadata,
       IReadOnlyCollection<string> queueNames);
   }
+*/
 }

@@ -22,7 +22,7 @@ namespace Eshva.Poezd.Core.Routing
     /// The message broker ingress configuration.
     /// </summary>
     [NotNull]
-    IngressConfiguration Configuration { get; }
+    BrokerIngressConfiguration Configuration { get; }
 
     /// <summary>
     /// Gets the message broker ingress driver.

@@ -4,6 +4,7 @@
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /*
   /// <summary>
   /// Message broker driver factory.
   /// </summary>
@@ -15,4 +16,5 @@ namespace Eshva.Poezd.Core.Routing
     /// <returns></returns>
     IMessageBrokerDriver Create();
   }
+*/
 }

@@ -12,8 +12,6 @@ using Eshva.Poezd.SimpleInjectorCoupling;
 using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using Venture.CaseOffice.Messages;
-using Venture.Common.Poezd.Adapter.MessageHandling;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit.Abstractions;
 
@@ -24,7 +22,8 @@ namespace Venture.IntegrationTests
   public static class RoutingTests
   {
     public static Container SetupContainer<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
-      Action<PublicApiConfigurator> configureApi,
+      Action<IngressPublicApiConfigurator> configureIngressPublicApi,
+      Action<EgressPublicApiConfigurator> configureEgressPublicApi,
       ITestOutputHelper testOutput)
       where TIngressEnterPipeline : IPipeFitter
       where TIngressExitPipeline : IPipeFitter
@@ -33,13 +32,15 @@ namespace Venture.IntegrationTests
     {
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-      container.AddLogging(testOutput)
-        .AddRouter<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(configureApi);
+      container
+        .AddLogging(testOutput)
+        .AddRouter<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
+          configureIngressPublicApi,
+          configureEgressPublicApi);
 
       container.RegisterInstance<IServiceProvider>(container);
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipeFitter>();
-      container.RegisterSingleton<KafkaDriverFactory>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
       container.RegisterSingleton<PublicApi1QueueNamePatternsProvider>();
       container.RegisterSingleton<EmptyHandlerRegistry>();
@@ -64,38 +65,8 @@ namespace Venture.IntegrationTests
 
     private static Container AddRouter<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
       this Container container,
-      Action<PublicApiConfigurator> configureApi)
-      where TIngressEnterPipeline : IPipeFitter
-      where TIngressExitPipeline : IPipeFitter
-      where TEgressEnterPipeline : IPipeFitter
-      where TEgressExitPipeline : IPipeFitter
-    {
-      var messageRouterConfiguration =
-        MessageRouter.Configure(
-          router => router
-            .AddMessageBroker(
-              broker => broker
-                .WithId("venture-kafka")
-                .WithDriver<KafkaDriverFactory, KafkaDriverConfigurator, KafkaDriverConfiguration>(
-                  driver => driver
-                    .WithConsumerConfig(CreateConsumerConfig())
-                    .WithProducerConfig(CreateProducerConfig())
-                    .WithCommitPeriod(commitPeriod: 1)
-                    .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
-                .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                .WithIngressEnterPipeFitter<TIngressEnterPipeline>()
-                .WithIngressExitPipeFitter<TIngressExitPipeline>()
-                .WithEgressEnterPipeFitter<TEgressEnterPipeline>()
-                .WithEgressExitPipeFitter<TEgressExitPipeline>()
-                .AddPublicApi(configureApi)));
-
-      container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
-      return container;
-    }
-
-    private static Container AddRouter1<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
-      this Container container,
-      Action<PublicApiConfigurator> configureApi)
+      Action<IngressPublicApiConfigurator> configureIngressPublicApi,
+      Action<EgressPublicApiConfigurator> configureEgressPublicApi)
       where TIngressEnterPipeline : IPipeFitter
       where TIngressExitPipeline : IPipeFitter
       where TEgressEnterPipeline : IPipeFitter
@@ -116,13 +87,7 @@ namespace Venture.IntegrationTests
                     .WithEnterPipeFitter<TIngressEnterPipeline>()
                     .WithExitPipeFitter<TIngressExitPipeline>()
                     .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                    .AddPublicApi(
-                      api => api
-                        .WithId("case-office-ingress")
-                        .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
-                        .WithPipeFitter<EmptyPipeFitter>()
-                        .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
-                        .WithHandlerRegistry<VentureServiceHandlersRegistry>()))
+                    .AddPublicApi(configureIngressPublicApi))
                 .Egress(
                   egress => egress
                     .WithKafkaDriver(
@@ -130,11 +95,7 @@ namespace Venture.IntegrationTests
                         .WithProducerConfig(CreateProducerConfig()))
                     .WithEnterPipeFitter<TEgressEnterPipeline>()
                     .WithExitPipeFitter<TEgressExitPipeline>()
-                    .AddPublicApi(
-                      api => api
-                        .WithId("case-office-egress")
-                        .WithPipeFitter<EmptyPipeFitter>()
-                        .WithMessageTypesRegistry<CaseOfficeEgressMessageTypesRegistry>()))));
+                    .AddPublicApi(configureEgressPublicApi))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;

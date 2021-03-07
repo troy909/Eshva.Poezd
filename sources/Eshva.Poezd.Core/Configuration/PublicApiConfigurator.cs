@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
+  /*
   /// <summary>
   /// Public API configurator.
   /// </summary>
@@ -141,4 +142,5 @@ namespace Eshva.Poezd.Core.Configuration
 
     private readonly PublicApiConfiguration _configuration;
   }
+*/
 }

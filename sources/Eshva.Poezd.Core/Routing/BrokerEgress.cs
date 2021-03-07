@@ -17,7 +17,7 @@ namespace Eshva.Poezd.Core.Routing
   public class BrokerEgress : IBrokerEgress
   {
     public BrokerEgress(
-      [NotNull] EgressConfiguration configuration,
+      [NotNull] BrokerEgressConfiguration configuration,
       [NotNull] IServiceProvider serviceProvider)
     {
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
@@ -30,7 +30,7 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public EgressConfiguration Configuration { get; }
+    public BrokerEgressConfiguration Configuration { get; }
 
     /// <inheritdoc />
     public IEgressDriver Driver { get; }

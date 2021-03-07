@@ -10,6 +10,7 @@ using Eshva.Poezd.Core.Routing;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
+  /*
   internal sealed class TestBrokerDriver : IMessageBrokerDriver
   {
     public IEnumerable<string> SubscribedQueueNamePatters { get; private set; } = new List<string>();
@@ -57,9 +58,12 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     // ReSharper disable once NotAccessedField.Local It a real world driver will be used in StartConsumeMessages().
     private IMessageRouter _messageRouter;
   }
+  */
 
+  /*
   internal sealed class TestBrokerDriverFactory : IMessageBrokerDriverFactory
   {
     public IMessageBrokerDriver Create() => new TestBrokerDriver();
   }
+*/
 }

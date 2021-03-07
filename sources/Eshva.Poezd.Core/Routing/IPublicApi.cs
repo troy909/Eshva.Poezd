@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /*
   /// <summary>
   /// Contract of a public API.
   /// </summary>
@@ -58,4 +59,5 @@ namespace Eshva.Poezd.Core.Routing
     [NotNull]
     IEnumerable<string> GetQueueNamePatterns();
   }
+*/
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Eshva.Poezd.Core.Configuration
 {
+  /*
   /// <summary>
   /// Configuration of a public API.
   /// </summary>
@@ -59,4 +60,5 @@ namespace Eshva.Poezd.Core.Configuration
         yield return $"The message registry type should be set for the public API with ID '{Id}'.";
     }
   }
+*/
 }

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
+  /*
   /// <summary>
   /// Kafka driver.
   /// </summary>
@@ -271,4 +272,5 @@ namespace Eshva.Poezd.KafkaCoupling
     private IMessageRouter _messageRouter;
     private IProducer<Null, byte[]> _producer;
   }
+*/
 }

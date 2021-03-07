@@ -11,7 +11,7 @@ namespace Eshva.Poezd.Core.Configuration
 {
   public class EgressConfigurator : IEgressDriverConfigurator
   {
-    public EgressConfigurator(EgressConfiguration configuration)
+    public EgressConfigurator(BrokerEgressConfiguration configuration)
     {
       _configuration = configuration;
     }
@@ -43,6 +43,6 @@ namespace Eshva.Poezd.Core.Configuration
       _configuration.Driver = driver;
     }
 
-    private readonly EgressConfiguration _configuration;
+    private readonly BrokerEgressConfiguration _configuration;
   }
 }

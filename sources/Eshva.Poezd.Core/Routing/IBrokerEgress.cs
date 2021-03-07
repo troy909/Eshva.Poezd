@@ -19,7 +19,7 @@ namespace Eshva.Poezd.Core.Routing
     /// The message broker egress configuration.
     /// </summary>
     [NotNull]
-    EgressConfiguration Configuration { get; }
+    BrokerEgressConfiguration Configuration { get; }
 
     /// <summary>
     /// Gets the message broker egress driver.

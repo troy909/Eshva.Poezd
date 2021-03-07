@@ -27,6 +27,7 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       _testOutputHelper = testOutputHelper;
     }
+    /*
 
     [Fact]
     public void when_starting_it_should_subscribe_to_all_queues_specified_in_configuration()
@@ -88,6 +89,39 @@ namespace Eshva.Poezd.Core.UnitTests
       container.RegisterInstance<IServiceProvider>(container);
       const string TestBrokerDriverSettings = "some setting";
       var messageRouterConfiguration =
+        MessageRouter.Configure(
+          router => router
+            .AddMessageBroker(
+              broker => broker
+                .WithId("venture-kafka")
+                .Ingress(
+                  ingress => ingress
+                    .WithKafkaDriver(
+                      driver => driver
+                        .WithConsumerConfig(CreateConsumerConfig())
+                        .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
+                    .WithEnterPipeFitter<TIngressEnterPipeline>()
+                    .WithExitPipeFitter<TIngressExitPipeline>()
+                    .WithQueueNameMatcher<RegexQueueNameMatcher>()
+                    .AddPublicApi(
+                      api => api
+                        .WithId("case-office-ingress")
+                        .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
+                        .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
+                        .WithHandlerRegistry<VentureServiceHandlersRegistry>()))
+                .Egress(
+                  egress => egress
+                    .WithKafkaDriver(
+                      driver => driver
+                        .WithProducerConfig(CreateProducerConfig()))
+                    .WithEnterPipeFitter<TEgressEnterPipeline>()
+                    .WithExitPipeFitter<TEgressExitPipeline>()
+                    .AddPublicApi(
+                      api => api
+                        .WithId("case-office-egress")
+                        .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageTypesRegistry<CaseOfficeEgressMessageTypesRegistry>()))));
         MessageRouter.Configure(
           router => router
             .AddMessageBroker(
@@ -162,6 +196,7 @@ namespace Eshva.Poezd.Core.UnitTests
           .WriteTo.TestOutput(_testOutputHelper)
           .MinimumLevel.Verbose()
           .CreateLogger());
+          */
 
     private readonly ITestOutputHelper _testOutputHelper;
     private const string SampleBrokerServer = "sample-broker-server";

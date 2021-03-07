@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using FluentAssertions;
 using Xunit;
 
@@ -20,24 +21,14 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.DriverConfiguration = null)
-        .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.DriverFactoryType = null)
-        .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.Id = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.IngressEnterPipeFitterType = null)
-        .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.IngressExitPipeFitterType = null)
-        .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.QueueNameMatcherType = null)
-        .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.EgressEnterPipeFitterType = null)
-        .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.EgressExitPipeFitterType = null)
-        .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateMessageBrokerConfiguration(shouldAddPublicApi: false)
-        .Validate().Should().HaveCount(expected: 1);
+
+      Action sutIngress = () => ConfigurationTests.CreateMessageBrokerConfiguration().Ingress = null;
+      sutIngress.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("value"));
+
+      Action sutEgress = () => ConfigurationTests.CreateMessageBrokerConfiguration().Egress = null;
+      sutEgress.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("value"));
     }
   }
 }

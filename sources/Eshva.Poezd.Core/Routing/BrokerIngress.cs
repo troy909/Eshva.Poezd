@@ -29,7 +29,7 @@ namespace Eshva.Poezd.Core.Routing
     /// One of arguments is not specified.
     /// </exception>
     public BrokerIngress(
-      [NotNull] IngressConfiguration configuration,
+      [NotNull] BrokerIngressConfiguration configuration,
       [NotNull] IServiceProvider serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -42,7 +42,7 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public IngressConfiguration Configuration { get; }
+    public BrokerIngressConfiguration Configuration { get; }
 
     /// <inheritdoc />
     public IIngressDriver Driver { get; }

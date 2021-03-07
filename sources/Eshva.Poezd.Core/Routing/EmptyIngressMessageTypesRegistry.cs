@@ -8,7 +8,7 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class EmptyIngressMessageTypesRegistry : IIngressMessageTypesRegistry
+  internal sealed class EmptyIngressMessageTypesRegistry : IIngressMessageTypesRegistry
   {
     public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) =>
       throw new KeyNotFoundException("An empty ingress message types registry knows nothing about any message types.");

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Eshva.Poezd.Core.Pipeline;
 using FluentAssertions;
 using RandomStringCreator;
 using SimpleInjector;

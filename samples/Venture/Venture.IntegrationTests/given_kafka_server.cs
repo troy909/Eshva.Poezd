@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Eshva.Poezd.Core.Pipeline;
 using FluentAssertions;
 using SimpleInjector;
 using Venture.CaseOffice.Messages;

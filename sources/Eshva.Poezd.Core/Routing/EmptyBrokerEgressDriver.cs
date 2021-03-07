@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class EmptyBrokerEgressDriver : IBrokerEgressDriver
+  internal sealed class EmptyBrokerEgressDriver : IBrokerEgressDriver
   {
     public void Dispose() { }
 

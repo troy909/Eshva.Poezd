@@ -1,4 +1,10 @@
-namespace Eshva.Poezd.Core.Pipeline
+#region Usings
+
+using Eshva.Poezd.Core.Pipeline;
+
+#endregion
+
+namespace Venture.IntegrationTests.TestSubjects
 {
   /// <summary>
   /// Pipe fitter producing no steps.

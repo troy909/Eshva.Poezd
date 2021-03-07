@@ -2,15 +2,16 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
-namespace Eshva.Poezd.Core.Pipeline
+namespace Venture.IntegrationTests.TestSubjects
 {
   /// <summary>
   /// A stab for handler registry.
   /// </summary>
-  internal class EmptyHandlerRegistry : IHandlerRegistry
+  public class EmptyHandlerRegistry : IHandlerRegistry
   {
     public EmptyHandlerRegistry()
     {

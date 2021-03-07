@@ -12,7 +12,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// A stab for ingress public API.
   /// </summary>
-  public class EmptyIngressPublicApi : IIngressPublicApi
+  internal sealed class EmptyIngressPublicApi : IIngressPublicApi
   {
     /// <inheritdoc />
     public IngressPublicApiConfiguration Configuration => new();

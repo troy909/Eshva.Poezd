@@ -2,10 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
-namespace Eshva.Poezd.Core.Pipeline
+namespace Venture.IntegrationTests.TestSubjects
 {
   internal class EmptyEgressMessageTypesRegistry : IEgressMessageTypesRegistry
   {

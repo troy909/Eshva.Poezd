@@ -6,8 +6,8 @@ using Eshva.Poezd.Core.Routing;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public interface IEgressDriverConfigurator
+  public interface IBrokerIngressDriverConfigurator
   {
-    void SetDriver(IEgressDriver driver);
+    void SetDriver(IBrokerIngressDriver driver);
   }
 }

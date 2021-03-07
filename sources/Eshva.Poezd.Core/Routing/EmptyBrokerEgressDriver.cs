@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class EmptyEgressDriver : IEgressDriver
+  public class EmptyBrokerEgressDriver : IBrokerEgressDriver
   {
     public void Dispose() { }
 
-    public void Initialize(string brokerId, ILogger<IEgressDriver> logger) { }
+    public void Initialize(string brokerId, ILogger<IBrokerEgressDriver> logger) { }
 
     public Task Publish(
       byte[] key,

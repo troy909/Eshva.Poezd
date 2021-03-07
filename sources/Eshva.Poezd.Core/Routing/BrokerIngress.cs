@@ -45,7 +45,7 @@ namespace Eshva.Poezd.Core.Routing
     public BrokerIngressConfiguration Configuration { get; }
 
     /// <inheritdoc />
-    public IIngressDriver Driver { get; }
+    public IBrokerIngressDriver Driver { get; }
 
     /// <inheritdoc />
     public IReadOnlyCollection<IIngressPublicApi> PublicApis { get; }

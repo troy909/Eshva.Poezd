@@ -15,80 +15,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
-  /*
-  /// <summary>
-  /// Kafka driver.
-  /// </summary>
-  public class KafkaDriver : IMessageBrokerDriver
+  public class BrokerIngressKafkaDriver : IBrokerIngressDriver
   {
-    /// <summary>
-    /// Constructs a new instance of kafka driver.
-    /// </summary>
-    /// <param name="serviceProvider">
-    /// Service provider.
-    /// </param>
-    /// <param name="logger">
-    /// Logger.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// One of argument is not specified.
-    /// </exception>
-    public KafkaDriver([NotNull] IServiceProvider serviceProvider, [NotNull] ILogger<KafkaDriver> logger)
+    public BrokerIngressKafkaDriver([NotNull] BrokerIngressKafkaDriverConfiguration configuration)
     {
-      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-      _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
-
-    /// <inheritdoc />
-    public void Initialize(
-      IMessageRouter messageRouter,
-      string brokerId,
-      object configuration)
-    {
-      _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
-
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
-      _brokerId = brokerId;
-
-      _configuration = configuration as KafkaDriverConfiguration ?? throw new ArgumentException(
-        $"The value of {nameof(configuration)} parameter should be of type {typeof(KafkaDriverConfiguration).FullName}.");
-      if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-
-      if (_isInitialized)
-        throw new PoezdOperationException($"Kafka driver for broker with ID '{_brokerId}' is already initialized.");
-
-      _consumer = CreateConsumer();
-      _producer = CreateProducer();
-
-      _isInitialized = true;
-    }
-
-    /// <inheritdoc />
-    public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
-    {
-      if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can consume messages.");
-
-      if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
-      var patterns = queueNamePatterns.ToArray();
-      if (!patterns.Any()) throw new ArgumentException("List of patterns contains no patterns. It should contain at least one pattern.");
-
-      _consumer.Subscribe(patterns);
-
-      Consume(OnMessageReceived, cancellationToken);
-      return Task.CompletedTask;
-    }
-
-    /// <inheritdoc />
-    public Task Publish(
-      byte[] key,
-      byte[] payload,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames)
-    {
-      if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can publish messages.");
-      // TODO: Add message publishing.
-
-      return Task.CompletedTask;
+      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     /// <inheritdoc />
@@ -111,7 +42,45 @@ namespace Eshva.Poezd.KafkaCoupling
         _configuration.ConsumerConfig.GroupId);
 
       _consumer?.Dispose();
-      _producer?.Dispose();
+    }
+
+    /// <inheritdoc />
+    public void Initialize(
+      IMessageRouter messageRouter,
+      string brokerId,
+      IServiceProvider serviceProvider)
+    {
+      _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
+      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      _logger = (ILogger<BrokerIngressKafkaDriver>) serviceProvider.GetService(typeof(ILogger<BrokerIngressKafkaDriver>)) ??
+                throw new PoezdConfigurationException($"Can not get a logger of type {typeof(ILogger<BrokerIngressKafkaDriver>).FullName}.");
+
+      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
+      _brokerId = brokerId;
+
+      if (_isInitialized)
+        throw new PoezdOperationException($"Kafka driver for broker with ID '{_brokerId}' is already initialized.");
+
+      _consumer = CreateConsumer();
+
+      _isInitialized = true;
+    }
+
+    /// <inheritdoc />
+    public Task StartConsumeMessages(
+      IEnumerable<string> queueNamePatterns,
+      CancellationToken cancellationToken = default)
+    {
+      if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can consume messages.");
+
+      if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
+      var patterns = queueNamePatterns.ToArray();
+      if (!patterns.Any()) throw new ArgumentException("List of patterns contains no patterns. It should contain at least one pattern.");
+
+      _consumer.Subscribe(patterns);
+
+      Consume(OnMessageReceived, cancellationToken);
+      return Task.CompletedTask;
     }
 
     private async Task OnMessageReceived(ConsumeResult<Ignore, byte[]> consumeResult)
@@ -153,14 +122,15 @@ namespace Eshva.Poezd.KafkaCoupling
                 consumeResult.TopicPartitionOffset,
                 consumeResult.Message.Value);
 
-              if (consumeResult.Offset.Value % _configuration.CommitPeriod == 0)
-                // The Commit method sends a "commit offsets" request to the Kafka
-                // cluster and synchronously waits for the response. This is very
-                // slow compared to the rate at which the consumer is capable of
-                // consuming messages. A high performance application will typically
-                // commit offsets relatively infrequently and be designed handle
-                // duplicate messages in the event of failure.
-                _consumer.Commit(consumeResult);
+              // TODO: Choose how to commit received messages.
+              // if (consumeResult.Offset.Value % _configuration.CommitPeriod == 0)
+              // The Commit method sends a "commit offsets" request to the Kafka
+              // cluster and synchronously waits for the response. This is very
+              // slow compared to the rate at which the consumer is capable of
+              // consuming messages. A high performance application will typically
+              // commit offsets relatively infrequently and be designed handle
+              // duplicate messages in the event of failure.
+              _consumer.Commit(consumeResult);
             }
           }
           catch (ConsumeException exception)
@@ -245,32 +215,13 @@ namespace Eshva.Poezd.KafkaCoupling
       }
     }
 
-    private IProducer<Null, byte[]> CreateProducer()
-    {
-      try
-      {
-        _logger.LogInformation("Creating Kafka producer with configuration @{ProducerConfig}", _configuration.ProducerConfig);
-        var producer = new ProducerBuilder<Null, byte[]>(_configuration.ProducerConfig).Build();
-        _logger.LogInformation("A Kafka producer created.");
-        return producer;
-      }
-      catch (Exception exception)
-      {
-        const string errorMessage = "During Kafka producer creating an error occurred.";
-        _logger.LogError(exception, errorMessage);
-        throw new PoezdOperationException(errorMessage, exception);
-      }
-    }
-
-    private readonly ILogger<KafkaDriver> _logger;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly BrokerIngressKafkaDriverConfiguration _configuration;
     private string _brokerId;
-    private KafkaDriverConfiguration _configuration;
     private IConsumer<Ignore, byte[]> _consumer;
     private Task<Task> _consumeTask;
     private bool _isInitialized;
+    private ILogger<BrokerIngressKafkaDriver> _logger;
     private IMessageRouter _messageRouter;
-    private IProducer<Null, byte[]> _producer;
+    private IServiceProvider _serviceProvider;
   }
-*/
 }

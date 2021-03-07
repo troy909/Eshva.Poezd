@@ -28,7 +28,7 @@ namespace Eshva.Poezd.Core.Routing
     /// Gets the message broker ingress driver.
     /// </summary>
     [NotNull]
-    IIngressDriver Driver { get; }
+    IBrokerIngressDriver Driver { get; }
 
     /// <summary>
     /// Gets list of public APIs bound to this message broker.

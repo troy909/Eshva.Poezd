@@ -13,15 +13,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
-  public class EgressKafkaDriver : IEgressDriver
+  public class BrokerEgressKafkaDriver : IBrokerEgressDriver
   {
-    public EgressKafkaDriver([NotNull] EgressKafkaDriverConfiguration configuration)
+    public BrokerEgressKafkaDriver([NotNull] BrokerEgressKafkaDriverConfiguration configuration)
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     /// <inheritdoc />
-    public void Initialize(string brokerId, ILogger<IEgressDriver> logger)
+    public void Initialize(string brokerId, ILogger<IBrokerEgressDriver> logger)
     {
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
@@ -74,8 +74,8 @@ namespace Eshva.Poezd.KafkaCoupling
       }
     }
 
-    private readonly EgressKafkaDriverConfiguration _configuration;
-    private ILogger<IEgressDriver> _logger;
+    private readonly BrokerEgressKafkaDriverConfiguration _configuration;
+    private ILogger<IBrokerEgressDriver> _logger;
     private string _brokerId;
     private bool _isInitialized;
     private IProducer<Null, byte[]> _producer;

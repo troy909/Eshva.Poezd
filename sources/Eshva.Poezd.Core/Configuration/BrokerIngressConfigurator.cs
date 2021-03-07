@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class BrokerIngressConfigurator : IIngressDriverConfigurator
+  public class BrokerIngressConfigurator : IBrokerIngressDriverConfigurator
   {
     public BrokerIngressConfigurator([NotNull] BrokerIngressConfiguration configuration)
     {
@@ -44,7 +44,7 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    void IIngressDriverConfigurator.SetDriver([NotNull] IIngressDriver driver)
+    void IBrokerIngressDriverConfigurator.SetDriver([NotNull] IBrokerIngressDriver driver)
     {
       _configuration.Driver = driver ?? throw new ArgumentNullException(nameof(driver));
     }

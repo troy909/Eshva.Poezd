@@ -33,7 +33,7 @@ namespace Eshva.Poezd.Core.Routing
     public BrokerEgressConfiguration Configuration { get; }
 
     /// <inheritdoc />
-    public IEgressDriver Driver { get; }
+    public IBrokerEgressDriver Driver { get; }
 
     /// <inheritdoc />
     public IPipeFitter EnterPipeFitter { get; }

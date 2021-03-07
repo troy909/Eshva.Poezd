@@ -92,7 +92,7 @@ namespace Eshva.Poezd.Core.UnitTests
       return configuration;
     }
 
-    private class StabBrokerIngressDriver : IIngressDriver
+    private class StabBrokerIngressDriver : IBrokerIngressDriver
     {
       public void Dispose()
       {

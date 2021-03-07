@@ -27,7 +27,6 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       _testOutputHelper = testOutputHelper;
     }
-    /*
 
     [Fact]
     public void when_starting_it_should_subscribe_to_all_queues_specified_in_configuration()
@@ -37,15 +36,15 @@ namespace Eshva.Poezd.Core.UnitTests
       var messageRouter = GetMessageRouter(container);
 
       var messageBroker = messageRouter.Brokers.Single(broker => broker.Id.Equals(SampleBrokerServer));
-      // TODO: Rework the tests.
-      // ((TestBrokerDriver) messageBroker.Driver).SubscribedQueueNamePatters.Should().BeEquivalentTo(
-      //   new[]
-      //   {
-      //     @"^sample\.(commands|facts)\.service1\.v1",
-      //     "sample.facts.service-2.v1",
-      //     @"^sample\.cdc\..*"
-      //   },
-      //   "it is full list of subscribed queues");
+      var patters = ((TestBrokerIngressDriver) messageBroker.Ingress.Driver).SubscribedQueueNamePatters;
+      patters.Should().BeEquivalentTo(
+        new[]
+        {
+          @"^sample\.(commands|facts)\.service1\.v1",
+          "sample.facts.service-2.v1",
+          @"^sample\.cdc\..*"
+        },
+        "it is full list of subscribed queues");
     }
 
     [Fact]
@@ -87,77 +86,49 @@ namespace Eshva.Poezd.Core.UnitTests
     private void ConfigurePoezd(Container container)
     {
       container.RegisterInstance<IServiceProvider>(container);
-      const string TestBrokerDriverSettings = "some setting";
       var messageRouterConfiguration =
         MessageRouter.Configure(
           router => router
             .AddMessageBroker(
               broker => broker
-                .WithId("venture-kafka")
+                .WithId(SampleBrokerServer)
                 .Ingress(
                   ingress => ingress
-                    .WithKafkaDriver(
-                      driver => driver
-                        .WithConsumerConfig(CreateConsumerConfig())
-                        .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
-                    .WithEnterPipeFitter<TIngressEnterPipeline>()
-                    .WithExitPipeFitter<TIngressExitPipeline>()
+                    .WithTestDriver()
+                    .WithEnterPipeFitter<SampleBrokerPipeFitter>()
+                    .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<RegexQueueNameMatcher>()
                     .AddPublicApi(
                       api => api
-                        .WithId("case-office-ingress")
-                        .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
-                        .WithPipeFitter<EmptyPipeFitter>()
-                        .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
-                        .WithHandlerRegistry<VentureServiceHandlersRegistry>()))
+                        .WithId("api-1-ingress")
+                        .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
+                        .WithPipeFitter<Service1PipeFitter>()
+                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithHandlerRegistry<EmptyHandlerRegistry>())
+                    .AddPublicApi(
+                      api => api
+                        .WithId("api-2-ingress")
+                        .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
+                        .WithPipeFitter<Service2PipeFitter>()
+                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithHandlerRegistry<EmptyHandlerRegistry>())
+                    .AddPublicApi(
+                      api => api
+                        .WithId("cdc-notifications-ingress")
+                        .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
+                        .WithPipeFitter<CdcNotificationsPipeFitter>()
+                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
-                    .WithKafkaDriver(
-                      driver => driver
-                        .WithProducerConfig(CreateProducerConfig()))
-                    .WithEnterPipeFitter<TEgressEnterPipeline>()
-                    .WithExitPipeFitter<TEgressExitPipeline>()
+                    .WithTestDriver()
+                    .WithEnterPipeFitter<EmptyPipeFitter>()
+                    .WithExitPipeFitter<EmptyPipeFitter>()
                     .AddPublicApi(
                       api => api
                         .WithId("case-office-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
-                        .WithMessageTypesRegistry<CaseOfficeEgressMessageTypesRegistry>()))));
-        MessageRouter.Configure(
-          router => router
-            .AddMessageBroker(
-              broker => broker
-                .WithId(SampleBrokerServer)
-                .WithDriver<TestBrokerDriverFactory, TestBrokerDriverConfigurator, TestBrokerDriverConfiguration>(
-                  driver => driver.WithSomeSetting(TestBrokerDriverSettings))
-                .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                .WithIngressEnterPipeFitter<SampleBrokerPipeFitter>()
-                .WithIngressExitPipeFitter<EmptyPipeFitter>()
-                .WithEgressEnterPipeFitter<EmptyPipeFitter>()
-                .WithEgressExitPipeFitter<EmptyPipeFitter>()
-                .AddPublicApi(
-                  api => api
-                    .WithId("api-1")
-                    .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
-                    .WithIngressPipeFitter<Service1PipeFitter>()
-                    .WithEgressPipeFitter<EmptyPipeFitter>()
-                    .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
-                    .WithHandlerRegistry<NoneHandlerRegistry>())
-                .AddPublicApi(
-                  api => api
-                    .WithId("api-2")
-                    .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
-                    .WithIngressPipeFitter<Service2PipeFitter>()
-                    .WithEgressPipeFitter<EmptyPipeFitter>()
-                    .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
-                    .WithHandlerRegistry<NoneHandlerRegistry>())
-                .AddPublicApi(
-                  api => api
-                    .WithId("cdc-notifications")
-                    .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
-                    .WithIngressPipeFitter<CdcNotificationsPipeFitter>()
-                    .WithEgressPipeFitter<EmptyPipeFitter>()
-                    .WithMessageTypesRegistry<EmptyMessageTypesRegistry>()
-                    .WithHandlerRegistry<NoneHandlerRegistry>())));
+                        .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       container.RegisterInstance(GetLoggerFactory());
@@ -166,9 +137,9 @@ namespace Eshva.Poezd.Core.UnitTests
         typeof(Logger<>),
         Lifestyle.Singleton);
 
-      container.RegisterSingleton<EmptyMessageTypesRegistry>();
-      container.RegisterSingleton<NoneHandlerRegistry>();
-      container.RegisterSingleton<TestBrokerDriverFactory>();
+      container.RegisterSingleton<EmptyIngressMessageTypesRegistry>();
+      container.RegisterSingleton<EmptyEgressMessageTypesRegistry>();
+      container.RegisterSingleton<EmptyHandlerRegistry>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<Service1QueueNamePatternsProvider>();
       container.RegisterSingleton<Service2QueueNamePatternsProvider>();
@@ -196,7 +167,6 @@ namespace Eshva.Poezd.Core.UnitTests
           .WriteTo.TestOutput(_testOutputHelper)
           .MinimumLevel.Verbose()
           .CreateLogger());
-          */
 
     private readonly ITestOutputHelper _testOutputHelper;
     private const string SampleBrokerServer = "sample-broker-server";

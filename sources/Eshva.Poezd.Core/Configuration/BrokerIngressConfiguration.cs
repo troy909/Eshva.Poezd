@@ -22,7 +22,7 @@ namespace Eshva.Poezd.Core.Configuration
 
     public IReadOnlyCollection<IngressPublicApiConfiguration> PublicApis => _publicApis.AsReadOnly();
 
-    public IIngressDriver Driver { get; internal set; }
+    public IBrokerIngressDriver Driver { get; internal set; }
 
     public static BrokerIngressConfiguration Empty { get; } = CreateValidEmpty();
 
@@ -76,7 +76,7 @@ namespace Eshva.Poezd.Core.Configuration
         EnterPipeFitterType = typeof(EmptyPipeFitter),
         ExitPipeFitterType = typeof(EmptyPipeFitter),
         QueueNameMatcherType = typeof(MatchingNothingQueueNameMatcher),
-        Driver = new EmptyIngressDriver()
+        Driver = new EmptyBrokerIngressDriver()
       };
       configuration.AddPublicApi(IngressPublicApiConfiguration.Empty);
       return configuration;

@@ -1,17 +1,21 @@
+#region Usings
+
 using System;
 using Eshva.Poezd.Core.Configuration;
+
+#endregion
 
 namespace Eshva.Poezd.KafkaCoupling
 {
   public static class EgressConfiguratorExtensions
   {
-    public static EgressConfigurator WithKafkaDriver(this EgressConfigurator egress, Action<EgressKafkaDriverConfigurator> configurator)
+    public static BrokerEgressConfigurator WithKafkaDriver(this BrokerEgressConfigurator brokerEgress, Action<BrokerEgressKafkaDriverConfigurator> configurator)
     {
-      var configuration = new EgressKafkaDriverConfiguration();
-      configurator(new EgressKafkaDriverConfigurator(configuration));
-      IEgressDriverConfigurator driverConfigurator = egress;
-      driverConfigurator.SetDriver(new EgressKafkaDriver(configuration));
-      return egress;
+      var configuration = new BrokerEgressKafkaDriverConfiguration();
+      configurator(new BrokerEgressKafkaDriverConfigurator(configuration));
+      IBrokerEgressDriverConfigurator driverConfigurator = brokerEgress;
+      driverConfigurator.SetDriver(new BrokerEgressKafkaDriver(configuration));
+      return brokerEgress;
     }
   }
 }

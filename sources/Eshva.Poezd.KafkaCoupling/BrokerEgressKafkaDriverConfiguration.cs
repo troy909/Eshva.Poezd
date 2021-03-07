@@ -6,7 +6,7 @@ using Confluent.Kafka;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
-  public class EgressKafkaDriverConfiguration
+  public class BrokerEgressKafkaDriverConfiguration
   {
     public ProducerConfig ProducerConfig { get; internal set; }
   }

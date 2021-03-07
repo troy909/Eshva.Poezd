@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public interface IEgressDriver : IDisposable
+  public interface IBrokerEgressDriver : IDisposable
   {
     /// <summary>
     /// Initializes the egress message broker driver.
@@ -28,7 +28,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
     /// </exception>
-    public void Initialize([NotNull] string brokerId, [NotNull] ILogger<IEgressDriver> logger);
+    public void Initialize([NotNull] string brokerId, [NotNull] ILogger<IBrokerEgressDriver> logger);
 
     /// <summary>
     /// Publishes a message using the broker client.

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  internal sealed class EmptyIngressDriver : IIngressDriver
+  internal sealed class EmptyBrokerIngressDriver : IBrokerIngressDriver
   {
     public void Dispose() { }
 

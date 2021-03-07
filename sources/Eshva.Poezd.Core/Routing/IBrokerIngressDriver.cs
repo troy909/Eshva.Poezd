@@ -11,14 +11,7 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  /*
-  /// <summary>
-  /// Contract of message broker driver.
-  /// </summary>
-  /// <remarks>
-  /// Message broker driver is a bridge between message broker client and Poezd router.
-  /// </remarks>
-  public interface IMessageBrokerDriver : IDisposable
+  public interface IBrokerIngressDriver : IDisposable
   {
     /// <summary>
     /// Initializes the message broker driver.
@@ -29,8 +22,8 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="brokerId">
     /// The broker ID to bind to.
     /// </param>
-    /// <param name="configuration">
-    /// The driver configuration.
+    /// <param name="serviceProvider">
+    /// The service provider.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// One of arguments is null, an empty or whitespace string.
@@ -44,7 +37,7 @@ namespace Eshva.Poezd.Core.Routing
     public void Initialize(
       [NotNull] IMessageRouter messageRouter,
       [NotNull] string brokerId,
-      [NotNull] object configuration);
+      [NotNull] IServiceProvider serviceProvider);
 
     /// <summary>
     /// Starts message consuming from the broker client.
@@ -68,35 +61,8 @@ namespace Eshva.Poezd.Core.Routing
     /// The driver is not yet initialized.
     /// </exception>
     [NotNull]
-    Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Publishes a message using the broker client.
-    /// </summary>
-    /// <param name="key">
-    /// The message broker key if required like in case of Kafka.
-    /// </param>
-    /// <param name="payload">
-    /// The message broker payload.
-    /// </param>
-    /// <param name="metadata">
-    /// The message broker metadata.
-    /// </param>
-    /// <param name="queueNames">
-    /// The message broker queue/topic names to which the message should be published.
-    /// </param>
-    /// <returns>
-    /// A task that can be used for waiting when publishing finished.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// One of arguments is <c>null</c>, an empty or a whitespace string.
-    /// </exception>
-    [NotNull]
-    Task Publish(
-      byte[] key,
-      byte[] payload,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames);
+    Task StartConsumeMessages(
+      [NotNull] IEnumerable<string> queueNamePatterns,
+      CancellationToken cancellationToken = default);
   }
-*/
 }

@@ -9,26 +9,26 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class EgressConfigurator : IEgressDriverConfigurator
+  public class BrokerEgressConfigurator : IBrokerEgressDriverConfigurator
   {
-    public EgressConfigurator(BrokerEgressConfiguration configuration)
+    public BrokerEgressConfigurator(BrokerEgressConfiguration configuration)
     {
       _configuration = configuration;
     }
 
-    public EgressConfigurator WithEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    public BrokerEgressConfigurator WithEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
       _configuration.EnterPipeFitterType = typeof(TConfigurator);
       return this;
     }
 
-    public EgressConfigurator WithExitPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    public BrokerEgressConfigurator WithExitPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
       _configuration.ExitPipeFitterType = typeof(TConfigurator);
       return this;
     }
 
-    public EgressConfigurator AddPublicApi([NotNull] Action<EgressPublicApiConfigurator> configurator)
+    public BrokerEgressConfigurator AddPublicApi([NotNull] Action<EgressPublicApiConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
 
@@ -38,7 +38,7 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public void SetDriver(IEgressDriver driver)
+    public void SetDriver(IBrokerEgressDriver driver)
     {
       _configuration.Driver = driver;
     }

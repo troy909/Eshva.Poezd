@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.Routing
     /// Gets the message broker egress driver.
     /// </summary>
     [NotNull]
-    IEgressDriver Driver { get; }
+    IBrokerEgressDriver Driver { get; }
 
     /// <summary>
     /// Gets egress enter pipe fitter. Configures the very beginning of egress pipeline.

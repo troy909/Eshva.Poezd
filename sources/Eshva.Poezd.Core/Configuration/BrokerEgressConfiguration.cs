@@ -19,7 +19,7 @@ namespace Eshva.Poezd.Core.Configuration
 
     public IReadOnlyCollection<EgressPublicApiConfiguration> PublicApis => _publicApis.AsReadOnly();
 
-    public IEgressDriver Driver { get; internal set; }
+    public IBrokerEgressDriver Driver { get; internal set; }
 
     public static BrokerEgressConfiguration Empty { get; } = CreateValidEmpty();
 
@@ -53,7 +53,7 @@ namespace Eshva.Poezd.Core.Configuration
     {
       var configuration = new BrokerEgressConfiguration
       {
-        Driver = new EmptyEgressDriver(),
+        Driver = new EmptyBrokerEgressDriver(),
         EnterPipeFitterType = typeof(EmptyPipeFitter),
         ExitPipeFitterType = typeof(EmptyPipeFitter)
       };

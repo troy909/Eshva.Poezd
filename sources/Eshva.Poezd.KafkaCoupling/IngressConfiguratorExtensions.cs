@@ -11,12 +11,12 @@ namespace Eshva.Poezd.KafkaCoupling
   {
     public static BrokerIngressConfigurator WithKafkaDriver(
       this BrokerIngressConfigurator ingress,
-      Action<IngressKafkaDriverConfigurator> configurator)
+      Action<BrokerIngressKafkaDriverConfigurator> configurator)
     {
-      var configuration = new IngressKafkaDriverConfiguration();
-      configurator(new IngressKafkaDriverConfigurator(configuration));
-      IIngressDriverConfigurator driverConfigurator = ingress;
-      driverConfigurator.SetDriver(new IngressKafkaDriver(configuration));
+      var configuration = new BrokerIngressKafkaDriverConfiguration();
+      configurator(new BrokerIngressKafkaDriverConfigurator(configuration));
+      IBrokerIngressDriverConfigurator driverConfigurator = ingress;
+      driverConfigurator.SetDriver(new BrokerIngressKafkaDriver(configuration));
       return ingress;
     }
   }

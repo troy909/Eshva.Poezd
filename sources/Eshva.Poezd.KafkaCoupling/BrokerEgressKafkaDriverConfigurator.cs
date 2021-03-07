@@ -8,19 +8,19 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
-  public class EgressKafkaDriverConfigurator
+  public class BrokerEgressKafkaDriverConfigurator
   {
-    public EgressKafkaDriverConfigurator(EgressKafkaDriverConfiguration configuration)
+    public BrokerEgressKafkaDriverConfigurator(BrokerEgressKafkaDriverConfiguration configuration)
     {
       _configuration = configuration;
     }
 
-    public EgressKafkaDriverConfigurator WithProducerConfig([NotNull] ProducerConfig producerConfig)
+    public BrokerEgressKafkaDriverConfigurator WithProducerConfig([NotNull] ProducerConfig producerConfig)
     {
       _configuration.ProducerConfig = producerConfig ?? throw new ArgumentNullException(nameof(producerConfig));
       return this;
     }
 
-    private readonly EgressKafkaDriverConfiguration _configuration;
+    private readonly BrokerEgressKafkaDriverConfiguration _configuration;
   }
 }

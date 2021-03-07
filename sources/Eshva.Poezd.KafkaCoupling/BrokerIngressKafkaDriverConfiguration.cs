@@ -7,7 +7,7 @@ using Confluent.Kafka;
 
 namespace Eshva.Poezd.KafkaCoupling
 {
-  public class IngressKafkaDriverConfiguration
+  public class BrokerIngressKafkaDriverConfiguration
   {
     public ConsumerConfig ConsumerConfig { get; internal set; }
 

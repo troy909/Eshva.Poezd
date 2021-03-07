@@ -14,7 +14,7 @@ deploy:
   - provider: NuGet
     server: https://www.myget.org/F/eshva-public/api/v2/package
     api_key:
-      secure: eGX5aim+j0FX2y9WtOeXLK0+abWbSQK7kuXY6WkQ9mWzHhuoqT4DNTWHEVOeTdv7
+      secure: EWEbUVHovEaxui62fk5XtNTctmLzY5NHj8gqY+7s/eRl5zqIxPzwVUVspbJrU/TP
     skip_symbols: true
     on:
       branch: master
@@ -22,6 +22,6 @@ deploy:
     name: production
     skip_symbols: true
     api_key:
-      secure: RwdsEIjhYDeJvFbfTZayjLHBWtVTmvwBwfKIiGWG+K7edtQ94Hd5lOuN9yvhG7oF
+      secure: X0KFzlh5UoQWKhbg80RuvGqVPSDHMUm23F+BRBnonaGUZ6dMbKqedRjXXKHF7Tgn
     on:
       appveyor_repo_tag: true

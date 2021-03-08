@@ -9,6 +9,7 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
 
 #endregion
 
@@ -20,8 +21,7 @@ namespace Eshva.Poezd.Core.Routing
       [NotNull] BrokerEgressConfiguration configuration,
       [NotNull] IServiceProvider serviceProvider)
     {
-      if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-
+      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
       PublicApis = configuration.PublicApis.Select(api => new EgressPublicApi(api, serviceProvider)).ToList().AsReadOnly();
@@ -44,9 +44,11 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public ReadOnlyCollection<EgressPublicApi> PublicApis { get; }
 
-    public void Initialize(
-      IMessageRouter messageRouter,
-      string brokerId) { }
+    public void Initialize(IMessageRouter messageRouter, string brokerId)
+    {
+      var logger = (ILogger<IBrokerEgressDriver>) _serviceProvider.GetService(typeof(ILogger<IBrokerEgressDriver>));
+      Driver.Initialize(brokerId, logger);
+    }
 
     public Task Publish(
       [NotNull] byte[] key,
@@ -88,5 +90,7 @@ namespace Eshva.Poezd.Core.Routing
           $"Can not get instance of the message broker egress exit pipe fitter of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
     }
+
+    private readonly IServiceProvider _serviceProvider;
   }
 }

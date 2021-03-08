@@ -46,7 +46,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
   /// </item>
   /// </list>
   /// </remarks>
-  public sealed class VentureIngressPipeFitter : TypeBasedLinearPipeFitter
+  public sealed class VentureIngressPipeFitter : TypeBasedPipeFitter
   {
     public VentureIngressPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 

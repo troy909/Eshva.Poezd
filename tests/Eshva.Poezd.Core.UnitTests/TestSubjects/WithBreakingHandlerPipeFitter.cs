@@ -9,14 +9,13 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  [UsedImplicitly]
-  public class SampleBrokerPipeFitter : TypeBasedPipeFitter
+  public class WithBreakingHandlerPipeFitter : TypeBasedPipeFitter
   {
-    public SampleBrokerPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public WithBreakingHandlerPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {
-      yield return typeof(LogMessageHandlingContextStep);
+      yield return typeof(BreakingIngressStep);
     }
   }
 }

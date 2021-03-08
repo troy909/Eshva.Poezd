@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace Venture.Common.Poezd.Adapter.MessagePublishing
 {
-  public class VentureEgressPipeFitter : TypeBasedLinearPipeFitter
+  public class VentureEgressPipeFitter : TypeBasedPipeFitter
   {
     public VentureEgressPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 

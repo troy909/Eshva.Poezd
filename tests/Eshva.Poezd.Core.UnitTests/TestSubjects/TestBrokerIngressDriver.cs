@@ -1,8 +1,7 @@
-﻿#region Usings
+#region Usings
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Routing;
@@ -13,11 +12,14 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   public class TestBrokerIngressDriver : IBrokerIngressDriver
   {
-    public IEnumerable<string> SubscribedQueueNamePatters { get; private set; } = Enumerable.Empty<string>();
+    public TestBrokerIngressDriver(TestDriverState state)
+    {
+      _state = state;
+    }
 
     public void Dispose()
     {
-      throw new NotImplementedException();
+      _state.DisposedCount++;
     }
 
     public void Initialize(
@@ -25,7 +27,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       string brokerId,
       IServiceProvider serviceProvider)
     {
-      _messageRouter = messageRouter;
+      // _messageRouter = messageRouter;
+      _state.InitializedCount++;
     }
 
     public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
@@ -36,16 +39,15 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
           $"{nameof(TestBrokerIngressDriver)} is started already. You can subscribe to queues only before driver is started.");
       }
 
-      SubscribedQueueNamePatters = queueNamePatterns;
+      _state.SubscribedQueueNamePatters.AddRange(queueNamePatterns);
+      _state.MessageConsumingStartedCount++;
 
       // In a real world driver you will do something to connect to the broker.
       _isMessageConsumingStarted = true;
       return Task.CompletedTask;
     }
 
+    private readonly TestDriverState _state;
     private bool _isMessageConsumingStarted;
-
-    // ReSharper disable once NotAccessedField.Local It a real world driver will be used in StartConsumeMessages().
-    private IMessageRouter _messageRouter;
   }
 }

@@ -12,7 +12,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// Pipe fitter which configuration based on specifying ordered list of step types.
   /// </summary>
-  public abstract class TypeBasedLinearPipeFitter : IPipeFitter
+  public abstract class TypeBasedPipeFitter : IPipeFitter
   {
     /// <summary>
     /// Constructs an instance of pipe fitter.
@@ -23,7 +23,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <exception cref="ArgumentNullException">
     /// Service provider is not specified.
     /// </exception>
-    protected TypeBasedLinearPipeFitter([NotNull] IServiceProvider serviceProvider)
+    protected TypeBasedPipeFitter([NotNull] IServiceProvider serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }

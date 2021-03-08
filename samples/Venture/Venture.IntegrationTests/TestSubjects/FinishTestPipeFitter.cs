@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class FinishTestPipeFitter : TypeBasedLinearPipeFitter
+  public class FinishTestPipeFitter : TypeBasedPipeFitter
   {
     public FinishTestPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 

@@ -47,6 +47,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public async Task Start(CancellationToken cancellationToken = default)
     {
+      if (_isDisposed) throw new PoezdOperationException("It's not possible to start a disposed message router");
       if (_isStarted) throw new PoezdOperationException("The router is started already.");
 
       EnsureConfigurationValid();
@@ -73,13 +74,16 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public Task RouteIngressMessage(
+    public async Task RouteIngressMessage(
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
       byte[] payload,
       IReadOnlyDictionary<string, string> metadata)
     {
+      // TODO: Message handling shouldn't stop but decision what to do with erroneous message should be carried to some API-related strategy.
+      if (_isStopped)
+        throw new PoezdOperationException("Further message handling is stopped due an error during handling another message.");
       if (payload == null) throw new ArgumentNullException(nameof(payload));
       if (metadata == null) throw new ArgumentNullException(nameof(metadata));
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
@@ -102,12 +106,13 @@ namespace Eshva.Poezd.Core.Routing
         try
         {
           // TODO: Add timeout as a cancellation token and configuration its using router configuration fluent interface.
-          return pipeline.Execute(messageHandlingContext);
+          await pipeline.Execute(messageHandlingContext);
         }
         catch (Exception exception)
         {
+          _isStopped = true;
           throw new PoezdOperationException(
-            "An error occurred during incoming message handling. Inspect the inner exceptions for more details.",
+            "An error occurred during ingress message handling. Inspect the inner exceptions for more details.",
             exception);
         }
       }
@@ -170,6 +175,12 @@ namespace Eshva.Poezd.Core.Routing
       var poezdConfigurator = new MessageRouterConfigurator();
       configurator(poezdConfigurator);
       return poezdConfigurator.Configuration;
+    }
+
+    public void Dispose()
+    {
+      _brokers.ForEach(broker => broker.Dispose());
+      _isDisposed = true;
     }
 
     private void InitializeMessageBrokers()
@@ -302,7 +313,12 @@ namespace Eshva.Poezd.Core.Routing
 
     private readonly List<MessageBroker> _brokers = new();
     private readonly MessageRouterConfiguration _configuration;
+
     private readonly IDiContainerAdapter _diContainerAdapter;
+
+    // TODO: Use the State pattern.
+    private bool _isDisposed;
     private bool _isStarted;
+    private bool _isStopped;
   }
 }

@@ -14,7 +14,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   /// So we don't need to deserialize message payload.
   /// </summary>
   [UsedImplicitly]
-  public sealed class CdcNotificationsPipeFitter : TypeBasedLinearPipeFitter
+  public sealed class CdcNotificationsPipeFitter : TypeBasedPipeFitter
   {
     public CdcNotificationsPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 

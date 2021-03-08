@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Collections;
+using Eshva.Poezd.Core.Common;
 
 #endregion
 
@@ -30,7 +31,6 @@ namespace Eshva.Poezd.Core.Pipeline
     }
 
     /// <inheritdoc />
-    // TODO: Add a cancellation token.
     public async Task Execute(IPocket context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
@@ -39,7 +39,22 @@ namespace Eshva.Poezd.Core.Pipeline
       while (currentNode != null)
       {
         var currentStep = currentNode.Value;
-        await currentStep.Execute(context);
+        try
+        {
+          await currentStep.Execute(context);
+        }
+        catch (BreakThisMessageHandlingException)
+        {
+          // Intentionally skip this message and commit its handling success.
+          break;
+        }
+        catch (Exception exception)
+        {
+          throw new PoezdOperationException(
+            $"An error occurred during executing a pipeline step of type {currentNode.Value.GetType().FullName}.",
+            exception);
+        }
+
         currentNode = currentNode.Next;
       }
     }

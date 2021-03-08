@@ -47,5 +47,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
       MessageId = messageId;
       return Task.CompletedTask;
     }
+
+    public void Dispose() { }
   }
 }

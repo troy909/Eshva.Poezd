@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   [UsedImplicitly]
-  public sealed class Service1PipeFitter : TypeBasedLinearPipeFitter
+  public sealed class Service1PipeFitter : TypeBasedPipeFitter
   {
     public Service1PipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
 

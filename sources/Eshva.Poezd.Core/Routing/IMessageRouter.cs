@@ -14,7 +14,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// Message router. The core part of Poezd.
   /// </summary>
-  public interface IMessageRouter
+  public interface IMessageRouter : IDisposable
   {
     /// <summary>
     /// A list of message brokers connected to the router.

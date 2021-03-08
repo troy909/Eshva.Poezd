@@ -155,7 +155,7 @@ namespace Eshva.Poezd.Core.Routing
         catch (Exception exception)
         {
           throw new PoezdOperationException(
-            "An error occurred during outgoing message handling. Inspect the inner exceptions for more details.",
+            "An error occurred during message publishing. Inspect the inner exceptions for more details.",
             exception);
         }
       }

@@ -23,6 +23,15 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       container.AddLogging(testOutput);
 
       container.RegisterInstance<IServiceProvider>(container);
+      container.RegisterSingleton<ThrowingEgressStep>();
+      container.RegisterSingleton<WithThrowingStepPipeFitter>();
+      container.RegisterSingleton<TestBrokerEgressEnterStep>();
+      container.RegisterSingleton<TestBrokerEgressExitStep>();
+      container.RegisterSingleton<TestBrokerEgressApiStep>();
+      container.RegisterSingleton<TestBrokerEgressExitPipeFitter>();
+      container.RegisterSingleton<TestBrokerEgressEnterPipeFitter>();
+      container.RegisterSingleton<TestBrokerEgressApiPipeFitter>();
+      container.RegisterSingleton<OwningEverythingEgressMessageTypesRegistry>();
       container.RegisterSingleton<WithBreakingHandlerPipeFitter>();
       container.RegisterSingleton<BreakingIngressStep>();
       container.RegisterSingleton<WithThrowingHandlerPipeFitter>();
@@ -137,13 +146,13 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                 .Egress(
                   egress => egress
                     .WithTestDriver(state)
-                    .WithEnterPipeFitter<EmptyPipeFitter>()
+                    .WithEnterPipeFitter<WithThrowingStepPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .AddPublicApi(
                       api => api
                         .WithId("api-1-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
-                        .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()))));
+                        .WithMessageTypesRegistry<OwningEverythingEgressMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;
@@ -276,6 +285,42 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-3-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()))));
+
+      container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
+      return container;
+    }
+
+    public static Container AddRouterWithConfiguredEgressApi(this Container container, TestDriverState state)
+    {
+      var messageRouterConfiguration =
+        MessageRouter.Configure(
+          router => router
+            .AddMessageBroker(
+              broker => broker
+                .WithId("broker-1")
+                .Ingress(
+                  ingress => ingress
+                    .WithTestDriver(state)
+                    .WithEnterPipeFitter<EmptyPipeFitter>()
+                    .WithExitPipeFitter<EmptyPipeFitter>()
+                    .WithQueueNameMatcher<MatchingNothingQueueNameMatcher>()
+                    .AddPublicApi(
+                      api => api
+                        .WithId("api-1-ingress")
+                        .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
+                        .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithHandlerRegistry<EmptyHandlerRegistry>()))
+                .Egress(
+                  egress => egress
+                    .WithTestDriver(state)
+                    .WithEnterPipeFitter<TestBrokerEgressEnterPipeFitter>()
+                    .WithExitPipeFitter<TestBrokerEgressExitPipeFitter>()
+                    .AddPublicApi(
+                      api => api
+                        .WithId("api-1-egress")
+                        .WithPipeFitter<TestBrokerEgressApiPipeFitter>()
+                        .WithMessageTypesRegistry<OwningEverythingEgressMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;

@@ -38,13 +38,13 @@ namespace Venture.CaseOffice.Messages
     private class Descriptor<TMessage> : IEgressMessageTypeDescriptor<TMessage>
       where TMessage : class
     {
-      public Descriptor(string queueName, Func<TMessage, string> getKey)
+      public Descriptor(string queueName, Func<TMessage, byte[]> getKey)
       {
         GetKey = getKey;
         _queueNames.Add(queueName);
       }
 
-      public Func<TMessage, object> GetKey { get; }
+      public Func<TMessage, byte[]> GetKey { get; }
 
       public IReadOnlyCollection<string> QueueNames => _queueNames.AsReadOnly();
 
@@ -62,10 +62,10 @@ namespace Venture.CaseOffice.Messages
         const string researchCaseFacts = "case.facts.research-case.v1";
         return new Dictionary<Type, object>
         {
-          {typeof(CreateJusticeCase), new Descriptor<CreateJusticeCase>(officeCommands, message => Guid.NewGuid().ToString("N"))},
-          {typeof(CreateResearchCase), new Descriptor<CreateResearchCase>(officeCommands, message => Guid.NewGuid().ToString("N"))},
-          {typeof(JusticeCaseCreated), new Descriptor<JusticeCaseCreated>(justiceCaseFacts, message => message.CaseId)},
-          {typeof(ResearchCaseCreated), new Descriptor<ResearchCaseCreated>(researchCaseFacts, message => message.CaseId)}
+          {typeof(CreateJusticeCase), new Descriptor<CreateJusticeCase>(officeCommands, message => Guid.NewGuid().ToByteArray())},
+          {typeof(CreateResearchCase), new Descriptor<CreateResearchCase>(officeCommands, message => Guid.NewGuid().ToByteArray())},
+          {typeof(JusticeCaseCreated), new Descriptor<JusticeCaseCreated>(justiceCaseFacts, message => message.CaseId.value)},
+          {typeof(ResearchCaseCreated), new Descriptor<ResearchCaseCreated>(researchCaseFacts, message => message.CaseId.value)}
         };
       }
     }

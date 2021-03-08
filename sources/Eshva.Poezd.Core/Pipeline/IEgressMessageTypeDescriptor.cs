@@ -23,7 +23,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Gets a functor that returns the partition key (if required by public API or message broker) for the message type.
     /// </summary>
     [NotNull]
-    Func<TMessage, object> GetKey { get; }
+    Func<TMessage, byte[]> GetKey { get; }
 
     /// <summary>
     /// Serializes a message object into byte array using standard for this public API method.

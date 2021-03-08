@@ -1,9 +1,7 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
@@ -15,14 +13,17 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
   /// <summary>
   /// Extracts message type from message broker headers and puts message type related items into context.
   /// </summary>
-  public class ExtractMessageTypeStep : IStep<IPocket>
+  public class ExtractMessageTypeStep : IStep<MessageHandlingContext>
   {
     /// <inheritdoc />
-    public Task Execute(IPocket context)
+    public Task Execute(MessageHandlingContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
+      if (context.PublicApi == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.PublicApi));
+      if (context.PublicApi.MessageTypesRegistry == null)
+        throw context.MakeKeyNotFoundException(nameof(IIngressPublicApi.MessageTypesRegistry));
 
-      var metadata = context.TakeOrThrow<Dictionary<string, string>>(ContextKeys.Broker.MessageMetadata);
+      var metadata = context.Metadata;
 
       if (metadata.TryGetValue(VentureApi.Headers.MessageTypeName, out var messageTypeName))
       {
@@ -33,7 +34,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
             "By the contract of standard Venture public API it should be specified.");
         }
 
-        context.Put(ContextKeys.Application.MessageTypeName, messageTypeName);
+        context.TypeName = messageTypeName;
       }
       else
       {
@@ -42,19 +43,18 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
           $"specified in the {VentureApi.Headers.MessageTypeName} Kafka header.");
       }
 
-      var messageTypesRegistry = context.TakeOrThrow<IIngressPublicApi>(ContextKeys.PublicApi.Itself).MessageTypesRegistry;
+      var messageTypesRegistry = context.PublicApi.MessageTypesRegistry;
 
       try
       {
         var messageType = messageTypesRegistry.GetMessageTypeByItsMessageTypeName(messageTypeName);
-        context.Put(ContextKeys.Application.MessageType, messageType);
+        context.MessageType = messageType;
 
         var getDescriptorMethod =
           typeof(IIngressMessageTypesRegistry).GetMethod(nameof(IIngressMessageTypesRegistry.GetDescriptorByMessageTypeName))!
             .MakeGenericMethod(messageType);
 
-        var descriptor = getDescriptorMethod.Invoke(messageTypesRegistry, new object?[] {messageTypeName});
-        context.Put(ContextKeys.Application.MessageTypeDescriptor, descriptor!);
+        context.Descriptor = getDescriptorMethod.Invoke(messageTypesRegistry, new object?[] {messageTypeName});
       }
       catch (Exception exception)
       {

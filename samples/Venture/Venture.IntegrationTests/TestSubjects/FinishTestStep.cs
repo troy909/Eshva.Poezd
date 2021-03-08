@@ -2,14 +2,14 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Pipeline;
+using Eshva.Poezd.Core.Routing;
 
 #endregion
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class FinishTestStep : IStep<IPocket>
+  public class FinishTestStep : IStep<MessageHandlingContext>
   {
     public FinishTestStep(Properties props)
     {
@@ -18,7 +18,7 @@ namespace Venture.IntegrationTests.TestSubjects
 
     public Properties Props { get; }
 
-    public Task Execute(IPocket context)
+    public Task Execute(MessageHandlingContext context)
     {
       Props.Semaphore.Release();
       return Task.CompletedTask;
@@ -31,7 +31,7 @@ namespace Venture.IntegrationTests.TestSubjects
         Semaphore = new SemaphoreSlim(initialCount, maxCount);
       }
 
-      public SemaphoreSlim Semaphore { get; set; }
+      public SemaphoreSlim Semaphore { get; }
     }
   }
 }

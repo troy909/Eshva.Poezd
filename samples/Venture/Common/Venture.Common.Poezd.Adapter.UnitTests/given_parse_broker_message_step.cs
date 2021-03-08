@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Routing;
 using FlatSharp;
 using FluentAssertions;
@@ -26,17 +25,17 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Broker.MessagePayload, messageBytes);
-      context.Put(ContextKeys.Application.MessageType, messageType);
-      context.Put(
-        ContextKeys.Application.MessageTypeDescriptor,
-        registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!));
+      var context = new MessageHandlingContext
+      {
+        Payload = messageBytes,
+        MessageType = messageType,
+        Descriptor = registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!)
+      };
 
       var sut = new ParseBrokerMessageStep();
       await sut.Execute(context);
 
-      var parsedMessage = context.TakeOrNull<CreateJusticeCase>(ContextKeys.Application.MessagePayload);
+      var parsedMessage = context.Message;
       parsedMessage.Should().NotBeSameAs(message, "parsed message should not be the same object as the original");
       parsedMessage.Should().BeEquivalentTo(message, "parsed message should have same property values as the original");
     }
@@ -49,11 +48,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Broker.MessagePayload, messageBytes);
-      context.Put(
-        ContextKeys.Application.MessageTypeDescriptor,
-        registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!));
+      var context = new MessageHandlingContext
+      {
+        Payload = messageBytes,
+        Descriptor = registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!)
+      };
 
       var step = new ParseBrokerMessageStep();
       Func<Task> sut = () => step.Execute(context);
@@ -68,11 +67,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Application.MessageType, messageType);
-      context.Put(
-        ContextKeys.Application.MessageTypeDescriptor,
-        registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!));
+      var context = new MessageHandlingContext
+      {
+        MessageType = messageType,
+        Descriptor = registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(messageType.FullName!)
+      };
 
       var step = new ParseBrokerMessageStep();
       Func<Task> sut = () => step.Execute(context);
@@ -88,9 +87,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       registry.Initialize();
 
       var messageType = typeof(CreateJusticeCase);
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Application.MessageType, messageType);
-      context.Put(ContextKeys.Broker.MessagePayload, messageBytes);
+      var context = new MessageHandlingContext {MessageType = messageType, Payload = messageBytes};
 
       var step = new ParseBrokerMessageStep();
       Func<Task> sut = () => step.Execute(context);
@@ -109,7 +106,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
     private static (CreateJusticeCase, byte[]) CreateSerializedMessage()
     {
-      var message = new CreateJusticeCase {SubjectId = Guid.NewGuid(), Reason = "some reason", ResposibleId = Guid.NewGuid()};
+      var message = new CreateJusticeCase {SubjectId = Guid.NewGuid(), Reason = "some reason", ResponsibleId = Guid.NewGuid()};
       var buffer = new byte[1024];
       FlatBufferSerializer.Default.Serialize(message, buffer);
       return (message, buffer);

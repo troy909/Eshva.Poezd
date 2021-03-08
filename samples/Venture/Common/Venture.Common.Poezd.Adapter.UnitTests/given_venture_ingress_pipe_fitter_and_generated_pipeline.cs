@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -60,16 +59,19 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         await pipeline.Execute(context);
       }
 
-      context.TakeOrThrow<Message1>(ContextKeys.Application.MessagePayload).IsExecuted.Should().BeTrue("message should be handled");
-      context.TakeOrThrow<IEnumerable<HandlerDescriptor>>(ContextKeys.Application.Handlers).Should()
+      context.Message.Should()
+        .BeOfType<Message1>()
+        .Subject.IsExecuted.Should().BeTrue("message should be handled");
+      context.Handlers.Should()
         .NotBeNull("message handler should be found and stored in the context").And
+        .BeOfType<HandlerDescriptor[]>()
         .Subject.Single().HandlerType.Should().Be<Massage1Handler>("message handler should be of expected type");
-      context.TakeOrThrow<string>(ContextKeys.Application.MessageTypeName).Should().Be(nameof(Message1));
-      context.TakeOrThrow<string>(ContextKeys.Application.MessageId).Should().Be("VentureApi.Headers.MessageId");
-      context.TakeOrThrow<string>(ContextKeys.Application.CorrelationId).Should().Be("VentureApi.Headers.CorrelationId");
-      context.TakeOrThrow<string>(ContextKeys.Application.CausationId).Should().Be("VentureApi.Headers.CausationId");
-      context.TakeOrThrow<Type>(ContextKeys.Application.MessageType).Should().Be(typeof(Message1));
-      context.TakeOrThrow<IIngressPublicApi>(ContextKeys.PublicApi.Itself).Should().NotBeNull();
+      context.TypeName.Should().Be(nameof(Message1));
+      context.CorrelationId.Should().Be("VentureApi.Headers.CorrelationId");
+      context.CausationId.Should().Be("VentureApi.Headers.CausationId");
+      context.MessageId.Should().Be("VentureApi.Headers.MessageId");
+      context.MessageType.Should().Be(typeof(Message1));
+      context.PublicApi.Should().NotBeNull();
     }
 
     [Fact]
@@ -98,27 +100,25 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       }
     }
 
-    private static ConcurrentPocket CreateContext()
+    private static MessageHandlingContext CreateContext()
     {
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Broker.MessagePayload, new byte[1]);
-      context.Put(ContextKeys.Broker.QueueName, "queue name");
-      context.Put(ContextKeys.Broker.ReceivedOnUtc, DateTimeOffset.UtcNow);
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string>
+      var typesRegistry = new IngressMessageTypesRegistry1();
+      typesRegistry.Initialize();
+
+      var context = new MessageHandlingContext
+      {
+        Payload = new byte[1],
+        QueueName = "queue name",
+        ReceivedOnUtc = DateTimeOffset.UtcNow,
+        Metadata = new Dictionary<string, string>
         {
           {VentureApi.Headers.MessageId, "VentureApi.Headers.MessageId"},
           {VentureApi.Headers.CorrelationId, "VentureApi.Headers.CorrelationId"},
           {VentureApi.Headers.CausationId, "VentureApi.Headers.CausationId"},
           {VentureApi.Headers.MessageTypeName, nameof(Message1)}
-        });
-      var typesRegistry = new IngressMessageTypesRegistry1();
-      typesRegistry.Initialize();
-      var handlerRegistry = new HandlerRegistry();
-      context.Put(
-        ContextKeys.PublicApi.Itself,
-        new FakePublicApi {MessageTypesRegistry = typesRegistry, HandlerRegistry = handlerRegistry});
+        },
+        PublicApi = new FakePublicApi {MessageTypesRegistry = typesRegistry, HandlerRegistry = new HandlerRegistry()}
+      };
 
       return context;
     }
@@ -154,16 +154,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       {
         public IReadOnlyCollection<string> QueueNames { get; } = new string[0];
 
-        public Func<Message1, object> GetKey { get; } = _ => typeof(Message1).FullName;
-
         public Message1 Parse(Memory<byte> bytes) => new Message1();
-
-        public int Serialize(Message1 message, Memory<byte> buffer)
-        {
-          // ReSharper disable once RedundantAssignment
-          buffer = new byte[1];
-          return 1;
-        }
       }
     }
 
@@ -173,17 +164,17 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         new Dictionary<Type, Type[]> {{typeof(Message1), new[] {typeof(Massage1Handler)}}});
     }
 
-    private class Pipeline : IPipeline<IPocket>
+    private class Pipeline : IPipeline<MessageHandlingContext>
     {
-      public List<IStep<IPocket>> Steps { get; } = new List<IStep<IPocket>>();
+      public List<IStep<MessageHandlingContext>> Steps { get; } = new List<IStep<MessageHandlingContext>>();
 
-      public IPipeline<IPocket> Append(IStep<IPocket> step)
+      public IPipeline<MessageHandlingContext> Append(IStep<MessageHandlingContext> step)
       {
         Steps.Add(step);
         return this;
       }
 
-      public async Task Execute(IPocket context)
+      public async Task Execute(MessageHandlingContext context)
       {
         foreach (var step in Steps)
         {

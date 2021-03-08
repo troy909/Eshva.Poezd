@@ -90,7 +90,7 @@ namespace Venture.IntegrationTests
       registry.Initialize();
       var descriptor = registry.GetDescriptorByMessageType<CreateJusticeCase>();
       var serialized = new byte[1024];
-      var message = new CreateJusticeCase {Reason = expectedReason, SubjectId = Guid.NewGuid(), ResposibleId = Guid.NewGuid()};
+      var message = new CreateJusticeCase {Reason = expectedReason, SubjectId = Guid.NewGuid(), ResponsibleId = Guid.NewGuid()};
       descriptor.Serialize(message, serialized);
       return (message, serialized);
     }

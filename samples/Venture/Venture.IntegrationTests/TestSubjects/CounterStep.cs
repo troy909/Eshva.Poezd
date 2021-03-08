@@ -1,14 +1,14 @@
 #region Usings
 
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Pipeline;
+using Eshva.Poezd.Core.Routing;
 
 #endregion
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class CounterStep : IStep<IPocket>
+  public class CounterStep : IStep<MessageHandlingContext>
   {
     public CounterStep(Properties props)
     {
@@ -17,7 +17,7 @@ namespace Venture.IntegrationTests.TestSubjects
 
     public Properties Props { get; }
 
-    public Task Execute(IPocket context)
+    public Task Execute(MessageHandlingContext context)
     {
       Props.Counter++;
       return Task.CompletedTask;

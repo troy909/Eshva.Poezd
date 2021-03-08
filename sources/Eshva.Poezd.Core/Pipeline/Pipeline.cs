@@ -14,10 +14,10 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// Message handling pipeline using a linked list.
   /// </summary>
-  public sealed class MessageHandlingPipeline : IPipeline<IPocket>
+  public sealed class Pipeline<TContext> : IPipeline<TContext> where TContext : class, IPocket
   {
     /// <inheritdoc />
-    public IPipeline<IPocket> Append(IStep<IPocket> step)
+    public IPipeline<TContext> Append(IStep<TContext> step)
     {
       if (step == null) throw new ArgumentNullException(nameof(step));
 
@@ -31,7 +31,7 @@ namespace Eshva.Poezd.Core.Pipeline
     }
 
     /// <inheritdoc />
-    public async Task Execute(IPocket context)
+    public async Task Execute(TContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
@@ -59,8 +59,8 @@ namespace Eshva.Poezd.Core.Pipeline
       }
     }
 
-    private IStep<IPocket> GetStepOfType(Type stepType) => _steps.FirstOrDefault(step => step.GetType() == stepType);
+    private IStep<TContext> GetStepOfType(Type stepType) => _steps.FirstOrDefault(step => step.GetType() == stepType);
 
-    private readonly LinkedList<IStep<IPocket>> _steps = new();
+    private readonly LinkedList<IStep<TContext>> _steps = new();
   }
 }

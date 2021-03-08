@@ -2,7 +2,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 
@@ -13,22 +13,24 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
   /// <summary>
   /// Parses a message object from broker message.
   /// </summary>
-  public class ParseBrokerMessageStep : IStep<IPocket>
+  public class ParseBrokerMessageStep : IStep<MessageHandlingContext>
   {
     /// <inheritdoc />
-    public Task Execute(IPocket context)
+    public Task Execute(MessageHandlingContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
+      if (context.Payload == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.Payload));
+      if (context.MessageType == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.MessageType));
+      if (context.Descriptor == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.Descriptor));
 
-      var messagePayload = context.TakeOrThrow<byte[]>(ContextKeys.Broker.MessagePayload);
-      var messageType = context.TakeOrThrow<Type>(ContextKeys.Application.MessageType);
-      var descriptor = context.TakeOrThrow<object>(ContextKeys.Application.MessageTypeDescriptor);
-
+      var messagePayload = context.Payload;
+      var messageType = context.MessageType;
+      var descriptor = context.Descriptor;
+      // TODO: Refactor to a private generic method.
       var descriptorType = typeof(IIngressMessageTypeDescriptor<>).MakeGenericType(messageType);
       var parseMethod = descriptorType.GetMethod(nameof(IIngressMessageTypeDescriptor<object>.Parse));
       Memory<byte> buffer = messagePayload;
-      var message = parseMethod!.Invoke(descriptor, new object?[] {buffer});
-      context.Put(ContextKeys.Application.MessagePayload, message!);
+      context.Message = parseMethod!.Invoke(descriptor, new object?[] {buffer});
 
       return Task.CompletedTask;
     }

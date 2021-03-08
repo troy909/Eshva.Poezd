@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using Venture.Common.Poezd.Adapter.MessageHandling;
@@ -19,85 +18,76 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public async Task when_executed_with_context_containing_message_id_within_broker_message_metadata_it_should_store_it_in_context()
     {
       var sut = new ExtractRelationMetadataStep();
-      var context = new ConcurrentPocket();
+      var context = new MessageHandlingContext();
       const string expectedId = "expected";
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.MessageId, expectedId}});
+      context.Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageId, expectedId}};
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.MessageId).Should().Be(expectedId, "this header should be copied");
+      context.MessageId.Should().Be(expectedId, "this header should be copied");
     }
 
     [Fact]
     public async Task when_executed_with_context_containing_message_metadata_with_missing_message_id_it_should_skip()
     {
       var sut = new ExtractRelationMetadataStep();
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string>());
+      var context = new MessageHandlingContext {Metadata = new Dictionary<string, string>()};
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.MessageId).Should().BeNull("this header not present");
+      context.MessageId.Should().BeNull("this header not present");
     }
 
     [Fact]
     public async Task when_executed_with_context_containing_correlation_id_within_broker_message_metadata_it_should_store_it_in_context()
     {
       var sut = new ExtractRelationMetadataStep();
-      var context = new ConcurrentPocket();
+      var context = new MessageHandlingContext();
       const string expectedCorrelationId = "expected";
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.CorrelationId, expectedCorrelationId}});
+      context.Metadata = new Dictionary<string, string> {{VentureApi.Headers.CorrelationId, expectedCorrelationId}};
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.CorrelationId).Should().Be(expectedCorrelationId, "this header should be copied");
+      context.CorrelationId.Should().Be(expectedCorrelationId, "this header should be copied");
     }
 
     [Fact]
     public async Task when_executed_with_context_containing_message_metadata_with_missing_correlation_id_it_should_skip()
     {
       var sut = new ExtractRelationMetadataStep();
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string>());
+      var context = new MessageHandlingContext {Metadata = new Dictionary<string, string>()};
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.CorrelationId).Should().BeNull("this header not present");
+      context.CorrelationId.Should().BeNull("this header not present");
     }
 
     [Fact]
     public async Task when_executed_with_context_containing_causation_id_within_broker_message_metadata_it_should_store_it_in_context()
     {
       var sut = new ExtractRelationMetadataStep();
-      var context = new ConcurrentPocket();
+      var context = new MessageHandlingContext();
       const string expectedCausationId = "expected";
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.CausationId, expectedCausationId}});
+      context.Metadata = new Dictionary<string, string> {{VentureApi.Headers.CausationId, expectedCausationId}};
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.CausationId).Should().Be(expectedCausationId, "this header should be copied");
+      context.CausationId.Should().Be(expectedCausationId, "this header should be copied");
     }
 
     [Fact]
     public async Task when_executed_with_context_containing_message_metadata_with_missing_causation_id_it_should_skip()
     {
       var sut = new ExtractRelationMetadataStep();
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string>());
+      var context = new MessageHandlingContext {Metadata = new Dictionary<string, string>()};
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.CausationId).Should().BeNull("this header not present");
+      context.CausationId.Should().BeNull("this header not present");
     }
 
     [Fact]
     public async Task when_executed_with_context_containing_no_message_metadata_it_should_skip()
     {
       var sut = new ExtractRelationMetadataStep();
-      var context = new ConcurrentPocket();
+      var context = new MessageHandlingContext();
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.CorrelationId).Should().BeNull("this header not present");
+      context.CorrelationId.Should().BeNull("this header not present");
     }
 
     [Fact]

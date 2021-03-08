@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
@@ -17,7 +16,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
   /// <summary>
   /// Executes all found message handlers, collects theirs commit decisions and stores them in the message handling context.
   /// </summary>
-  public class ExecuteMessageHandlersStep : IStep<IPocket>
+  public class ExecuteMessageHandlersStep : IStep<MessageHandlingContext>
   {
     public ExecuteMessageHandlersStep([NotNull] IHandlersExecutionStrategy executionStrategy)
     {
@@ -25,19 +24,20 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
     }
 
     /// <inheritdoc />
-    public Task Execute(IPocket context)
+    public Task Execute(MessageHandlingContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
       try
       {
-        var handlers = context.TakeOrThrow<IEnumerable<HandlerDescriptor>>(ContextKeys.Application.Handlers);
-        var message = context.TakeOrThrow<object>(ContextKeys.Application.MessagePayload);
+        if (context.Handlers == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.Handlers));
+        if (context.Message == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.Message));
+
         var messageHandlingContext = CreateMessageHandlingContext(context);
 
         return _executionStrategy.ExecuteHandlers(
-          handlers,
-          message,
+          (IEnumerable<HandlerDescriptor>) context.Handlers,
+          context.Message,
           messageHandlingContext);
       }
       catch (KeyNotFoundException exception)
@@ -46,21 +46,21 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
       }
     }
 
-    private static VentureIncomingMessageHandlingContext CreateMessageHandlingContext(IPocket context)
+    private static VentureIncomingMessageHandlingContext CreateMessageHandlingContext(MessageHandlingContext context)
     {
-      if (!context.TryTake<DateTimeOffset>(ContextKeys.Broker.ReceivedOnUtc, out var receivedOnUtc))
-        throw new KeyNotFoundException($"Can not find {ContextKeys.Broker.ReceivedOnUtc} context item.");
+      if (context.Message == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.Message));
+      if (context.MessageType == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.MessageType));
+      if (context.ReceivedOnUtc.IsMissing()) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.ReceivedOnUtc));
+      if (context.QueueName == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.QueueName));
 
-      var ventureContext = new VentureIncomingMessageHandlingContext(
-        context.TakeOrThrow<object>(ContextKeys.Application.MessagePayload),
-        context.TakeOrThrow<Type>(ContextKeys.Application.MessageType),
-        context.TakeOrThrow<string>(ContextKeys.Broker.QueueName),
-        receivedOnUtc,
-        context.TakeOrNull<string>(ContextKeys.Application.CorrelationId),
-        context.TakeOrNull<string>(ContextKeys.Application.CausationId),
-        context.TakeOrNull<string>(ContextKeys.Application.MessageId));
-
-      return ventureContext;
+      return new VentureIncomingMessageHandlingContext(
+        context.Message,
+        context.MessageType,
+        context.QueueName,
+        context.ReceivedOnUtc,
+        context.CorrelationId,
+        context.CausationId,
+        context.MessageId);
     }
 
     private readonly IHandlersExecutionStrategy _executionStrategy;

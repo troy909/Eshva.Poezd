@@ -39,15 +39,17 @@ namespace Eshva.Poezd.Core.Routing
       Egress = new BrokerEgress(configuration.Egress, serviceProvider);
     }
 
-    public IBrokerIngress Ingress { get; }
-
-    public IBrokerEgress Egress { get; }
-
     /// <summary>
     /// Gets the message broker ID.
     /// </summary>
     [NotNull]
     public string Id => Configuration.Id;
+
+    [NotNull]
+    public IBrokerIngress Ingress { get; }
+
+    [NotNull]
+    public IBrokerEgress Egress { get; }
 
     /// <summary>
     /// The message broker configuration.

@@ -43,7 +43,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
       egressRegistry.Initialize();
       var egressDescriptor = egressRegistry.GetDescriptorByMessageType<CreateJusticeCase>();
 
-      var message = new CreateJusticeCase {SubjectId = Guid.NewGuid(), Reason = "some reason", ResposibleId = Guid.NewGuid()};
+      var message = new CreateJusticeCase {SubjectId = Guid.NewGuid(), Reason = "some reason", ResponsibleId = Guid.NewGuid()};
       using var bufferOwner = MemoryPool<byte>.Shared.Rent();
       var buffer = bufferOwner.Memory;
 

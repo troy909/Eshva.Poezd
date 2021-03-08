@@ -1,9 +1,7 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 
@@ -15,23 +13,18 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
   /// Extracts correlation ID, causation ID from broker message headers and sets appropriate metadata in the message handling
   /// context.
   /// </summary>
-  public class ExtractRelationMetadataStep : IStep<IPocket>
+  public class ExtractRelationMetadataStep : IStep<MessageHandlingContext>
   {
-    public Task Execute(IPocket context)
+    public Task Execute(MessageHandlingContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
 
-      if (!context.TryTake<Dictionary<string, string>>(ContextKeys.Broker.MessageMetadata, out var metadata))
-        return Task.CompletedTask;
+      var metadata = context.Metadata;
+      if (metadata == null) return Task.CompletedTask;
 
-      if (metadata.TryGetValue(VentureApi.Headers.MessageId, out var messageId))
-        context.Put(ContextKeys.Application.MessageId, messageId);
-
-      if (metadata.TryGetValue(VentureApi.Headers.CorrelationId, out var correlationId))
-        context.Put(ContextKeys.Application.CorrelationId, correlationId);
-
-      if (metadata.TryGetValue(VentureApi.Headers.CausationId, out var causationId))
-        context.Put(ContextKeys.Application.CausationId, causationId);
+      if (metadata.TryGetValue(VentureApi.Headers.MessageId, out var messageId)) context.MessageId = messageId;
+      if (metadata.TryGetValue(VentureApi.Headers.CorrelationId, out var correlationId)) context.CorrelationId = correlationId;
+      if (metadata.TryGetValue(VentureApi.Headers.CausationId, out var causationId)) context.CausationId = causationId;
 
       return Task.CompletedTask;
     }

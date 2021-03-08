@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Common.Testing;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -41,13 +40,15 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       }
 
       var sut = new FindMessageHandlersStep(container);
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.Application.MessageType, typeof(Message01));
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {HandlerRegistry = handlersRegistry});
+      var context = new MessageHandlingContext
+      {
+        MessageType = typeof(Message01),
+        PublicApi = new FakePublicApi {HandlerRegistry = handlersRegistry}
+      };
 
       await sut.Execute(context);
 
-      var foundHandlers = context.TakeOrNull<IEnumerable<HandlerDescriptor>>(ContextKeys.Application.Handlers);
+      var foundHandlers = (IEnumerable<HandlerDescriptor>) context.Handlers;
       var singleHandler = foundHandlers.Single();
       singleHandler.Should().BeOfType<HandlerDescriptor>("should find the handler for the message");
     }

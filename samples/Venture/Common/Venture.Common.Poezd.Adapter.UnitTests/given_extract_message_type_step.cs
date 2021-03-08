@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -25,20 +24,19 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
 
-      var context = new ConcurrentPocket();
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateJusticeCase";
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}});
+      var context = new MessageHandlingContext
+      {
+        PublicApi = new FakePublicApi {MessageTypesRegistry = registry},
+        Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}}
+      };
+
       var sut = new ExtractMessageTypeStep();
 
       await sut.Execute(context);
 
-      context.TakeOrNull<string>(ContextKeys.Application.MessageTypeName)
-        .Should().Be(expectedTypeName, "this header should be copied");
-      context.TakeOrNull<Type>(ContextKeys.Application.MessageType)
-        .Should().Be(typeof(CreateJusticeCase), "message type should be recognized by its name");
+      context.TypeName.Should().Be(expectedTypeName, "this header should be copied");
+      context.MessageType.Should().Be(typeof(CreateJusticeCase), "message type should be recognized by its name");
     }
 
     [Fact]
@@ -46,9 +44,12 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string>());
+      var context = new MessageHandlingContext
+      {
+        PublicApi = new FakePublicApi {MessageTypesRegistry = registry},
+        Metadata = new Dictionary<string, string>()
+      };
+
       var step = new ExtractMessageTypeStep();
 
       Func<Task> sut = () => step.Execute(context);
@@ -60,28 +61,21 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
+      var context = new MessageHandlingContext {PublicApi = new FakePublicApi {MessageTypesRegistry = registry}};
       var step = new ExtractMessageTypeStep();
 
       // ReSharper disable once JoinDeclarationAndInitializer - it's a way to test.
       Func<Task> sut;
 
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, null}});
+      context.Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, null}};
       sut = () => step.Execute(context);
       sut.Should().Throw<PoezdOperationException>("null is a wrong message type value");
 
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, string.Empty}});
+      context.Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, string.Empty}};
       sut = () => step.Execute(context);
       sut.Should().Throw<PoezdOperationException>("an empty string is a wrong message type value");
 
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, WhitespaceString}});
+      context.Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, WhitespaceString}};
       sut = () => step.Execute(context);
       sut.Should().Throw<PoezdOperationException>("a whitespace string is a wrong message type value");
     }
@@ -92,10 +86,12 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
       var step = new ExtractMessageTypeStep();
-      var context = new ConcurrentPocket();
-      context.Put(ContextKeys.PublicApi.Itself, new FakePublicApi {MessageTypesRegistry = registry});
+      var context = new MessageHandlingContext
+      {
+        PublicApi = new FakePublicApi {MessageTypesRegistry = registry},
+        Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, "unknown"}}
+      };
 
-      context.Put(ContextKeys.Broker.MessageMetadata, new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, "unknown"}});
       Func<Task> sut = () => step.Execute(context);
 
       sut.Should().Throw<PoezdOperationException>("unknown type name used as a broker message type name");
@@ -106,11 +102,11 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
-      var context = new ConcurrentPocket();
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateCase";
-      context.Put(
-        ContextKeys.Broker.MessageMetadata,
-        new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}});
+      var context = new MessageHandlingContext
+      {
+        Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}}
+      };
       var step = new ExtractMessageTypeStep();
 
       Func<Task> sut = () => step.Execute(context);

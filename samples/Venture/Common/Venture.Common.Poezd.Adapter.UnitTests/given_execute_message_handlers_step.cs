@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -53,24 +52,24 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var step = new ExecuteMessageHandlersStep(new ExecutionStrategy());
 
-      IPocket context = null;
+      MessageHandlingContext context = null;
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       // ReSharper disable once AccessToModifiedClosure - it's a way to test.
       Func<Task> sut = () => step.Execute(context!);
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.MessageType);
-      sut.Should().Throw<PoezdOperationException>();
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.QueueName);
-      sut.Should().Throw<PoezdOperationException>();
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.Handlers);
-      sut.Should().Throw<PoezdOperationException>();
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Broker.ReceivedOnUtc);
-      sut.Should().Throw<PoezdOperationException>();
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.MessageId);
-      sut.Should().NotThrow<PoezdOperationException>();
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.CorrelationId);
-      sut.Should().NotThrow<PoezdOperationException>();
-      context = VentureContextTools.CreateContextWithout(ContextKeys.Application.CausationId);
-      sut.Should().NotThrow<PoezdOperationException>();
+      context = VentureContextTools.CreateContextWithout(handlingContext => handlingContext.MessageType = null);
+      sut.Should().Throw<PoezdOperationException>("message type is required");
+      context = VentureContextTools.CreateContextWithout(handlingContext => handlingContext.QueueName = null);
+      sut.Should().Throw<PoezdOperationException>("queue name is required");
+      context = VentureContextTools.CreateContextWithout(handlingContext => handlingContext.Handlers = null);
+      sut.Should().Throw<PoezdOperationException>("handlers are required");
+      context = VentureContextTools.CreateContextWithout(handlingContext => handlingContext.ReceivedOnUtc = DateTimeOffset.MinValue);
+      sut.Should().Throw<PoezdOperationException>("received on moment is required");
+      context = VentureContextTools.CreateContextWithout(handlingContext => handlingContext.CorrelationId = null);
+      sut.Should().NotThrow<PoezdOperationException>("correlation ID is not required");
+      context = VentureContextTools.CreateContextWithout(handlingContext => handlingContext.CausationId = null);
+      sut.Should().NotThrow<PoezdOperationException>("causation ID is not required");
+      context = VentureContextTools.CreateContextWithout(handlingContext => handlingContext.MessageId = null);
+      sut.Should().NotThrow<PoezdOperationException>("message ID is not required");
     }
 
     private class ExecutionStrategy : IHandlersExecutionStrategy

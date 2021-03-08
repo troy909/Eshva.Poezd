@@ -3,7 +3,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
@@ -16,7 +16,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
   /// <summary>
   /// Finds all message handlers for a message object stored in a message handling context item.
   /// </summary>
-  public class FindMessageHandlersStep : IStep<IPocket>
+  public class FindMessageHandlersStep : IStep<MessageHandlingContext>
   {
     public FindMessageHandlersStep([NotNull] IServiceProvider serviceProvider)
     {
@@ -24,15 +24,15 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
     }
 
     /// <inheritdoc />
-    public Task Execute(IPocket context)
+    public Task Execute(MessageHandlingContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
+      if (context.PublicApi == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.PublicApi));
+      if (context.MessageType == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.MessageType));
 
-      var publicApi = context.TakeOrThrow<IIngressPublicApi>(ContextKeys.PublicApi.Itself);
-      var handlerRegistry = publicApi.HandlerRegistry;
-      var messageType = context.TakeOrThrow<Type>(ContextKeys.Application.MessageType);
-      var handlers = GetHandlersForMessageType(messageType, handlerRegistry);
-      context.Put(ContextKeys.Application.Handlers, handlers);
+      var handlerRegistry = context.PublicApi.HandlerRegistry;
+      var handlers = GetHandlersForMessageType(context.MessageType, handlerRegistry);
+      context.Handlers = handlers;
       return Task.CompletedTask;
     }
 

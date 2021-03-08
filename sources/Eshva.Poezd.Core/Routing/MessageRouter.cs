@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Eshva.Common.Collections;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
@@ -91,16 +90,20 @@ namespace Eshva.Poezd.Core.Routing
 
       using (_diContainerAdapter.BeginScope())
       {
+        // TODO: Move getting broker and API into a pipeline step.
         var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
         var publicApi = messageBroker.Ingress.GetApiByQueueName(queueName);
 
-        var messageHandlingContext = BuildIngressMessageHandlingContext(
-          messageBroker,
-          publicApi,
-          payload,
-          metadata,
-          queueName,
-          receivedOnUtc);
+        var messageHandlingContext = new MessageHandlingContext
+        {
+          Payload = payload,
+          Metadata = metadata,
+          QueueName = queueName,
+          ReceivedOnUtc = receivedOnUtc,
+          Broker = messageBroker,
+          PublicApi = publicApi
+        };
+
         var pipeline = BuildIngressPipeline(messageBroker, publicApi);
 
         try
@@ -131,13 +134,15 @@ namespace Eshva.Poezd.Core.Routing
 
       using (_diContainerAdapter.BeginScope())
       {
-        var context = BuildEgressMessageHandlingContext(
-          message,
-          messageBroker,
-          publicApi,
-          correlationId,
-          causationId,
-          messageId);
+        var context = new MessagePublishingContext
+        {
+          Message = message,
+          Broker = messageBroker,
+          PublicApi = publicApi,
+          CorrelationId = correlationId,
+          CausationId = causationId,
+          MessageId = messageId
+        };
 
         var pipeline = BuildEgressPipeline(messageBroker, publicApi);
 
@@ -201,40 +206,11 @@ namespace Eshva.Poezd.Core.Routing
       context.Metadata,
       context.QueueNames);
 
-    private static ConcurrentPocket BuildIngressMessageHandlingContext(
-      MessageBroker messageBroker,
-      IIngressPublicApi publicApi,
-      byte[] payload,
-      IReadOnlyDictionary<string, string> metadata,
-      string queueName,
-      DateTimeOffset receivedOnUtc)
+    private static Pipeline<MessageHandlingContext> BuildIngressPipeline(MessageBroker messageBroker, IIngressPublicApi publicApi)
     {
       try
       {
-        // TODO: Replace with a IncomingMessageHandlingContext similar to MessagePublishingContext.
-        var context = new ConcurrentPocket();
-        context
-          .Put(ContextKeys.Broker.MessageMetadata, metadata)
-          .Put(ContextKeys.Broker.MessagePayload, payload)
-          .Put(ContextKeys.Broker.QueueName, queueName)
-          .Put(ContextKeys.Broker.ReceivedOnUtc, receivedOnUtc)
-          .Put(ContextKeys.Broker.Itself, messageBroker)
-          .Put(ContextKeys.PublicApi.Itself, publicApi);
-        return context;
-      }
-      catch (Exception exception)
-      {
-        throw new PoezdOperationException(
-          "An error occurred during building an ingress message handling context. Inspect the inner exceptions for more details.",
-          exception);
-      }
-    }
-
-    private static MessageHandlingPipeline BuildIngressPipeline(MessageBroker messageBroker, IIngressPublicApi publicApi)
-    {
-      try
-      {
-        var pipeline = new MessageHandlingPipeline();
+        var pipeline = new Pipeline<MessageHandlingContext>();
         messageBroker.Ingress.EnterPipeFitter.AppendStepsInto(pipeline);
         publicApi.PipeFitter.AppendStepsInto(pipeline);
         messageBroker.Ingress.ExitPipeFitter.AppendStepsInto(pipeline);
@@ -248,44 +224,13 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    private static MessagePublishingContext BuildEgressMessageHandlingContext<TMessage>(
-      TMessage message,
-      MessageBroker messageBroker,
-      IEgressPublicApi publicApi,
-      string correlationId,
-      string causationId,
-      string messageId)
-      where TMessage : class
-    {
-      try
-      {
-        var context = new MessagePublishingContext
-        {
-          Message = message,
-          Broker = messageBroker,
-          PublicApi = publicApi,
-          CorrelationId = correlationId,
-          CausationId = causationId,
-          MessageId = messageId
-        };
-
-        return context;
-      }
-      catch (Exception exception)
-      {
-        throw new PoezdOperationException(
-          "An error occurred during building an egress message handling context. Inspect the inner exceptions for more details.",
-          exception);
-      }
-    }
-
-    private static MessageHandlingPipeline BuildEgressPipeline(
+    private static Pipeline<MessagePublishingContext> BuildEgressPipeline(
       MessageBroker messageBroker,
       IEgressPublicApi publicApi)
     {
       try
       {
-        var pipeline = new MessageHandlingPipeline();
+        var pipeline = new Pipeline<MessagePublishingContext>();
         messageBroker.Egress.EnterPipeFitter.AppendStepsInto(pipeline);
         publicApi.PipeFitter.AppendStepsInto(pipeline);
         messageBroker.Egress.ExitPipeFitter.AppendStepsInto(pipeline);

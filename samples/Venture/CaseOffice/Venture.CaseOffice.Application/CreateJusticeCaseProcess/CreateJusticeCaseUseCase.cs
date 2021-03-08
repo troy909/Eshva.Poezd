@@ -28,7 +28,7 @@ namespace Venture.CaseOffice.Application.CreateJusticeCaseProcess
         Guid.NewGuid(),
         message.SubjectId,
         message.Reason,
-        message.ResposibleId);
+        message.ResponsibleId);
 
       try
       {

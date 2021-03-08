@@ -23,7 +23,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Message type is not specified.
     /// </exception>
     /// <exception cref="KeyNotFoundException">
-    /// Message type doesn't belongs to this public API.
+    /// Message type doesn't belongs to this API.
     /// </exception>
     [NotNull]
     string GetMessageTypeNameByItsMessageType(Type messageType);
@@ -41,19 +41,19 @@ namespace Eshva.Poezd.Core.Pipeline
     /// The message type is not specified.
     /// </exception>
     /// <exception cref="KeyNotFoundException">
-    /// Message type doesn't belongs to this public API.
+    /// Message type doesn't belongs to this API.
     /// </exception>
     [NotNull]
     IEgressMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class;
 
     /// <summary>
-    /// Checks if message of <typeparamref name="TMessage" /> belongs to this public API.
+    /// Checks if message of <typeparamref name="TMessage" /> belongs to this API.
     /// </summary>
     /// <typeparam name="TMessage">
     /// The message CLR-type.
     /// </typeparam>
     /// <returns>
-    /// Returns <c>true</c> if message belongs to this public API, <c>false</c> otherwise.
+    /// Returns <c>true</c> if message belongs to this API, <c>false</c> otherwise.
     /// </returns>
     bool DoesOwn<TMessage>() where TMessage : class;
   }

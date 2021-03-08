@@ -27,10 +27,10 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
     public Task Execute(MessageHandlingContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
-      if (context.PublicApi == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.PublicApi));
+      if (context.Api == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.Api));
       if (context.MessageType == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.MessageType));
 
-      var handlerRegistry = context.PublicApi.HandlerRegistry;
+      var handlerRegistry = context.Api.HandlerRegistry;
       var handlers = GetHandlersForMessageType(context.MessageType, handlerRegistry);
       context.Handlers = handlers;
       return Task.CompletedTask;

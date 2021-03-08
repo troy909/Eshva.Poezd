@@ -7,7 +7,7 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class PublicApi1QueueNamePatternsProvider : IQueueNamePatternsProvider
+  public class IngressApi1QueueNamePatternsProvider : IQueueNamePatternsProvider
   {
     public IEnumerable<string> GetQueueNamePatterns()
     {

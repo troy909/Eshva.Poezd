@@ -44,14 +44,14 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
-    public void when_public_api_added_it_should_be_added_into_configuration()
+    public void when_api_added_it_should_be_added_into_configuration()
     {
       var configuration = new BrokerIngressConfiguration();
       var sut = new BrokerIngressConfigurator(configuration);
       var expected = new StringCreator().Get(length: 10);
-      sut.AddPublicApi(api => api.WithId(expected)).Should().BeSameAs(sut);
-      configuration.PublicApis.Should().HaveCount(expected: 1, "public API should be added")
-        .And.Subject.Single().Id.Should().Be(expected, "it should be added public API instance");
+      sut.AddApi(api => api.WithId(expected)).Should().BeSameAs(sut);
+      configuration.Apis.Should().HaveCount(expected: 1, "an API should be added")
+        .And.Subject.Single().Id.Should().Be(expected, "it should be added API instance");
     }
 
     [Fact]
@@ -64,11 +64,11 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
-    public void when_null_added_as_public_api_it_should_fail()
+    public void when_null_added_as_api_it_should_fail()
     {
       var configurator = new BrokerIngressConfigurator(new BrokerIngressConfiguration());
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
-      Action sut = () => configurator.AddPublicApi(configurator: null);
+      Action sut = () => configurator.AddApi(configurator: null);
       sut.Should().Throw<ArgumentNullException>();
     }
 

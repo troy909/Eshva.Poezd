@@ -22,7 +22,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var sut = new GetBrokerMetadataStep();
       var context = new MessagePublishingContext
       {
-        PublicApi = CreatePublicApi(),
+        Api = CreateEgressApi(),
         Message = new Message1(),
         CorrelationId = ExpectedCorrelationId,
         CausationId = ExpectedCausationId,
@@ -51,13 +51,13 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"));
     }
 
-    private static IEgressPublicApi CreatePublicApi()
+    private static IEgressApi CreateEgressApi()
     {
       var registryMock = new Mock<IEgressMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetMessageTypeNameByItsMessageType(It.IsAny<Type>())).Returns(ExpectedMessageTypeName);
-      var publicApiMock = new Mock<IEgressPublicApi>();
-      publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
-      return publicApiMock.Object;
+      var egressApiMock = new Mock<IEgressApi>();
+      egressApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
+      return egressApiMock.Object;
     }
 
     private const string ExpectedMessageTypeName = nameof(ExpectedMessageTypeName);

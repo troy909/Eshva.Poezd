@@ -19,9 +19,9 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
     public Task Execute(MessageHandlingContext context)
     {
       if (context == null) throw new ArgumentNullException(nameof(context));
-      if (context.PublicApi == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.PublicApi));
-      if (context.PublicApi.MessageTypesRegistry == null)
-        throw context.MakeKeyNotFoundException(nameof(IIngressPublicApi.MessageTypesRegistry));
+      if (context.Api == null) throw context.MakeKeyNotFoundException(nameof(MessageHandlingContext.Api));
+      if (context.Api.MessageTypesRegistry == null)
+        throw context.MakeKeyNotFoundException(nameof(IIngressApi.MessageTypesRegistry));
 
       var metadata = context.Metadata;
 
@@ -31,7 +31,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
         {
           throw new PoezdOperationException(
             "Message type in its headers is null, an empty or whitespace string. " +
-            "By the contract of standard Venture public API it should be specified.");
+            "By the standard Venture ingress API contract of it should be specified.");
         }
 
         context.TypeName = messageTypeName;
@@ -39,11 +39,11 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
       else
       {
         throw new PoezdOperationException(
-          "Can not find the message type in its headers. By the contract of standard Venture public API it should be " +
+          "Can not find the message type in its headers. By the standard Venture ingress API contract of it should be " +
           $"specified in the {VentureApi.Headers.MessageTypeName} Kafka header.");
       }
 
-      var messageTypesRegistry = context.PublicApi.MessageTypesRegistry;
+      var messageTypesRegistry = context.Api.MessageTypesRegistry;
 
       try
       {

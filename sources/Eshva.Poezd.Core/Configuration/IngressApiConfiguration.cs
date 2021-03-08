@@ -9,7 +9,7 @@ using Eshva.Poezd.Core.Routing;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class IngressPublicApiConfiguration : IMessageRouterConfigurationPart
+  public class IngressApiConfiguration : IMessageRouterConfigurationPart
   {
     public string Id { get; set; }
 
@@ -21,26 +21,26 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type MessageTypesRegistryType { get; set; }
 
-    public static IngressPublicApiConfiguration Empty { get; } = CreateValidEmpty();
+    public static IngressApiConfiguration Empty { get; } = CreateValidEmpty();
 
     /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
       if (string.IsNullOrWhiteSpace(Id))
-        yield return "ID of the public API should be specified.";
+        yield return "ID of ingress API should be specified.";
       if (PipeFitterType == null)
-        yield return $"The ingress pipe fitter type should be set for the public API with ID '{Id}'.";
+        yield return $"The ingress pipe fitter type should be set for the API with ID '{Id}'.";
       if (HandlerRegistryType == null)
-        yield return $"The handler factory type should be set for the public API with ID '{Id}'.";
+        yield return $"The handler factory type should be set for the API with ID '{Id}'.";
       if (QueueNamePatternsProviderType == null)
-        yield return $"The queue name patterns provider type should be set for the public API with ID '{Id}'.";
+        yield return $"The queue name patterns provider type should be set for the API with ID '{Id}'.";
       if (MessageTypesRegistryType == null)
-        yield return $"The message registry type should be set for the public API with ID '{Id}'.";
+        yield return $"The message registry type should be set for the API with ID '{Id}'.";
     }
 
-    private static IngressPublicApiConfiguration CreateValidEmpty() => new()
+    private static IngressApiConfiguration CreateValidEmpty() => new()
     {
-      Id = "empty ingress public API configuration",
+      Id = "empty ingress API configuration",
       HandlerRegistryType = typeof(EmptyHandlerRegistry),
       MessageTypesRegistryType = typeof(EmptyIngressMessageTypesRegistry),
       PipeFitterType = typeof(EmptyPipeFitter),

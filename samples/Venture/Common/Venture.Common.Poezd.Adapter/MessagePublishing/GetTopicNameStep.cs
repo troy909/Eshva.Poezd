@@ -24,7 +24,7 @@ namespace Venture.Common.Poezd.Adapter.MessagePublishing
       var getQueueNames = GenericGetQueueName!.MakeGenericMethod(context.Message.GetType());
       context.QueueNames = (IReadOnlyCollection<string>) getQueueNames.Invoke(
         this,
-        new object?[] {context.PublicApi.MessageTypesRegistry});
+        new object?[] {context.Api.MessageTypesRegistry});
       return Task.CompletedTask;
     }
 

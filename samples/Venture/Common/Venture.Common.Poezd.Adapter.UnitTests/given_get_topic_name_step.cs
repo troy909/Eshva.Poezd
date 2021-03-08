@@ -18,7 +18,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_it_should_store_queue_name_into_context()
     {
-      var context = new MessagePublishingContext {PublicApi = CreatePublicApi(), Message = new Message1()};
+      var context = new MessagePublishingContext {Api = CreateEgressApi(), Message = new Message1()};
       var sut = new GetTopicNameStep();
       sut.Execute(context);
 
@@ -35,15 +35,15 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"));
     }
 
-    private static IEgressPublicApi CreatePublicApi()
+    private static IEgressApi CreateEgressApi()
     {
       var descriptorMock = new Mock<IEgressMessageTypeDescriptor<Message1>>();
       descriptorMock.SetupGet(descriptor => descriptor.QueueNames).Returns(() => new[] {ExpectedQueueName});
       var registryMock = new Mock<IEgressMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetDescriptorByMessageType<Message1>()).Returns(descriptorMock.Object);
-      var publicApiMock = new Mock<IEgressPublicApi>();
-      publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
-      return publicApiMock.Object;
+      var egressApiMock = new Mock<IEgressApi>();
+      egressApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
+      return egressApiMock.Object;
     }
 
     private const string ExpectedQueueName = nameof(ExpectedQueueName);

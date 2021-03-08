@@ -17,29 +17,29 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type ExitPipeFitterType { get; internal set; }
 
-    public IReadOnlyCollection<EgressPublicApiConfiguration> PublicApis => _publicApis.AsReadOnly();
+    public IReadOnlyCollection<EgressApiConfiguration> Apis => _apis.AsReadOnly();
 
     public IBrokerEgressDriver Driver { get; internal set; }
 
     public static BrokerEgressConfiguration Empty { get; } = CreateValidEmpty();
 
     /// <summary>
-    /// Adds a public API configuration
+    /// Adds an egress API configuration
     /// </summary>
     /// <param name="configuration">
-    /// Public API configuration to add.
+    /// Egress API configuration to add.
     /// </param>
-    public void AddPublicApi([NotNull] EgressPublicApiConfiguration configuration)
+    public void AddApi([NotNull] EgressApiConfiguration configuration)
     {
       if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
-      _publicApis.Add(configuration);
+      _apis.Add(configuration);
     }
 
     protected override IEnumerable<string> ValidateItself()
     {
-      if (!_publicApis.Any())
-        yield return "At least one public API should be configured for broker egress.";
+      if (!_apis.Any())
+        yield return "At least one API should be configured for broker egress.";
       if (EnterPipeFitterType == null)
         yield return "The enter pipe fitter type should be set for the broker egress.";
       if (ExitPipeFitterType == null)
@@ -47,7 +47,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     /// <inheritdoc />
-    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => _publicApis.AsReadOnly();
+    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => _apis.AsReadOnly();
 
     private static BrokerEgressConfiguration CreateValidEmpty()
     {
@@ -57,10 +57,10 @@ namespace Eshva.Poezd.Core.Configuration
         EnterPipeFitterType = typeof(EmptyPipeFitter),
         ExitPipeFitterType = typeof(EmptyPipeFitter)
       };
-      configuration.AddPublicApi(EgressPublicApiConfiguration.Empty);
+      configuration.AddApi(EgressApiConfiguration.Empty);
       return configuration;
     }
 
-    private readonly List<EgressPublicApiConfiguration> _publicApis = new();
+    private readonly List<EgressApiConfiguration> _apis = new();
   }
 }

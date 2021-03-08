@@ -11,13 +11,13 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class IngressPublicApi : IIngressPublicApi
+  public class IngressApi : IIngressApi
   {
     /// <summary>
-    /// Constructs a new instance of public API.
+    /// Constructs a new instance of ingress API.
     /// </summary>
     /// <param name="configuration">
-    /// The public API configuration.
+    /// The ingress API configuration.
     /// </param>
     /// <param name="serviceProvider">
     /// Service provider.
@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// One of arguments is not specified.
     /// </exception>
-    public IngressPublicApi([NotNull] IngressPublicApiConfiguration configuration, [NotNull] IServiceProvider serviceProvider)
+    public IngressApi([NotNull] IngressApiConfiguration configuration, [NotNull] IServiceProvider serviceProvider)
     {
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
@@ -37,7 +37,7 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public IngressPublicApiConfiguration Configuration { get; }
+    public IngressApiConfiguration Configuration { get; }
 
     /// <inheritdoc />
     public IPipeFitter PipeFitter { get; }
@@ -48,7 +48,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public IHandlerRegistry HandlerRegistry { get; }
 
-    public static IIngressPublicApi Empty { get; } = new EmptyIngressPublicApi();
+    public static IIngressApi Empty { get; } = new EmptyIngressApi();
 
     /// <inheritdoc />
     public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
@@ -58,7 +58,7 @@ namespace Eshva.Poezd.Core.Routing
       var pipeFitter = (IPipeFitter) serviceProvider.GetService(
         Configuration.PipeFitterType,
         type => new PoezdOperationException(
-          $"Can not get an instance of public API ingress pipe fitter of type '{type.FullName}'." +
+          $"Can not get an instance of ingress API pipe fitter of type '{type.FullName}'." +
           "You should register this type in DI-container."));
       return pipeFitter;
     }

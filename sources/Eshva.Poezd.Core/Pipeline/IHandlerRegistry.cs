@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// Registry of message handlers specific for a public API.
+  /// Registry of message handlers specific for an API.
   /// </summary>
   public interface IHandlerRegistry
   {

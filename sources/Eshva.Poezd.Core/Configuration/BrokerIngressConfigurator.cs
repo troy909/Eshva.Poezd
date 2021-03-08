@@ -34,13 +34,13 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public BrokerIngressConfigurator AddPublicApi([NotNull] Action<IngressPublicApiConfigurator> configurator)
+    public BrokerIngressConfigurator AddApi([NotNull] Action<IngressApiConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
 
-      var configuration = new IngressPublicApiConfiguration();
-      _configuration.AddPublicApi(configuration);
-      configurator(new IngressPublicApiConfigurator(configuration));
+      var configuration = new IngressApiConfiguration();
+      _configuration.AddApi(configuration);
+      configurator(new IngressApiConfigurator(configuration));
       return this;
     }
 

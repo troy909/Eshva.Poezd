@@ -57,7 +57,7 @@ namespace Eshva.Poezd.Core.Routing
 
         var starters = Brokers.Select(
           broker => broker.StartConsumeMessages(
-            broker.Ingress.PublicApis.SelectMany(api => api.GetQueueNamePatterns()),
+            broker.Ingress.Apis.SelectMany(api => api.GetQueueNamePatterns()),
             cancellationToken));
         // TODO: Are exceptions here handled correctly?
         await Task.WhenAll(starters);
@@ -92,7 +92,7 @@ namespace Eshva.Poezd.Core.Routing
       {
         // TODO: Move getting broker and API into a pipeline step.
         var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
-        var publicApi = messageBroker.Ingress.GetApiByQueueName(queueName);
+        var api = messageBroker.Ingress.GetApiByQueueName(queueName);
 
         var messageHandlingContext = new MessageHandlingContext
         {
@@ -101,10 +101,10 @@ namespace Eshva.Poezd.Core.Routing
           QueueName = queueName,
           ReceivedOnUtc = receivedOnUtc,
           Broker = messageBroker,
-          PublicApi = publicApi
+          Api = api
         };
 
-        var pipeline = BuildIngressPipeline(messageBroker, publicApi);
+        var pipeline = BuildIngressPipeline(messageBroker, api);
 
         try
         {
@@ -129,8 +129,8 @@ namespace Eshva.Poezd.Core.Routing
       string messageId = default)
       where TMessage : class
     {
-      var publicApi = _brokers.SelectMany(broker => broker.Egress.PublicApis).Single(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
-      var messageBroker = _brokers.Single(broker => broker.Egress.PublicApis.Contains(publicApi));
+      var egressApi = _brokers.SelectMany(broker => broker.Egress.Apis).Single(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
+      var messageBroker = _brokers.Single(broker => broker.Egress.Apis.Contains(egressApi));
 
       using (_diContainerAdapter.BeginScope())
       {
@@ -138,13 +138,13 @@ namespace Eshva.Poezd.Core.Routing
         {
           Message = message,
           Broker = messageBroker,
-          PublicApi = publicApi,
+          Api = egressApi,
           CorrelationId = correlationId,
           CausationId = causationId,
           MessageId = messageId
         };
 
-        var pipeline = BuildEgressPipeline(messageBroker, publicApi);
+        var pipeline = BuildEgressPipeline(messageBroker, egressApi);
 
         try
         {
@@ -206,13 +206,13 @@ namespace Eshva.Poezd.Core.Routing
       context.Metadata,
       context.QueueNames);
 
-    private static Pipeline<MessageHandlingContext> BuildIngressPipeline(MessageBroker messageBroker, IIngressPublicApi publicApi)
+    private static Pipeline<MessageHandlingContext> BuildIngressPipeline(MessageBroker messageBroker, IIngressApi api)
     {
       try
       {
         var pipeline = new Pipeline<MessageHandlingContext>();
         messageBroker.Ingress.EnterPipeFitter.AppendStepsInto(pipeline);
-        publicApi.PipeFitter.AppendStepsInto(pipeline);
+        api.PipeFitter.AppendStepsInto(pipeline);
         messageBroker.Ingress.ExitPipeFitter.AppendStepsInto(pipeline);
         return pipeline;
       }
@@ -226,13 +226,13 @@ namespace Eshva.Poezd.Core.Routing
 
     private static Pipeline<MessagePublishingContext> BuildEgressPipeline(
       MessageBroker messageBroker,
-      IEgressPublicApi publicApi)
+      IEgressApi api)
     {
       try
       {
         var pipeline = new Pipeline<MessagePublishingContext>();
         messageBroker.Egress.EnterPipeFitter.AppendStepsInto(pipeline);
-        publicApi.PipeFitter.AppendStepsInto(pipeline);
+        api.PipeFitter.AppendStepsInto(pipeline);
         messageBroker.Egress.ExitPipeFitter.AppendStepsInto(pipeline);
 
         return pipeline;

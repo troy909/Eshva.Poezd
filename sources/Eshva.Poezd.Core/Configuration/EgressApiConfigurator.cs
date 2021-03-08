@@ -7,14 +7,14 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class EgressPublicApiConfigurator
+  public class EgressApiConfigurator
   {
-    public EgressPublicApiConfigurator(EgressPublicApiConfiguration configuration)
+    public EgressApiConfigurator(EgressApiConfiguration configuration)
     {
       _configuration = configuration;
     }
 
-    public EgressPublicApiConfigurator WithId(string id)
+    public EgressApiConfigurator WithId(string id)
     {
       if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
 
@@ -22,18 +22,18 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public EgressPublicApiConfigurator WithPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    public EgressApiConfigurator WithPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
       _configuration.PipeFitterType = typeof(TConfigurator);
       return this;
     }
 
-    public EgressPublicApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
+    public EgressApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
     {
       _configuration.MessageTypesRegistryType = typeof(TMessageTypesRegistry);
       return this;
     }
 
-    private readonly EgressPublicApiConfiguration _configuration;
+    private readonly EgressApiConfiguration _configuration;
   }
 }

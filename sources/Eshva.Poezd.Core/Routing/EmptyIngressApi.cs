@@ -10,12 +10,12 @@ using Eshva.Poezd.Core.Pipeline;
 namespace Eshva.Poezd.Core.Routing
 {
   /// <summary>
-  /// A stab for ingress public API.
+  /// A stab for ingress API.
   /// </summary>
-  internal sealed class EmptyIngressPublicApi : IIngressPublicApi
+  internal sealed class EmptyIngressApi : IIngressApi
   {
     /// <inheritdoc />
-    public IngressPublicApiConfiguration Configuration => new();
+    public IngressApiConfiguration Configuration => new();
 
     /// <inheritdoc />
     public IPipeFitter PipeFitter { get; } = new EmptyPipeFitter();

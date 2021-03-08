@@ -9,9 +9,9 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class EgressPublicApi : IEgressPublicApi
+  public class EgressApi : IEgressApi
   {
-    public EgressPublicApi(EgressPublicApiConfiguration configuration, IServiceProvider serviceProvider)
+    public EgressApi(EgressApiConfiguration configuration, IServiceProvider serviceProvider)
     {
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
@@ -20,7 +20,7 @@ namespace Eshva.Poezd.Core.Routing
       PipeFitter = GetPipeFitter(serviceProvider);
     }
 
-    public EgressPublicApiConfiguration Configuration { get; }
+    public EgressApiConfiguration Configuration { get; }
 
     public IPipeFitter PipeFitter { get; }
 
@@ -31,7 +31,7 @@ namespace Eshva.Poezd.Core.Routing
       var pipeFitter = (IPipeFitter) serviceProvider.GetService(
         Configuration.PipeFitterType,
         type => new PoezdOperationException(
-          $"Can not get an instance of public API ingress pipe fitter of type '{type.FullName}'." +
+          $"Can not get an instance of an egress API pipe fitter of type '{type.FullName}'." +
           "You should register this type in DI-container."));
       return pipeFitter;
     }

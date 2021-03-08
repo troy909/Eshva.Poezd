@@ -83,21 +83,21 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithEnterPipeFitter<TIngressEnterPipeline>()
                     .WithExitPipeFitter<TIngressExitPipeline>()
                     .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
                         .WithPipeFitter<Service1PipeFitter>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>())
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-2-ingress")
                         .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
                         .WithPipeFitter<Service2PipeFitter>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>())
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("cdc-notifications-ingress")
                         .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
@@ -109,7 +109,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithTestDriver(state)
                     .WithEnterPipeFitter<TEgressEnterPipeline>()
                     .WithExitPipeFitter<TEgressExitPipeline>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("case-office-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
@@ -136,7 +136,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithEnterPipeFitter<WithThrowingHandlerPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<MatchingEverythingQueueNameMatcher>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
@@ -148,7 +148,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithTestDriver(state)
                     .WithEnterPipeFitter<WithThrowingStepPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
@@ -175,7 +175,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithEnterPipeFitter<WithBreakingHandlerPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<MatchingEverythingQueueNameMatcher>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
@@ -187,7 +187,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithTestDriver(state)
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
@@ -216,7 +216,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<MatchingNothingQueueNameMatcher>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
@@ -228,7 +228,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithTestDriver(state)
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
@@ -242,7 +242,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<MatchingNothingQueueNameMatcher>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-2-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
@@ -254,7 +254,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithTestDriver(state)
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-2-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
@@ -268,7 +268,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<MatchingNothingQueueNameMatcher>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-3-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
@@ -280,7 +280,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithTestDriver(state)
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-3-egress")
                         .WithPipeFitter<EmptyPipeFitter>()
@@ -304,7 +304,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<MatchingNothingQueueNameMatcher>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
@@ -316,7 +316,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .WithTestDriver(state)
                     .WithEnterPipeFitter<TestBrokerEgressEnterPipeFitter>()
                     .WithExitPipeFitter<TestBrokerEgressExitPipeFitter>()
-                    .AddPublicApi(
+                    .AddApi(
                       api => api
                         .WithId("api-1-egress")
                         .WithPipeFitter<TestBrokerEgressApiPipeFitter>()

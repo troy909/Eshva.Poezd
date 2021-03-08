@@ -13,7 +13,7 @@ namespace Eshva.Poezd.Core.Pipeline
   public interface IQueueNamePatternsProvider
   {
     /// <summary>
-    /// Provides queue name patterns that belongs to a public API.
+    /// Provides queue name patterns that belongs to an API.
     /// </summary>
     /// <returns>
     /// List of queue name patterns.

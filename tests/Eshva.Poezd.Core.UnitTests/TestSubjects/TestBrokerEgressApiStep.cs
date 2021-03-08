@@ -20,7 +20,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 
     public Task Execute(MessagePublishingContext context)
     {
-      var registry = context.PublicApi.MessageTypesRegistry;
+      var registry = context.Api.MessageTypesRegistry;
       var descriptor = registry.GetDescriptorByMessageType<TestEgressMessage1>();
       var message = (TestEgressMessage1) context.Message;
 

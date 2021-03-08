@@ -19,7 +19,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     public async Task when_executing_it_should_serialize_message_into_byte_array()
     {
       const byte expected = 0x23;
-      var context = new MessagePublishingContext {PublicApi = CreatePublicApi(), Message = new Message1 {Byte = expected}};
+      var context = new MessagePublishingContext {Api = CreateEgressApi(), Message = new Message1 {Byte = expected}};
       var sut = new SerializeMessageStep();
 
       await sut.Execute(context);
@@ -37,7 +37,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"));
     }
 
-    private static IEgressPublicApi CreatePublicApi()
+    private static IEgressApi CreateEgressApi()
     {
       var descriptorMock = new Mock<IEgressMessageTypeDescriptor<Message1>>();
       descriptorMock.Setup(descriptor => descriptor.Serialize(It.IsAny<Message1>(), It.IsAny<Memory<byte>>()))
@@ -45,9 +45,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         .Returns(value: 777);
       var registryMock = new Mock<IEgressMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetDescriptorByMessageType<Message1>()).Returns(descriptorMock.Object);
-      var publicApiMock = new Mock<IEgressPublicApi>();
-      publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
-      return publicApiMock.Object;
+      var egressApiMock = new Mock<IEgressApi>();
+      egressApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);
+      return egressApiMock.Object;
     }
 
     // ReSharper disable once MemberCanBePrivate.Global

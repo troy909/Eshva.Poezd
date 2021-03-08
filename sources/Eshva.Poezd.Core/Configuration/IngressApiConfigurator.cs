@@ -8,15 +8,15 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
-  public class IngressPublicApiConfigurator
+  public class IngressApiConfigurator
   {
-    public IngressPublicApiConfigurator([NotNull] IngressPublicApiConfiguration configuration)
+    public IngressApiConfigurator([NotNull] IngressApiConfiguration configuration)
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     [NotNull]
-    public IngressPublicApiConfigurator WithId([NotNull] string id)
+    public IngressApiConfigurator WithId([NotNull] string id)
     {
       if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
 
@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     [NotNull]
-    public IngressPublicApiConfigurator WithQueueNamePatternsProvider<TQueueNamePatternsProvider>()
+    public IngressApiConfigurator WithQueueNamePatternsProvider<TQueueNamePatternsProvider>()
       where TQueueNamePatternsProvider : IQueueNamePatternsProvider
     {
       _configuration.QueueNamePatternsProviderType = typeof(TQueueNamePatternsProvider);
@@ -33,7 +33,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     [NotNull]
-    public IngressPublicApiConfigurator WithPipeFitter<TConfigurator>()
+    public IngressApiConfigurator WithPipeFitter<TConfigurator>()
       where TConfigurator : IPipeFitter
     {
       _configuration.PipeFitterType = typeof(TConfigurator);
@@ -41,7 +41,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     [NotNull]
-    public IngressPublicApiConfigurator WithHandlerRegistry<THandlerRegistryType>()
+    public IngressApiConfigurator WithHandlerRegistry<THandlerRegistryType>()
       where THandlerRegistryType : IHandlerRegistry
     {
       _configuration.HandlerRegistryType = typeof(THandlerRegistryType);
@@ -49,12 +49,12 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     [NotNull]
-    public IngressPublicApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
+    public IngressApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
     {
       _configuration.MessageTypesRegistryType = typeof(TMessageTypesRegistry);
       return this;
     }
 
-    private readonly IngressPublicApiConfiguration _configuration;
+    private readonly IngressApiConfiguration _configuration;
   }
 }

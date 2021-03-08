@@ -51,7 +51,7 @@ namespace Venture.IntegrationTests
       var container = RoutingTests
         .SetupContainer<MessageCountingPipeFitter, FinishTestPipeFitter, MessageCountingPipeFitter, FinishTestPipeFitter>(
           api => api.WithId("ingress-case-office")
-            .WithQueueNamePatternsProvider<PublicApi1QueueNamePatternsProvider>()
+            .WithQueueNamePatternsProvider<IngressApi1QueueNamePatternsProvider>()
             .WithPipeFitter<EmptyPipeFitter>()
             .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
             .WithHandlerRegistry<EmptyHandlerRegistry>(),

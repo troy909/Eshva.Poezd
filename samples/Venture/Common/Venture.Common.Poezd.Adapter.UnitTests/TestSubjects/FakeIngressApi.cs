@@ -13,9 +13,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
 {
   [SuppressMessage("ReSharper", "NotNullMemberIsNotInitialized")]
   [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-  public class FakePublicApi : IIngressPublicApi
+  public class FakeIngressApi : IIngressApi
   {
-    public IngressPublicApiConfiguration Configuration { get; set; }
+    public IngressApiConfiguration Configuration { get; set; }
 
     public IPipeFitter PipeFitter { get; set; }
 

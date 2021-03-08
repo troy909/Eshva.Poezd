@@ -8,7 +8,7 @@ using Eshva.Common.Collections;
 namespace Eshva.Poezd.Core.Routing
 {
   /// <summary>
-  /// Message handling context for publishing outgoing messages.
+  /// Message publishing context for publishing egress messages.
   /// </summary>
   /// <remarks>
   /// This class implements <see cref="IPocket" /> contract. That means you can use this context to pass any data between
@@ -27,9 +27,9 @@ namespace Eshva.Poezd.Core.Routing
     public MessageBroker Broker { get; set; }
 
     /// <summary>
-    /// Gets/sets the public API CLR-object that will be rule the publishing process.
+    /// Gets/sets the egress API CLR-object that will be rule the publishing process.
     /// </summary>
-    public IEgressPublicApi PublicApi { get; set; }
+    public IEgressApi Api { get; set; }
 
     /// <summary>
     /// Gets/sets the correlation ID.

@@ -45,31 +45,31 @@ namespace Eshva.Poezd.Core.UnitTests
         .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.QueueNameMatcherType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerIngressConfiguration(shouldAddPublicApis: false)
+      ConfigurationTests.CreateBrokerIngressConfiguration(shouldAddApis: false)
         .Validate().Should().HaveCount(expected: 1);
     }
 
     [Fact]
-    public void when_same_public_api_added_second_time_it_should_fail()
+    public void when_same_api_added_second_time_it_should_fail()
     {
       var configuration = new BrokerIngressConfiguration();
-      var api = new IngressPublicApiConfiguration();
-      Action sut = () => { configuration.AddPublicApi(api); };
+      var api = new IngressApiConfiguration();
+      Action sut = () => { configuration.AddApi(api); };
       sut.Should().NotThrow();
       sut.Should().ThrowExactly<PoezdConfigurationException>();
     }
 
     [Fact]
-    public void when_public_api_with_same_id_added_it_should_fail()
+    public void when_api_with_same_id_added_it_should_fail()
     {
       var configuration = new BrokerIngressConfiguration();
 
-      var api1 = new IngressPublicApiConfiguration {Id = "same id"};
-      Action sut1 = () => { configuration.AddPublicApi(api1); };
+      var api1 = new IngressApiConfiguration {Id = "same id"};
+      Action sut1 = () => { configuration.AddApi(api1); };
       sut1.Should().NotThrow();
 
-      var api2 = new IngressPublicApiConfiguration {Id = "same id"};
-      Action sut2 = () => { configuration.AddPublicApi(api2); };
+      var api2 = new IngressApiConfiguration {Id = "same id"};
+      Action sut2 = () => { configuration.AddApi(api2); };
       sut2.Should().ThrowExactly<PoezdConfigurationException>();
     }
   }

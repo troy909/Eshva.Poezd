@@ -37,9 +37,9 @@ namespace Eshva.Poezd.Core.Routing
     public MessageBroker Broker { get; set; }
 
     /// <summary>
-    /// Gets/sets the public API CLR-object that will be rule the handling process.
+    /// Gets/sets the ingress API CLR-object that will rule the handling process.
     /// </summary>
-    public IIngressPublicApi PublicApi { get; set; }
+    public IIngressApi Api { get; set; }
 
     /// <summary>
     /// Gets/sets the message type name gotten from the broker message metadata/headers.

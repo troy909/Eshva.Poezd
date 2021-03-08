@@ -20,13 +20,13 @@ namespace Eshva.Poezd.Core.Pipeline
     IReadOnlyCollection<string> QueueNames { get; }
 
     /// <summary>
-    /// Gets a functor that returns the partition key (if required by public API or message broker) for the message type.
+    /// Gets a functor that returns the partition key (if required by API or message broker) for the message type.
     /// </summary>
     [NotNull]
     Func<TMessage, byte[]> GetKey { get; }
 
     /// <summary>
-    /// Serializes a message object into byte array using standard for this public API method.
+    /// Serializes a message object into byte array using standard for this API method.
     /// </summary>
     /// <param name="message">
     /// Message object to be serialized.

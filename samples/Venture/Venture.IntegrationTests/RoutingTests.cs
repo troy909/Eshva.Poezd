@@ -22,8 +22,8 @@ namespace Venture.IntegrationTests
   public static class RoutingTests
   {
     public static Container SetupContainer<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
-      Action<IngressPublicApiConfigurator> configureIngressPublicApi,
-      Action<EgressPublicApiConfigurator> configureEgressPublicApi,
+      Action<IngressApiConfigurator> configureIngressApi,
+      Action<EgressApiConfigurator> configureEgressApi,
       ITestOutputHelper testOutput)
       where TIngressEnterPipeline : IPipeFitter
       where TIngressExitPipeline : IPipeFitter
@@ -35,14 +35,14 @@ namespace Venture.IntegrationTests
       container
         .AddLogging(testOutput)
         .AddRouter<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
-          configureIngressPublicApi,
-          configureEgressPublicApi);
+          configureIngressApi,
+          configureEgressApi);
 
       container.RegisterInstance<IServiceProvider>(container);
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipeFitter>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
-      container.RegisterSingleton<PublicApi1QueueNamePatternsProvider>();
+      container.RegisterSingleton<IngressApi1QueueNamePatternsProvider>();
       container.RegisterSingleton<EmptyHandlerRegistry>();
 
       return container;
@@ -65,8 +65,8 @@ namespace Venture.IntegrationTests
 
     private static Container AddRouter<TIngressEnterPipeline, TIngressExitPipeline, TEgressEnterPipeline, TEgressExitPipeline>(
       this Container container,
-      Action<IngressPublicApiConfigurator> configureIngressPublicApi,
-      Action<EgressPublicApiConfigurator> configureEgressPublicApi)
+      Action<IngressApiConfigurator> configureIngressApi,
+      Action<EgressApiConfigurator> configureEgressApi)
       where TIngressEnterPipeline : IPipeFitter
       where TIngressExitPipeline : IPipeFitter
       where TEgressEnterPipeline : IPipeFitter
@@ -87,7 +87,7 @@ namespace Venture.IntegrationTests
                     .WithEnterPipeFitter<TIngressEnterPipeline>()
                     .WithExitPipeFitter<TIngressExitPipeline>()
                     .WithQueueNameMatcher<RegexQueueNameMatcher>()
-                    .AddPublicApi(configureIngressPublicApi))
+                    .AddApi(configureIngressApi))
                 .Egress(
                   egress => egress
                     .WithKafkaDriver(
@@ -95,7 +95,7 @@ namespace Venture.IntegrationTests
                         .WithProducerConfig(CreateProducerConfig()))
                     .WithEnterPipeFitter<TEgressEnterPipeline>()
                     .WithExitPipeFitter<TEgressExitPipeline>()
-                    .AddPublicApi(configureEgressPublicApi))));
+                    .AddApi(configureEgressApi))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;

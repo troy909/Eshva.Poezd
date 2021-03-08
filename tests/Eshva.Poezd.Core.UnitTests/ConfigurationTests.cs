@@ -32,7 +32,7 @@ namespace Eshva.Poezd.Core.UnitTests
       return configuration;
     }
 
-    public static BrokerIngressConfiguration CreateBrokerIngressConfiguration(bool shouldAddPublicApis = true)
+    public static BrokerIngressConfiguration CreateBrokerIngressConfiguration(bool shouldAddApis = true)
     {
       var someType = typeof(object);
       var configuration = new BrokerIngressConfiguration
@@ -43,7 +43,7 @@ namespace Eshva.Poezd.Core.UnitTests
         QueueNameMatcherType = someType
       };
 
-      if (shouldAddPublicApis) configuration.AddPublicApi(CreateIngressPublicApiConfiguration());
+      if (shouldAddApis) configuration.AddApi(CreateIngressApiConfiguration());
 
       return configuration;
     }
@@ -55,7 +55,7 @@ namespace Eshva.Poezd.Core.UnitTests
       return configuration;
     }
 
-    public static IngressPublicApiConfiguration CreateIngressPublicApiConfiguration() => new IngressPublicApiConfiguration
+    public static IngressApiConfiguration CreateIngressApiConfiguration() => new IngressApiConfiguration
     {
       HandlerRegistryType = typeof(object),
       Id = "id",
@@ -64,23 +64,23 @@ namespace Eshva.Poezd.Core.UnitTests
       QueueNamePatternsProviderType = typeof(object)
     };
 
-    public static IngressPublicApiConfiguration CreateIngressPublicApiConfigurationWithout(Action<IngressPublicApiConfiguration> updater)
+    public static IngressApiConfiguration CreateIngressApiConfigurationWithout(Action<IngressApiConfiguration> updater)
     {
-      var configuration = CreateIngressPublicApiConfiguration();
+      var configuration = CreateIngressApiConfiguration();
       updater(configuration);
       return configuration;
     }
 
-    public static EgressPublicApiConfiguration CreateEgressPublicApiConfiguration() => new EgressPublicApiConfiguration
+    public static EgressApiConfiguration CreateEgressApiConfiguration() => new EgressApiConfiguration
     {
       Id = "id",
       MessageTypesRegistryType = typeof(object),
       PipeFitterType = typeof(object)
     };
 
-    public static EgressPublicApiConfiguration CreateEgressPublicApiConfigurationWithout(Action<EgressPublicApiConfiguration> updater)
+    public static EgressApiConfiguration CreateEgressApiConfigurationWithout(Action<EgressApiConfiguration> updater)
     {
-      var configuration = CreateEgressPublicApiConfiguration();
+      var configuration = CreateEgressApiConfiguration();
       updater(configuration);
       return configuration;
     }

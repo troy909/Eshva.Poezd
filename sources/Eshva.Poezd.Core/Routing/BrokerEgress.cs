@@ -24,7 +24,7 @@ namespace Eshva.Poezd.Core.Routing
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
-      PublicApis = configuration.PublicApis.Select(api => new EgressPublicApi(api, serviceProvider)).ToList().AsReadOnly();
+      Apis = configuration.Apis.Select(api => new EgressApi(api, serviceProvider)).ToList().AsReadOnly();
       EnterPipeFitter = GetEnterPipeFitter(serviceProvider);
       ExitPipeFitter = GetExitPipeFitter(serviceProvider);
     }
@@ -42,7 +42,7 @@ namespace Eshva.Poezd.Core.Routing
     public IPipeFitter ExitPipeFitter { get; }
 
     /// <inheritdoc />
-    public ReadOnlyCollection<EgressPublicApi> PublicApis { get; }
+    public ReadOnlyCollection<EgressApi> Apis { get; }
 
     public void Initialize(IMessageRouter messageRouter, string brokerId)
     {

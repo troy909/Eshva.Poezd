@@ -28,12 +28,12 @@ namespace Venture.Common.Poezd.Adapter.MessagePublishing
       if (string.IsNullOrWhiteSpace(context.MessageId))
         throw new ArgumentException("Message ID should be set in the message publishing context.", nameof(context));
 
-      if (context.PublicApi == null)
-        throw new ArgumentException("Public API should be set in the message publishing context.", nameof(context));
-      if (context.PublicApi.MessageTypesRegistry == null)
+      if (context.Api == null)
+        throw new ArgumentException("Egress API should be set in the message publishing context.", nameof(context));
+      if (context.Api.MessageTypesRegistry == null)
       {
         throw new ArgumentException(
-          "Message types registry of public API should be set in the message publishing context.",
+          "Message types registry of egress API should be set in the message publishing context.",
           nameof(context));
       }
 

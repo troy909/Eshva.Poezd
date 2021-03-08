@@ -31,7 +31,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var step = new ValidateMessagePublishingContextStep();
       var context = new MessagePublishingContext
       {
-        PublicApi = CreatePublicApi(),
+        Api = CreateEgressApi(),
         Message = null,
         CorrelationId = ExpectedCorrelationId,
         CausationId = ExpectedCausationId,
@@ -52,7 +52,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var step = new ValidateMessagePublishingContextStep();
       var context = new MessagePublishingContext
       {
-        PublicApi = CreatePublicApi(),
+        Api = CreateEgressApi(),
         Message = new Message1(),
         CorrelationId = ExpectedCorrelationId,
         CausationId = ExpectedCausationId,
@@ -81,7 +81,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var step = new ValidateMessagePublishingContextStep();
       var context = new MessagePublishingContext
       {
-        PublicApi = CreatePublicApi(),
+        Api = CreateEgressApi(),
         Message = new Message1(),
         CorrelationId = ExpectedCorrelationId,
         CausationId = ExpectedCausationId,
@@ -110,7 +110,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var step = new ValidateMessagePublishingContextStep();
       var context = new MessagePublishingContext
       {
-        PublicApi = CreatePublicApi(),
+        Api = CreateEgressApi(),
         Message = new Message1(),
         CorrelationId = ExpectedCorrelationId,
         CausationId = ExpectedCausationId,
@@ -134,12 +134,12 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     }
 
     [Fact]
-    public void when_executing_without_public_api_in_context_it_should_fail()
+    public void when_executing_without_api_in_context_it_should_fail()
     {
       var step = new ValidateMessagePublishingContextStep();
       var context = new MessagePublishingContext
       {
-        PublicApi = null,
+        Api = null,
         Message = new Message1(),
         CorrelationId = ExpectedCorrelationId,
         CausationId = ExpectedCausationId,
@@ -150,8 +150,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       sut.Should().Throw<ArgumentException>()
         .Where(
-          exception => exception.ParamName.Equals("context") && exception.Message.Contains("Public API should"),
-          "public API is required");
+          exception => exception.ParamName.Equals("context") && exception.Message.Contains("Egress API should"),
+          "egress API is required");
     }
 
     [Fact]
@@ -160,7 +160,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var step = new ValidateMessagePublishingContextStep();
       var context = new MessagePublishingContext
       {
-        PublicApi = CreatePublicApi(shouldSetRegistry: false),
+        Api = CreateEgressApi(shouldSetRegistry: false),
         Message = new Message1(),
         CorrelationId = ExpectedCorrelationId,
         CausationId = ExpectedCausationId,
@@ -175,13 +175,13 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
           "message is required");
     }
 
-    private static IEgressPublicApi CreatePublicApi(bool shouldSetRegistry = true)
+    private static IEgressApi CreateEgressApi(bool shouldSetRegistry = true)
     {
       var registryMock = new Mock<IEgressMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetMessageTypeNameByItsMessageType(It.IsAny<Type>())).Returns(ExpectedMessageTypeName);
-      var publicApiMock = new Mock<IEgressPublicApi>();
-      publicApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => shouldSetRegistry ? registryMock.Object : null);
-      return publicApiMock.Object;
+      var egressApiMock = new Mock<IEgressApi>();
+      egressApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => shouldSetRegistry ? registryMock.Object : null);
+      return egressApiMock.Object;
     }
 
     private const string WhitespaceString = " \t\n";

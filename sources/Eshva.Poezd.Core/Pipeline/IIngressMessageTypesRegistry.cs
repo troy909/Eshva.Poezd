@@ -21,7 +21,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Message type name is <c>null</c>, an empty or a whitespace string.
     /// </exception>
     /// <exception cref="KeyNotFoundException">
-    /// Message type doesn't belongs to this public API.
+    /// Message type doesn't belongs to this API.
     /// </exception>
     [NotNull]
     Type GetMessageTypeByItsMessageTypeName([NotNull] string messageTypeName);
@@ -39,7 +39,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// The message type name is <c>null</c>, an empty or a whitespace string.
     /// </exception>
     /// <exception cref="KeyNotFoundException">
-    /// Message type doesn't belongs to this public API.
+    /// Message type doesn't belongs to this API.
     /// </exception>
     [NotNull]
     IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>([NotNull] string messageTypeName)

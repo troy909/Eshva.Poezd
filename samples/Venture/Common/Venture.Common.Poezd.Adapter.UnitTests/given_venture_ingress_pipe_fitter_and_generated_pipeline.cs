@@ -71,7 +71,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       context.CausationId.Should().Be("VentureApi.Headers.CausationId");
       context.MessageId.Should().Be("VentureApi.Headers.MessageId");
       context.MessageType.Should().Be(typeof(Message1));
-      context.PublicApi.Should().NotBeNull();
+      context.Api.Should().NotBeNull();
     }
 
     [Fact]
@@ -117,7 +117,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
           {VentureApi.Headers.CausationId, "VentureApi.Headers.CausationId"},
           {VentureApi.Headers.MessageTypeName, nameof(Message1)}
         },
-        PublicApi = new FakePublicApi {MessageTypesRegistry = typesRegistry, HandlerRegistry = new HandlerRegistry()}
+        Api = new FakeIngressApi {MessageTypesRegistry = typesRegistry, HandlerRegistry = new HandlerRegistry()}
       };
 
       return context;

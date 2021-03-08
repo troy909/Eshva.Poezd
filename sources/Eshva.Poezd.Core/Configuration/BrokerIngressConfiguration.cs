@@ -20,42 +20,42 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type QueueNameMatcherType { get; internal set; }
 
-    public IReadOnlyCollection<IngressPublicApiConfiguration> PublicApis => _publicApis.AsReadOnly();
+    public IReadOnlyCollection<IngressApiConfiguration> Apis => _apis.AsReadOnly();
 
     public IBrokerIngressDriver Driver { get; internal set; }
 
     public static BrokerIngressConfiguration Empty { get; } = CreateValidEmpty();
 
     /// <summary>
-    /// Adds a public API configuration
+    /// Adds an ingress API configuration
     /// </summary>
     /// <param name="configuration">
-    /// Public API configuration to add.
+    /// Ingress API configuration to add.
     /// </param>
-    public void AddPublicApi([NotNull] IngressPublicApiConfiguration configuration)
+    public void AddApi([NotNull] IngressApiConfiguration configuration)
     {
       if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
-      if (_publicApis.Contains(configuration))
+      if (_apis.Contains(configuration))
       {
         throw new PoezdConfigurationException(
-          $"You try to add a public API {configuration.Id} which already present in the list of public APIs. It's not allowed.");
+          $"You try to add an ingress API {configuration.Id} which already present in the list of APIs. It's not allowed.");
       }
 
-      if (_publicApis.Any(api => api.Id.Equals(configuration.Id, StringComparison.InvariantCulture)))
+      if (_apis.Any(api => api.Id.Equals(configuration.Id, StringComparison.InvariantCulture)))
       {
         throw new PoezdConfigurationException(
-          $"A public API with ID '{configuration.Id}' already present in the list of APIs. Every API should have an unique ID.");
+          $"An ingress API with ID '{configuration.Id}' already present in the list of APIs. Every API should have an unique ID.");
       }
 
-      _publicApis.Add(configuration);
+      _apis.Add(configuration);
     }
 
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
-      if (!_publicApis.Any())
-        yield return "At least one public API should be configured for broker ingress.";
+      if (!_apis.Any())
+        yield return "At least one API should be configured for broker ingress.";
       if (QueueNameMatcherType == null)
         yield return "The queue name matcher type should be set for the broker ingress.";
       if (EnterPipeFitterType == null)
@@ -67,7 +67,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     /// <inheritdoc />
-    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => _publicApis.AsReadOnly();
+    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => _apis.AsReadOnly();
 
     private static BrokerIngressConfiguration CreateValidEmpty()
     {
@@ -78,10 +78,10 @@ namespace Eshva.Poezd.Core.Configuration
         QueueNameMatcherType = typeof(MatchingNothingQueueNameMatcher),
         Driver = new EmptyBrokerIngressDriver()
       };
-      configuration.AddPublicApi(IngressPublicApiConfiguration.Empty);
+      configuration.AddApi(IngressApiConfiguration.Empty);
       return configuration;
     }
 
-    private readonly List<IngressPublicApiConfiguration> _publicApis = new();
+    private readonly List<IngressApiConfiguration> _apis = new();
   }
 }

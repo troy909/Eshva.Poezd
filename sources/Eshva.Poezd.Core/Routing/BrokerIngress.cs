@@ -35,7 +35,7 @@ namespace Eshva.Poezd.Core.Routing
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
-      PublicApis = configuration.PublicApis.Select(api => new IngressPublicApi(api, serviceProvider)).ToList().AsReadOnly();
+      Apis = configuration.Apis.Select(api => new IngressApi(api, serviceProvider)).ToList().AsReadOnly();
       _queueNameMatcher = (IQueueNameMatcher) serviceProvider.GetService(configuration.QueueNameMatcherType);
       EnterPipeFitter = GetEnterPipeFitter(serviceProvider);
       ExitPipeFitter = GetExitPipeFitter(serviceProvider);
@@ -48,7 +48,7 @@ namespace Eshva.Poezd.Core.Routing
     public IBrokerIngressDriver Driver { get; }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<IIngressPublicApi> PublicApis { get; }
+    public IReadOnlyCollection<IIngressApi> Apis { get; }
 
     /// <inheritdoc />
     public IPipeFitter EnterPipeFitter { get; }
@@ -57,24 +57,23 @@ namespace Eshva.Poezd.Core.Routing
     public IPipeFitter ExitPipeFitter { get; }
 
     /// <summary>
-    /// Gets public API by queue name.
+    /// Gets ingress API by queue name.
     /// </summary>
     /// <param name="queueName">
-    /// Queue name that should belong to one of public APIs bound to this broker.
+    /// Queue name that should belong to one of ingress APIs bound to this broker.
     /// </param>
     /// <returns>
-    /// Public API to which queue name belongs or a stab public API for an unknown queue name.
+    /// The ingress API to which queue name belongs or a stab ingress API for an unknown queue name.
     /// </returns>
     /// <exception cref="ArgumentNullException">
     /// Queue name is null, an empty or a whitespace string.
     /// </exception>
-    public IIngressPublicApi GetApiByQueueName(string queueName)
+    public IIngressApi GetApiByQueueName(string queueName)
     {
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
-      var publicApi = PublicApis.FirstOrDefault(
-        api => api.GetQueueNamePatterns()
-          .Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
-      return publicApi ?? IngressPublicApi.Empty; // TODO: Do I need an empty API here at all?
+      var ingressApi = Apis.FirstOrDefault(
+        api => api.GetQueueNamePatterns().Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
+      return ingressApi ?? IngressApi.Empty; // TODO: Do I need an empty API here at all?
     }
 
     public void Initialize(IMessageRouter messageRouter, string brokerId)

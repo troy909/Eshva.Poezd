@@ -40,10 +40,10 @@ namespace Eshva.Poezd.Core.Routing
     IPipeFitter ExitPipeFitter { get; }
 
     /// <summary>
-    /// Gets list of public APIs bound to this message broker egress.
+    /// Gets list of APIs bound to this message broker egress.
     /// </summary>
     [NotNull]
-    ReadOnlyCollection<EgressPublicApi> PublicApis { get; }
+    ReadOnlyCollection<EgressApi> Apis { get; }
 
     /// <summary>
     /// Initializes the message broker driver.

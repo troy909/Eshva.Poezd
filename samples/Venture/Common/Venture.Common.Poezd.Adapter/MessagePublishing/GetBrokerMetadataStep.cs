@@ -11,7 +11,7 @@ using Eshva.Poezd.Core.Routing;
 namespace Venture.Common.Poezd.Adapter.MessagePublishing
 {
   /// <summary>
-  /// An egress message pipeline step that gets broker message metadata that specific for public API and store it into
+  /// An egress message pipeline step that gets broker message metadata that specific for the egress API and store it into
   /// context.
   /// </summary>
   public class GetBrokerMetadataStep : IStep<MessagePublishingContext>
@@ -25,7 +25,7 @@ namespace Venture.Common.Poezd.Adapter.MessagePublishing
       {
         {
           VentureApi.Headers.MessageTypeName,
-          context.PublicApi.MessageTypesRegistry.GetMessageTypeNameByItsMessageType(context.Message.GetType())
+          context.Api.MessageTypesRegistry.GetMessageTypeNameByItsMessageType(context.Message.GetType())
         },
         {VentureApi.Headers.CorrelationId, context.CorrelationId},
         {VentureApi.Headers.CausationId, context.CausationId},

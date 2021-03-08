@@ -27,7 +27,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateJusticeCase";
       var context = new MessageHandlingContext
       {
-        PublicApi = new FakePublicApi {MessageTypesRegistry = registry},
+        Api = new FakeIngressApi {MessageTypesRegistry = registry},
         Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, expectedTypeName}}
       };
 
@@ -46,7 +46,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       registry.Initialize();
       var context = new MessageHandlingContext
       {
-        PublicApi = new FakePublicApi {MessageTypesRegistry = registry},
+        Api = new FakeIngressApi {MessageTypesRegistry = registry},
         Metadata = new Dictionary<string, string>()
       };
 
@@ -61,7 +61,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var registry = new CaseOfficeIngressMessageTypesRegistry();
       registry.Initialize();
-      var context = new MessageHandlingContext {PublicApi = new FakePublicApi {MessageTypesRegistry = registry}};
+      var context = new MessageHandlingContext {Api = new FakeIngressApi {MessageTypesRegistry = registry}};
       var step = new ExtractMessageTypeStep();
 
       // ReSharper disable once JoinDeclarationAndInitializer - it's a way to test.
@@ -88,7 +88,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var step = new ExtractMessageTypeStep();
       var context = new MessageHandlingContext
       {
-        PublicApi = new FakePublicApi {MessageTypesRegistry = registry},
+        Api = new FakeIngressApi {MessageTypesRegistry = registry},
         Metadata = new Dictionary<string, string> {{VentureApi.Headers.MessageTypeName, "unknown"}}
       };
 

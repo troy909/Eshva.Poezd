@@ -8,13 +8,13 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public interface IEgressPublicApi
+  public interface IEgressApi
   {
     /// <summary>
-    /// Gets the egress public API configuration.
+    /// Gets the egress API configuration.
     /// </summary>
     [NotNull]
-    EgressPublicApiConfiguration Configuration { get; }
+    EgressApiConfiguration Configuration { get; }
 
     /// <summary>
     /// Gets the egress pipe fitter.

@@ -21,7 +21,7 @@ namespace Venture.Common.Poezd.Adapter.MessagePublishing
       if (context == null) throw new ArgumentNullException(nameof(context));
 
       var message = context.Message;
-      var registry = context.PublicApi.MessageTypesRegistry;
+      var registry = context.Api.MessageTypesRegistry;
       var getKey = GenericGetKey!.MakeGenericMethod(message.GetType());
       context.Key = (byte[]) getKey.Invoke(this, new[] {message, registry});
       return Task.CompletedTask;

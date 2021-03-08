@@ -10,15 +10,15 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Routing
 {
   /// <summary>
-  /// Contract of an ingress public API.
+  /// Contract of an ingress API.
   /// </summary>
-  public interface IIngressPublicApi
+  public interface IIngressApi
   {
     /// <summary>
-    /// Gets the public API configuration.
+    /// Gets the ingress API configuration.
     /// </summary>
     [NotNull]
-    IngressPublicApiConfiguration Configuration { get; }
+    IngressApiConfiguration Configuration { get; }
 
     /// <summary>
     /// Gets the ingress pipe fitter.

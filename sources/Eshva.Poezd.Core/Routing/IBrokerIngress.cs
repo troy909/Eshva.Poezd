@@ -31,10 +31,10 @@ namespace Eshva.Poezd.Core.Routing
     IBrokerIngressDriver Driver { get; }
 
     /// <summary>
-    /// Gets list of public APIs bound to this message broker.
+    /// Gets list of ingress APIs bound to this message broker.
     /// </summary>
     [NotNull]
-    IReadOnlyCollection<IIngressPublicApi> PublicApis { get; }
+    IReadOnlyCollection<IIngressApi> Apis { get; }
 
     /// <summary>
     /// Gets enter pipe fitter. Configures the very beginning of pipeline.
@@ -49,28 +49,22 @@ namespace Eshva.Poezd.Core.Routing
     IPipeFitter ExitPipeFitter { get; }
 
     /// <summary>
-    /// Gets public API by queue name.
+    /// Gets an ingress API by queue name.
     /// </summary>
     /// <param name="queueName">
-    /// Queue name that should belong to one of public APIs bound to this broker.
+    /// Queue name that should belong to one of ingress APIs bound to this broker.
     /// </param>
     /// <returns>
-    /// Public API to which queue name belongs or a stab public API for an unknown queue name.
+    /// The ingress API to which queue name belongs or a stab ingress API for an unknown queue name.
     /// </returns>
     /// <exception cref="ArgumentNullException">
     /// Queue name is null, an empty or a whitespace string.
     /// </exception>
-    IIngressPublicApi GetApiByQueueName([NotNull] string queueName);
+    IIngressApi GetApiByQueueName([NotNull] string queueName);
 
     /// <summary>
     /// Initializes the message broker driver.
     /// </summary>
-    /// <param name="messageRouter">
-    /// Message router to bind to.
-    /// </param>
-    /// <param name="brokerId">
-    /// The broker ID to bind to.
-    /// </param>
     /// <exception cref="ArgumentNullException">
     /// One of arguments is null, an empty or whitespace string.
     /// </exception>

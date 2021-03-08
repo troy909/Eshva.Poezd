@@ -43,7 +43,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var context = new MessageHandlingContext
       {
         MessageType = typeof(Message01),
-        PublicApi = new FakePublicApi {HandlerRegistry = handlersRegistry}
+        Api = new FakeIngressApi {HandlerRegistry = handlersRegistry}
       };
 
       await sut.Execute(context);

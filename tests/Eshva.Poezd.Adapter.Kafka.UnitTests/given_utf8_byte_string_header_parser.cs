@@ -6,7 +6,7 @@ using Xunit;
 
 #endregion
 
-namespace Eshva.Poezd.KafkaCoupling.UnitTests
+namespace Eshva.Poezd.Adapter.Kafka.UnitTests
 {
   public class given_utf8_byte_string_header_parser
   {

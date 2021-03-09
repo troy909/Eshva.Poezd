@@ -23,9 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{DA7B0F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Application", "samples\Venture\Common\Venture.Common.Application\Venture.Common.Application.csproj", "{A88021C0-3349-4D1A-A8B7-24B2D9375813}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.SimpleInjectorCoupling", "sources\Eshva.Poezd.SimpleInjectorCoupling\Eshva.Poezd.SimpleInjectorCoupling.csproj", "{85AF1D21-9C16-4CCD-B9A3-8DA891490301}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.SimpleInjector", "sources\Eshva.Poezd.Adapter.SimpleInjector\Eshva.Poezd.Adapter.SimpleInjector.csproj", "{85AF1D21-9C16-4CCD-B9A3-8DA891490301}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.KafkaCoupling", "sources\Eshva.Poezd.KafkaCoupling\Eshva.Poezd.KafkaCoupling.csproj", "{DF999F58-7A68-4D65-B936-AF9B66658085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.Kafka", "sources\Eshva.Poezd.Adapter.Kafka\Eshva.Poezd.Adapter.Kafka.csproj", "{DF999F58-7A68-4D65-B936-AF9B66658085}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.IntegrationTests", "samples\Venture\Venture.IntegrationTests\Venture.IntegrationTests.csproj", "{EFA0590F-48F6-4EF8-B147-D00A872AF26E}"
 EndProject
@@ -51,7 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Core.UnitTests", "tests\Eshva.Poezd.Core.UnitTests\Eshva.Poezd.Core.UnitTests.csproj", "{5310501E-C533-4982-92E7-E77624CC0F45}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.KafkaCoupling.UnitTests", "tests\Eshva.Poezd.KafkaCoupling.UnitTests\Eshva.Poezd.KafkaCoupling.UnitTests.csproj", "{513BA58C-AE6F-4EB0-98DC-FD8A632078C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.Kafka.UnitTests", "tests\Eshva.Poezd.Adapter.Kafka.UnitTests\Eshva.Poezd.Adapter.Kafka.UnitTests.csproj", "{513BA58C-AE6F-4EB0-98DC-FD8A632078C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Messages.UnitTests", "samples\Venture\Common\Venture.CaseOffice.Messages.UnitTests\Venture.CaseOffice.Messages.UnitTests.csproj", "{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC}"
 EndProject

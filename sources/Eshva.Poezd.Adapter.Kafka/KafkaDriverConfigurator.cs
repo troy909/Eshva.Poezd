@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Eshva.Poezd.KafkaCoupling
+namespace Eshva.Poezd.Adapter.Kafka
 {
   public class KafkaDriverConfigurator
   {

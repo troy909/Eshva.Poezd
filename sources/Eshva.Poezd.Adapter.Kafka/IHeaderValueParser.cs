@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Eshva.Poezd.KafkaCoupling
+namespace Eshva.Poezd.Adapter.Kafka
 {
   /// <summary>
   /// Parser of Kafka header value.

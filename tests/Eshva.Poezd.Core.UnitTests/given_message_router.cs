@@ -3,12 +3,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
-using Eshva.Poezd.SimpleInjectorCoupling;
 using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;

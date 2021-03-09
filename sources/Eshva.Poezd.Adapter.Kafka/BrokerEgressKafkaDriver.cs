@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 #endregion
 
-namespace Eshva.Poezd.KafkaCoupling
+namespace Eshva.Poezd.Adapter.Kafka
 {
   public class BrokerEgressKafkaDriver : IBrokerEgressDriver
   {

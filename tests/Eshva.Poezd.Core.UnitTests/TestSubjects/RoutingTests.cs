@@ -2,9 +2,9 @@
 
 using System;
 using Eshva.Common.Testing;
+using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
-using Eshva.Poezd.SimpleInjectorCoupling;
 using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;

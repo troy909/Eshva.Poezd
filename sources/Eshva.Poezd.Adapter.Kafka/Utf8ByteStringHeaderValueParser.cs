@@ -4,7 +4,7 @@ using System.Text;
 
 #endregion
 
-namespace Eshva.Poezd.KafkaCoupling
+namespace Eshva.Poezd.Adapter.Kafka
 {
   /// <summary>
   /// Header value parser for UTF-8 encoded byte arrays.

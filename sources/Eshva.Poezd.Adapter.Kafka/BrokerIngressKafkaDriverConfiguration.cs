@@ -5,7 +5,7 @@ using Confluent.Kafka;
 
 #endregion
 
-namespace Eshva.Poezd.KafkaCoupling
+namespace Eshva.Poezd.Adapter.Kafka
 {
   public class BrokerIngressKafkaDriverConfiguration
   {

@@ -7,7 +7,7 @@ using Eshva.Poezd.Core.Configuration;
 
 #endregion
 
-namespace Eshva.Poezd.KafkaCoupling
+namespace Eshva.Poezd.Adapter.Kafka
 {
   public class KafkaDriverConfiguration : IMessageRouterConfigurationPart
   {

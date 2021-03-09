@@ -10,6 +10,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Eshva.Poezd.Adapter.Kafka.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
   </ItemGroup>
 

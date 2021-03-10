@@ -24,7 +24,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       await sut.Execute(context);
 
-      context.Payload[0].Should().Be(expected, "message content should be serialized");
+      ((byte[])context.Payload)[0].Should().Be(expected, "message content should be serialized");
     }
 
     [Fact]

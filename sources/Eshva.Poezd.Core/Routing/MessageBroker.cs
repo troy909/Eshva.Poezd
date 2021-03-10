@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using JetBrains.Annotations;
 
@@ -25,18 +26,23 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="serviceProvider">
     /// Service provider.
     /// </param>
+    /// <param name="clock"></param>
     /// <exception cref="ArgumentNullException">
     /// One of arguments is not specified.
     /// </exception>
     public MessageBroker(
       [NotNull] MessageBrokerConfiguration configuration,
-      [NotNull] IServiceProvider serviceProvider)
+      [NotNull] IServiceProvider serviceProvider,
+      [NotNull] IClock clock)
     {
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
 
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       Ingress = new BrokerIngress(configuration.Ingress, serviceProvider);
-      Egress = new BrokerEgress(configuration.Egress, serviceProvider);
+      Egress = new BrokerEgress(
+        configuration.Egress,
+        serviceProvider,
+        clock);
     }
 
     /// <summary>
@@ -71,15 +77,17 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     public Task Publish(
-      byte[] key,
-      byte[] payload,
+      object key,
+      object payload,
       IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames) =>
+      IReadOnlyCollection<string> queueNames,
+      CancellationToken cancellationToken) =>
       Egress.Publish(
         key,
         payload,
         metadata,
-        queueNames);
+        queueNames,
+        cancellationToken);
 
     public Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {

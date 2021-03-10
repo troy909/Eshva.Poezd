@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
@@ -19,9 +20,11 @@ namespace Eshva.Poezd.Core.Routing
   {
     public BrokerEgress(
       [NotNull] BrokerEgressConfiguration configuration,
-      [NotNull] IServiceProvider serviceProvider)
+      [NotNull] IServiceProvider serviceProvider,
+      [NotNull] IClock clock)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      _clock = clock ?? throw new ArgumentNullException(nameof(clock));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
       Apis = configuration.Apis.Select(api => new EgressApi(api, serviceProvider)).ToList().AsReadOnly();
@@ -47,14 +50,18 @@ namespace Eshva.Poezd.Core.Routing
     public void Initialize(IMessageRouter messageRouter, string brokerId)
     {
       var logger = (ILogger<IBrokerEgressDriver>) _serviceProvider.GetService(typeof(ILogger<IBrokerEgressDriver>));
-      Driver.Initialize(brokerId, logger);
+      Driver.Initialize(
+        brokerId,
+        logger,
+        _clock);
     }
 
     public Task Publish(
-      [NotNull] byte[] key,
-      [NotNull] byte[] payload,
+      [NotNull] object key,
+      [NotNull] object payload,
       [NotNull] IReadOnlyDictionary<string, string> metadata,
-      [NotNull] IReadOnlyCollection<string> queueNames)
+      [NotNull] IReadOnlyCollection<string> queueNames,
+      CancellationToken cancellationToken)
     {
       if (key == null) throw new ArgumentNullException(nameof(key));
       if (payload == null) throw new ArgumentNullException(nameof(payload));
@@ -65,7 +72,8 @@ namespace Eshva.Poezd.Core.Routing
         key,
         payload,
         metadata,
-        queueNames);
+        queueNames,
+        cancellationToken);
     }
 
     public void Dispose()
@@ -90,6 +98,8 @@ namespace Eshva.Poezd.Core.Routing
           $"Can not get instance of the message broker egress exit pipe fitter of type '{type.FullName}'. " +
           "You should register this type in DI-container."));
     }
+
+    private readonly IClock _clock;
 
     private readonly IServiceProvider _serviceProvider;
   }

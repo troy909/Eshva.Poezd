@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
@@ -22,13 +23,17 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="logger">
     /// A logger.
     /// </param>
+    /// <param name="clock"></param>
     /// <exception cref="ArgumentNullException">
     /// One of arguments is null, an empty or whitespace string.
     /// </exception>
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
     /// </exception>
-    public void Initialize([NotNull] string brokerId, [NotNull] ILogger<IBrokerEgressDriver> logger);
+    public void Initialize(
+      [NotNull] string brokerId,
+      [NotNull] ILogger<IBrokerEgressDriver> logger,
+      [NotNull] IClock clock);
 
     /// <summary>
     /// Publishes a message using the broker client.
@@ -45,6 +50,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="queueNames">
     /// The message broker queue/topic names to which the message should be published.
     /// </param>
+    /// <param name="cancellationToken"></param>
     /// <returns>
     /// A task that can be used for waiting when publishing finished.
     /// </returns>
@@ -53,9 +59,10 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     [NotNull]
     Task Publish(
-      byte[] key,
-      byte[] payload,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames);
+      [NotNull] object key,
+      [NotNull] object payload,
+      [NotNull] IReadOnlyDictionary<string, string> metadata,
+      [NotNull] IReadOnlyCollection<string> queueNames,
+      CancellationToken cancellationToken);
   }
 }

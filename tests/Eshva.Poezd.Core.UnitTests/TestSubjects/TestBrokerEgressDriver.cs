@@ -1,7 +1,9 @@
 #region Usings
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using Microsoft.Extensions.Logging;
 
@@ -21,16 +23,20 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       _state.DisposedCount++;
     }
 
-    public void Initialize(string brokerId, ILogger<IBrokerEgressDriver> logger)
+    public void Initialize(
+      string brokerId,
+      ILogger<IBrokerEgressDriver> logger,
+      IClock clock)
     {
       _state.InitializedCount++;
     }
 
     public Task Publish(
-      byte[] key,
-      byte[] payload,
+      object key,
+      object payload,
       IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames)
+      IReadOnlyCollection<string> queueNames,
+      CancellationToken cancellationToken)
     {
       _state.PublishedMessageCount++;
       return Task.CompletedTask;

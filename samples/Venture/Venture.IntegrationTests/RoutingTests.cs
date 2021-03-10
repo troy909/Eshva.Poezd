@@ -92,7 +92,8 @@ namespace Venture.IntegrationTests
                   egress => egress
                     .WithKafkaDriver(
                       driver => driver
-                        .WithProducerConfig(CreateProducerConfig()))
+                        .WithProducerConfig(CreateProducerConfig())
+                        .WithDefaultProducerFactory())
                     .WithEnterPipeFitter<TEgressEnterPipeline>()
                     .WithExitPipeFitter<TEgressExitPipeline>()
                     .AddApi(configureEgressApi))));

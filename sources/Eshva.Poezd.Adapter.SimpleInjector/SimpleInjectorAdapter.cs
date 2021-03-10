@@ -27,6 +27,9 @@ namespace Eshva.Poezd.Adapter.SimpleInjector
     /// <inheritdoc />
     public IDisposable BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
 
+    /// <inheritdoc />
+    public TService GetService<TService>() where TService : class => _container.GetInstance<TService>();
+
     private readonly Container _container;
   }
 }

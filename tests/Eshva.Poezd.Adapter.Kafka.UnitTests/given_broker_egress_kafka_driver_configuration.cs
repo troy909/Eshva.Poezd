@@ -22,7 +22,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     [Fact]
     public void when_validating_it_should_validate_expected_number_of_properties()
     {
-      const int expectedNumberOfValidatingProperties = 1;
+      const int expectedNumberOfValidatingProperties = 2;
 
       var properties = typeof(BrokerEgressKafkaDriverConfiguration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
       properties.Should().HaveCount(
@@ -36,6 +36,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
       ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.ProducerConfig = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.ProducerFactory = null)
         .Validate().Should().HaveCount(expected: 1);
     }
   }

@@ -2,6 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Eshva.Poezd.Core.Common;
@@ -18,66 +21,110 @@ namespace Eshva.Poezd.Adapter.Kafka
     public BrokerEgressKafkaDriver([NotNull] BrokerEgressKafkaDriverConfiguration configuration)
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+      _producerRegistry = new CachingProducerRegistry(
+        configuration.ProducerFactory ?? throw new ArgumentNullException(nameof(configuration.ProducerFactory)));
     }
 
     /// <inheritdoc />
-    public void Initialize(string brokerId, ILogger<IBrokerEgressDriver> logger)
+    public void Initialize(
+      string brokerId,
+      ILogger<IBrokerEgressDriver> logger,
+      IClock clock)
     {
-      _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      if (_isInitialized) throw new PoezdOperationException($"Kafka driver for broker with ID {_brokerId} is already initialized.");
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
+      _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      _clock = clock ?? throw new ArgumentNullException(nameof(clock));
       _brokerId = brokerId;
-
-      // _configuration = configuration as KafkaDriverConfiguration ?? throw new ArgumentException(
-      // $"The value of {nameof(configuration)} parameter should be of type {typeof(KafkaDriverConfiguration).FullName}.");
-      // if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-
-      if (_isInitialized)
-        throw new PoezdOperationException($"Kafka driver for broker with ID '{_brokerId}' is already initialized.");
-
-      _producer = CreateProducer();
-
       _isInitialized = true;
     }
 
+    /// <inheritdoc />
     public Task Publish(
-      byte[] key,
-      byte[] payload,
+      object key,
+      object payload,
       IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames)
+      IReadOnlyCollection<string> queueNames,
+      CancellationToken cancellationToken)
     {
       if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can publish messages.");
-      // TODO: Add message publishing.
+      if (key == null) throw new ArgumentNullException(nameof(key));
+      if (payload == null) throw new ArgumentNullException(nameof(payload));
+      if (metadata == null) throw new ArgumentNullException(nameof(metadata));
+      if (queueNames == null) throw new ArgumentNullException(nameof(queueNames));
 
-      return Task.CompletedTask;
+      var publish = GenericPublish!.MakeGenericMethod(key.GetType(), payload.GetType());
+      return ((Task) publish.Invoke(this, new[] {key, payload, metadata, queueNames, cancellationToken}))!;
     }
 
     /// <inheritdoc />
     public void Dispose()
     {
-      _producer?.Dispose();
+      _producerRegistry.Dispose();
     }
 
-    private IProducer<Null, byte[]> CreateProducer()
+    private async Task Publish<TKey, TValue>(
+      TKey key,
+      TValue payload,
+      IReadOnlyDictionary<string, string> metadata,
+      IReadOnlyCollection<string> queueNames,
+      CancellationToken cancellationToken)
     {
-      try
+      var producer = _producerRegistry.Get<TKey, TValue>(_configuration.ProducerConfig);
+      var headers = MakeHeaders(metadata);
+      var timestamp = new Timestamp(_clock.GetNowUtc());
+      foreach (var queueName in queueNames)
       {
-        _logger.LogInformation("Creating Kafka producer with configuration @{ProducerConfig}", _configuration.ProducerConfig);
-        var producer = new ProducerBuilder<Null, byte[]>(_configuration.ProducerConfig).Build();
-        _logger.LogInformation("A Kafka producer created.");
-        return producer;
+        var message = new Message<TKey, TValue> {Key = key, Value = payload, Headers = headers, Timestamp = timestamp};
+        try
+        {
+          _logger.LogDebug(
+            "Publishing a message with key {Key} to topic {Topic} of broker with ID {BrokerId}.",
+            key,
+            queueName,
+            _brokerId);
+          await producer.ProduceAsync(
+            queueName,
+            message,
+            cancellationToken);
+          _logger.LogDebug(
+            "Successfully published a message with key {Key} to topic {Topic} of broker with ID {BrokerId}.",
+            key,
+            queueName,
+            _brokerId);
+        }
+        catch (Exception exception)
+        {
+          _logger.LogDebug(
+            exception,
+            "Failed to publish a message with key {Key} to topic {Topic} of broker with ID {BrokerId}.",
+            key,
+            queueName,
+            _brokerId);
+          throw;
+        }
       }
-      catch (Exception exception)
+    }
+
+    private static Headers MakeHeaders(IReadOnlyDictionary<string, string> metadata)
+    {
+      var headers = new Headers();
+      foreach (var (key, value) in metadata)
       {
-        const string errorMessage = "During Kafka producer creating an error occurred.";
-        _logger.LogError(exception, errorMessage);
-        throw new PoezdOperationException(errorMessage, exception);
+        headers.Add(key, Encoding.UTF8.GetBytes(value));
       }
+
+      return headers;
     }
 
     private readonly BrokerEgressKafkaDriverConfiguration _configuration;
+    private readonly CachingProducerRegistry _producerRegistry;
     private string _brokerId;
+    private IClock _clock;
     private bool _isInitialized;
     private ILogger<IBrokerEgressDriver> _logger;
-    private IProducer<Null, byte[]> _producer;
+
+    private static readonly MethodInfo GenericPublish =
+      typeof(BrokerEgressKafkaDriver).GetMethod(nameof(Publish), BindingFlags.Instance | BindingFlags.NonPublic);
   }
 }

@@ -54,13 +54,13 @@ namespace Eshva.Poezd.Core.Routing
     /// an application. But not every message broker requires this key.
     /// </remarks>
     /// TODO: May be I should change the property type to string or byte array?
-    public byte[] Key { get; set; }
+    public object Key { get; set; }
 
     /// <summary>
     /// Gets/sets the message payload as a byte array.
     /// </summary>
     // TODO: Can I change it to Memory<byte> or Span<byte>?
-    public byte[] Payload { get; set; }
+    public object Payload { get; set; }
 
     /// <summary>
     /// Gets/sets the message metadata that will be send along with the message.

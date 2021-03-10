@@ -13,11 +13,15 @@ namespace Eshva.Poezd.Adapter.Kafka
   {
     public ProducerConfig ProducerConfig { get; internal set; }
 
+    public IProducerFactory ProducerFactory { get; internal set; }
+
     // TODO: Connect validation to the router configuration validation.
     public IEnumerable<string> Validate()
     {
       if (ProducerConfig == null)
-        yield return "Producer configuration for broker egress driver should be specified.";
+        yield return "Producer configuration for broker egress Kafka driver should be specified.";
+      if (ProducerFactory == null)
+        yield return "Producer factory for broker egress Kafka driver should be specified.";
     }
   }
 }

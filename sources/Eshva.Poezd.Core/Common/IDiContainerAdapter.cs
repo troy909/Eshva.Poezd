@@ -20,5 +20,7 @@ namespace Eshva.Poezd.Core.Common
     /// </returns>
     [NotNull]
     IDisposable BeginScope();
+
+    TService GetService<TService>() where TService : class;
   }
 }

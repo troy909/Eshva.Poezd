@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
@@ -66,9 +67,10 @@ namespace Eshva.Poezd.Core.Routing
     public void Initialize([NotNull] IMessageRouter messageRouter, [NotNull] string brokerId);
 
     Task Publish(
-      byte[] key,
-      byte[] payload,
+      object key,
+      object payload,
       IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames);
+      IReadOnlyCollection<string> queueNames,
+      CancellationToken cancellationToken);
   }
 }

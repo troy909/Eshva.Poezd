@@ -2,6 +2,7 @@
 
 using System;
 using Eshva.Poezd.Core.Pipeline;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -9,9 +10,9 @@ namespace Eshva.Poezd.Core.Configuration
 {
   public class EgressApiConfigurator
   {
-    public EgressApiConfigurator(EgressApiConfiguration configuration)
+    public EgressApiConfigurator([NotNull] EgressApiConfiguration configuration)
     {
-      _configuration = configuration;
+      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     public EgressApiConfigurator WithId(string id)
@@ -28,7 +29,7 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public EgressApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
+    public EgressApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>() where TMessageTypesRegistry : IEgressMessageTypesRegistry
     {
       _configuration.MessageTypesRegistryType = typeof(TMessageTypesRegistry);
       return this;

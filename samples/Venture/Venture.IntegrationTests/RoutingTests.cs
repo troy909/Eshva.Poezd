@@ -6,6 +6,7 @@ using Confluent.Kafka;
 using Eshva.Common.Testing;
 using Eshva.Poezd.Adapter.Kafka;
 using Eshva.Poezd.Adapter.SimpleInjector;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
@@ -39,6 +40,7 @@ namespace Venture.IntegrationTests
           configureEgressApi);
 
       container.RegisterInstance<IServiceProvider>(container);
+      container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipeFitter>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();

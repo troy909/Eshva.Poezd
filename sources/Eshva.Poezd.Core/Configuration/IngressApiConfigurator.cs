@@ -50,6 +50,7 @@ namespace Eshva.Poezd.Core.Configuration
 
     [NotNull]
     public IngressApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
+      where TMessageTypesRegistry : IIngressMessageTypesRegistry
     {
       _configuration.MessageTypesRegistryType = typeof(TMessageTypesRegistry);
       return this;

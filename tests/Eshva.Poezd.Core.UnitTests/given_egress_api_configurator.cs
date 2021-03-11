@@ -12,13 +12,13 @@ using Xunit;
 
 namespace Eshva.Poezd.Core.UnitTests
 {
-  public class given_ingress_api_configurator
+  public class given_egress_api_configurator
   {
     [Fact]
     public void when_id_set_it_should_be_set_in_configuration()
     {
-      var configuration = new IngressApiConfiguration();
-      var sut = new IngressApiConfigurator(configuration);
+      var configuration = new EgressApiConfiguration();
+      var sut = new EgressApiConfigurator(configuration);
       const string expected = "id";
       sut.WithId(expected).Should().BeSameAs(sut);
       configuration.Id.Should().Be(expected);
@@ -27,35 +27,17 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_enter_pipe_fitter_set_it_should_be_set_in_configuration()
     {
-      var configuration = new IngressApiConfiguration();
-      var sut = new IngressApiConfigurator(configuration);
+      var configuration = new EgressApiConfiguration();
+      var sut = new EgressApiConfigurator(configuration);
       sut.WithPipeFitter<PipeFitter>().Should().BeSameAs(sut);
       configuration.PipeFitterType.Should().Be<PipeFitter>();
     }
 
     [Fact]
-    public void when_handler_registry_set_it_should_be_set_in_configuration()
-    {
-      var configuration = new IngressApiConfiguration();
-      var sut = new IngressApiConfigurator(configuration);
-      sut.WithHandlerRegistry<HandlerRegistry>().Should().BeSameAs(sut);
-      configuration.HandlerRegistryType.Should().Be<HandlerRegistry>();
-    }
-
-    [Fact]
-    public void when_queue_name_patterns_provider_set_it_should_be_set_in_configuration()
-    {
-      var configuration = new IngressApiConfiguration();
-      var sut = new IngressApiConfigurator(configuration);
-      sut.WithQueueNamePatternsProvider<QueueNamePatternsProvider>().Should().BeSameAs(sut);
-      configuration.QueueNamePatternsProviderType.Should().Be<QueueNamePatternsProvider>();
-    }
-
-    [Fact]
     public void when_message_type_registry_set_it_should_be_set_in_configuration()
     {
-      var configuration = new IngressApiConfiguration();
-      var sut = new IngressApiConfigurator(configuration);
+      var configuration = new EgressApiConfiguration();
+      var sut = new EgressApiConfigurator(configuration);
       sut.WithMessageTypesRegistry<MessageTypesRegistry1>().Should().BeSameAs(sut);
       configuration.MessageTypesRegistryType.Should().Be<MessageTypesRegistry1>();
     }
@@ -65,14 +47,14 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new IngressApiConfigurator(configuration: null);
+      Action sut = () => new EgressApiConfigurator(configuration: null);
       sut.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void when_null_set_as_id_it_should_fail()
     {
-      var configurator = new IngressApiConfigurator(new IngressApiConfiguration());
+      var configurator = new EgressApiConfigurator(new EgressApiConfiguration());
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => configurator.WithId(id: null);
       sut.Should().Throw<ArgumentNullException>();
@@ -81,7 +63,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_empty_string_set_as_id_it_should_fail()
     {
-      var configurator = new IngressApiConfigurator(new IngressApiConfiguration());
+      var configurator = new EgressApiConfigurator(new EgressApiConfiguration());
       Action sut = () => configurator.WithId(string.Empty);
       sut.Should().Throw<ArgumentNullException>();
     }
@@ -89,26 +71,20 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_whitespace_string_set_as_id_it_should_fail()
     {
-      var configurator = new IngressApiConfigurator(new IngressApiConfiguration());
+      var configurator = new EgressApiConfigurator(new EgressApiConfiguration());
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => configurator.WithId(" \n\t");
       sut.Should().Throw<ArgumentNullException>();
     }
 
     // ReSharper disable once ClassNeverInstantiated.Local
-    private class MessageTypesRegistry1 : IIngressMessageTypesRegistry
+    private class MessageTypesRegistry1 : IEgressMessageTypesRegistry
     {
-      public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) => typeof(object);
+      public string GetMessageTypeNameByItsMessageType(Type messageType) => string.Empty;
 
-      public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(
-        string messageTypeName) where TMessage : class =>
-        null!;
-    }
+      public IEgressMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class => null!;
 
-    // ReSharper disable once ClassNeverInstantiated.Local
-    private class QueueNamePatternsProvider : IQueueNamePatternsProvider
-    {
-      public IEnumerable<string> GetQueueNamePatterns() => throw new NotImplementedException();
+      public bool DoesOwn<TMessage>() where TMessage : class => false;
     }
 
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]
@@ -120,10 +96,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [UsedImplicitly]
     private class PipeFitter : IPipeFitter
     {
-      public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class
-      {
-        throw new NotImplementedException();
-      }
+      public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class { }
     }
   }
 }

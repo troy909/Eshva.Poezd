@@ -3,6 +3,7 @@
 using System;
 using Eshva.Common.Testing;
 using Eshva.Poezd.Adapter.SimpleInjector;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using RandomStringCreator;
@@ -23,6 +24,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       container.AddLogging(testOutput);
 
       container.RegisterInstance<IServiceProvider>(container);
+      container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
       container.RegisterSingleton<ThrowingEgressStep>();
       container.RegisterSingleton<WithThrowingStepPipeFitter>();
       container.RegisterSingleton<TestBrokerEgressEnterStep>();

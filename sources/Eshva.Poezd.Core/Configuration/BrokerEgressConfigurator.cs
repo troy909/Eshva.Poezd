@@ -11,9 +11,9 @@ namespace Eshva.Poezd.Core.Configuration
 {
   public class BrokerEgressConfigurator : IBrokerEgressDriverConfigurator
   {
-    public BrokerEgressConfigurator(BrokerEgressConfiguration configuration)
+    public BrokerEgressConfigurator([NotNull] BrokerEgressConfiguration configuration)
     {
-      _configuration = configuration;
+      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     public BrokerEgressConfigurator WithEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
@@ -38,10 +38,10 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public void SetDriver(IBrokerEgressDriver driver, IMessageRouterConfigurationPart configuration)
+    public void SetDriver([NotNull] IBrokerEgressDriver driver, [NotNull] IMessageRouterConfigurationPart configuration)
     {
-      _configuration.Driver = driver;
-      _configuration.DriverConfiguration = configuration;
+      _configuration.Driver = driver ?? throw new ArgumentNullException(nameof(driver));
+      _configuration.DriverConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
     private readonly BrokerEgressConfiguration _configuration;

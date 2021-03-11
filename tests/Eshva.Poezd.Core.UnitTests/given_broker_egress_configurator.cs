@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
-using Eshva.Poezd.Core.Routing;
+using Eshva.Poezd.Core.UnitTests.TestSubjects;
 using FluentAssertions;
 using JetBrains.Annotations;
 using RandomStringCreator;
@@ -14,13 +14,13 @@ using Xunit;
 
 namespace Eshva.Poezd.Core.UnitTests
 {
-  public class given_broker_ingress_configurator
+  public class given_broker_egress_configurator
   {
     [Fact]
     public void when_enter_pipe_fitter_set_it_should_be_set_in_configuration()
     {
-      var configuration = new BrokerIngressConfiguration();
-      var sut = new BrokerIngressConfigurator(configuration);
+      var configuration = new BrokerEgressConfiguration();
+      var sut = new BrokerEgressConfigurator(configuration);
       sut.WithEnterPipeFitter<StabPipeFitter>().Should().BeSameAs(sut);
       configuration.EnterPipeFitterType.Should().Be<StabPipeFitter>();
     }
@@ -28,26 +28,17 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_exit_pipe_fitter_set_it_should_be_set_in_configuration()
     {
-      var configuration = new BrokerIngressConfiguration();
-      var sut = new BrokerIngressConfigurator(configuration);
+      var configuration = new BrokerEgressConfiguration();
+      var sut = new BrokerEgressConfigurator(configuration);
       sut.WithExitPipeFitter<StabPipeFitter>().Should().BeSameAs(sut);
       configuration.ExitPipeFitterType.Should().Be<StabPipeFitter>();
     }
 
     [Fact]
-    public void when_queue_name_matcher_set_it_should_be_set_in_configuration()
-    {
-      var configuration = new BrokerIngressConfiguration();
-      var sut = new BrokerIngressConfigurator(configuration);
-      sut.WithQueueNameMatcher<StabQueueNameMatcher>().Should().BeSameAs(sut);
-      configuration.QueueNameMatcherType.Should().Be<StabQueueNameMatcher>();
-    }
-
-    [Fact]
     public void when_api_added_it_should_be_added_into_configuration()
     {
-      var configuration = new BrokerIngressConfiguration();
-      var sut = new BrokerIngressConfigurator(configuration);
+      var configuration = new BrokerEgressConfiguration();
+      var sut = new BrokerEgressConfigurator(configuration);
       var expected = new StringCreator().Get(length: 10);
       sut.AddApi(api => api.WithId(expected)).Should().BeSameAs(sut);
       configuration.Apis.Should().HaveCount(expected: 1, "an API should be added")
@@ -59,23 +50,35 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => new BrokerIngressConfigurator(configuration: null);
+      Action sut = () => new BrokerEgressConfigurator(configuration: null);
       sut.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void when_null_added_as_api_it_should_fail()
     {
-      var configurator = new BrokerIngressConfigurator(new BrokerIngressConfiguration());
+      var configurator = new BrokerEgressConfigurator(new BrokerEgressConfiguration());
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => configurator.AddApi(configurator: null);
       sut.Should().Throw<ArgumentNullException>();
     }
-// TODO: Test SetDriver.
-    [UsedImplicitly]
-    private class StabQueueNameMatcher : IQueueNameMatcher
+
+    [Fact]
+    public void when_setting_null_as_driver_it_should_fail()
     {
-      public bool DoesMatch(string queueName, string queueNamePattern) => true;
+      var configurator = new BrokerEgressConfigurator(new BrokerEgressConfiguration());
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
+      Action sut = () => configurator.SetDriver(driver: null, new TestBrokerEgressDriverConfiguration());
+      sut.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void when_setting_null_as_driver_configuration_it_should_fail()
+    {
+      var configurator = new BrokerEgressConfigurator(new BrokerEgressConfiguration());
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
+      Action sut = () => configurator.SetDriver(new TestBrokerEgressDriver(new TestDriverState()), configuration: null);
+      sut.Should().Throw<ArgumentNullException>();
     }
 
     [UsedImplicitly]

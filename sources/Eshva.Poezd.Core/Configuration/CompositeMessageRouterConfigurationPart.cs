@@ -13,8 +13,16 @@ namespace Eshva.Poezd.Core.Configuration
   /// </summary>
   public abstract class CompositeMessageRouterConfigurationPart : IMessageRouterConfigurationPart
   {
+    // TODO: Write tests.
     /// <inheritdoc />
-    public IEnumerable<string> Validate() => ValidateItself().Concat(GetChildConfigurations().SelectMany(part => part.Validate()));
+    public IEnumerable<string> Validate()
+    {
+      var selfErrors = ValidateItself().ToList();
+      var children = GetChildConfigurations().ToArray();
+      if (children.Any(part => part == null)) selfErrors.Add($"Some of child properties of {GetType().Name} are null.");
+
+      return selfErrors.Concat(children.Where(part => part != null).SelectMany(part => part.Validate()));
+    }
 
     /// <summary>
     /// Validates the configuration object itself.

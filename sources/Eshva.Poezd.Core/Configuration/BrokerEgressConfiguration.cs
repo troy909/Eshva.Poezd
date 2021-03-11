@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
@@ -21,6 +22,8 @@ namespace Eshva.Poezd.Core.Configuration
 
     public IBrokerEgressDriver Driver { get; internal set; }
 
+    public IMessageRouterConfigurationPart DriverConfiguration { get; internal set; }
+
     public static BrokerEgressConfiguration Empty { get; } = CreateValidEmpty();
 
     /// <summary>
@@ -33,9 +36,22 @@ namespace Eshva.Poezd.Core.Configuration
     {
       if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
+      if (_apis.Contains(configuration))
+      {
+        throw new PoezdConfigurationException(
+          $"You try to add an egress API {configuration.Id} which already present in the list of APIs. It's not allowed.");
+      }
+
+      if (_apis.Any(api => api.Id.Equals(configuration.Id, StringComparison.InvariantCulture)))
+      {
+        throw new PoezdConfigurationException(
+          $"An egress API with ID '{configuration.Id}' already present in the list of APIs. Every API should have an unique ID.");
+      }
+
       _apis.Add(configuration);
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
       if (!_apis.Any())
@@ -44,10 +60,13 @@ namespace Eshva.Poezd.Core.Configuration
         yield return "The enter pipe fitter type should be set for the broker egress.";
       if (ExitPipeFitterType == null)
         yield return "The exit pipe fitter type should be set for the broker egress.";
+      if (Driver == null)
+        yield return "The driver should be set for the broker egress.";
     }
 
     /// <inheritdoc />
-    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => _apis.AsReadOnly();
+    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() =>
+      _apis.AsReadOnly().Append(DriverConfiguration);
 
     private static BrokerEgressConfiguration CreateValidEmpty()
     {

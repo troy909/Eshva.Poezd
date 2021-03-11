@@ -11,7 +11,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public static BrokerEgressConfigurator WithTestDriver(this BrokerEgressConfigurator egress, TestDriverState state)
     {
       IBrokerEgressDriverConfigurator driverConfigurator = egress;
-      driverConfigurator.SetDriver(new TestBrokerEgressDriver(state));
+      driverConfigurator.SetDriver(new TestBrokerEgressDriver(state), new TestBrokerEgressDriverConfiguration());
       return egress;
     }
   }

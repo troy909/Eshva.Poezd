@@ -21,16 +21,17 @@ namespace Eshva.Poezd.Core.UnitTests
       sut.Validate().Should().NotBeNull().And.Subject.Should().BeEmpty("there is no errors in the configuration");
     }
 
+// TODO: Add test on driver configuration.
     [Fact]
     public void when_validating_it_should_validate_expected_number_of_properties()
     {
       const int expectedNumberOfValidatingProperties = 4;
       const int numberOfNotValidatingPublicProperties = 1;
 
-      var properties = typeof(BrokerIngressConfiguration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-      properties.Should().HaveCount(
+      var validatingProperties = typeof(BrokerIngressConfiguration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+      validatingProperties.Should().HaveCount(
         expectedNumberOfValidatingProperties + numberOfNotValidatingPublicProperties,
-        $"Seams like you've added new properties to {nameof(BrokerIngressConfiguration)}. " +
+        $"seams like you've added new properties to {nameof(BrokerIngressConfiguration)}. " +
         $"Update its ValidateItself method to test them or update {nameof(expectedNumberOfValidatingProperties)} const value.");
     }
 
@@ -64,11 +65,12 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var configuration = new BrokerIngressConfiguration();
 
-      var api1 = new IngressApiConfiguration {Id = "same id"};
+      const string sameId = "same id";
+      var api1 = new IngressApiConfiguration {Id = sameId};
       Action sut1 = () => { configuration.AddApi(api1); };
       sut1.Should().NotThrow();
 
-      var api2 = new IngressApiConfiguration {Id = "same id"};
+      var api2 = new IngressApiConfiguration {Id = sameId};
       Action sut2 = () => { configuration.AddApi(api2); };
       sut2.Should().ThrowExactly<PoezdConfigurationException>();
     }

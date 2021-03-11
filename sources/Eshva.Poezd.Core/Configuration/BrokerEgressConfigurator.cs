@@ -38,9 +38,10 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
-    public void SetDriver(IBrokerEgressDriver driver)
+    public void SetDriver(IBrokerEgressDriver driver, IMessageRouterConfigurationPart configuration)
     {
       _configuration.Driver = driver;
+      _configuration.DriverConfiguration = configuration;
     }
 
     private readonly BrokerEgressConfiguration _configuration;

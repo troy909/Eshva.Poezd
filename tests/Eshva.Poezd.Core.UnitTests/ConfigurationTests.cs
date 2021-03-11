@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Routing;
+using Eshva.Poezd.Core.UnitTests.TestSubjects;
 
 #endregion
 
@@ -89,6 +90,27 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var configuration = new MessageRouterConfiguration();
       configuration.AddBroker(CreateMessageBrokerConfiguration());
+      return configuration;
+    }
+
+    public static BrokerEgressConfiguration CreateBrokerEgressConfiguration(bool shouldAddApis = true)
+    {
+      var configuration = new BrokerEgressConfiguration
+      {
+        Driver = new TestBrokerEgressDriver(new TestDriverState()),
+        DriverConfiguration = new TestBrokerEgressDriverConfiguration(),
+        EnterPipeFitterType = typeof(object),
+        ExitPipeFitterType = typeof(object)
+      };
+      if (shouldAddApis) configuration.AddApi(CreateEgressApiConfiguration());
+
+      return configuration;
+    }
+
+    public static BrokerEgressConfiguration CreateBrokerEgressConfigurationWithout(Action<BrokerEgressConfiguration> updater)
+    {
+      var configuration = CreateBrokerEgressConfiguration();
+      updater(configuration);
       return configuration;
     }
 

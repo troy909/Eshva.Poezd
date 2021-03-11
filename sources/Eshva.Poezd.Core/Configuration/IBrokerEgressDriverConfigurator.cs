@@ -8,6 +8,6 @@ namespace Eshva.Poezd.Core.Configuration
 {
   public interface IBrokerEgressDriverConfigurator
   {
-    void SetDriver(IBrokerEgressDriver driver);
+    void SetDriver(IBrokerEgressDriver driver, IMessageRouterConfigurationPart brokerEgressKafkaDriverConfiguration);
   }
 }

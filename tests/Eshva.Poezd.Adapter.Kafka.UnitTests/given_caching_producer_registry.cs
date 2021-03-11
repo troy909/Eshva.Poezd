@@ -1,10 +1,14 @@
 #region Usings
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.UnitTests.Tools;
+using Eshva.Poezd.Core.Common;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -75,6 +79,29 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       sut.Dispose();
 
       producers.Count(producer => producer.IsDisposed).Should().Be(expected: 3, "all producers should be disposed");
+    }
+
+    [Fact]
+    public void when_constructed_with_null_as_factory_it_should_fail()
+    {
+      // ReSharper disable once AssignNullToNotNullAttribute
+      // ReSharper disable once ObjectCreationAsStatement
+      Action sut = () => new CachingProducerRegistry(producerFactory: null);
+      sut.Should().ThrowExactly<ArgumentNullException>().Where(
+        exception => exception.ParamName.Equals("producerFactory"),
+        "producer factory should be specified");
+    }
+
+    [Fact]
+    public void when_getting_producer_and_error_occurred_on_producer_creating_it_should_fail()
+    {
+      var factoryMock = new Mock<IProducerFactory>();
+      factoryMock.Setup(factory => factory.Create<string, string>(It.IsAny<ProducerConfig>())).Throws<IOException>();
+      var registry = new CachingProducerRegistry(factoryMock.Object);
+      var producerConfig = new ProducerConfig();
+      Action sut = () => registry.Get<string, string>(producerConfig);
+      sut.Should().ThrowExactly<PoezdOperationException>()
+        .Where(exception => exception.Message.Contains("During Kafka producer creating an occurred error."), "should fail");
     }
   }
 }

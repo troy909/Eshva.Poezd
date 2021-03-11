@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="TestResults\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="TestSubjects\HandlerInterfaces.cs" />
     <Compile Remove="TestSubjects\MessageHandlers1.cs" />
     <Compile Remove="TestSubjects\MessageHandlers2.cs" />
@@ -44,8 +50,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
-    <ProjectReference
-      Include="..\..\sources\Eshva.Poezd.Adapter.SimpleInjector\Eshva.Poezd.Adapter.SimpleInjector.csproj" />
+    <ProjectReference Include="..\..\sources\Eshva.Poezd.Adapter.SimpleInjector\Eshva.Poezd.Adapter.SimpleInjector.csproj" />
   </ItemGroup>
 
 </Project>

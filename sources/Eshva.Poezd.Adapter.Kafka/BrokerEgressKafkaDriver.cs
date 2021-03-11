@@ -18,11 +18,12 @@ namespace Eshva.Poezd.Adapter.Kafka
 {
   public class BrokerEgressKafkaDriver : IBrokerEgressDriver
   {
-    public BrokerEgressKafkaDriver([NotNull] BrokerEgressKafkaDriverConfiguration configuration)
+    internal BrokerEgressKafkaDriver(
+      [NotNull] BrokerEgressKafkaDriverConfiguration configuration,
+      [NotNull] IProducerRegistry producerRegistry)
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-      _producerRegistry = new CachingProducerRegistry(
-        configuration.ProducerFactory ?? throw new ArgumentNullException(nameof(configuration.ProducerFactory)));
+      _producerRegistry = producerRegistry ?? throw new ArgumentNullException(nameof(producerRegistry));
     }
 
     /// <inheritdoc />
@@ -118,7 +119,7 @@ namespace Eshva.Poezd.Adapter.Kafka
     }
 
     private readonly BrokerEgressKafkaDriverConfiguration _configuration;
-    private readonly CachingProducerRegistry _producerRegistry;
+    private readonly IProducerRegistry _producerRegistry;
     private string _brokerId;
     private IClock _clock;
     private bool _isInitialized;

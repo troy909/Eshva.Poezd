@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,12 +65,6 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     public void Initialize([NotNull] IMessageRouter messageRouter, [NotNull] string brokerId);
 
-    Task Publish(
-      object key,
-      object payload,
-      IEgressApi api,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames,
-      CancellationToken cancellationToken);
+    Task Publish(MessagePublishingContext context, CancellationToken cancellationToken);
   }
 }

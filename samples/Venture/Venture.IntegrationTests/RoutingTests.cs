@@ -42,12 +42,15 @@ namespace Venture.IntegrationTests
 
       container.RegisterInstance<IServiceProvider>(container);
       container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
+      container.RegisterSingleton<DefaultProducerFactory>();
+      container.RegisterSingleton<LoggingProducerConfigurator>();
+      container.RegisterSingleton<DefaultSerializerFactory>();
       container.RegisterSingleton<VentureConsumerConfigurator>();
       container.RegisterSingleton<DefaultConsumerFactory>();
       container.RegisterSingleton<DefaultDeserializerFactory>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipeFitter>();
-      container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
+      container.RegisterSingleton<Utf8ByteStringHeaderValueCodec>();
       container.RegisterSingleton<IngressApi1QueueNamePatternsProvider>();
       container.RegisterSingleton<EmptyHandlerRegistry>();
 
@@ -92,7 +95,7 @@ namespace Venture.IntegrationTests
                         .WithConsumerFactory<DefaultConsumerFactory>()
                         .WithDeserializerFactory<DefaultDeserializerFactory>()
                         .WithConsumerConfigurator<VentureConsumerConfigurator>()
-                        .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
+                        .WithHeaderValueCodec<Utf8ByteStringHeaderValueCodec>())
                     .WithEnterPipeFitter<TIngressEnterPipeline>()
                     .WithExitPipeFitter<TIngressExitPipeline>()
                     .WithQueueNameMatcher<RegexQueueNameMatcher>()
@@ -102,7 +105,10 @@ namespace Venture.IntegrationTests
                     .WithKafkaDriver(
                       driver => driver
                         .WithProducerConfig(CreateProducerConfig())
-                        .WithDefaultProducerFactory())
+                        .WithDefaultProducerFactory()
+                        .WithSerializerFactory<DefaultSerializerFactory>()
+                        .WithProducerConfigurator<LoggingProducerConfigurator>()
+                        .WithHeaderValueCodec<Utf8ByteStringHeaderValueCodec>())
                     .WithEnterPipeFitter<TEgressEnterPipeline>()
                     .WithExitPipeFitter<TEgressExitPipeline>()
                     .AddApi(configureEgressApi))));
@@ -141,8 +147,8 @@ namespace Venture.IntegrationTests
         //Debug = "msg",
         MessageTimeoutMs = 3000
       };
-      producerConfig.Set("request.required.acks", "-1");
-      producerConfig.Set("queue.buffering.max.ms", "5");
+      producerConfig.Set(@"request.required.acks", "-1");
+      producerConfig.Set(@"queue.buffering.max.ms", "5");
       return producerConfig;
     }
 

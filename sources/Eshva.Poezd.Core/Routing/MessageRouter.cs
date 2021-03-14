@@ -152,11 +152,7 @@ namespace Eshva.Poezd.Core.Routing
           await pipeline.Execute(context);
           // TODO: Add timeout configuration using router configuration fluent interface.
           var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-          await PublishMessageWithDriver(
-            messageBroker,
-            context,
-            egressApi,
-            timeout);
+          await PublishMessageWithDriver(context, timeout);
         }
         catch (Exception exception)
         {
@@ -210,16 +206,9 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     private Task PublishMessageWithDriver(
-      MessageBroker messageBroker,
       MessagePublishingContext context,
-      IEgressApi egressApi,
-      CancellationToken cancellationToken) => messageBroker.Publish(
-      context.Key,
-      context.Payload,
-      egressApi,
-      context.Metadata,
-      context.QueueNames,
-      cancellationToken);
+      CancellationToken cancellationToken) =>
+      context.Broker.Publish(context, cancellationToken);
 
     private static Pipeline<MessageHandlingContext> BuildIngressPipeline(MessageBroker messageBroker, IIngressApi api)
     {

@@ -54,13 +54,15 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var configuration = new BrokerIngressKafkaDriverConfiguration();
       var sut = new BrokerIngressKafkaDriverConfigurator(configuration);
-      sut.WithHeaderValueParser<StabHeaderValueParser>().Should().BeSameAs(sut);
-      configuration.HeaderValueParserType.Should().Be<StabHeaderValueParser>();
+      sut.WithHeaderValueCodec<StabHeaderValueCodec>().Should().BeSameAs(sut);
+      configuration.HeaderValueParserType.Should().Be<StabHeaderValueCodec>();
     }
 
-    private class StabHeaderValueParser : IHeaderValueParser
+    private class StabHeaderValueCodec : IHeaderValueCodec
     {
-      public string Parser(byte[] value) => null;
+      public string Decode(byte[] value) => null;
+
+      public byte[] Encode(string value) => null;
     }
 
     private class StabConsumerConfigurator : IConsumerConfigurator

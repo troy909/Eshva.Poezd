@@ -1,6 +1,5 @@
 #region Usings
 
-using System.Collections.Generic;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.UnitTests.Tools;
 using FluentAssertions;
@@ -23,13 +22,12 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     }
 
     [Fact]
-    public void when_producer_factory_set_it_should_be_set_in_configuration()
+    public void when_producer_factory_type_set_it_should_be_set_in_configuration()
     {
       var configuration = new BrokerEgressKafkaDriverConfiguration();
       var sut = new BrokerEgressKafkaDriverConfigurator(configuration);
-      var expected = new TestProducerFactory(new Dictionary<string, object>());
-      sut.WithProducerFactory(expected).Should().BeSameAs(sut);
-      configuration.ProducerFactory.Should().BeSameAs(expected);
+      sut.WithProducerFactory<TestProducerFactory>().Should().BeSameAs(sut);
+      configuration.ProducerFactoryType.Should().Be(typeof(TestProducerFactory));
     }
 
     [Fact]
@@ -37,9 +35,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var configuration = new BrokerEgressKafkaDriverConfiguration();
       var sut = new BrokerEgressKafkaDriverConfigurator(configuration);
-      var expected = new TestProducerFactory(new Dictionary<string, object>());
       sut.WithDefaultProducerFactory().Should().BeSameAs(sut);
-      configuration.ProducerFactory.Should().BeOfType<DefaultProducerFactory>();
+      configuration.ProducerFactoryType.Should().Be<DefaultProducerFactory>();
     }
   }
 }

@@ -24,7 +24,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Gets/sets the message broker CLR-object that will be used to publish the message.
     /// </summary>
-    public MessageBroker Broker { get; set; }
+    public IMessageBroker Broker { get; set; }
 
     /// <summary>
     /// Gets/sets the egress API CLR-object that will be rule the publishing process.

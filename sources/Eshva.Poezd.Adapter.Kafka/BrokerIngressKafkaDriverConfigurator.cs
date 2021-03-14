@@ -43,9 +43,10 @@ namespace Eshva.Poezd.Adapter.Kafka
       return this;
     }
 
-    public BrokerIngressKafkaDriverConfigurator WithHeaderValueParser<THeaderValueParser>()
+    public BrokerIngressKafkaDriverConfigurator WithHeaderValueCodec<THeaderValueCodec>()
+      where THeaderValueCodec : IHeaderValueCodec
     {
-      _configuration.HeaderValueParserType = typeof(THeaderValueParser);
+      _configuration.HeaderValueParserType = typeof(THeaderValueCodec);
       return this;
     }
 

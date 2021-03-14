@@ -22,7 +22,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     [Fact]
     public void when_validating_it_should_validate_expected_number_of_properties()
     {
-      const int expectedNumberOfValidatingProperties = 2;
+      const int expectedNumberOfValidatingProperties = 5;
 
       var properties = typeof(BrokerEgressKafkaDriverConfiguration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
       properties.Should().HaveCount(
@@ -37,7 +37,13 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.ProducerConfig = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.ProducerFactory = null)
+      ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.ProducerFactoryType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.HeaderValueCodecType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.ProducerConfiguratorType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerEgressKafkaDriverConfigurationWithout(configuration => configuration.SerializerFactoryType = null)
         .Validate().Should().HaveCount(expected: 1);
     }
   }

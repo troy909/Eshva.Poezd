@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -53,9 +52,14 @@ namespace Eshva.Poezd.Core.Routing
       Driver.Initialize(
         brokerId,
         logger,
-        _clock);
+        _clock,
+        Apis,
+        _serviceProvider);
     }
 
+    public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) =>
+      Driver.Publish(context, cancellationToken);
+    /*
     public Task Publish(
       [NotNull] object key,
       [NotNull] object payload,
@@ -78,6 +82,7 @@ namespace Eshva.Poezd.Core.Routing
         queueNames,
         cancellationToken);
     }
+    */
 
     public void Dispose()
     {

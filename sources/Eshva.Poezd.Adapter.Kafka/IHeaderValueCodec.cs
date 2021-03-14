@@ -13,7 +13,7 @@ namespace Eshva.Poezd.Adapter.Kafka
   /// Kafka handles header values as byte arrays. Poezd handles broker headers as strings. This parser should translate bytes
   /// to string in accordance to way headers are encoded on producer side.
   /// </remarks>
-  public interface IHeaderValueParser
+  public interface IHeaderValueCodec
   {
     /// <summary>
     /// Converts Kafka header value from byte array to string.
@@ -26,6 +26,9 @@ namespace Eshva.Poezd.Adapter.Kafka
     /// <returns>
     /// String representation of header <paramref name="value" />.
     /// </returns>
-    string Parser([CanBeNull] byte[] value);
+    [NotNull]
+    string Decode([CanBeNull] byte[] value);
+
+    [NotNull] byte[] Encode([NotNull] string value);
   }
 }

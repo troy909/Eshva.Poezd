@@ -30,10 +30,12 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
     /// </exception>
-    public void Initialize(
+    void Initialize(
       [NotNull] string brokerId,
       [NotNull] ILogger<IBrokerEgressDriver> logger,
-      [NotNull] IClock clock);
+      [NotNull] IClock clock,
+      [NotNull] IEnumerable<IEgressApi> apis,
+      [NotNull] IServiceProvider serviceProvider);
 
     /// <summary>
     /// Publishes a message using the broker client.
@@ -59,12 +61,6 @@ namespace Eshva.Poezd.Core.Routing
     /// One of arguments is <c>null</c>, an empty or a whitespace string.
     /// </exception>
     [NotNull]
-    Task Publish(
-      [NotNull] object key,
-      [NotNull] object payload,
-      [NotNull] IEgressApi api,
-      [NotNull] IReadOnlyDictionary<string, string> metadata,
-      [NotNull] IReadOnlyCollection<string> queueNames,
-      CancellationToken cancellationToken);
+    Task Publish([NotNull] MessagePublishingContext context, CancellationToken cancellationToken);
   }
 }

@@ -37,9 +37,9 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       // ReSharper disable once ObjectCreationAsStatement
-      Action sut = () => { new BrokerEgressKafkaDriver(configuration: null, new Mock<IProducerRegistry>().Object); };
+      Action sut = () => { new BrokerEgressKafkaDriver(driverConfiguration: null, new Mock<IProducerRegistry>().Object); };
       sut.Should().ThrowExactly<ArgumentNullException>().Where(
-        exception => exception.ParamName.Equals("configuration"),
+        exception => exception.ParamName.Equals("driverConfiguration"),
         "configuration should be specified");
     }
 
@@ -48,6 +48,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var configuration = new BrokerEgressKafkaDriverConfiguration();
       // ReSharper disable once ObjectCreationAsStatement
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => new BrokerEgressKafkaDriver(configuration, producerRegistry: null);
       sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("producerRegistry"));
     }
@@ -64,12 +65,14 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
 
       var brokerId = "broker-1";
       var logger = container.GetInstance<ILogger<IBrokerEgressDriver>>();
-      var clock = new TestClock(DateTimeOffset.UtcNow);
+      var clock = Mock.Of<IClock>();
 
       Action sut = () => driver.Initialize(
         brokerId,
         logger,
-        clock);
+        clock,
+        new IEgressApi[0],
+        Mock.Of<IServiceProvider>());
 
       brokerId = null;
       sut.Should().ThrowExactly<ArgumentNullException>()
@@ -104,7 +107,9 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       Action sut = () => driver.Initialize(
         "broker-1",
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
-        new TestClock(DateTimeOffset.UtcNow));
+        new TestClock(DateTimeOffset.UtcNow),
+        new IEgressApi[0],
+        Mock.Of<IServiceProvider>());
       sut.Should().NotThrow();
       sut.Should().ThrowExactly<PoezdOperationException>().Where(exception => exception.Message.Contains("already initialized"));
     }
@@ -115,13 +120,19 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var driver = new BrokerEgressKafkaDriver(
         ConfigurationTests.CreateBrokerEgressKafkaDriverConfiguration(),
         new Mock<IProducerRegistry>().Object);
-      Func<Task> sut = () => driver.Publish(
-        "key",
-        "payload",
-        Mock.Of<IEgressApi>(),
-        new Dictionary<string, string>(),
-        new string[0],
-        CancellationToken.None);
+      Func<Task> sut = () =>
+      {
+        var context = new MessagePublishingContext
+        {
+          Key = "key",
+          Payload = "payload",
+          Api = Mock.Of<IEgressApi>(),
+          Metadata = new Dictionary<string, string>(),
+          QueueNames = new string[0],
+          Broker = Mock.Of<IMessageBroker>()
+        };
+        return driver.Publish(context, CancellationToken.None);
+      };
 
       sut.Should().ThrowExactly<PoezdOperationException>()
         .Where(
@@ -134,6 +145,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var container = new Container().AddLogging(_testOutput);
       const string brokerId = "broker-1";
+      var brokerMock = new Mock<IMessageBroker>();
+      brokerMock.SetupGet(broker => broker.Id).Returns(brokerId);
       var publishedMessages = new Dictionary<string, object>();
 
       var registryMock = new Mock<IProducerRegistry>();
@@ -146,20 +159,26 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       driver.Initialize(
         brokerId,
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
-        new TestClock(DateTimeOffset.UtcNow));
+        new TestClock(DateTimeOffset.UtcNow),
+        new IEgressApi[0],
+        Mock.Of<IServiceProvider>());
       const int key = 555;
       var payload = Encoding.UTF8.GetBytes("payload");
       const string topic1 = "commands1";
       const string topic2 = "audit2";
       const string headerKey = "Type";
       const string headerValue = "Message1";
-      await driver.Publish(
-        key,
-        payload,
-        Mock.Of<IEgressApi>(),
-        new Dictionary<string, string> {{headerKey, headerValue}},
-        new[] {topic1, topic2},
-        CancellationToken.None);
+      var context = new MessagePublishingContext
+      {
+        Key = key,
+        Payload = payload,
+        Api = Mock.Of<IEgressApi>(),
+        Metadata = new Dictionary<string, string> {{headerKey, headerValue}},
+        QueueNames = new[] {topic1, topic2},
+        Broker = brokerMock.Object
+      };
+
+      await driver.Publish(context, CancellationToken.None);
       publishedMessages.Should().HaveCount(expected: 2, "published 1 message to 2 topics");
       publishedMessages.ElementAt(index: 0).Key.Should().Be(topic1, "should publish to topics in order of occurrence");
       publishedMessages.ElementAt(index: 0).Value.As<Message<int, byte[]>>().Key.Should().Be(key, "key should have expected value");
@@ -201,18 +220,26 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       driver.Initialize(
         brokerId,
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
-        new TestClock(DateTimeOffset.UtcNow));
+        new TestClock(DateTimeOffset.UtcNow),
+        new IEgressApi[0],
+        Mock.Of<IServiceProvider>());
       const int key = 555;
       var payload = Encoding.UTF8.GetBytes("payload");
       const string topic1 = "commands1";
       const string topic2 = "audit2";
-      await driver.Publish(
-        key,
-        payload,
-        Mock.Of<IEgressApi>(),
-        new Dictionary<string, string> {{"Type", "Message1"}},
-        new[] {topic1, topic2},
-        CancellationToken.None);
+      var brokerMock = new Mock<IMessageBroker>();
+      brokerMock.SetupGet(broker => broker.Id).Returns(brokerId);
+      var context = new MessagePublishingContext
+      {
+        Key = key,
+        Payload = payload,
+        Api = Mock.Of<IEgressApi>(),
+        Metadata = new Dictionary<string, string> {{"Type", "Message1"}},
+        QueueNames = new[] {topic1, topic2},
+        Broker = brokerMock.Object
+      };
+
+      await driver.Publish(context, CancellationToken.None);
       InMemorySink.Instance.LogEvents.Should().HaveCount(2 * 2, "message was published to 2 topics");
       InMemorySink.Instance.LogEvents.ElementAt(index: 0).RenderMessage().Should().Contain("Publishing")
         .And.Contain(key.ToString())
@@ -237,6 +264,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var container = new Container().AddLogging(_testOutput);
       const string brokerId = "broker-1";
+      var brokerMock = new Mock<IMessageBroker>();
+      brokerMock.SetupGet(broker => broker.Id).Returns(brokerId);
 
       var producerMock = new Mock<IProducer<int, byte[]>>();
       producerMock.Setup(
@@ -257,17 +286,23 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       driver.Initialize(
         brokerId,
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
-        new TestClock(DateTimeOffset.UtcNow));
+        new TestClock(DateTimeOffset.UtcNow),
+        new IEgressApi[0],
+        Mock.Of<IServiceProvider>());
       const int key = 555;
       const string topic1 = "commands1";
       const string topic2 = "audit2";
-      Func<Task> sut = () => driver.Publish(
-        key,
-        Encoding.UTF8.GetBytes("payload"),
-        Mock.Of<IEgressApi>(),
-        new Dictionary<string, string> {{"Type", "Message1"}},
-        new[] {topic1, topic2},
-        CancellationToken.None);
+      var context = new MessagePublishingContext
+      {
+        Key = key,
+        Payload = Encoding.UTF8.GetBytes("payload"),
+        Api = Mock.Of<IEgressApi>(),
+        Metadata = new Dictionary<string, string> {{"Type", "Message1"}},
+        QueueNames = new[] {topic1, topic2},
+        Broker = brokerMock.Object
+      };
+
+      Func<Task> sut = () => driver.Publish(context, CancellationToken.None);
 
       sut.Should().ThrowExactly<IOException>("should fail if publishing failed");
 
@@ -294,35 +329,63 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       driver.Initialize(
         "broker-1",
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
-        new TestClock(DateTimeOffset.UtcNow));
+        new TestClock(DateTimeOffset.UtcNow),
+        new IEgressApi[0],
+        Mock.Of<IServiceProvider>());
 
-      object key = 555;
+      const int key = 555;
       var payload = Encoding.UTF8.GetBytes("payload");
 
       var metadata = new Dictionary<string, string> {{"Type", "Message1"}};
       var queueNames = new[] {"commands1", "audit2"};
-      Func<Task> sut = () => driver.Publish(
-        key,
-        payload,
-        Mock.Of<IEgressApi>(),
-        metadata,
-        queueNames,
-        CancellationToken.None);
+      var broker = Mock.Of<IMessageBroker>();
+      var api = Mock.Of<IEgressApi>();
+      var context = new MessagePublishingContext
+      {
+        Key = key,
+        Payload = payload,
+        Api = api,
+        Metadata = metadata,
+        QueueNames = queueNames,
+        Broker = broker
+      };
 
-      metadata = null;
-      sut.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("metadata", "null is an invalid metadata");
+      Func<Task> sut = () => driver.Publish(context, CancellationToken.None);
 
-      metadata = new Dictionary<string, string> {{"Type", "Message1"}};
-      queueNames = null;
-      sut.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("queueNames", "null is an invalid queue names");
+      context.Metadata = null;
+      sut.Should().ThrowExactly<PoezdOperationException>().Where(
+        exception => exception.Message.Contains("metadata", StringComparison.InvariantCultureIgnoreCase),
+        "null is an invalid metadata");
 
-      queueNames = new[] {"commands1", "audit2"};
-      key = null;
-      sut.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("key", "null is an invalid key");
+      context.Metadata = metadata;
+      context.QueueNames = null;
+      sut.Should().ThrowExactly<PoezdOperationException>().Where(
+        exception => exception.Message.Contains("queueNames", StringComparison.InvariantCultureIgnoreCase),
+        "null is an invalid queue names");
 
-      key = 555;
-      payload = null;
-      sut.Should().ThrowExactly<ArgumentNullException>().Which.ParamName.Should().Be("payload", "null is an invalid payload");
+      context.QueueNames = queueNames;
+      context.Key = null;
+      sut.Should().ThrowExactly<PoezdOperationException>().Where(
+        exception => exception.Message.Contains("key", StringComparison.InvariantCultureIgnoreCase),
+        "null is an invalid key");
+
+      context.Key = key;
+      context.Payload = null;
+      sut.Should().ThrowExactly<PoezdOperationException>().Where(
+        exception => exception.Message.Contains("payload", StringComparison.InvariantCultureIgnoreCase),
+        "null is an invalid payload");
+
+      context.Payload = payload;
+      context.Broker = null;
+      sut.Should().ThrowExactly<PoezdOperationException>().Where(
+        exception => exception.Message.Contains("broker", StringComparison.InvariantCultureIgnoreCase),
+        "null is an invalid broker");
+
+      context.Broker = broker;
+      context.Api = null;
+      sut.Should().ThrowExactly<PoezdOperationException>().Where(
+        exception => exception.Message.Contains("API", StringComparison.InvariantCultureIgnoreCase),
+        "null is an invalid API");
     }
 
     [Fact]
@@ -341,21 +404,22 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       driver.Initialize(
         "broker-1",
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
-        new TestClock(DateTimeOffset.UtcNow));
+        new TestClock(DateTimeOffset.UtcNow),
+        new IEgressApi[0],
+        Mock.Of<IServiceProvider>());
 
-      const int key = 555;
-      var payload = Encoding.UTF8.GetBytes("payload");
-
-      var metadata = new Dictionary<string, string> {{"Type", "Message1"}};
-      var queueNames = new[] {"commands1", "audit2"};
       var cancelledToken = new CancellationToken(canceled: true);
-      driver.Publish(
-        key,
-        payload,
-        Mock.Of<IEgressApi>(),
-        metadata,
-        queueNames,
-        cancelledToken).IsCanceled.Should().BeTrue("publishing was cancelled");
+      var context = new MessagePublishingContext
+      {
+        Key = 555,
+        Payload = Encoding.UTF8.GetBytes("payload"),
+        Api = Mock.Of<IEgressApi>(),
+        Metadata = new Dictionary<string, string> {{"Type", "Message1"}},
+        QueueNames = new[] {"commands1", "audit2"},
+        Broker = Mock.Of<IMessageBroker>()
+      };
+
+      driver.Publish(context, cancelledToken).IsCanceled.Should().BeTrue("publishing was cancelled");
     }
 
     [Fact]

@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,18 +27,14 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public void Initialize(
       string brokerId,
       ILogger<IBrokerEgressDriver> logger,
-      IClock clock)
+      IClock clock,
+      IEnumerable<IEgressApi> apis,
+      IServiceProvider serviceProvider)
     {
       _state.InitializedCount++;
     }
 
-    public Task Publish(
-      object key,
-      object payload,
-      IEgressApi api,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames,
-      CancellationToken cancellationToken)
+    public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken)
     {
       _state.PublishedMessageCount++;
       return Task.CompletedTask;

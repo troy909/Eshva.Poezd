@@ -16,7 +16,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
       new BrokerEgressKafkaDriverConfiguration
       {
         ProducerConfig = new ProducerConfig(),
-        ProducerFactory = new TestProducerFactory(publishedMessages ?? new Dictionary<string, object>(), exceptionToThrowOnPublishing)
+        ProducerFactoryType = typeof(object),
+        HeaderValueCodecType = typeof(object),
+        ProducerConfiguratorType = typeof(object),
+        SerializerFactoryType = typeof(object)
       };
 
     public static BrokerEgressKafkaDriverConfiguration CreateBrokerEgressKafkaDriverConfigurationWithout(

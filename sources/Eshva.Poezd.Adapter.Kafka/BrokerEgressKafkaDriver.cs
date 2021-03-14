@@ -19,10 +19,10 @@ namespace Eshva.Poezd.Adapter.Kafka
   public class BrokerEgressKafkaDriver : IBrokerEgressDriver
   {
     internal BrokerEgressKafkaDriver(
-      [NotNull] BrokerEgressKafkaDriverConfiguration configuration,
+      [NotNull] BrokerEgressKafkaDriverConfiguration driverConfiguration,
       [NotNull] IProducerRegistry producerRegistry)
     {
-      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+      _driverConfiguration = driverConfiguration ?? throw new ArgumentNullException(nameof(driverConfiguration));
       _producerRegistry = producerRegistry ?? throw new ArgumentNullException(nameof(producerRegistry));
     }
 
@@ -30,55 +30,83 @@ namespace Eshva.Poezd.Adapter.Kafka
     public void Initialize(
       string brokerId,
       ILogger<IBrokerEgressDriver> logger,
-      IClock clock)
+      IClock clock,
+      IEnumerable<IEgressApi> apis,
+      IServiceProvider serviceProvider)
     {
       if (_isInitialized) throw new PoezdOperationException($"Kafka driver for broker with ID {_brokerId} is already initialized.");
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
+
+      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      _serializerFactory = (ISerializerFactory) _serviceProvider.GetService(_driverConfiguration.SerializerFactoryType);
+      _producerFactory = (IProducerFactory) _serviceProvider.GetService(_driverConfiguration.ProducerFactoryType);
+      _producerConfigurator = (IProducerConfigurator) _serviceProvider.GetService(_driverConfiguration.ProducerConfiguratorType);
+      _apis = apis;
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       _clock = clock ?? throw new ArgumentNullException(nameof(clock));
       _brokerId = brokerId;
+
+      CreateAndRegisterProducerPerApi();
+
       _isInitialized = true;
     }
 
     /// <inheritdoc />
-    public Task Publish(
-      object key,
-      object payload,
-      IEgressApi api,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames,
-      CancellationToken cancellationToken)
+    public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken)
     {
       if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can publish messages.");
-      if (key == null) throw new ArgumentNullException(nameof(key));
-      if (payload == null) throw new ArgumentNullException(nameof(payload));
-      if (api == null) throw new ArgumentNullException(nameof(api));
-      if (metadata == null) throw new ArgumentNullException(nameof(metadata));
-      if (queueNames == null) throw new ArgumentNullException(nameof(queueNames));
+      if (context == null) throw new ArgumentNullException(nameof(context));
+      var errors = ValidateContext(context);
+      if (!string.IsNullOrWhiteSpace(errors)) throw new PoezdOperationException($"Message publishing context has missing data: {errors}.");
 
-      var publish = PublishMethod!.MakeGenericMethod(key.GetType(), payload.GetType());
-      return ((Task) publish.Invoke(this, new[] {key, payload, api, metadata, queueNames, cancellationToken}))!;
+      var publish = PublishMethod!.MakeGenericMethod(context.Key.GetType(), context.Payload.GetType());
+      return ((Task) publish.Invoke(this, new object[] {context, cancellationToken}))!;
     }
 
     /// <inheritdoc />
-    public void Dispose()
+    public void Dispose() => _producerRegistry.Dispose();
+
+    private void CreateAndRegisterProducerPerApi()
     {
-      _producerRegistry.Dispose();
+      foreach (var api in _apis)
+      {
+        var concreteMethod = CreateAndRegisterProducerMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
+        concreteMethod.Invoke(this, new object?[] {api});
+      }
     }
 
-    private async Task Publish<TKey, TValue>(
-      TKey key,
-      TValue payload,
-      IEgressApi api,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames,
-      CancellationToken cancellationToken)
+    private void CreateAndRegisterProducer<TKey, TValue>(IEgressApi api)
     {
-      var producer = _producerRegistry.Get<TKey, TValue>(api);
-      var headers = MakeHeaders(metadata);
+      var producer = _producerFactory.Create<TKey, TValue>(
+        _driverConfiguration.ProducerConfig,
+        _producerConfigurator,
+        _serializerFactory);
+      _producerRegistry.Add(api, producer);
+    }
+
+    private static string ValidateContext(MessagePublishingContext context)
+    {
+      var errors = new List<string>();
+      if (context.Metadata == null) errors.Add(nameof(context.Metadata));
+      if (context.Payload == null) errors.Add(nameof(context.Payload));
+      if (context.Key == null) errors.Add(nameof(context.Key));
+      if (context.Api == null) errors.Add(nameof(context.Api));
+      if (context.QueueNames == null) errors.Add(nameof(context.QueueNames));
+      if (context.Broker == null) errors.Add(nameof(context.Broker));
+
+      return string.Join(", ", errors);
+    }
+
+    private async Task Publish<TKey, TValue>(MessagePublishingContext context, CancellationToken cancellationToken)
+    {
+      var producer = _producerRegistry.Get<TKey, TValue>(context.Api);
+      var headers = MakeHeaders(context.Metadata);
       var timestamp = new Timestamp(_clock.GetNowUtc());
-      foreach (var queueName in queueNames)
+      var brokerId = context.Broker.Id;
+      foreach (var queueName in context.QueueNames)
       {
+        var key = (TKey) context.Key;
+        var payload = (TValue) context.Payload;
         var message = new Message<TKey, TValue> {Key = key, Value = payload, Headers = headers, Timestamp = timestamp};
         try
         {
@@ -86,7 +114,7 @@ namespace Eshva.Poezd.Adapter.Kafka
             "Publishing a message with key {Key} to topic {Topic} of broker with ID {BrokerId}.",
             key,
             queueName,
-            _brokerId);
+            brokerId);
           await producer.ProduceAsync(
             queueName,
             message,
@@ -95,7 +123,7 @@ namespace Eshva.Poezd.Adapter.Kafka
             "Successfully published a message with key {Key} to topic {Topic} of broker with ID {BrokerId}.",
             key,
             queueName,
-            _brokerId);
+            brokerId);
         }
         catch (Exception exception)
         {
@@ -104,7 +132,7 @@ namespace Eshva.Poezd.Adapter.Kafka
             "Failed to publish a message with key {Key} to topic {Topic} of broker with ID {BrokerId}.",
             key,
             queueName,
-            _brokerId);
+            brokerId);
           throw;
         }
       }
@@ -121,14 +149,22 @@ namespace Eshva.Poezd.Adapter.Kafka
       return headers;
     }
 
-    private readonly BrokerEgressKafkaDriverConfiguration _configuration;
+    private readonly BrokerEgressKafkaDriverConfiguration _driverConfiguration;
     private readonly IProducerRegistry _producerRegistry;
+    private IEnumerable<IEgressApi> _apis;
     private string _brokerId;
     private IClock _clock;
     private bool _isInitialized;
     private ILogger<IBrokerEgressDriver> _logger;
+    private IProducerConfigurator _producerConfigurator;
+    private IProducerFactory _producerFactory;
+    private ISerializerFactory _serializerFactory;
+    private IServiceProvider _serviceProvider;
 
     private static readonly MethodInfo PublishMethod =
       typeof(BrokerEgressKafkaDriver).GetMethod(nameof(Publish), BindingFlags.Instance | BindingFlags.NonPublic);
+
+    private static readonly MethodInfo CreateAndRegisterProducerMethod =
+      typeof(BrokerEgressKafkaDriver).GetMethod(nameof(CreateAndRegisterProducer), BindingFlags.Instance | BindingFlags.NonPublic);
   }
 }

@@ -51,6 +51,8 @@ namespace Venture.IntegrationTests
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
         api => api
           .WithId("egress-case-office")
+          .WithMessageKey<int>()
+          .WithMessagePayload<byte[]>()
           .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()
           .WithPipeFitter<EmptyPipeFitter>(),
         _testOutput);

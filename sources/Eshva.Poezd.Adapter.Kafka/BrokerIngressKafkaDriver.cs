@@ -37,6 +37,8 @@ namespace Eshva.Poezd.Adapter.Kafka
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _deserializerFactory = (IDeserializerFactory) serviceProvider.GetService(_driverConfiguration.DeserializerFactoryType);
       _consumerFactory = (IConsumerFactory) serviceProvider.GetService(_driverConfiguration.ConsumerFactoryType);
+      _consumerConfigurator = (IConsumerConfigurator) _serviceProvider.GetService(_driverConfiguration.ConsumerConfiguratorType);
+      _apis = apis;
       _logger = (ILogger<BrokerIngressKafkaDriver>) serviceProvider.GetService(typeof(ILogger<BrokerIngressKafkaDriver>)) ??
                 throw new PoezdConfigurationException(
                   $"Can not get a logger of type {typeof(ILogger<BrokerIngressKafkaDriver>).FullName}.");
@@ -47,7 +49,6 @@ namespace Eshva.Poezd.Adapter.Kafka
       if (_isInitialized)
         throw new PoezdOperationException($"Kafka driver for broker with ID '{_brokerId}' is already initialized.");
 
-      _apis = apis;
       CreateAndRegisterConsumerPerApi();
 
       _isInitialized = true;
@@ -132,10 +133,9 @@ namespace Eshva.Poezd.Adapter.Kafka
 
     private void CreateAndRegisterConsumer<TKey, TValue>(IIngressApi api)
     {
-      var consumerConfigurator = (IConsumerConfigurator) _serviceProvider.GetService(_driverConfiguration.ConsumerConfiguratorType);
       var consumer = _consumerFactory.Create<TKey, TValue>(
         _driverConfiguration.ConsumerConfig,
-        consumerConfigurator,
+        _consumerConfigurator,
         _deserializerFactory);
       _consumerRegistry.Add(api, consumer);
     }
@@ -143,7 +143,7 @@ namespace Eshva.Poezd.Adapter.Kafka
     private async Task OnMessageReceived<TKey, TValue>(ConsumeResult<TKey, TValue> consumeResult)
     {
       // TODO: handle in parallel? No we need a strategy.
-      if (!(_serviceProvider.GetService(_driverConfiguration.HeaderValueParserType) is IHeaderValueParser parser))
+      if (!(_serviceProvider.GetService(_driverConfiguration.HeaderValueParserType) is IHeaderValueCodec codec))
       {
         throw new PoezdOperationException(
           "Can not parse Kafka broker message headers because can not get a header value parser. " +
@@ -152,7 +152,7 @@ namespace Eshva.Poezd.Adapter.Kafka
 
       var headers = consumeResult.Message.Headers.ToDictionary(
         header => header.Key,
-        header => parser.Parser(header.GetValueBytes()));
+        header => codec.Decode(header.GetValueBytes()));
       await _messageRouter.RouteIngressMessage(
         _brokerId,
         consumeResult.Topic,
@@ -218,6 +218,7 @@ namespace Eshva.Poezd.Adapter.Kafka
     private readonly BrokerIngressKafkaDriverConfiguration _driverConfiguration;
     private IEnumerable<IIngressApi> _apis;
     private string _brokerId;
+    private IConsumerConfigurator _consumerConfigurator;
     private IConsumerFactory _consumerFactory;
     private IEnumerable<Task<Task>> _consumeTasks;
     private IDeserializerFactory _deserializerFactory;

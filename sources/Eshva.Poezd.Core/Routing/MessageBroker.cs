@@ -15,7 +15,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// Message broker.
   /// </summary>
-  public sealed class MessageBroker : IDisposable
+  public sealed class MessageBroker : IMessageBroker
   {
     /// <summary>
     /// Construct a new instance of message broker.
@@ -76,20 +76,8 @@ namespace Eshva.Poezd.Core.Routing
       Egress.Initialize(messageRouter, brokerId);
     }
 
-    public Task Publish(
-      object key,
-      object payload,
-      IEgressApi egressApi,
-      IReadOnlyDictionary<string, string> metadata,
-      IReadOnlyCollection<string> queueNames,
-      CancellationToken cancellationToken) =>
-      Egress.Publish(
-        key,
-        payload,
-        egressApi,
-        metadata,
-        queueNames,
-        cancellationToken);
+    public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) =>
+      Egress.Publish(context, cancellationToken);
 
     public Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {

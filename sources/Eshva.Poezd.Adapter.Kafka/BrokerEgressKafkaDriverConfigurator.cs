@@ -21,15 +21,34 @@ namespace Eshva.Poezd.Adapter.Kafka
       return this;
     }
 
-    public BrokerEgressKafkaDriverConfigurator WithProducerFactory(IProducerFactory producerFactory)
+    public BrokerEgressKafkaDriverConfigurator WithProducerConfigurator<TProducerConfigurator>()
+      where TProducerConfigurator : IProducerConfigurator
     {
-      _configuration.ProducerFactory = producerFactory;
+      _configuration.ProducerConfiguratorType = typeof(TProducerConfigurator);
+      return this;
+    }
+
+    public BrokerEgressKafkaDriverConfigurator WithSerializerFactory<TSerializerFactory>() where TSerializerFactory : ISerializerFactory
+    {
+      _configuration.SerializerFactoryType = typeof(TSerializerFactory);
+      return this;
+    }
+
+    public BrokerEgressKafkaDriverConfigurator WithHeaderValueCodec<THeaderValueEncoder>() where THeaderValueEncoder : IHeaderValueCodec
+    {
+      _configuration.HeaderValueCodecType = typeof(THeaderValueEncoder);
+      return this;
+    }
+
+    public BrokerEgressKafkaDriverConfigurator WithProducerFactory<TProducerFactory>() where TProducerFactory : IProducerFactory
+    {
+      _configuration.ProducerFactoryType = typeof(TProducerFactory);
       return this;
     }
 
     public BrokerEgressKafkaDriverConfigurator WithDefaultProducerFactory()
     {
-      _configuration.ProducerFactory = new DefaultProducerFactory();
+      _configuration.ProducerFactoryType = typeof(DefaultProducerFactory);
       return this;
     }
 

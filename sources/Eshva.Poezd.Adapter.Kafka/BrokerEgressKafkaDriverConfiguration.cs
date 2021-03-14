@@ -15,7 +15,6 @@ namespace Eshva.Poezd.Adapter.Kafka
 
     public IProducerFactory ProducerFactory { get; internal set; }
 
-    // TODO: Connect validation to the router configuration validation.
     public IEnumerable<string> Validate()
     {
       if (ProducerConfig == null)

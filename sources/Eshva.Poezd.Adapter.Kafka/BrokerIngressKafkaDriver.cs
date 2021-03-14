@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -15,43 +16,27 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Adapter.Kafka
 {
-  public class BrokerIngressKafkaDriver : IBrokerIngressDriver
+  internal class BrokerIngressKafkaDriver : IBrokerIngressDriver
   {
-    public BrokerIngressKafkaDriver([NotNull] BrokerIngressKafkaDriverConfiguration configuration)
+    public BrokerIngressKafkaDriver(
+      [NotNull] BrokerIngressKafkaDriverConfiguration configuration,
+      [NotNull] IConsumerRegistry consumerRegistry)
     {
-      _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-    }
-
-    /// <inheritdoc />
-    public void Dispose()
-    {
-      try
-      {
-        _consumer?.Commit();
-      }
-      catch (Exception exception)
-      {
-        // Mostly ignore.
-        _logger.LogInformation("During the final offsets commit an error occurred: @{Exception}", exception);
-      }
-
-      _consumer?.Close();
-      _logger.LogInformation(
-        "Closed consumer with bootstrap servers '@{BootstrapServers}' and @{GroupID}.",
-        _configuration.ConsumerConfig.BootstrapServers,
-        _configuration.ConsumerConfig.GroupId);
-
-      _consumer?.Dispose();
+      _driverConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+      _consumerRegistry = consumerRegistry ?? throw new ArgumentNullException(nameof(consumerRegistry));
     }
 
     /// <inheritdoc />
     public void Initialize(
-      IMessageRouter messageRouter,
       string brokerId,
+      IMessageRouter messageRouter,
+      IEnumerable<IIngressApi> apis,
       IServiceProvider serviceProvider)
     {
       _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      _deserializerFactory = (IDeserializerFactory) serviceProvider.GetService(_driverConfiguration.DeserializerFactoryType);
+      _consumerFactory = (IConsumerFactory) serviceProvider.GetService(_driverConfiguration.ConsumerFactoryType);
       _logger = (ILogger<BrokerIngressKafkaDriver>) serviceProvider.GetService(typeof(ILogger<BrokerIngressKafkaDriver>)) ??
                 throw new PoezdConfigurationException(
                   $"Can not get a logger of type {typeof(ILogger<BrokerIngressKafkaDriver>).FullName}.");
@@ -62,7 +47,8 @@ namespace Eshva.Poezd.Adapter.Kafka
       if (_isInitialized)
         throw new PoezdOperationException($"Kafka driver for broker with ID '{_brokerId}' is already initialized.");
 
-      _consumer = CreateConsumer();
+      _apis = apis;
+      CreateAndRegisterConsumerPerApi();
 
       _isInitialized = true;
     }
@@ -75,23 +61,93 @@ namespace Eshva.Poezd.Adapter.Kafka
       if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can consume messages.");
 
       if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
-      var patterns = queueNamePatterns.ToArray();
-      if (!patterns.Any()) throw new ArgumentException("List of patterns contains no patterns. It should contain at least one pattern.");
 
-      _consumer.Subscribe(patterns);
-
-      Consume(OnMessageReceived, cancellationToken);
+      StartConsumeMessagesFromApis(cancellationToken);
       return Task.CompletedTask;
     }
 
-    private async Task OnMessageReceived(ConsumeResult<Ignore, byte[]> consumeResult)
+    /// <inheritdoc />
+    public void Dispose()
+    {
+      StopMessageConsumption();
+      _consumerRegistry.Dispose();
+    }
+
+    private void StopMessageConsumption()
+    {
+      foreach (var api in _apis)
+      {
+        var concreteMethod = StopConsumerOfApiMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
+        concreteMethod.Invoke(this, new object?[] {api});
+      }
+    }
+
+    private void StopConsumerOfApi<TKey, TValue>(IIngressApi api)
+    {
+      var consumer = _consumerRegistry.Get<TKey, TValue>(api);
+      try
+      {
+        consumer.Commit();
+      }
+      catch (Exception exception)
+      {
+        // Mostly ignore.
+        _logger.LogInformation("During the final offsets commit an error occurred: @{Exception}", exception);
+      }
+
+      consumer.Close();
+      _logger.LogInformation(
+        "Closed consumer with bootstrap servers '@{BootstrapServers}' and @{GroupID}.",
+        _driverConfiguration.ConsumerConfig.BootstrapServers,
+        _driverConfiguration.ConsumerConfig.GroupId);
+    }
+
+    private void StartConsumeMessagesFromApis(CancellationToken cancellationToken)
+    {
+      foreach (var api in _apis)
+      {
+        var concreteMethod = StartConsumeFromApiTopicsMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
+        concreteMethod.Invoke(this, new object?[] {api, cancellationToken});
+      }
+    }
+
+    private void StartConsumeFromApiTopics<TKey, TValue>(IIngressApi api, CancellationToken cancellationToken)
+    {
+      var consumer = _consumerRegistry.Get<TKey, TValue>(api);
+      consumer.Subscribe(api.GetQueueNamePatterns());
+      Consume(
+        consumer,
+        OnMessageReceived,
+        cancellationToken);
+    }
+
+    private void CreateAndRegisterConsumerPerApi()
+    {
+      foreach (var api in _apis)
+      {
+        var concreteMethod = CreateAndRegisterConsumerMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
+        concreteMethod.Invoke(this, new object?[] {api});
+      }
+    }
+
+    private void CreateAndRegisterConsumer<TKey, TValue>(IIngressApi api)
+    {
+      var consumerConfigurator = (IConsumerConfigurator) _serviceProvider.GetService(_driverConfiguration.ConsumerConfiguratorType);
+      var consumer = _consumerFactory.Create<TKey, TValue>(
+        _driverConfiguration.ConsumerConfig,
+        consumerConfigurator,
+        _deserializerFactory);
+      _consumerRegistry.Add(api, consumer);
+    }
+
+    private async Task OnMessageReceived<TKey, TValue>(ConsumeResult<TKey, TValue> consumeResult)
     {
       // TODO: handle in parallel? No we need a strategy.
-      if (!(_serviceProvider.GetService(_configuration.HeaderValueParserType) is IHeaderValueParser parser))
+      if (!(_serviceProvider.GetService(_driverConfiguration.HeaderValueParserType) is IHeaderValueParser parser))
       {
         throw new PoezdOperationException(
           "Can not parse Kafka broker message headers because can not get a header value parser. " +
-          $"You should register a service of type {_configuration.HeaderValueParserType.FullName} in your DI-container.");
+          $"You should register a service of type {_driverConfiguration.HeaderValueParserType.FullName} in your DI-container.");
       }
 
       var headers = consumeResult.Message.Headers.ToDictionary(
@@ -101,20 +157,24 @@ namespace Eshva.Poezd.Adapter.Kafka
         _brokerId,
         consumeResult.Topic,
         consumeResult.Message.Timestamp.UtcDateTime,
+        consumeResult.Message.Key,
         consumeResult.Message.Value,
         headers);
     }
 
-    private void Consume(Func<ConsumeResult<Ignore, byte[]>, Task> onMessageReceived, CancellationToken cancellationToken = default)
+    private void Consume<TKey, TValue>(
+      IConsumer<TKey, TValue> consumer,
+      Func<ConsumeResult<TKey, TValue>, Task> onMessageReceived,
+      CancellationToken cancellationToken = default)
     {
-      _consumeTask = Task.Factory.StartNew(
+      var consumeTask = Task.Factory.StartNew(
         async () =>
         {
           try
           {
             while (!cancellationToken.IsCancellationRequested)
             {
-              var consumeResult = _consumer.Consume(cancellationToken);
+              var consumeResult = consumer.Consume(cancellationToken);
               if (consumeResult.IsPartitionEOF) continue;
 
               await onMessageReceived(consumeResult);
@@ -131,7 +191,7 @@ namespace Eshva.Poezd.Adapter.Kafka
               // consuming messages. A high performance application will typically
               // commit offsets relatively infrequently and be designed handle
               // duplicate messages in the event of failure.
-              _consumer.Commit(consumeResult);
+              consumer.Commit(consumeResult);
             }
           }
           catch (ConsumeException exception)
@@ -144,7 +204,7 @@ namespace Eshva.Poezd.Adapter.Kafka
           finally
           {
             _logger.LogInformation("Closing Kafka consumer.");
-            _consumer.Close();
+            consumer.Close();
             _logger.LogInformation("Kafka consumer closed.");
           }
         },
@@ -154,75 +214,25 @@ namespace Eshva.Poezd.Adapter.Kafka
       );
     }
 
-    private IConsumer<Ignore, byte[]> CreateConsumer()
-    {
-      try
-      {
-        _logger.LogInformation("Creating Kafka consumer with configuration @{ConsumerConfig}", _configuration.ConsumerConfig);
-        var consumer = new ConsumerBuilder<Ignore, byte[]>(_configuration.ConsumerConfig)
-          .SetKeyDeserializer(Deserializers.Ignore)
-          .SetLogHandler(ConsumerOnLog)
-          .SetErrorHandler(ConsumerOnError)
-          .SetStatisticsHandler(
-            (_, statistics) => _logger.LogInformation(
-              "Consumer statistics: @{Statistics}",
-              statistics))
-          .SetPartitionsAssignedHandler(
-            (_, partitions) => _logger.LogDebug(
-              "Assigned partitions: [@{Partitions}]",
-              string.Join(", ", partitions.Select(partition => partition.Partition))))
-          .SetPartitionsRevokedHandler(
-            (_, partitionOffsets) => _logger.LogDebug(
-              "Revoked partitions: [@{Partitions}]",
-              string.Join(", ", partitionOffsets.Select(offset => offset.Partition))))
-          .Build();
-        _logger.LogInformation("A Kafka consumer created.");
-        return consumer;
-      }
-      catch (Exception exception)
-      {
-        const string errorMessage = "During Kafka consumer creating an error occurred.";
-        _logger.LogError(exception, errorMessage);
-        throw new PoezdOperationException(errorMessage, exception);
-      }
-    }
-
-    private void ConsumerOnLog(IConsumer<Ignore, byte[]> arg1, LogMessage logMessage)
-    {
-      // To skip messages about empty reads.
-      if (logMessage.Message.Contains("MessageSet size 0, error \"Success\"")) return;
-
-      _logger.LogDebug(
-        "Consuming from Kafka. Client: '@{Client}', syslog level: '@{LogLevel}', message: '@{Message}'.",
-        logMessage.Name,
-        logMessage.Level,
-        logMessage.Message);
-    }
-
-    private void ConsumerOnError(IConsumer<Ignore, byte[]> consumer, Error error)
-    {
-      if (!error.IsFatal)
-        _logger.LogWarning("Consumer error: @{Error}. No action required.", error);
-      else
-      {
-        var values = consumer.Assignment;
-        _logger.LogError(
-          "Fatal error consuming from Kafka. Topic/partition/offset: '@{Topic}/@{Partition}/@{Offset}'. Error: '@{Error}'.",
-          string.Join(",", values.Select(a => a.Topic)),
-          string.Join(",", values.Select(a => a.Partition)),
-          string.Join(",", values.Select(consumer.Position)),
-          error.Reason);
-        throw new KafkaException(error);
-      }
-    }
-
-    private readonly BrokerIngressKafkaDriverConfiguration _configuration;
+    private readonly IConsumerRegistry _consumerRegistry;
+    private readonly BrokerIngressKafkaDriverConfiguration _driverConfiguration;
+    private IEnumerable<IIngressApi> _apis;
     private string _brokerId;
-    private IConsumer<Ignore, byte[]> _consumer;
-    private Task<Task> _consumeTask;
+    private IConsumerFactory _consumerFactory;
+    private IEnumerable<Task<Task>> _consumeTasks;
+    private IDeserializerFactory _deserializerFactory;
     private bool _isInitialized;
     private ILogger<BrokerIngressKafkaDriver> _logger;
     private IMessageRouter _messageRouter;
     private IServiceProvider _serviceProvider;
+
+    private static readonly MethodInfo CreateAndRegisterConsumerMethod =
+      typeof(BrokerIngressKafkaDriver).GetMethod(nameof(CreateAndRegisterConsumer), BindingFlags.Instance | BindingFlags.NonPublic);
+
+    private static readonly MethodInfo StartConsumeFromApiTopicsMethod =
+      typeof(BrokerIngressKafkaDriver).GetMethod(nameof(StartConsumeFromApiTopics), BindingFlags.Instance | BindingFlags.NonPublic);
+
+    private static readonly MethodInfo StopConsumerOfApiMethod =
+      typeof(BrokerIngressKafkaDriver).GetMethod(nameof(StopConsumerOfApi), BindingFlags.Instance | BindingFlags.NonPublic);
   }
 }

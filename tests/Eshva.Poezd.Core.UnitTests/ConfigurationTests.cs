@@ -39,6 +39,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var configuration = new BrokerIngressConfiguration
       {
         Driver = new StabBrokerIngressDriver(),
+        DriverConfiguration = new EmptyMessageRouterConfigurationPart(),
         EnterPipeFitterType = someType,
         ExitPipeFitterType = someType,
         QueueNameMatcherType = someType
@@ -62,7 +63,9 @@ namespace Eshva.Poezd.Core.UnitTests
       Id = "id",
       PipeFitterType = typeof(object),
       MessageTypesRegistryType = typeof(object),
-      QueueNamePatternsProviderType = typeof(object)
+      QueueNamePatternsProviderType = typeof(object),
+      MessageKeyType = typeof(object),
+      MessagePayloadType = typeof(object)
     };
 
     public static IngressApiConfiguration CreateIngressApiConfigurationWithout(Action<IngressApiConfiguration> updater)
@@ -114,16 +117,13 @@ namespace Eshva.Poezd.Core.UnitTests
       return configuration;
     }
 
+    // TODO: Replace with a mock.
     private class StabBrokerIngressDriver : IBrokerIngressDriver
     {
-      public void Dispose()
-      {
-        throw new NotImplementedException();
-      }
-
       public void Initialize(
-        IMessageRouter messageRouter,
         string brokerId,
+        IMessageRouter messageRouter,
+        IEnumerable<IIngressApi> apis,
         IServiceProvider serviceProvider)
       {
         throw new NotImplementedException();
@@ -131,6 +131,11 @@ namespace Eshva.Poezd.Core.UnitTests
 
       public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
+
+      public void Dispose()
+      {
+        throw new NotImplementedException();
+      }
     }
   }
 }

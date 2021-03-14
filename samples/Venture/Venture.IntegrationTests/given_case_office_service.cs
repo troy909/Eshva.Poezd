@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using FluentAssertions;
 using RandomStringCreator;
 using SimpleInjector;
@@ -44,6 +45,8 @@ namespace Venture.IntegrationTests
           .WithId("ingress-case-office")
           .WithQueueNamePatternsProvider<VentureQueueNamePatternsProvider>()
           .WithPipeFitter<VentureIngressPipeFitter>()
+          .WithMessageKey<Ignore>()
+          .WithMessagePayload<byte[]>()
           .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
         api => api

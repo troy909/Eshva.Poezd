@@ -7,6 +7,7 @@ using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using JetBrains.Annotations;
+using Moq;
 using RandomStringCreator;
 using Xunit;
 
@@ -71,7 +72,41 @@ namespace Eshva.Poezd.Core.UnitTests
       Action sut = () => configurator.AddApi(configurator: null);
       sut.Should().Throw<ArgumentNullException>();
     }
-// TODO: Test SetDriver.
+
+    [Fact]
+    public void when_set_driver_it_should_be_set_driver_and_driver_configuration()
+    {
+      var configuration = new BrokerIngressConfiguration();
+      var sut = (IBrokerIngressDriverConfigurator) new BrokerIngressConfigurator(configuration);
+      var expectedDriver = Mock.Of<IBrokerIngressDriver>();
+      var expectedDriverConfiguration = Mock.Of<IMessageRouterConfigurationPart>();
+      sut.SetDriver(expectedDriver, expectedDriverConfiguration);
+      configuration.Driver.Should().BeSameAs(expectedDriver);
+      configuration.DriverConfiguration.Should().BeSameAs(expectedDriverConfiguration);
+    }
+
+    [Fact]
+    public void when_set_driver_with_null_as_driver_it_should_fail()
+    {
+      var configuration = new BrokerIngressConfiguration();
+      var configurator = (IBrokerIngressDriverConfigurator) new BrokerIngressConfigurator(configuration);
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
+      Action sut = () => configurator.SetDriver(driver: null, Mock.Of<IMessageRouterConfigurationPart>());
+      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("driver"), "driver is required");
+    }
+
+    [Fact]
+    public void when_set_driver_with_null_as_driver_configuration_it_should_fail()
+    {
+      var configuration = new BrokerIngressConfiguration();
+      var configurator = (IBrokerIngressDriverConfigurator) new BrokerIngressConfigurator(configuration);
+      // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
+      Action sut = () => configurator.SetDriver(Mock.Of<IBrokerIngressDriver>(), configuration: null);
+      sut.Should().ThrowExactly<ArgumentNullException>().Where(
+        exception => exception.ParamName.Equals("configuration"),
+        "driver configuration is required");
+    }
+
     [UsedImplicitly]
     private class StabQueueNameMatcher : IQueueNameMatcher
     {

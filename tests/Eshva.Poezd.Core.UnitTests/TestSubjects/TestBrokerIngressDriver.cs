@@ -23,11 +23,11 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     }
 
     public void Initialize(
-      IMessageRouter messageRouter,
       string brokerId,
+      IMessageRouter messageRouter,
+      IEnumerable<IIngressApi> apis,
       IServiceProvider serviceProvider)
     {
-      // _messageRouter = messageRouter;
       _state.InitializedCount++;
     }
 

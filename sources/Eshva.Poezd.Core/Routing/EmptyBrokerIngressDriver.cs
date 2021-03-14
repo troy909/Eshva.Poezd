@@ -14,8 +14,9 @@ namespace Eshva.Poezd.Core.Routing
     public void Dispose() { }
 
     public void Initialize(
-      IMessageRouter messageRouter,
       string brokerId,
+      IMessageRouter messageRouter,
+      IEnumerable<IIngressApi> apis,
       IServiceProvider serviceProvider) { }
 
     public Task StartConsumeMessages(

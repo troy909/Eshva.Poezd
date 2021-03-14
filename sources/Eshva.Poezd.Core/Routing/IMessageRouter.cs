@@ -67,7 +67,8 @@ namespace Eshva.Poezd.Core.Routing
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
-      byte[] payload,
+      object key,
+      object payload,
       IReadOnlyDictionary<string, string> metadata);
 
     /// <summary>

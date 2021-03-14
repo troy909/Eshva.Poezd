@@ -82,8 +82,9 @@ namespace Eshva.Poezd.Core.Routing
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
 
       Driver.Initialize(
-        messageRouter,
         brokerId,
+        messageRouter,
+        Apis,
         _serviceProvider);
     }
 

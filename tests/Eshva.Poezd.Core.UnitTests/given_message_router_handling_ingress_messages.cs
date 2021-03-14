@@ -60,6 +60,7 @@ namespace Eshva.Poezd.Core.UnitTests
         "sample.facts.service-2.v1",
         DateTimeOffset.UtcNow,
         new byte[0],
+        new byte[0],
         new Dictionary<string, string>());
 
       InMemorySink.Instance.LogEvents
@@ -92,6 +93,7 @@ namespace Eshva.Poezd.Core.UnitTests
         queueName,
         DateTimeOffset.UtcNow,
         new byte[0],
+        new byte[0],
         new Dictionary<string, string>());
       sut.Should().ThrowExactly<PoezdOperationException>().Where(
         exception => exception.Message.Contains("message handling"),
@@ -115,6 +117,7 @@ namespace Eshva.Poezd.Core.UnitTests
         brokerName,
         queueName,
         DateTimeOffset.UtcNow,
+        new byte[0],
         new byte[0],
         new Dictionary<string, string>());
       sut.Should().NotThrow("message just skipped");

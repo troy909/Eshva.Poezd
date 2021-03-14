@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
   [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
   public class FakeIngressApi : IIngressApi
   {
+    public string Id { get; }
+
     public IngressApiConfiguration Configuration { get; set; }
 
     public IPipeFitter PipeFitter { get; set; }
@@ -22,6 +25,10 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
     public IIngressMessageTypesRegistry MessageTypesRegistry { get; set; }
 
     public IHandlerRegistry HandlerRegistry { get; set; }
+
+    public Type MessageKeyType { get; set; }
+
+    public Type MessagePayloadType { get; set; }
 
     public IEnumerable<string> GetQueueNamePatterns() => Enumerable.Empty<string>();
   }

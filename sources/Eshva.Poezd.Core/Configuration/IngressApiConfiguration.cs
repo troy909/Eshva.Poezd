@@ -15,6 +15,10 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type QueueNamePatternsProviderType { get; set; }
 
+    public Type MessageKeyType { get; set; }
+
+    public Type MessagePayloadType { get; set; }
+
     public Type PipeFitterType { get; set; }
 
     public Type HandlerRegistryType { get; set; }
@@ -36,6 +40,10 @@ namespace Eshva.Poezd.Core.Configuration
         yield return $"The queue name patterns provider type should be set for the API with ID '{Id}'.";
       if (MessageTypesRegistryType == null)
         yield return $"The message registry type should be set for the API with ID '{Id}'.";
+      if (MessageKeyType == null)
+        yield return $"The message key type should be set for the API with ID '{Id}'.";
+      if (MessagePayloadType == null)
+        yield return $"The message payload type should be set for the API with ID '{Id}'.";
     }
 
     private static IngressApiConfiguration CreateValidEmpty() => new()
@@ -44,7 +52,9 @@ namespace Eshva.Poezd.Core.Configuration
       HandlerRegistryType = typeof(EmptyHandlerRegistry),
       MessageTypesRegistryType = typeof(EmptyIngressMessageTypesRegistry),
       PipeFitterType = typeof(EmptyPipeFitter),
-      QueueNamePatternsProviderType = typeof(ProvidingNothingQueueNamePatternsProvider)
+      QueueNamePatternsProviderType = typeof(ProvidingNothingQueueNamePatternsProvider),
+      MessageKeyType = typeof(int),
+      MessagePayloadType = typeof(byte[])
     };
   }
 }

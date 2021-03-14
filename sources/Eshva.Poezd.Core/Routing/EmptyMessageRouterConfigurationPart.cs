@@ -8,7 +8,7 @@ using Eshva.Poezd.Core.Configuration;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  internal sealed class EmptyBrokerEgressDriverConfiguration : IMessageRouterConfigurationPart
+  internal sealed class EmptyMessageRouterConfigurationPart : IMessageRouterConfigurationPart
   {
     public IEnumerable<string> Validate() => Enumerable.Empty<string>();
   }

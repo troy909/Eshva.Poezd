@@ -26,6 +26,8 @@ namespace Eshva.Poezd.Core.Configuration
 
     public static BrokerIngressConfiguration Empty { get; } = CreateValidEmpty();
 
+    public IMessageRouterConfigurationPart DriverConfiguration { get; internal set; }
+
     /// <summary>
     /// Adds an ingress API configuration
     /// </summary>
@@ -67,16 +69,18 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     /// <inheritdoc />
-    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => _apis.AsReadOnly();
+    protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() =>
+      _apis.AsReadOnly().Append(DriverConfiguration);
 
     private static BrokerIngressConfiguration CreateValidEmpty()
     {
       var configuration = new BrokerIngressConfiguration
       {
+        Driver = new EmptyBrokerIngressDriver(),
+        DriverConfiguration = new EmptyMessageRouterConfigurationPart(),
         EnterPipeFitterType = typeof(EmptyPipeFitter),
         ExitPipeFitterType = typeof(EmptyPipeFitter),
-        QueueNameMatcherType = typeof(MatchingNothingQueueNameMatcher),
-        Driver = new EmptyBrokerIngressDriver()
+        QueueNameMatcherType = typeof(MatchingNothingQueueNameMatcher)
       };
       configuration.AddApi(IngressApiConfiguration.Empty);
       return configuration;

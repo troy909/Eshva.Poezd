@@ -13,6 +13,7 @@ using Eshva.Poezd.Core.Routing;
 using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
+using Venture.Common.Poezd.Adapter.MessageHandling;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit.Abstractions;
 
@@ -41,6 +42,9 @@ namespace Venture.IntegrationTests
 
       container.RegisterInstance<IServiceProvider>(container);
       container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
+      container.RegisterSingleton<VentureConsumerConfigurator>();
+      container.RegisterSingleton<DefaultConsumerFactory>();
+      container.RegisterSingleton<DefaultDeserializerFactory>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipeFitter>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueParser>();
@@ -85,6 +89,9 @@ namespace Venture.IntegrationTests
                     .WithKafkaDriver(
                       driver => driver
                         .WithConsumerConfig(CreateConsumerConfig())
+                        .WithConsumerFactory<DefaultConsumerFactory>()
+                        .WithDeserializerFactory<DefaultDeserializerFactory>()
+                        .WithConsumerConfigurator<VentureConsumerConfigurator>()
                         .WithHeaderValueParser<Utf8ByteStringHeaderValueParser>())
                     .WithEnterPipeFitter<TIngressEnterPipeline>()
                     .WithExitPipeFitter<TIngressExitPipeline>()

@@ -1,10 +1,12 @@
 #region Usings
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
+using Eshva.Poezd.Core.Configuration;
 using JetBrains.Annotations;
 
 #endregion
@@ -16,12 +18,13 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Initializes the message broker driver.
     /// </summary>
-    /// <param name="messageRouter">
-    /// Message router to bind to.
-    /// </param>
     /// <param name="brokerId">
     /// The broker ID to bind to.
     /// </param>
+    /// <param name="messageRouter">
+    /// Message router to bind to.
+    /// </param>
+    /// <param name="apiConfigurations"></param>
     /// <param name="serviceProvider">
     /// The service provider.
     /// </param>
@@ -34,10 +37,11 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
     /// </exception>
-    public void Initialize(
-      [NotNull] IMessageRouter messageRouter,
-      [NotNull] string brokerId,
-      [NotNull] IServiceProvider serviceProvider);
+    void Initialize(
+      string brokerId,
+      IMessageRouter messageRouter,
+      IEnumerable<IIngressApi> apis,
+      IServiceProvider serviceProvider);
 
     /// <summary>
     /// Starts message consuming from the broker client.

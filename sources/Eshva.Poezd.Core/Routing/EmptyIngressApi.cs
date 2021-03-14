@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eshva.Poezd.Core.Configuration;
@@ -15,6 +16,9 @@ namespace Eshva.Poezd.Core.Routing
   internal sealed class EmptyIngressApi : IIngressApi
   {
     /// <inheritdoc />
+    public string Id { get; }
+
+    /// <inheritdoc />
     public IngressApiConfiguration Configuration => new();
 
     /// <inheritdoc />
@@ -25,6 +29,12 @@ namespace Eshva.Poezd.Core.Routing
 
     /// <inheritdoc />
     public IHandlerRegistry HandlerRegistry { get; } = new EmptyHandlerRegistry();
+
+    /// <inheritdoc />
+    public Type MessageKeyType => typeof(int);
+
+    /// <inheritdoc />
+    public Type MessagePayloadType => typeof(byte[]);
 
     /// <inheritdoc />
     public IEnumerable<string> GetQueueNamePatterns() => Enumerable.Empty<string>();

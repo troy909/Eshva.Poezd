@@ -26,5 +26,23 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
       updater(configuration);
       return configuration;
     }
+
+    public static BrokerIngressKafkaDriverConfiguration CreateBrokerIngressKafkaDriverConfiguration() =>
+      new BrokerIngressKafkaDriverConfiguration
+      {
+        ConsumerConfig = new ConsumerConfig(),
+        ConsumerConfiguratorType = typeof(object),
+        ConsumerFactoryType = typeof(object),
+        DeserializerFactoryType = typeof(object),
+        HeaderValueParserType = typeof(object)
+      };
+
+    public static BrokerIngressKafkaDriverConfiguration CreateBrokerIngressKafkaDriverConfigurationWithout(
+      Action<BrokerIngressKafkaDriverConfiguration> updater)
+    {
+      var configuration = CreateBrokerIngressKafkaDriverConfiguration();
+      updater(configuration);
+      return configuration;
+    }
   }
 }

@@ -73,7 +73,7 @@ namespace Eshva.Poezd.Core.Configuration
       var configuration = new BrokerEgressConfiguration
       {
         Driver = new EmptyBrokerEgressDriver(),
-        DriverConfiguration = new EmptyBrokerEgressDriverConfiguration(),
+        DriverConfiguration = new EmptyMessageRouterConfigurationPart(),
         EnterPipeFitterType = typeof(EmptyPipeFitter),
         ExitPipeFitterType = typeof(EmptyPipeFitter)
       };

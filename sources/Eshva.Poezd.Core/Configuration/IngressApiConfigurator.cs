@@ -25,6 +25,20 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     [NotNull]
+    public IngressApiConfigurator WithMessageKey<TMessageKey>()
+    {
+      _configuration.MessageKeyType = typeof(TMessageKey);
+      return this;
+    }
+
+    [NotNull]
+    public IngressApiConfigurator WithMessagePayload<TMessagePayload>()
+    {
+      _configuration.MessagePayloadType = typeof(TMessagePayload);
+      return this;
+    }
+
+    [NotNull]
     public IngressApiConfigurator WithQueueNamePatternsProvider<TQueueNamePatternsProvider>()
       where TQueueNamePatternsProvider : IQueueNamePatternsProvider
     {

@@ -90,6 +90,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
                         .WithPipeFitter<Service1PipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>())
                     .AddApi(
@@ -97,6 +99,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-2-ingress")
                         .WithQueueNamePatternsProvider<Service2QueueNamePatternsProvider>()
                         .WithPipeFitter<Service2PipeFitter>()
+                        .WithMessageKey<long>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>())
                     .AddApi(
@@ -104,6 +108,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("cdc-notifications-ingress")
                         .WithQueueNamePatternsProvider<CdcNotificationsQueueNamePatternsProvider>()
                         .WithPipeFitter<CdcNotificationsPipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<string>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
@@ -143,6 +149,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
@@ -182,6 +190,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
@@ -223,6 +233,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
@@ -249,6 +261,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-2-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
@@ -275,6 +289,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-3-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
@@ -311,6 +327,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithId("api-1-ingress")
                         .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
+                        .WithMessageKey<int>()
+                        .WithMessagePayload<byte[]>()
                         .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(

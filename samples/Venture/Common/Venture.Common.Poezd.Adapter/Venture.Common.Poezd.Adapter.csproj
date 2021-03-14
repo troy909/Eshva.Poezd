@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\sources\Eshva.Poezd.Adapter.Kafka\Eshva.Poezd.Adapter.Kafka.csproj" />
     <ProjectReference Include="..\..\..\..\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
     <ProjectReference Include="..\Venture.Common.Application\Venture.Common.Application.csproj" />
   </ItemGroup>

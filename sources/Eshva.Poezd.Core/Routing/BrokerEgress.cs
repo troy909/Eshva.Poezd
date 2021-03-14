@@ -100,7 +100,6 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     private readonly IClock _clock;
-
     private readonly IServiceProvider _serviceProvider;
   }
 }

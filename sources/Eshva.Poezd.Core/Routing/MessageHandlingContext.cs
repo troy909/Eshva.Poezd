@@ -10,11 +10,12 @@ namespace Eshva.Poezd.Core.Routing
 {
   public class MessageHandlingContext : ConcurrentPocket
   {
+    public object Key { get; set; }
+
     /// <summary>
     /// Gets/sets the broker message payload as a byte array.
     /// </summary>
-    // TODO: Can I change it to Memory<byte> or Span<byte>?
-    public byte[] Payload { get; set; }
+    public object Payload { get; set; }
 
     /// <summary>
     /// Gets/sets the broker message metadata/headers that was received with message.

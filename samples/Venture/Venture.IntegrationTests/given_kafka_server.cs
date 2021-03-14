@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Confluent.Kafka;
+using Eshva.Poezd.Core.Common;
 using FluentAssertions;
 using SimpleInjector;
 using Venture.CaseOffice.Messages;
@@ -50,12 +52,16 @@ namespace Venture.IntegrationTests
     {
       var container = RoutingTests
         .SetupContainer<MessageCountingPipeFitter, FinishTestPipeFitter, MessageCountingPipeFitter, FinishTestPipeFitter>(
-          api => api.WithId("ingress-case-office")
+          api => api
+            .WithId("ingress-case-office")
             .WithQueueNamePatternsProvider<IngressApi1QueueNamePatternsProvider>()
+            .WithMessageKey<Ignore>()
+            .WithMessagePayload<byte[]>()
             .WithPipeFitter<EmptyPipeFitter>()
             .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
             .WithHandlerRegistry<EmptyHandlerRegistry>(),
-          api => api.WithId("egress-case-office")
+          api => api
+            .WithId("egress-case-office")
             .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()
             .WithPipeFitter<EmptyPipeFitter>(),
           _testOutput);

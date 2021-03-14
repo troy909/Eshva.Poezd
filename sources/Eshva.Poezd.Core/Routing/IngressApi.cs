@@ -30,11 +30,14 @@ namespace Eshva.Poezd.Core.Routing
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
 
+      Id = configuration.Id;
       _queueNamePatternsProvider = GetQueueNamePatternsProvider(serviceProvider);
       MessageTypesRegistry = GetMessageTypesRegistry(serviceProvider);
       HandlerRegistry = GetHandlerRegistry(serviceProvider);
       PipeFitter = GetIngressPipeFitter(serviceProvider);
     }
+
+    public string Id { get; }
 
     /// <inheritdoc />
     public IngressApiConfiguration Configuration { get; }
@@ -47,6 +50,12 @@ namespace Eshva.Poezd.Core.Routing
 
     /// <inheritdoc />
     public IHandlerRegistry HandlerRegistry { get; }
+
+    /// <inheritdoc />
+    public Type MessageKeyType => Configuration.MessageKeyType;
+
+    /// <inheritdoc />
+    public Type MessagePayloadType => Configuration.MessagePayloadType;
 
     public static IIngressApi Empty { get; } = new EmptyIngressApi();
 

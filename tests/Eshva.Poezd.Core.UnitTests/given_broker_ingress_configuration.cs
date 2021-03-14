@@ -21,11 +21,10 @@ namespace Eshva.Poezd.Core.UnitTests
       sut.Validate().Should().NotBeNull().And.Subject.Should().BeEmpty("there is no errors in the configuration");
     }
 
-// TODO: Add test on driver configuration.
     [Fact]
     public void when_validating_it_should_validate_expected_number_of_properties()
     {
-      const int expectedNumberOfValidatingProperties = 4;
+      const int expectedNumberOfValidatingProperties = 5;
       const int numberOfNotValidatingPublicProperties = 1;
 
       var validatingProperties = typeof(BrokerIngressConfiguration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -39,6 +38,8 @@ namespace Eshva.Poezd.Core.UnitTests
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
       ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.Driver = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.DriverConfiguration = null)
         .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.EnterPipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);

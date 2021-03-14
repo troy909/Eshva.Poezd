@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
@@ -14,6 +15,9 @@ namespace Eshva.Poezd.Core.Routing
   /// </summary>
   public interface IIngressApi
   {
+    [NotNull]
+    string Id { get; }
+
     /// <summary>
     /// Gets the ingress API configuration.
     /// </summary>
@@ -37,6 +41,10 @@ namespace Eshva.Poezd.Core.Routing
     /// </summary>
     [NotNull]
     IHandlerRegistry HandlerRegistry { get; }
+
+    Type MessageKeyType { get; }
+
+    Type MessagePayloadType { get; }
 
     /// <summary>
     /// Gets queue name patterns.

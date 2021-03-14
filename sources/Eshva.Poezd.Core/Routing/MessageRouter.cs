@@ -72,13 +72,13 @@ namespace Eshva.Poezd.Core.Routing
       _isStarted = true;
     }
 
-    /// <inheritdoc />
     public async Task RouteIngressMessage(
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
-      byte[] payload,
-      IReadOnlyDictionary<string, string> metadata)
+      object key,
+      object payload,
+      IReadOnlyDictionary<string, string> metadata) 
     {
       // TODO: Message handling shouldn't stop but decision what to do with erroneous message should be carried to some API-related strategy.
       if (_isStopped)
@@ -96,6 +96,7 @@ namespace Eshva.Poezd.Core.Routing
 
         var messageHandlingContext = new MessageHandlingContext
         {
+          Key = key,
           Payload = payload,
           Metadata = metadata,
           QueueName = queueName,

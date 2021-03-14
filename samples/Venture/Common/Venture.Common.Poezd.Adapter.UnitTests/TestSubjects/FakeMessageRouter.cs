@@ -30,7 +30,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
-      byte[] payload,
+      object key,
+      object payload,
       IReadOnlyDictionary<string, string> metadata) =>
       throw new InvalidOperationException();
 

@@ -22,7 +22,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_validating_it_should_validate_expected_number_of_properties()
     {
-      const int expectedNumberOfValidatingProperties = 3;
+      const int expectedNumberOfValidatingProperties = 5;
 
       var properties = typeof(EgressApiConfiguration).GetProperties(BindingFlags.Public | BindingFlags.Instance);
       properties.Should().HaveCount(
@@ -51,6 +51,10 @@ namespace Eshva.Poezd.Core.UnitTests
       ConfigurationTests.CreateEgressApiConfigurationWithout(configuration => configuration.PipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateEgressApiConfigurationWithout(configuration => configuration.MessageTypesRegistryType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.MessageKeyType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.MessagePayloadType = null)
         .Validate().Should().HaveCount(expected: 1);
     }
   }

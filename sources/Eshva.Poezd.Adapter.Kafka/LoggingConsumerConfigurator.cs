@@ -1,8 +1,10 @@
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 #endregion
@@ -17,11 +19,15 @@ namespace Eshva.Poezd.Adapter.Kafka
     }
 
     public ConsumerBuilder<TKey, TValue> Configure<TKey, TValue>(
-      ConsumerBuilder<TKey, TValue> builder,
-      IDeserializer<TKey> keyDeserializer,
-      IDeserializer<TValue> valueDeserializer)
+      [NotNull] ConsumerBuilder<TKey, TValue> builder,
+      [NotNull] IDeserializer<TKey> keyDeserializer,
+      [NotNull] IDeserializer<TValue> valueDeserializer)
     {
-      builder
+      if (builder == null) throw new ArgumentNullException(nameof(builder));
+      if (keyDeserializer == null) throw new ArgumentNullException(nameof(keyDeserializer));
+      if (valueDeserializer == null) throw new ArgumentNullException(nameof(valueDeserializer));
+
+      return builder
         .SetKeyDeserializer(keyDeserializer)
         .SetValueDeserializer(valueDeserializer)
         .SetLogHandler(LogHandler)
@@ -29,7 +35,6 @@ namespace Eshva.Poezd.Adapter.Kafka
         .SetStatisticsHandler(StatisticsHandler)
         .SetPartitionsAssignedHandler(PartitionsAssignedHandler)
         .SetPartitionsRevokedHandler(PartitionsRevokedHandler);
-      return builder;
     }
 
     private void PartitionsRevokedHandler<TKey, TValue>(IConsumer<TKey, TValue> consumer, List<TopicPartitionOffset> partitionOffsets)
@@ -48,7 +53,7 @@ namespace Eshva.Poezd.Adapter.Kafka
 
     private void StatisticsHandler<TKey, TValue>(IConsumer<TKey, TValue> consumer, string statistics)
     {
-      _logger.LogInformation("Consumer statistics: @{Statistics}", statistics);
+      _logger.LogInformation("Consumer statistics: {Statistics}", statistics);
     }
 
     private void LogHandler<TKey, TValue>(IConsumer<TKey, TValue> consumer, LogMessage logMessage)
@@ -70,7 +75,7 @@ namespace Eshva.Poezd.Adapter.Kafka
       {
         var values = consumer.Assignment;
         _logger.LogError(
-          "Fatal error consuming from Kafka. Topic/partition/offset: {Topic}/{Partition}/{Offset}. Error: @{Error}.",
+          "Fatal error consuming from Kafka. Topic/partition/offset: {Topic}/{Partition}/{Offset}. Error: {Error}.",
           string.Join(",", values.Select(a => a.Topic)),
           string.Join(",", values.Select(a => a.Partition)),
           string.Join(",", values.Select(consumer.Position)),

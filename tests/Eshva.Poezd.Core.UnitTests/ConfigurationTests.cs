@@ -1,12 +1,10 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Routing;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
+using Moq;
 
 #endregion
 
@@ -38,7 +36,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var someType = typeof(object);
       var configuration = new BrokerIngressConfiguration
       {
-        Driver = new StabBrokerIngressDriver(),
+        Driver = Mock.Of<IBrokerIngressDriver>(),
         DriverConfiguration = new EmptyMessageRouterConfigurationPart(),
         EnterPipeFitterType = someType,
         ExitPipeFitterType = someType,
@@ -79,7 +77,9 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       Id = "id",
       MessageTypesRegistryType = typeof(object),
-      PipeFitterType = typeof(object)
+      PipeFitterType = typeof(object),
+      MessageKeyType = typeof(object),
+      MessagePayloadType = typeof(object)
     };
 
     public static EgressApiConfiguration CreateEgressApiConfigurationWithout(Action<EgressApiConfiguration> updater)
@@ -115,27 +115,6 @@ namespace Eshva.Poezd.Core.UnitTests
       var configuration = CreateBrokerEgressConfiguration();
       updater(configuration);
       return configuration;
-    }
-
-    // TODO: Replace with a mock.
-    private class StabBrokerIngressDriver : IBrokerIngressDriver
-    {
-      public void Initialize(
-        string brokerId,
-        IMessageRouter messageRouter,
-        IEnumerable<IIngressApi> apis,
-        IServiceProvider serviceProvider)
-      {
-        throw new NotImplementedException();
-      }
-
-      public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default) =>
-        throw new NotImplementedException();
-
-      public void Dispose()
-      {
-        throw new NotImplementedException();
-      }
     }
   }
 }

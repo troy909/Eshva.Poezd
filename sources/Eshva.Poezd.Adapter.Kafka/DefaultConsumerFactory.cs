@@ -25,8 +25,7 @@ namespace Eshva.Poezd.Adapter.Kafka
       try
       {
         _logger.LogInformation("Creating Kafka consumer with configuration @{ConsumerConfig}", consumerConfig);
-        var consumer = configurator
-          .Configure(
+        var consumer = configurator.Configure(
             new ConsumerBuilder<TKey, TValue>(consumerConfig),
             deserializerFactory.Create<TKey>(),
             deserializerFactory.Create<TValue>())

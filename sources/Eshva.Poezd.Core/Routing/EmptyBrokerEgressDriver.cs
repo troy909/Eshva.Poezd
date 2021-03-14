@@ -22,6 +22,7 @@ namespace Eshva.Poezd.Core.Routing
     public Task Publish(
       object key,
       object payload,
+      IEgressApi api,
       IReadOnlyDictionary<string, string> metadata,
       IReadOnlyCollection<string> queueNames,
       CancellationToken cancellationToken) => Task.CompletedTask;

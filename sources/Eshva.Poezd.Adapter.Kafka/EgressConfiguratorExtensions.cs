@@ -16,9 +16,7 @@ namespace Eshva.Poezd.Adapter.Kafka
       var configuration = new BrokerEgressKafkaDriverConfiguration();
       configurator(new BrokerEgressKafkaDriverConfigurator(configuration));
       IBrokerEgressDriverConfigurator driverConfigurator = brokerEgress;
-      driverConfigurator.SetDriver(
-        new BrokerEgressKafkaDriver(configuration, new CachingProducerRegistry(configuration.ProducerFactory)),
-        configuration);
+      driverConfigurator.SetDriver(new BrokerEgressKafkaDriver(configuration, new DefaultProducerRegistry()), configuration);
       return brokerEgress;
     }
   }

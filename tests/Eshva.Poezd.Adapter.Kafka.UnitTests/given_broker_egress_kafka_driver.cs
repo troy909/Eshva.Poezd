@@ -118,6 +118,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       Func<Task> sut = () => driver.Publish(
         "key",
         "payload",
+        Mock.Of<IEgressApi>(),
         new Dictionary<string, string>(),
         new string[0],
         CancellationToken.None);
@@ -136,7 +137,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var publishedMessages = new Dictionary<string, object>();
 
       var registryMock = new Mock<IProducerRegistry>();
-      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<ProducerConfig>()))
+      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<IEgressApi>()))
         .Returns(new TestProducer<int, byte[]>(new ProducerConfig(), publishedMessages));
 
       var driver = new BrokerEgressKafkaDriver(
@@ -155,6 +156,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       await driver.Publish(
         key,
         payload,
+        Mock.Of<IEgressApi>(),
         new Dictionary<string, string> {{headerKey, headerValue}},
         new[] {topic1, topic2},
         CancellationToken.None);
@@ -190,7 +192,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
             CancellationToken.None))
         .Returns(() => Task.FromResult(new DeliveryResult<int, byte[]>()));
       var registryMock = new Mock<IProducerRegistry>();
-      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<ProducerConfig>()))
+      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<IEgressApi>()))
         .Returns(producerMock.Object);
 
       var driver = new BrokerEgressKafkaDriver(
@@ -207,6 +209,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       await driver.Publish(
         key,
         payload,
+        Mock.Of<IEgressApi>(),
         new Dictionary<string, string> {{"Type", "Message1"}},
         new[] {topic1, topic2},
         CancellationToken.None);
@@ -243,7 +246,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
             CancellationToken.None))
         .Throws<IOException>();
       var registryMock = new Mock<IProducerRegistry>();
-      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<ProducerConfig>()))
+      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<IEgressApi>()))
         .Returns(producerMock.Object);
 
       var driver = new BrokerEgressKafkaDriver(
@@ -261,6 +264,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       Func<Task> sut = () => driver.Publish(
         key,
         Encoding.UTF8.GetBytes("payload"),
+        Mock.Of<IEgressApi>(),
         new Dictionary<string, string> {{"Type", "Message1"}},
         new[] {topic1, topic2},
         CancellationToken.None);
@@ -300,6 +304,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       Func<Task> sut = () => driver.Publish(
         key,
         payload,
+        Mock.Of<IEgressApi>(),
         metadata,
         queueNames,
         CancellationToken.None);
@@ -327,7 +332,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var publishedMessages = new Dictionary<string, object>();
 
       var registryMock = new Mock<IProducerRegistry>();
-      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<ProducerConfig>()))
+      registryMock.Setup(registry => registry.Get<int, byte[]>(It.IsAny<IEgressApi>()))
         .Returns(new TestProducer<int, byte[]>(new ProducerConfig(), publishedMessages));
 
       var driver = new BrokerEgressKafkaDriver(
@@ -347,6 +352,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       driver.Publish(
         key,
         payload,
+        Mock.Of<IEgressApi>(),
         metadata,
         queueNames,
         cancelledToken).IsCanceled.Should().BeTrue("publishing was cancelled");

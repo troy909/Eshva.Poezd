@@ -23,6 +23,20 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
+    [NotNull]
+    public EgressApiConfigurator WithMessageKey<TMessageKey>()
+    {
+      _configuration.MessageKeyType = typeof(TMessageKey);
+      return this;
+    }
+
+    [NotNull]
+    public EgressApiConfigurator WithMessagePayload<TMessagePayload>()
+    {
+      _configuration.MessagePayloadType = typeof(TMessagePayload);
+      return this;
+    }
+
     public EgressApiConfigurator WithPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
       _configuration.PipeFitterType = typeof(TConfigurator);

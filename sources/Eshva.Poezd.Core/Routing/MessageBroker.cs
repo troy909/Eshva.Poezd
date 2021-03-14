@@ -79,12 +79,14 @@ namespace Eshva.Poezd.Core.Routing
     public Task Publish(
       object key,
       object payload,
+      IEgressApi egressApi,
       IReadOnlyDictionary<string, string> metadata,
       IReadOnlyCollection<string> queueNames,
       CancellationToken cancellationToken) =>
       Egress.Publish(
         key,
         payload,
+        egressApi,
         metadata,
         queueNames,
         cancellationToken);

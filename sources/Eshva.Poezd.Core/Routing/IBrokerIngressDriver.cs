@@ -1,12 +1,10 @@
 #region Usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
-using Eshva.Poezd.Core.Configuration;
 using JetBrains.Annotations;
 
 #endregion

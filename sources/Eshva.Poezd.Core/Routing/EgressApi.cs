@@ -20,7 +20,15 @@ namespace Eshva.Poezd.Core.Routing
       PipeFitter = GetPipeFitter(serviceProvider);
     }
 
+    public string Id => Configuration.Id;
+
     public EgressApiConfiguration Configuration { get; }
+
+    /// <inheritdoc />
+    public Type MessageKeyType => Configuration.MessageKeyType;
+
+    /// <inheritdoc />
+    public Type MessagePayloadType => Configuration.MessagePayloadType;
 
     public IPipeFitter PipeFitter { get; }
 

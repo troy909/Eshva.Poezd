@@ -44,6 +44,7 @@ namespace Eshva.Poezd.Adapter.Kafka
     public Task Publish(
       object key,
       object payload,
+      IEgressApi api,
       IReadOnlyDictionary<string, string> metadata,
       IReadOnlyCollection<string> queueNames,
       CancellationToken cancellationToken)
@@ -51,11 +52,12 @@ namespace Eshva.Poezd.Adapter.Kafka
       if (!_isInitialized) throw new PoezdOperationException("Kafka driver should be initialized before it can publish messages.");
       if (key == null) throw new ArgumentNullException(nameof(key));
       if (payload == null) throw new ArgumentNullException(nameof(payload));
+      if (api == null) throw new ArgumentNullException(nameof(api));
       if (metadata == null) throw new ArgumentNullException(nameof(metadata));
       if (queueNames == null) throw new ArgumentNullException(nameof(queueNames));
 
-      var publish = GenericPublish!.MakeGenericMethod(key.GetType(), payload.GetType());
-      return ((Task) publish.Invoke(this, new[] {key, payload, metadata, queueNames, cancellationToken}))!;
+      var publish = PublishMethod!.MakeGenericMethod(key.GetType(), payload.GetType());
+      return ((Task) publish.Invoke(this, new[] {key, payload, api, metadata, queueNames, cancellationToken}))!;
     }
 
     /// <inheritdoc />
@@ -67,11 +69,12 @@ namespace Eshva.Poezd.Adapter.Kafka
     private async Task Publish<TKey, TValue>(
       TKey key,
       TValue payload,
+      IEgressApi api,
       IReadOnlyDictionary<string, string> metadata,
       IReadOnlyCollection<string> queueNames,
       CancellationToken cancellationToken)
     {
-      var producer = _producerRegistry.Get<TKey, TValue>(_configuration.ProducerConfig);
+      var producer = _producerRegistry.Get<TKey, TValue>(api);
       var headers = MakeHeaders(metadata);
       var timestamp = new Timestamp(_clock.GetNowUtc());
       foreach (var queueName in queueNames)
@@ -125,7 +128,7 @@ namespace Eshva.Poezd.Adapter.Kafka
     private bool _isInitialized;
     private ILogger<IBrokerEgressDriver> _logger;
 
-    private static readonly MethodInfo GenericPublish =
+    private static readonly MethodInfo PublishMethod =
       typeof(BrokerEgressKafkaDriver).GetMethod(nameof(Publish), BindingFlags.Instance | BindingFlags.NonPublic);
   }
 }

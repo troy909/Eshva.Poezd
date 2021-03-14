@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Eshva.Poezd.Core.Common;
 using FluentAssertions;
 using SimpleInjector;
 using Venture.CaseOffice.Messages;
@@ -63,6 +62,8 @@ namespace Venture.IntegrationTests
           api => api
             .WithId("egress-case-office")
             .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()
+            .WithMessageKey<Null>()
+            .WithMessagePayload<byte[]>()
             .WithPipeFitter<EmptyPipeFitter>(),
           _testOutput);
 

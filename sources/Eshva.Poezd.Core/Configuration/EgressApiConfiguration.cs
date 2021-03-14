@@ -14,6 +14,10 @@ namespace Eshva.Poezd.Core.Configuration
 
     public Type PipeFitterType { get; set; }
 
+    public Type MessageKeyType { get; set; }
+
+    public Type MessagePayloadType { get; set; }
+
     public Type MessageTypesRegistryType { get; set; }
 
     public static EgressApiConfiguration Empty { get; } = CreateValidEmpty();

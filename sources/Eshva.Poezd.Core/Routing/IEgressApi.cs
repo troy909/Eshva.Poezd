@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
@@ -10,11 +11,17 @@ namespace Eshva.Poezd.Core.Routing
 {
   public interface IEgressApi
   {
+    string Id { get; }
+
     /// <summary>
     /// Gets the egress API configuration.
     /// </summary>
     [NotNull]
     EgressApiConfiguration Configuration { get; }
+
+    Type MessageKeyType => Configuration.MessageKeyType;
+
+    Type MessagePayloadType => Configuration.MessagePayloadType;
 
     /// <summary>
     /// Gets the egress pipe fitter.

@@ -25,6 +25,24 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
+    public void when_key_type_set_it_should_be_set_in_configuration()
+    {
+      var configuration = new EgressApiConfiguration();
+      var sut = new EgressApiConfigurator(configuration);
+      sut.WithMessageKey<int>().Should().BeSameAs(sut);
+      configuration.MessageKeyType.Should().Be<int>();
+    }
+
+    [Fact]
+    public void when_payload_type_set_it_should_be_set_in_configuration()
+    {
+      var configuration = new EgressApiConfiguration();
+      var sut = new EgressApiConfigurator(configuration);
+      sut.WithMessagePayload<string>().Should().BeSameAs(sut);
+      configuration.MessagePayloadType.Should().Be<string>();
+    }
+
+    [Fact]
     public void when_enter_pipe_fitter_set_it_should_be_set_in_configuration()
     {
       var configuration = new EgressApiConfiguration();

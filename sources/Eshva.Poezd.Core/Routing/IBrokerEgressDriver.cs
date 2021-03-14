@@ -44,6 +44,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="payload">
     /// The message broker payload.
     /// </param>
+    /// <param name="api"></param>
     /// <param name="metadata">
     /// The message broker metadata.
     /// </param>
@@ -61,6 +62,7 @@ namespace Eshva.Poezd.Core.Routing
     Task Publish(
       [NotNull] object key,
       [NotNull] object payload,
+      [NotNull] IEgressApi api,
       [NotNull] IReadOnlyDictionary<string, string> metadata,
       [NotNull] IReadOnlyCollection<string> queueNames,
       CancellationToken cancellationToken);

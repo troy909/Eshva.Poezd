@@ -34,6 +34,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public Task Publish(
       object key,
       object payload,
+      IEgressApi api,
       IReadOnlyDictionary<string, string> metadata,
       IReadOnlyCollection<string> queueNames,
       CancellationToken cancellationToken)

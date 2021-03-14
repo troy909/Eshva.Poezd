@@ -8,6 +8,9 @@ namespace Eshva.Poezd.Adapter.Kafka
 {
   public interface IProducerFactory
   {
-    IProducer<TKey, TValue> Create<TKey, TValue>(ProducerConfig config);
+    IProducer<TKey, TValue> Create<TKey, TValue>(
+      ProducerConfig config,
+      IProducerConfigurator configurator,
+      ISerializerFactory serializerFactory);
   }
 }

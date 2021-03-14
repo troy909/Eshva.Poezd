@@ -78,7 +78,7 @@ namespace Eshva.Poezd.Core.Routing
       DateTimeOffset receivedOnUtc,
       object key,
       object payload,
-      IReadOnlyDictionary<string, string> metadata) 
+      IReadOnlyDictionary<string, string> metadata)
     {
       // TODO: Message handling shouldn't stop but decision what to do with erroneous message should be carried to some API-related strategy.
       if (_isStopped)
@@ -155,6 +155,7 @@ namespace Eshva.Poezd.Core.Routing
           await PublishMessageWithDriver(
             messageBroker,
             context,
+            egressApi,
             timeout);
         }
         catch (Exception exception)
@@ -211,9 +212,11 @@ namespace Eshva.Poezd.Core.Routing
     private Task PublishMessageWithDriver(
       MessageBroker messageBroker,
       MessagePublishingContext context,
+      IEgressApi egressApi,
       CancellationToken cancellationToken) => messageBroker.Publish(
       context.Key,
       context.Payload,
+      egressApi,
       context.Metadata,
       context.QueueNames,
       cancellationToken);

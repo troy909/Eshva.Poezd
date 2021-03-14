@@ -18,14 +18,16 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
       _exceptionToThrowOnPublishing = exceptionToThrowOnPublishing;
     }
 
-    public IProducer<TKey, TValue> Create<TKey, TValue>(ProducerConfig config) =>
+    public IProducer<TKey, TValue> Create<TKey, TValue>(
+      ProducerConfig config,
+      IProducerConfigurator configurator,
+      ISerializerFactory serializerFactory) =>
       new TestProducer<TKey, TValue>(
         config,
         _publishedMessages,
         _exceptionToThrowOnPublishing);
 
     private readonly Exception _exceptionToThrowOnPublishing;
-
     private readonly Dictionary<string, object> _publishedMessages;
   }
 }

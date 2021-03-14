@@ -59,18 +59,21 @@ namespace Eshva.Poezd.Core.Routing
     public Task Publish(
       [NotNull] object key,
       [NotNull] object payload,
+      [NotNull] IEgressApi api,
       [NotNull] IReadOnlyDictionary<string, string> metadata,
       [NotNull] IReadOnlyCollection<string> queueNames,
       CancellationToken cancellationToken)
     {
       if (key == null) throw new ArgumentNullException(nameof(key));
       if (payload == null) throw new ArgumentNullException(nameof(payload));
+      if (api == null) throw new ArgumentNullException(nameof(api));
       if (metadata == null) throw new ArgumentNullException(nameof(metadata));
       if (queueNames == null) throw new ArgumentNullException(nameof(queueNames));
 
       return Driver.Publish(
         key,
         payload,
+        api,
         metadata,
         queueNames,
         cancellationToken);

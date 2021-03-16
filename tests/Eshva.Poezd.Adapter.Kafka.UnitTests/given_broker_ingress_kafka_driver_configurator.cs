@@ -55,7 +55,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var configuration = new BrokerIngressKafkaDriverConfiguration();
       var sut = new BrokerIngressKafkaDriverConfigurator(configuration);
       sut.WithHeaderValueCodec<StabHeaderValueCodec>().Should().BeSameAs(sut);
-      configuration.HeaderValueParserType.Should().Be<StabHeaderValueCodec>();
+      configuration.HeaderValueCodecType.Should().Be<StabHeaderValueCodec>();
     }
 
     private class StabHeaderValueCodec : IHeaderValueCodec

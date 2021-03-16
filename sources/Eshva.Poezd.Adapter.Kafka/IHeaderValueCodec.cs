@@ -26,9 +26,17 @@ namespace Eshva.Poezd.Adapter.Kafka
     /// <returns>
     /// String representation of header <paramref name="value" />.
     /// </returns>
+    [Pure]
     [NotNull]
     string Decode([CanBeNull] byte[] value);
 
-    [NotNull] byte[] Encode([NotNull] string value);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    [Pure]
+    [NotNull]
+    byte[] Encode([NotNull] string value);
   }
 }

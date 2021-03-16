@@ -36,10 +36,10 @@ namespace Eshva.Poezd.Core.Routing
     /// The driver is already initialized.
     /// </exception>
     void Initialize(
-      string brokerId,
-      IMessageRouter messageRouter,
-      IEnumerable<IIngressApi> apis,
-      IServiceProvider serviceProvider);
+      [NotNull] string brokerId,
+      [NotNull] IMessageRouter messageRouter,
+      [NotNull] IEnumerable<IIngressApi> apis,
+      [NotNull] IServiceProvider serviceProvider);
 
     /// <summary>
     /// Starts message consuming from the broker client.

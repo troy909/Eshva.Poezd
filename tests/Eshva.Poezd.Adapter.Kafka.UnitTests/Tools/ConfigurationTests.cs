@@ -37,7 +37,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
         ConsumerConfiguratorType = typeof(object),
         ConsumerFactoryType = typeof(object),
         DeserializerFactoryType = typeof(object),
-        HeaderValueParserType = typeof(object)
+        HeaderValueCodecType = typeof(object)
       };
 
     public static BrokerIngressKafkaDriverConfiguration CreateBrokerIngressKafkaDriverConfigurationWithout(

@@ -46,7 +46,7 @@ namespace Eshva.Poezd.Adapter.Kafka
     public BrokerIngressKafkaDriverConfigurator WithHeaderValueCodec<THeaderValueCodec>()
       where THeaderValueCodec : IHeaderValueCodec
     {
-      _configuration.HeaderValueParserType = typeof(THeaderValueCodec);
+      _configuration.HeaderValueCodecType = typeof(THeaderValueCodec);
       return this;
     }
 

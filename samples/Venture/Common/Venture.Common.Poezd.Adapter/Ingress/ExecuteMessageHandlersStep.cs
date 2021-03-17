@@ -11,7 +11,7 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   /// <summary>
   /// Executes all found message handlers, collects theirs commit decisions and stores them in the message handling context.

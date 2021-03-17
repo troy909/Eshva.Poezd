@@ -9,7 +9,7 @@ using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using Venture.Common.Poezd.Adapter.MessageHandling;
+using Venture.Common.Poezd.Adapter.Ingress;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 using Xunit.Abstractions;

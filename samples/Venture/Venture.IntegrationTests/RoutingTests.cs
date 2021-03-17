@@ -15,7 +15,7 @@ using Eshva.Poezd.Core.Routing;
 using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using Venture.Common.Poezd.Adapter.MessageHandling;
+using Venture.Common.Poezd.Adapter.Ingress;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit.Abstractions;
 

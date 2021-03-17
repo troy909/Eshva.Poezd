@@ -9,7 +9,7 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   /// <summary>
   /// Parses a message object from broker message.

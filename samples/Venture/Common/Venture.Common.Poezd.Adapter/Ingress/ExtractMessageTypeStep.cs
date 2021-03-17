@@ -8,7 +8,7 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   /// <summary>
   /// Extracts message type from message broker headers and puts message type related items into context.

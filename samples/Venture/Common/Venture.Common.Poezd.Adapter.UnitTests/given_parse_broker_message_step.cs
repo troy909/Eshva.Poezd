@@ -8,7 +8,7 @@ using FlatSharp;
 using FluentAssertions;
 using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
-using Venture.Common.Poezd.Adapter.MessageHandling;
+using Venture.Common.Poezd.Adapter.Ingress;
 using Xunit;
 
 #endregion

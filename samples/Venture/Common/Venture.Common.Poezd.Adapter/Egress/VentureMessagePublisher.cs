@@ -8,7 +8,7 @@ using Venture.Common.Application.MessagePublishing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessagePublishing
+namespace Venture.Common.Poezd.Adapter.Egress
 {
   /// <summary>
   /// The default message publisher for Venture product.

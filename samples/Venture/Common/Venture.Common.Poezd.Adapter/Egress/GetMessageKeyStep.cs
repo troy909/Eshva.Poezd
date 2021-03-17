@@ -8,7 +8,7 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessagePublishing
+namespace Venture.Common.Poezd.Adapter.Egress
 {
   /// <summary>
   /// An egress message pipeline step that gets key of message and stores it into context.

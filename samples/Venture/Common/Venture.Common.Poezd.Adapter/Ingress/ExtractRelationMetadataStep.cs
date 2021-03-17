@@ -7,7 +7,7 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   /// <summary>
   /// Extracts correlation ID, causation ID from broker message headers and sets appropriate metadata in the message handling

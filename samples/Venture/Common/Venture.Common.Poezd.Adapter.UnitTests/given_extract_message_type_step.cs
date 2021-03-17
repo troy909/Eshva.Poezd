@@ -8,7 +8,7 @@ using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
-using Venture.Common.Poezd.Adapter.MessageHandling;
+using Venture.Common.Poezd.Adapter.Ingress;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 

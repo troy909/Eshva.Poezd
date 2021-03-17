@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessagePublishing
+namespace Venture.Common.Poezd.Adapter.Egress
 {
   public class VentureEgressPipeFitter : TypeBasedPipeFitter
   {

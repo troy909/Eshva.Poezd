@@ -12,7 +12,7 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   public class ParallelHandlersExecutionStrategy : IHandlersExecutionStrategy
   {

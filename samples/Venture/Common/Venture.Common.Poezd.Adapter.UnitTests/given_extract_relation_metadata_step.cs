@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
-using Venture.Common.Poezd.Adapter.MessageHandling;
+using Venture.Common.Poezd.Adapter.Ingress;
 using Xunit;
 
 #endregion

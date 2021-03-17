@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   public class VentureProducerConfigurator : IProducerConfigurator
   {

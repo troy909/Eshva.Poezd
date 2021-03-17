@@ -8,7 +8,7 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessagePublishing
+namespace Venture.Common.Poezd.Adapter.Egress
 {
   /// <summary>
   /// An egress message pipeline step that gets broker message metadata that specific for the egress API and store it into

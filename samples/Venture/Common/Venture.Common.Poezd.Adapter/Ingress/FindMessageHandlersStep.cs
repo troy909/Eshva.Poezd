@@ -11,7 +11,7 @@ using Venture.Common.Application.MessageHandling;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   /// <summary>
   /// Finds all message handlers for a message object stored in a message handling context item.

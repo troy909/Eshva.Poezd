@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   /// <summary>
   /// A Venture service ingress message handling pipe fitter.

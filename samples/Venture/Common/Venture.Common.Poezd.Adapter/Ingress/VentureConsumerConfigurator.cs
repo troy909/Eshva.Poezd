@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 #endregion
 
-namespace Venture.Common.Poezd.Adapter.MessageHandling
+namespace Venture.Common.Poezd.Adapter.Ingress
 {
   [UsedImplicitly]
   public class VentureConsumerConfigurator : IConsumerConfigurator

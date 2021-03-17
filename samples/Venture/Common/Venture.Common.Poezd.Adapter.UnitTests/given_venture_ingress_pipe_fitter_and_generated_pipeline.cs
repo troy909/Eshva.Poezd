@@ -11,7 +11,7 @@ using FluentAssertions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Venture.Common.Application.MessageHandling;
-using Venture.Common.Poezd.Adapter.MessageHandling;
+using Venture.Common.Poezd.Adapter.Ingress;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;
 

@@ -16,7 +16,7 @@ using Venture.CaseOffice.Messages;
 using Venture.CaseOffice.Messages.V1.Commands;
 using Venture.Common.Application.Storage;
 using Venture.Common.Poezd.Adapter;
-using Venture.Common.Poezd.Adapter.MessageHandling;
+using Venture.Common.Poezd.Adapter.Ingress;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;

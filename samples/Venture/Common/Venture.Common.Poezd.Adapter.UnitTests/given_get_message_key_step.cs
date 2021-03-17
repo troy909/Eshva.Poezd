@@ -6,7 +6,7 @@ using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using Moq;
-using Venture.Common.Poezd.Adapter.MessagePublishing;
+using Venture.Common.Poezd.Adapter.Egress;
 using Xunit;
 
 #endregion

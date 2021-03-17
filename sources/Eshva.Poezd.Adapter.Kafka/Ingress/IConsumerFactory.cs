@@ -4,7 +4,7 @@ using Confluent.Kafka;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Ingress
 {
   public interface IConsumerFactory
   {

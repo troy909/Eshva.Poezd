@@ -6,7 +6,7 @@ using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
   internal interface IProducerRegistry : IDisposable
   {

@@ -2,6 +2,7 @@
 
 using System;
 using Confluent.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;

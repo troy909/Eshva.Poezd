@@ -4,6 +4,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Confluent.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Egress;
+using Eshva.Poezd.Adapter.Kafka.Ingress;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -73,7 +75,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var consumerRegistryMock = new Mock<IConsumerRegistry>();
       consumerRegistryMock.Setup(
           registry => registry
-            .Add(It.IsAny<IIngressApi>(), It.IsAny<IConsumer<It.IsAnyType, It.IsAnyType>>()))
+            .Add(It.IsAny<IIngressApi>(), It.IsAny<IApiConsumer<It.IsAnyType, It.IsAnyType>>()))
         .Callback(() => consumers++);
       var configuration = MakeDriverConfiguration();
 
@@ -153,6 +155,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Returns(valueFunction: null);
       sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("serviceProvider"));
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Returns(new TestHeaderValueCodec());
+
+      serviceProviderMock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Returns(valueFunction: null);
+      sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("serviceProvider"));
+      serviceProviderMock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Returns(Mock.Of<ILoggerFactory>());
     }
 
     [Fact]
@@ -193,54 +199,15 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     }
 
     [Fact]
-    public void when_dispose_it_should_dispose_consumer_registry_and_stop_consumption()
+    public void when_dispose_it_should_dispose_consumer_registry()
     {
       var consumerRegistryMock = new Mock<IConsumerRegistry>();
-      var consumerMock = new Mock<IConsumer<int, string>>();
-      var committed = 0;
-      var closed = 0;
-      consumerMock.Setup(consumer => consumer.Commit()).Callback(() => committed++);
-      consumerMock.Setup(consumer => consumer.Close()).Callback(() => closed++);
-      consumerRegistryMock
-        .Setup(registry => registry.Get<int, string>(It.IsAny<IIngressApi>()))
-        .Returns(() => consumerMock.Object);
       consumerRegistryMock.Setup(registry => registry.Dispose()).Verifiable();
       var driver = new BrokerIngressKafkaDriver(MakeDriverConfiguration(), consumerRegistryMock.Object);
-      driver.Initialize(
-        "broker-1",
-        Mock.Of<IMessageRouter>(),
-        new[] {MakeApi<int, string>(), MakeApi<int, string>()},
-        MakeServiceProviderMock().Object);
+
       driver.Dispose();
 
-      consumerRegistryMock.Verify();
-      committed.Should().Be(expected: 2);
-      closed.Should().Be(expected: 2);
-    }
-
-    [Fact]
-    public void when_dispose_and_exception_thrown_it_should_ignore_them()
-    {
-      var consumerRegistryMock = new Mock<IConsumerRegistry>();
-      var consumerMock = new Mock<IConsumer<int, string>>();
-      consumerMock.Setup(consumer => consumer.Commit()).Throws<InvalidOperationException>();
-      consumerRegistryMock
-        .Setup(registry => registry.Get<int, string>(It.IsAny<IIngressApi>()))
-        .Returns(() => consumerMock.Object);
-      // consumerRegistryMock.Setup(registry => registry.Dispose()).Verifiable();
-      var driver = new BrokerIngressKafkaDriver(MakeDriverConfiguration(), consumerRegistryMock.Object);
-      driver.Initialize(
-        "broker-1",
-        Mock.Of<IMessageRouter>(),
-        new[] {MakeApi<int, string>(), MakeApi<int, string>()},
-        MakeServiceProviderMock().Object);
-
-      Action sut = () => driver.Dispose();
-
-      sut.Should().NotThrow("Exceptions should be ignored.");
-      consumerMock.Setup(consumer => consumer.Commit()).Callback(() => { });
-      consumerMock.Setup(consumer => consumer.Close()).Throws<InvalidOperationException>();
-      sut.Should().NotThrow("Exceptions should be ignored.");
+      consumerRegistryMock.Verify(registry => registry.Dispose(), Times.Once());
     }
 
     private static BrokerIngressKafkaDriverConfiguration MakeDriverConfiguration()
@@ -263,8 +230,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       mock.Setup(provider => provider.GetService(typeof(TestConsumerFactory))).Returns(new TestConsumerFactory());
       mock.Setup(provider => provider.GetService(typeof(TestConsumerConfigurator))).Returns(new TestConsumerConfigurator());
       mock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Returns(new TestHeaderValueCodec());
-      mock.Setup(provider => provider.GetService(typeof(ILogger<BrokerIngressKafkaDriver>)))
-        .Returns(Mock.Of<ILogger<BrokerIngressKafkaDriver>>());
+      mock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Returns(Mock.Of<ILoggerFactory>());
       return mock;
     }
 
@@ -280,9 +246,9 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
 
     private class TestHeaderValueCodec : IHeaderValueCodec
     {
-      public string Decode(byte[] value) => null;
+      public string Decode(byte[] value) => string.Empty;
 
-      public byte[] Encode(string value) => null;
+      public byte[] Encode(string value) => new byte[0];
     }
 
     private class TestDeserializerFactory : IDeserializerFactory

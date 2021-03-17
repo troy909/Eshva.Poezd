@@ -5,6 +5,8 @@ using System.Threading;
 using Confluent.Kafka;
 using Eshva.Common.Testing;
 using Eshva.Poezd.Adapter.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Egress;
+using Eshva.Poezd.Adapter.Kafka.Ingress;
 using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
@@ -43,7 +45,7 @@ namespace Venture.IntegrationTests
       container.RegisterInstance<IServiceProvider>(container);
       container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
       container.RegisterSingleton<DefaultProducerFactory>();
-      container.RegisterSingleton<LoggingProducerConfigurator>();
+      container.RegisterSingleton<VentureProducerConfigurator>();
       container.RegisterSingleton<DefaultSerializerFactory>();
       container.RegisterSingleton<VentureConsumerConfigurator>();
       container.RegisterSingleton<DefaultConsumerFactory>();
@@ -107,7 +109,7 @@ namespace Venture.IntegrationTests
                         .WithProducerConfig(CreateProducerConfig())
                         .WithDefaultProducerFactory()
                         .WithSerializerFactory<DefaultSerializerFactory>()
-                        .WithProducerConfigurator<LoggingProducerConfigurator>()
+                        .WithProducerConfigurator<VentureProducerConfigurator>()
                         .WithHeaderValueCodec<Utf8ByteStringHeaderValueCodec>())
                     .WithEnterPipeFitter<TEgressEnterPipeline>()
                     .WithExitPipeFitter<TEgressExitPipeline>()

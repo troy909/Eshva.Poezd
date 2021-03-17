@@ -7,13 +7,14 @@ using Confluent.Kafka;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Ingress
 {
-  public interface IConsumerIgniter<TKey, TValue>
+  public interface IApiConsumer<TKey, TValue> : IDisposable
   {
     Task Start(
-      IConsumer<TKey, TValue> consumer,
       Func<ConsumeResult<TKey, TValue>, Task> onMessageReceived,
       CancellationToken cancellationToken);
+
+    void Stop();
   }
 }

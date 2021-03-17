@@ -2,6 +2,7 @@
 
 using System;
 using Confluent.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Ingress;
 using FluentAssertions;
 using Xunit;
 

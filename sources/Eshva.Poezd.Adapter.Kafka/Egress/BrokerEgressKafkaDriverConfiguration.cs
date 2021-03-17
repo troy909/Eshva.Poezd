@@ -7,7 +7,7 @@ using Eshva.Poezd.Core.Configuration;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
   public class BrokerEgressKafkaDriverConfiguration : IMessageRouterConfigurationPart
 

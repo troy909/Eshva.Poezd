@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
-using Eshva.Poezd.Adapter.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Ingress;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +15,7 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
   [UsedImplicitly]
   public class VentureConsumerConfigurator : IConsumerConfigurator
   {
-    public VentureConsumerConfigurator([NotNull] ILogger<LoggingConsumerConfigurator> logger)
+    public VentureConsumerConfigurator([NotNull] ILogger<VentureConsumerConfigurator> logger)
     {
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -83,6 +83,6 @@ namespace Venture.Common.Poezd.Adapter.MessageHandling
       }
     }
 
-    private readonly ILogger<LoggingConsumerConfigurator> _logger;
+    private readonly ILogger<VentureConsumerConfigurator> _logger;
   }
 }

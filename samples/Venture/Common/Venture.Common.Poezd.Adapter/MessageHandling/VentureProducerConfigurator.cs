@@ -2,16 +2,17 @@
 
 using System;
 using Confluent.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Egress;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Venture.Common.Poezd.Adapter.MessageHandling
 {
-  public class LoggingProducerConfigurator : IProducerConfigurator
+  public class VentureProducerConfigurator : IProducerConfigurator
   {
-    public LoggingProducerConfigurator([NotNull] ILogger<LoggingProducerConfigurator> logger)
+    public VentureProducerConfigurator([NotNull] ILogger<VentureProducerConfigurator> logger)
     {
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -58,6 +59,6 @@ namespace Eshva.Poezd.Adapter.Kafka
       }
     }
 
-    private readonly ILogger<LoggingProducerConfigurator> _logger;
+    private readonly ILogger<VentureProducerConfigurator> _logger;
   }
 }

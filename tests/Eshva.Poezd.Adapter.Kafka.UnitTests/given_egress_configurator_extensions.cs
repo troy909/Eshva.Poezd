@@ -1,6 +1,7 @@
 #region Usings
 
 using Confluent.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Core.Configuration;
 using FluentAssertions;
 using Xunit;

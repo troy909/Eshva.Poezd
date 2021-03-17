@@ -1,11 +1,12 @@
 #region Usings
 
 using System;
+using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Core.Configuration;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Ingress
 {
   public static class IngressConfiguratorExtensions
   {

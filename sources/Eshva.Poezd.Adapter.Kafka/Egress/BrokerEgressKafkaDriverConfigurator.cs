@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
   public class BrokerEgressKafkaDriverConfigurator
   {

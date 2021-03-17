@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Eshva.Common.Testing;
+using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Adapter.Kafka.UnitTests.Tools;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;

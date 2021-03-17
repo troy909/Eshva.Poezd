@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Ingress
 {
   public class DefaultConsumerFactory : IConsumerFactory
   {

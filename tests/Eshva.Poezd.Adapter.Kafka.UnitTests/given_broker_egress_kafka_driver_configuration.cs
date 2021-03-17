@@ -1,6 +1,7 @@
 #region Usings
 
 using System.Reflection;
+using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Adapter.Kafka.UnitTests.Tools;
 using Eshva.Poezd.Core.Configuration;
 using FluentAssertions;

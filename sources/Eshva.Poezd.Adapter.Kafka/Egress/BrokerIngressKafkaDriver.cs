@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Ingress;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
@@ -14,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 #endregion
 
-namespace Eshva.Poezd.Adapter.Kafka
+namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
   internal class BrokerIngressKafkaDriver : IBrokerIngressDriver
   {
@@ -76,11 +77,7 @@ namespace Eshva.Poezd.Adapter.Kafka
     }
 
     /// <inheritdoc />
-    public void Dispose()
-    {
-      StopMessageConsumption();
-      _consumerRegistry.Dispose();
-    }
+    public void Dispose() => _consumerRegistry.Dispose();
 
     private void GetRequiredServices()
     {
@@ -88,7 +85,7 @@ namespace Eshva.Poezd.Adapter.Kafka
       _consumerFactory = GetService<IConsumerFactory>(_driverConfiguration.ConsumerFactoryType);
       _deserializerFactory = GetService<IDeserializerFactory>(_driverConfiguration.DeserializerFactoryType);
       _headerValueCodecType = GetService<IHeaderValueCodec>(_driverConfiguration.HeaderValueCodecType);
-      _logger = GetService<ILogger<BrokerIngressKafkaDriver>>(typeof(ILogger<BrokerIngressKafkaDriver>));
+      _loggerFactory = GetService<ILoggerFactory>(typeof(ILoggerFactory));
     }
 
     private TResult GetService<TResult>(Type serviceType)
@@ -98,54 +95,6 @@ namespace Eshva.Poezd.Adapter.Kafka
         $"Service of type {serviceType.FullName} is missing in your DI-container.",
         "serviceProvider");
       return (TResult) service;
-    }
-
-    private void StopMessageConsumption()
-    {
-      foreach (var api in _apis)
-      {
-        var concreteMethod = StopConsumerOfApiMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
-        concreteMethod.Invoke(this, new object?[] {api});
-      }
-    }
-
-    private void StopConsumerOfApi<TKey, TValue>(IIngressApi api)
-    {
-      var consumer = _consumerRegistry.Get<TKey, TValue>(api);
-      try
-      {
-        consumer.Commit();
-        consumer.Close();
-      }
-      catch (Exception exception)
-      {
-        // Mostly ignore.
-        _logger.LogInformation("During the final offsets commit an error occurred: @{Exception}", exception);
-      }
-
-      _logger.LogInformation(
-        "Closed consumer with bootstrap servers {BootstrapServers} and {GroupID}.",
-        _driverConfiguration.ConsumerConfig.BootstrapServers,
-        _driverConfiguration.ConsumerConfig.GroupId);
-    }
-
-    private void StartConsumeMessagesFromApis(CancellationToken cancellationToken)
-    {
-      foreach (var api in _apis)
-      {
-        var concreteMethod = StartConsumeFromApiTopicsMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
-        concreteMethod.Invoke(this, new object?[] {api, cancellationToken});
-      }
-    }
-
-    private void StartConsumeFromApiTopics<TKey, TValue>(IIngressApi api, CancellationToken cancellationToken)
-    {
-      var consumer = _consumerRegistry.Get<TKey, TValue>(api);
-      consumer.Subscribe(api.GetQueueNamePatterns());
-      new DefaultConsumerIgniter<TKey, TValue>(_logger).Start(
-        consumer,
-        OnMessageReceived,
-        cancellationToken);
     }
 
     private void CreateAndRegisterConsumerPerApi()
@@ -159,12 +108,27 @@ namespace Eshva.Poezd.Adapter.Kafka
 
     private void CreateAndRegisterConsumer<TKey, TValue>(IIngressApi api)
     {
-      var consumer = _consumerFactory.Create<TKey, TValue>(
-        _driverConfiguration.ConsumerConfig,
-        _consumerConfigurator,
-        _deserializerFactory);
-      _consumerRegistry.Add(api, consumer);
+      var apiConsumer = new ApiConsumer<TKey, TValue>(
+        api,
+        _consumerFactory.Create<TKey, TValue>(
+          _driverConfiguration.ConsumerConfig,
+          _consumerConfigurator,
+          _deserializerFactory),
+        _loggerFactory.CreateLogger<ApiConsumer<TKey, TValue>>());
+      _consumerRegistry.Add(api, apiConsumer);
     }
+
+    private void StartConsumeMessagesFromApis(CancellationToken cancellationToken)
+    {
+      foreach (var api in _apis)
+      {
+        var concreteMethod = StartConsumeFromApiTopicsMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
+        concreteMethod.Invoke(this, new object?[] {api, cancellationToken});
+      }
+    }
+
+    private void StartConsumeFromApiTopics<TKey, TValue>(IIngressApi api, CancellationToken cancellationToken) =>
+      _consumerRegistry.Get<TKey, TValue>(api).Start(OnMessageReceived, cancellationToken);
 
     private async Task OnMessageReceived<TKey, TValue>(ConsumeResult<TKey, TValue> consumeResult)
     {
@@ -187,11 +151,10 @@ namespace Eshva.Poezd.Adapter.Kafka
     private string _brokerId;
     private IConsumerConfigurator _consumerConfigurator;
     private IConsumerFactory _consumerFactory;
-    private IEnumerable<Task<Task>> _consumeTasks;
     private IDeserializerFactory _deserializerFactory;
     private IHeaderValueCodec _headerValueCodecType;
     private bool _isInitialized;
-    private ILogger<BrokerIngressKafkaDriver> _logger;
+    private ILoggerFactory _loggerFactory;
     private IMessageRouter _messageRouter;
     private IServiceProvider _serviceProvider;
 
@@ -200,8 +163,5 @@ namespace Eshva.Poezd.Adapter.Kafka
 
     private static readonly MethodInfo StartConsumeFromApiTopicsMethod =
       typeof(BrokerIngressKafkaDriver).GetMethod(nameof(StartConsumeFromApiTopics), BindingFlags.Instance | BindingFlags.NonPublic);
-
-    private static readonly MethodInfo StopConsumerOfApiMethod =
-      typeof(BrokerIngressKafkaDriver).GetMethod(nameof(StopConsumerOfApi), BindingFlags.Instance | BindingFlags.NonPublic);
   }
 }

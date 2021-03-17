@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Confluent.Kafka;
+using Eshva.Poezd.Adapter.Kafka.Egress;
 
 #endregion
 

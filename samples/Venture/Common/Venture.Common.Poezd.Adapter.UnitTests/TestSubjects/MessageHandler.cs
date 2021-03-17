@@ -1,7 +1,7 @@
 #region Usings
 
 using System.Threading.Tasks;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.Ingress;
 
 #endregion
 

@@ -3,7 +3,7 @@
 using System;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.Ingress;
 
 #endregion
 

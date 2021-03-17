@@ -2,7 +2,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.Ingress;
 
 #endregion
 

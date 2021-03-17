@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Venture.CaseOffice.Domain;
 using Venture.CaseOffice.Messages.V1.Commands;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.Ingress;
 using Venture.Common.Application.Storage;
 
 #endregion

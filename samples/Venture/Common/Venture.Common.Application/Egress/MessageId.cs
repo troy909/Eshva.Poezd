@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 #endregion
 
-namespace Venture.Common.Application.MessagePublishing
+namespace Venture.Common.Application.Egress
 {
   /// <summary>
   /// Tools for message ID.

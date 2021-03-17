@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Eshva.Common.Tpl;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.Ingress;
 
 #endregion
 

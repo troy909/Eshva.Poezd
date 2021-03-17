@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Application.MessagePublishing
+namespace Venture.Common.Application.Egress
 {
   /// <summary>
   /// Contract of the message publisher for Venture product.

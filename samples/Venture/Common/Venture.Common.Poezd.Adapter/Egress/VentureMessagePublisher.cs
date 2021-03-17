@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
-using Venture.Common.Application.MessagePublishing;
+using Venture.Common.Application.Egress;
 
 #endregion
 

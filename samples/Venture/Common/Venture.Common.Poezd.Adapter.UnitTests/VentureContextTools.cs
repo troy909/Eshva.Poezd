@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eshva.Poezd.Core.Routing;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.Ingress;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 
 #endregion

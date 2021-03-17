@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
-using Venture.Common.Application.MessageHandling;
+using Venture.Common.Application.Ingress;
 
 #endregion
 

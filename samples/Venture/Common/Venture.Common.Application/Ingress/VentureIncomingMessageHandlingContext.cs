@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Application.MessageHandling
+namespace Venture.Common.Application.Ingress
 {
   /// <summary>
   /// Incoming message handling context fot the Venture sample product.

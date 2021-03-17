@@ -2,7 +2,7 @@
 
 using System;
 using FluentAssertions;
-using Venture.Common.Application.MessagePublishing;
+using Venture.Common.Application.Egress;
 using Xunit;
 
 #endregion

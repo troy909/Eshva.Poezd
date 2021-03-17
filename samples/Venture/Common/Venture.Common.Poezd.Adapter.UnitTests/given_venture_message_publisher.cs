@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using RandomStringCreator;
-using Venture.Common.Application.MessagePublishing;
+using Venture.Common.Application.Egress;
 using Venture.Common.Poezd.Adapter.Egress;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
 using Xunit;

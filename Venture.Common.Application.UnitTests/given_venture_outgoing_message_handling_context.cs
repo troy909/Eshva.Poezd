@@ -4,7 +4,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using RandomStringCreator;
-using Venture.Common.Application.MessagePublishing;
+using Venture.Common.Application.Egress;
 using Xunit;
 
 #endregion

@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Application.MessageHandling
+namespace Venture.Common.Application.Ingress
 {
   /// <summary>
   /// Marker interface for a general message handler in the application.

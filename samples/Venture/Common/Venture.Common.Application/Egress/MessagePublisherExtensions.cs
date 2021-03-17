@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Application.MessagePublishing
+namespace Venture.Common.Application.Egress
 {
   /// <summary>
   /// Extensions for <see cref="IMessagePublisher" />.

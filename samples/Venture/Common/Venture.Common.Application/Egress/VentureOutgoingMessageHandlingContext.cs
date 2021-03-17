@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 #endregion
 
-namespace Venture.Common.Application.MessagePublishing
+namespace Venture.Common.Application.Egress
 {
   public class VentureOutgoingMessageHandlingContext
   {

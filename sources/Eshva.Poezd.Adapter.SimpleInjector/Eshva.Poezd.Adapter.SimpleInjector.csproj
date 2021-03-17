@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,8 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="..\..\samples\Venture\Common\Venture.Common.Application\Venture.Common.Application.csproj" />
     <ProjectReference Include="..\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />
   </ItemGroup>
 

@@ -92,3 +92,5 @@ Build ".\Eshva.Poezd.sln" $versionSuffixOption
 Get-ChildItem -Filter *.UnitTests.csproj -Recurse | foreach { Test $_.FullName }
 
 MakePackage ".\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" $artifactsFolder $versionSuffixOption
+MakePackage ".\sources\Eshva.Poezd.Adapter.Kafka\Eshva.Poezd.Adapter.Kafka.csproj" $artifactsFolder $versionSuffixOption
+MakePackage ".\sources\Eshva.Poezd.Adapter.SimpleInjector\Eshva.Poezd.Adapter.SimpleInjector.csproj" $artifactsFolder $versionSuffixOption

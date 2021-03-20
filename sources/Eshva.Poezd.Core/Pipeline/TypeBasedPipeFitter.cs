@@ -23,7 +23,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <exception cref="ArgumentNullException">
     /// Service provider is not specified.
     /// </exception>
-    protected TypeBasedPipeFitter([NotNull] IServiceProvider serviceProvider)
+    protected TypeBasedPipeFitter([NotNull] IDiContainerAdapter serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
@@ -50,6 +50,6 @@ namespace Eshva.Poezd.Core.Pipeline
       new PoezdConfigurationException(
         $"Can not find a step of type '{stepType.FullName}'. You should register this step type in your DI-container.");
 
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IDiContainerAdapter _serviceProvider;
   }
 }

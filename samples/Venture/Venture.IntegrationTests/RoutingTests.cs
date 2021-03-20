@@ -42,7 +42,7 @@ namespace Venture.IntegrationTests
           configureIngressApi,
           configureEgressApi);
 
-      container.RegisterInstance<IServiceProvider>(container);
+      container.RegisterInstance<IDiContainerAdapter>(new SimpleInjectorAdapter(container));
       container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
       container.RegisterSingleton<DefaultProducerFactory>();
       container.RegisterSingleton<VentureProducerConfigurator>();

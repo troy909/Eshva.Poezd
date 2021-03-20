@@ -11,7 +11,7 @@ namespace Eshva.Poezd.Core.Routing
 {
   public class EgressApi : IEgressApi
   {
-    public EgressApi(EgressApiConfiguration configuration, IServiceProvider serviceProvider)
+    public EgressApi(EgressApiConfiguration configuration, IDiContainerAdapter serviceProvider)
     {
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
@@ -34,7 +34,7 @@ namespace Eshva.Poezd.Core.Routing
 
     public IEgressMessageTypesRegistry MessageTypesRegistry { get; }
 
-    private IPipeFitter GetPipeFitter(IServiceProvider serviceProvider)
+    private IPipeFitter GetPipeFitter(IDiContainerAdapter serviceProvider)
     {
       var pipeFitter = (IPipeFitter) serviceProvider.GetService(
         Configuration.PipeFitterType,
@@ -44,7 +44,7 @@ namespace Eshva.Poezd.Core.Routing
       return pipeFitter;
     }
 
-    private IEgressMessageTypesRegistry GetMessageTypesRegistry(IServiceProvider serviceProvider)
+    private IEgressMessageTypesRegistry GetMessageTypesRegistry(IDiContainerAdapter serviceProvider)
     {
       var registry = (IEgressMessageTypesRegistry) serviceProvider.GetService(
         Configuration.MessageTypesRegistryType,

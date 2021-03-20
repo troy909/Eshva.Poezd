@@ -1,6 +1,5 @@
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace Eshva.Poezd.Core.Routing
       ILogger<IBrokerEgressDriver> logger,
       IClock clock,
       IEnumerable<IEgressApi> apis,
-      IServiceProvider serviceProvider) { }
+      IDiContainerAdapter serviceProvider) { }
 
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) => Task.CompletedTask;
   }

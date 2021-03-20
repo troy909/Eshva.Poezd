@@ -14,26 +14,64 @@ namespace Eshva.Poezd.Core.Configuration
 {
   public class BrokerIngressConfiguration : CompositeMessageRouterConfigurationPart
   {
+    /// <summary>
+    /// Gets the type of pipe fitter that sets the very beginning of the broker ingress pipeline up.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IPipeFitter" />.
+    /// </remarks>
     public Type EnterPipeFitterType { get; internal set; }
 
+    /// <summary>
+    /// Gets the type of pipe fitter sets the very end of the broker ingress pipeline up.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IPipeFitter" />.
+    /// </remarks>
     public Type ExitPipeFitterType { get; internal set; }
 
+    /// <summary>
+    /// Gets the type of queue name matcher.
+    /// </summary>
+    /// <remarks>
+    /// Queue name matcher used to match the ingress message queue name to ingress API.
+    /// It should implement <see cref="IQueueNameMatcher" />.
+    /// </remarks>
     public Type QueueNameMatcherType { get; internal set; }
 
+    /// <summary>
+    /// Gets the list of ingress APIs.
+    /// </summary>
+    [NotNull]
     public IReadOnlyCollection<IngressApiConfiguration> Apis => _apis.AsReadOnly();
 
+    /// <summary>
+    /// Gets the broker ingress driver.
+    /// </summary>
     public IBrokerIngressDriver Driver { get; internal set; }
 
-    public static BrokerIngressConfiguration Empty { get; } = CreateValidEmpty();
-
+    /// <summary>
+    /// Gets the ingress driver configuration.
+    /// </summary>
     public IMessageRouterConfigurationPart DriverConfiguration { get; internal set; }
 
     /// <summary>
-    /// Adds an ingress API configuration
+    /// Gets an empty ingress object.
+    /// </summary>
+    public static BrokerIngressConfiguration Empty { get; } = CreateValidEmpty();
+
+    /// <summary>
+    /// Adds an ingress API configuration.
     /// </summary>
     /// <param name="configuration">
-    /// Ingress API configuration to add.
+    /// The ingress API configuration to add.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// The ingress API configuration is not specified.
+    /// </exception>
+    /// <exception cref="PoezdConfigurationException">
+    /// The same API configuration object or an API with the same ID already present in the list.
+    /// </exception>
     public void AddApi([NotNull] IngressApiConfiguration configuration)
     {
       if (configuration == null) throw new ArgumentNullException(nameof(configuration));

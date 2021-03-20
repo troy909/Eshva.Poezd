@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
 
@@ -11,7 +12,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   public class TestBrokerEgressExitPipeFitter : TypeBasedPipeFitter
   {
-    public TestBrokerEgressExitPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public TestBrokerEgressExitPipeFitter([NotNull] IDiContainerAdapter serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

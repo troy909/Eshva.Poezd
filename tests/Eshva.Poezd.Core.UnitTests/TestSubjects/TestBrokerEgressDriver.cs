@@ -1,6 +1,5 @@
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +28,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       ILogger<IBrokerEgressDriver> logger,
       IClock clock,
       IEnumerable<IEgressApi> apis,
-      IServiceProvider serviceProvider)
+      IDiContainerAdapter serviceProvider)
     {
       _state.InitializedCount++;
     }

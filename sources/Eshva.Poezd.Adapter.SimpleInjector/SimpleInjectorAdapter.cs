@@ -21,7 +21,7 @@ namespace Eshva.Poezd.Adapter.SimpleInjector
     }
 
     /// <inheritdoc />
-    public object GetService([NotNull] Type serviceType) =>
+    public object GetService(Type serviceType) =>
       _container.GetInstance(serviceType ?? throw new ArgumentNullException(nameof(serviceType)));
 
     /// <inheritdoc />

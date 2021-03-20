@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
 
@@ -11,7 +12,7 @@ namespace Venture.IntegrationTests.TestSubjects
 {
   public class MessageCountingPipeFitter : TypeBasedPipeFitter
   {
-    public MessageCountingPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public MessageCountingPipeFitter([NotNull] IDiContainerAdapter serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

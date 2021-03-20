@@ -32,7 +32,7 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     public MessageBroker(
       [NotNull] MessageBrokerConfiguration configuration,
-      [NotNull] IServiceProvider serviceProvider,
+      [NotNull] IDiContainerAdapter serviceProvider,
       [NotNull] IClock clock)
     {
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));

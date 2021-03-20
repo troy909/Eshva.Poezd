@@ -12,26 +12,59 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Configuration
 {
+  /// <summary>
+  /// Configuration of a broker egress.
+  /// </summary>
   public class BrokerEgressConfiguration : CompositeMessageRouterConfigurationPart
   {
+    /// <summary>
+    /// Gets the type of pipe fitter that sets the very beginning of the broker egress pipeline up.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IPipeFitter" />.
+    /// </remarks>
     public Type EnterPipeFitterType { get; internal set; }
 
+    /// <summary>
+    /// Gets the type of pipe fitter sets the very end of the broker egress pipeline up.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IPipeFitter" />.
+    /// </remarks>
     public Type ExitPipeFitterType { get; internal set; }
 
+    /// <summary>
+    /// Gets the list of egress APIs.
+    /// </summary>
     public IReadOnlyCollection<EgressApiConfiguration> Apis => _apis.AsReadOnly();
 
+    /// <summary>
+    /// Gets the broker egress driver.
+    /// </summary>
     public IBrokerEgressDriver Driver { get; internal set; }
 
+    /// <summary>
+    /// Gets the egress driver configuration.
+    /// </summary>
     public IMessageRouterConfigurationPart DriverConfiguration { get; internal set; }
 
+    /// <summary>
+    /// Gets an empty egress object.
+    /// </summary>
     public static BrokerEgressConfiguration Empty { get; } = CreateValidEmpty();
 
     /// <summary>
-    /// Adds an egress API configuration
+    /// Adds an egress API configuration.
     /// </summary>
     /// <param name="configuration">
-    /// Egress API configuration to add.
+    /// The egress API configuration to add.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// The egress API configuration is not specified.
+    /// </exception>
+    /// <exception cref="PoezdConfigurationException">
+    /// The same API configuration object or an API with the same ID already present in the list.
+    /// </exception>
     public void AddApi([NotNull] EgressApiConfiguration configuration)
     {
       if (configuration == null) throw new ArgumentNullException(nameof(configuration));

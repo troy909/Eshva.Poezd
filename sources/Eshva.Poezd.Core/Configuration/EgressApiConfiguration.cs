@@ -8,18 +8,52 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Eshva.Poezd.Core.Configuration
 {
+  /// <summary>
+  /// Configuration of an egress API.
+  /// </summary>
   public class EgressApiConfiguration : IMessageRouterConfigurationPart
   {
-    public string Id { get; set; }
+    /// <summary>
+    /// Gets the ID of the egress API.
+    /// </summary>
+    public string Id { get; internal set; }
 
-    public Type PipeFitterType { get; set; }
+    /// <summary>
+    /// Gets the type of pipe fitter that sets up the pipeline used to prepare published messages.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IPipeFitter" />.
+    /// </remarks>
+    public Type PipeFitterType { get; internal set; }
 
-    public Type MessageKeyType { get; set; }
+    /// <summary>
+    /// Gets the type of message key.
+    /// </summary>
+    /// <remarks>
+    /// The key required only for some message broker. For instance Kafka uses it to select partition of a topic to place a
+    /// message to. This type used to select proper serializer for the message key.
+    /// </remarks>
+    public Type MessageKeyType { get; internal set; }
 
-    public Type MessagePayloadType { get; set; }
+    /// <summary>
+    /// Gets the type of message payload.
+    /// </summary>
+    /// <remarks>
+    /// This type used to select proper serializer for the message payload.
+    /// </remarks>
+    public Type MessagePayloadType { get; internal set; }
 
-    public Type MessageTypesRegistryType { get; set; }
+    /// <summary>
+    /// Gets the type of message types registry.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IEgressMessageTypesRegistry" />.
+    /// </remarks>
+    public Type MessageTypesRegistryType { get; internal set; }
 
+    /// <summary>
+    /// An empty egress API configuration.
+    /// </summary>
     public static EgressApiConfiguration Empty { get; } = CreateValidEmpty();
 
     /// <inheritdoc />

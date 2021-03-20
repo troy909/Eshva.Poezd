@@ -9,22 +9,69 @@ using Eshva.Poezd.Core.Routing;
 
 namespace Eshva.Poezd.Core.Configuration
 {
+  /// <summary>
+  /// Configuration of an ingress API.
+  /// </summary>
   public class IngressApiConfiguration : IMessageRouterConfigurationPart
   {
-    public string Id { get; set; }
+    /// <summary>
+    /// Gets the ID of the ingress API.
+    /// </summary>
+    public string Id { get; internal set; }
 
-    public Type QueueNamePatternsProviderType { get; set; }
+    /// <summary>
+    /// Gets the type of pipe fitter that sets up the pipeline used to handle received messages.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IPipeFitter" />.
+    /// </remarks>
+    public Type PipeFitterType { get; internal set; }
 
-    public Type MessageKeyType { get; set; }
+    /// <summary>
+    /// Gets the type of message key.
+    /// </summary>
+    /// <remarks>
+    /// The key required only for some message broker. For instance Kafka uses it to select partition of a topic to place a
+    /// message to. This type used to select proper deserializer for the message key.
+    /// </remarks>
+    public Type MessageKeyType { get; internal set; }
 
-    public Type MessagePayloadType { get; set; }
+    /// <summary>
+    /// Gets the type of message payload.
+    /// </summary>
+    /// <remarks>
+    /// This type used to select proper deserializer for the message payload.
+    /// </remarks>
+    public Type MessagePayloadType { get; internal set; }
 
-    public Type PipeFitterType { get; set; }
+    /// <summary>
+    /// Gets the type of message types registry.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IIngressMessageTypesRegistry" />.
+    /// </remarks>
+    public Type MessageTypesRegistryType { get; internal set; }
 
-    public Type HandlerRegistryType { get; set; }
+    /// <summary>
+    /// Gets the type of queue name patterns provider.
+    /// </summary>
+    /// <remarks>
+    /// This provider used to get queue names the API messages are published to. The format of these patterns depends on the
+    /// message broker. For instance Kafka supports Regex patterns.
+    /// </remarks>
+    public Type QueueNamePatternsProviderType { get; internal set; }
 
-    public Type MessageTypesRegistryType { get; set; }
+    /// <summary>
+    /// Gets the type of the message handlers registry.
+    /// </summary>
+    /// <remarks>
+    /// It should implement <see cref="IHandlerRegistry" />.
+    /// </remarks>
+    public Type HandlerRegistryType { get; internal set; }
 
+    /// <summary>
+    /// An empty ingress API configuration.
+    /// </summary>
     public static IngressApiConfiguration Empty { get; } = CreateValidEmpty();
 
     /// <inheritdoc />

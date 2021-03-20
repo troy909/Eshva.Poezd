@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Eshva.Poezd.Adapter.SimpleInjector;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -26,7 +28,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
-      var sut = new VentureIngressPipeFitter(container);
+      var sut = new VentureIngressPipeFitter(container.GetInstance<IDiContainerAdapter>());
 
       using (AsyncScopedLifestyle.BeginScope(container))
       {
@@ -50,7 +52,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
-      var sut = new VentureIngressPipeFitter(container);
+      var sut = new VentureIngressPipeFitter(container.GetInstance<IDiContainerAdapter>());
 
       var context = CreateContext();
       await using (AsyncScopedLifestyle.BeginScope(container))
@@ -88,7 +90,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
-      var pipeFitter = new VentureIngressPipeFitter(container);
+      var pipeFitter = new VentureIngressPipeFitter(container.GetInstance<IDiContainerAdapter>());
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       // ReSharper disable once ObjectCreationAsStatement
@@ -127,7 +129,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-      container.RegisterInstance<IServiceProvider>(container);
+      container.RegisterInstance<IDiContainerAdapter>(new SimpleInjectorAdapter(container));
       container.RegisterSingleton<IHandlerRegistry, HandlerRegistry>();
       container.RegisterSingleton<IHandlersExecutionStrategy, ExecutionStrategy>();
       container.Register<ExtractRelationMetadataStep>(Lifestyle.Scoped);

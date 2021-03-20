@@ -1,9 +1,9 @@
 #region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Eshva.Poezd.Core.Common;
 
 #endregion
 
@@ -17,7 +17,7 @@ namespace Eshva.Poezd.Core.Routing
       string brokerId,
       IMessageRouter messageRouter,
       IEnumerable<IIngressApi> apis,
-      IServiceProvider serviceProvider) { }
+      IDiContainerAdapter serviceProvider) { }
 
     public Task StartConsumeMessages(
       IEnumerable<string> queueNamePatterns,

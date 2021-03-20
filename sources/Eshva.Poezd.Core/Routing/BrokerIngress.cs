@@ -30,7 +30,7 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     public BrokerIngress(
       [NotNull] BrokerIngressConfiguration configuration,
-      [NotNull] IServiceProvider serviceProvider)
+      [NotNull] IDiContainerAdapter serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -100,7 +100,7 @@ namespace Eshva.Poezd.Core.Routing
       Driver.Dispose();
     }
 
-    private IPipeFitter GetEnterPipeFitter(IServiceProvider serviceProvider)
+    private IPipeFitter GetEnterPipeFitter(IDiContainerAdapter serviceProvider)
     {
       return (IPipeFitter) serviceProvider.GetService(
         Configuration.EnterPipeFitterType,
@@ -109,7 +109,7 @@ namespace Eshva.Poezd.Core.Routing
           "You should register this type in DI-container."));
     }
 
-    private IPipeFitter GetExitPipeFitter(IServiceProvider serviceProvider)
+    private IPipeFitter GetExitPipeFitter(IDiContainerAdapter serviceProvider)
     {
       return (IPipeFitter) serviceProvider.GetService(
         Configuration.ExitPipeFitterType,
@@ -119,8 +119,6 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     private readonly IQueueNameMatcher _queueNameMatcher;
-
-    [NotNull]
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IDiContainerAdapter _serviceProvider;
   }
 }

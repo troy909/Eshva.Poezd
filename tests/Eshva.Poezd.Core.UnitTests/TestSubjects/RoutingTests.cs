@@ -23,7 +23,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
       container.AddLogging(testOutput);
 
-      container.RegisterInstance<IServiceProvider>(container);
+      container.RegisterInstance<IDiContainerAdapter>(new SimpleInjectorAdapter(container));
       container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
       container.RegisterSingleton<ThrowingEgressStep>();
       container.RegisterSingleton<WithThrowingStepPipeFitter>();

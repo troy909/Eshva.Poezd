@@ -42,7 +42,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       string brokerId,
       IMessageRouter messageRouter,
       IEnumerable<IIngressApi> apis,
-      IServiceProvider serviceProvider)
+      IDiContainerAdapter serviceProvider)
     {
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
       _brokerId = brokerId;
@@ -156,7 +156,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     private bool _isInitialized;
     private ILoggerFactory _loggerFactory;
     private IMessageRouter _messageRouter;
-    private IServiceProvider _serviceProvider;
+    private IDiContainerAdapter _serviceProvider;
 
     private static readonly MethodInfo CreateAndRegisterConsumerMethod =
       typeof(BrokerIngressKafkaDriver).GetMethod(nameof(CreateAndRegisterConsumer), BindingFlags.Instance | BindingFlags.NonPublic);

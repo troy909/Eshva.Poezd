@@ -10,12 +10,12 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Configuration
 {
   /// <summary>
-  /// Configuration of Poezd message router.
+  /// Poezd message router configuration.
   /// </summary>
   public sealed class MessageRouterConfiguration : CompositeMessageRouterConfigurationPart
   {
     /// <summary>
-    /// The list of message brokers managed by this instance of message router.
+    /// The list of message brokers managed by the message router.
     /// </summary>
     public IReadOnlyCollection<MessageBrokerConfiguration> Brokers => _brokers.AsReadOnly();
 
@@ -25,6 +25,9 @@ namespace Eshva.Poezd.Core.Configuration
     /// <param name="configuration">
     /// A message broker configuration to add.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// A message broker configuration is not specified.
+    /// </exception>
     internal void AddBroker([NotNull] MessageBrokerConfiguration configuration) =>
       _brokers.Add(configuration ?? throw new ArgumentNullException(nameof(configuration)));
 

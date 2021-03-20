@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
 
 #endregion
@@ -8,12 +9,12 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// Extensions for <see cref="IServiceProvider" />.
+  /// Extensions for <see cref="IDiContainerAdapter" />.
   /// </summary>
-  public static class ServiceProviderExtensions
+  public static class DiContainerExtensions
   {
     /// <summary>
-    /// Gets service by its service type. If service isn't found returns exception object made with
+    /// Gets service by its <paramref name="serviceType" /> type. If service isn't found throws exception made with
     /// <paramref name="makeException" />.
     /// </summary>
     /// <param name="serviceProvider">
@@ -32,14 +33,21 @@ namespace Eshva.Poezd.Core.Pipeline
     /// One of arguments is not specified.
     /// </exception>
     public static object GetService(
-      this IServiceProvider serviceProvider,
+      this IDiContainerAdapter serviceProvider,
       [NotNull] Type serviceType,
       [NotNull] Func<Type, Exception> makeException)
     {
       if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
       if (makeException == null) throw new ArgumentNullException(nameof(makeException));
 
-      return serviceProvider.GetService(serviceType) ?? makeException(serviceType);
+      try
+      {
+        return serviceProvider.GetService(serviceType);
+      }
+      catch (InvalidOperationException)
+      {
+        throw makeException(serviceType);
+      }
     }
   }
 }

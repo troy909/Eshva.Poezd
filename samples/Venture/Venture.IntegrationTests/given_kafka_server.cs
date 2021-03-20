@@ -39,7 +39,7 @@ namespace Venture.IntegrationTests
       var expectedValue = RoutingTests.GetRandomString();
       await kafkaTestContext.Produce(
         topic,
-        string.Empty, 
+        string.Empty,
         expectedValue,
         new Dictionary<string, byte[]> {{"header1", new byte[0]}});
       var consumeResult = kafkaTestContext.Consume(topic);
@@ -75,7 +75,10 @@ namespace Venture.IntegrationTests
 
       var expectedValue = new byte[10];
       new Random().NextBytes(expectedValue);
-      await kafkaTestContext.Produce(topic, string.Empty, expectedValue);
+      await kafkaTestContext.Produce(
+        topic,
+        string.Empty,
+        expectedValue);
       // var expectedValue = RoutingTests.GetRandomString();
       // await kafkaTestContext.Produce(topic, expectedValue);
 

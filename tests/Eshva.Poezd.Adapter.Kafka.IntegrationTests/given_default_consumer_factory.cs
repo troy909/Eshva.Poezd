@@ -1,4 +1,4 @@
-#region Usings
+﻿#region Usings
 
 using System;
 using System.Text;
@@ -65,7 +65,9 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
       await kafkaTestContext.CreateTopics(topic);
       var key = 123;
       var value = Encoding.UTF8.GetBytes("test-message");
-      await kafkaTestContext.Produce(topic, key,
+      await kafkaTestContext.Produce(
+        topic,
+        key,
         value);
 
       consumer.Subscribe(topic);

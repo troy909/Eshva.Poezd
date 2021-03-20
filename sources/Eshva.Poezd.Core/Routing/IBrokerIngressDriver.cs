@@ -39,7 +39,7 @@ namespace Eshva.Poezd.Core.Routing
       [NotNull] string brokerId,
       [NotNull] IMessageRouter messageRouter,
       [NotNull] IEnumerable<IIngressApi> apis,
-      [NotNull] IServiceProvider serviceProvider);
+      [NotNull] IDiContainerAdapter serviceProvider);
 
     /// <summary>
     /// Starts message consuming from the broker client.

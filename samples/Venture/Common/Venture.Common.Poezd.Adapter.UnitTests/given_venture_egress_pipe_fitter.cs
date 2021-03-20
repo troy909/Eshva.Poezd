@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Eshva.Poezd.Adapter.SimpleInjector;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
@@ -23,7 +25,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
-      var sut = new VentureEgressPipeFitter(container);
+      var sut = new VentureEgressPipeFitter(container.GetInstance<IDiContainerAdapter>());
 
       using (AsyncScopedLifestyle.BeginScope(container))
       {
@@ -56,7 +58,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = SetupContainer();
       var pipeline = new Pipeline();
-      var pipeFitter = new VentureEgressPipeFitter(container);
+      var pipeFitter = new VentureEgressPipeFitter(container.GetInstance<IDiContainerAdapter>());
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       // ReSharper disable once ObjectCreationAsStatement
@@ -72,7 +74,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     {
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-      container.RegisterInstance<IServiceProvider>(container);
+      container.RegisterInstance<IDiContainerAdapter>(new SimpleInjectorAdapter(container));
       container.Register<ValidateMessagePublishingContextStep>(Lifestyle.Scoped);
       container.Register<GetMessageKeyStep>(Lifestyle.Scoped);
       container.Register<GetTopicNameStep>(Lifestyle.Scoped);

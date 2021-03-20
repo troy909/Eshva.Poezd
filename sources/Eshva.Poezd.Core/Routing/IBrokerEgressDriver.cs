@@ -35,7 +35,7 @@ namespace Eshva.Poezd.Core.Routing
       [NotNull] ILogger<IBrokerEgressDriver> logger,
       [NotNull] IClock clock,
       [NotNull] IEnumerable<IEgressApi> apis,
-      [NotNull] IServiceProvider serviceProvider);
+      [NotNull] IDiContainerAdapter serviceProvider);
 
     /// <summary>
     /// Publishes a message using the broker client.

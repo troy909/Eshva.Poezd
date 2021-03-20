@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\sources\Eshva.Poezd.Adapter.SimpleInjector\Eshva.Poezd.Adapter.SimpleInjector.csproj" />
     <ProjectReference Include="..\Venture.CaseOffice.Messages\Venture.CaseOffice.Messages.csproj" />
     <ProjectReference Include="..\Venture.Common.Poezd.Adapter\Venture.Common.Poezd.Adapter.csproj" />
     <ProjectReference Include="..\Venture.WorkPlanner.Messages\Venture.WorkPlanner.Messages.csproj" />

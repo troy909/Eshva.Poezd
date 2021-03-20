@@ -14,11 +14,14 @@ namespace Eshva.Poezd.Core.Configuration
   public sealed class MessageBrokerConfiguration : CompositeMessageRouterConfigurationPart
   {
     /// <summary>
-    /// Gets ID of the message broker.
+    /// Gets the ID of the message broker.
     /// </summary>
     [NotNull]
     public string Id { get; internal set; } = string.Empty;
 
+    /// <summary>
+    /// Gets the message broker ingress.
+    /// </summary>
     [NotNull]
     public BrokerIngressConfiguration Ingress
     {
@@ -26,6 +29,9 @@ namespace Eshva.Poezd.Core.Configuration
       internal set => _ingress = value ?? throw new ArgumentNullException(nameof(value));
     }
 
+    /// <summary>
+    /// Gets the message broker egress.
+    /// </summary>
     [NotNull]
     public BrokerEgressConfiguration Egress
     {

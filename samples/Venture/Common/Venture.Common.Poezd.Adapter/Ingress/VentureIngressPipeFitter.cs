@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
 
@@ -48,7 +49,7 @@ namespace Venture.Common.Poezd.Adapter.Ingress
   /// </remarks>
   public sealed class VentureIngressPipeFitter : TypeBasedPipeFitter
   {
-    public VentureIngressPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public VentureIngressPipeFitter([NotNull] IDiContainerAdapter serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

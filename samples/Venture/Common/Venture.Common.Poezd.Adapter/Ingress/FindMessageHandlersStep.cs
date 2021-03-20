@@ -18,7 +18,7 @@ namespace Venture.Common.Poezd.Adapter.Ingress
   /// </summary>
   public class FindMessageHandlersStep : IStep<MessageHandlingContext>
   {
-    public FindMessageHandlersStep([NotNull] IServiceProvider serviceProvider)
+    public FindMessageHandlersStep([NotNull] IDiContainerAdapter serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
@@ -58,6 +58,6 @@ namespace Venture.Common.Poezd.Adapter.Ingress
         onHandle);
     }
 
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IDiContainerAdapter _serviceProvider;
   }
 }

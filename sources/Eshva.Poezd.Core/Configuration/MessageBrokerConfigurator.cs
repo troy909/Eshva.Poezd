@@ -8,18 +8,18 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Configuration
 {
   /// <summary>
-  /// Message broker configurator.
+  /// A message broker configurator.
   /// </summary>
   public sealed class MessageBrokerConfigurator
   {
     /// <summary>
-    /// Creates an instance of message broker configurator.
+    /// Creates an instance of a message broker configurator.
     /// </summary>
     /// <param name="configuration">
-    /// Message broker configuration object.
+    /// The message broker configuration to configure with this configurator.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Configuration object is not specified.
+    /// The message broker configuration is not specified.
     /// </exception>
     public MessageBrokerConfigurator([NotNull] MessageBrokerConfiguration configuration)
     {
@@ -27,7 +27,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     /// <summary>
-    /// Sets ID of the message broker.
+    /// Sets the ID of the message broker.
     /// </summary>
     /// <remarks>
     /// This ID used mainly for logging purposes.
@@ -36,10 +36,10 @@ namespace Eshva.Poezd.Core.Configuration
     /// The message broker ID to be set.
     /// </param>
     /// <returns>
-    /// This configurator object.
+    /// This configurator.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// ID is null, an empty or whitespace string.
+    /// The ID is null, an empty or a whitespace string.
     /// </exception>
     [NotNull]
     public MessageBrokerConfigurator WithId([NotNull] string id)
@@ -50,6 +50,18 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
+    /// <summary>
+    /// Configures the message broker ingress.
+    /// </summary>
+    /// <param name="configurator">
+    /// The the message broker ingress configurator.
+    /// </param>
+    /// <returns>
+    /// This configurator.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// The the message broker ingress configurator is not specified.
+    /// </exception>
     [NotNull]
     public MessageBrokerConfigurator Ingress([NotNull] Action<BrokerIngressConfigurator> configurator)
     {
@@ -60,6 +72,18 @@ namespace Eshva.Poezd.Core.Configuration
       return this;
     }
 
+    /// <summary>
+    /// Configures the message broker egress.
+    /// </summary>
+    /// <param name="configurator">
+    /// The the message broker egress configurator.
+    /// </param>
+    /// <returns>
+    /// This configurator.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// The the message broker egress configurator is not specified.
+    /// </exception>
     [NotNull]
     public MessageBrokerConfigurator Egress([NotNull] Action<BrokerEgressConfigurator> configurator)
     {

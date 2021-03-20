@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
 
@@ -16,7 +17,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   [UsedImplicitly]
   public sealed class Service2PipeFitter : TypeBasedPipeFitter
   {
-    public Service2PipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public Service2PipeFitter([NotNull] IDiContainerAdapter serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

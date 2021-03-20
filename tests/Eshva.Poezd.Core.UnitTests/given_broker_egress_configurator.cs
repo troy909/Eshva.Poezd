@@ -67,8 +67,9 @@ namespace Eshva.Poezd.Core.UnitTests
     public void when_setting_null_as_driver_it_should_fail()
     {
       var configurator = new BrokerEgressConfigurator(new BrokerEgressConfiguration());
+      var driverConfigurator = (IBrokerEgressDriverConfigurator) configurator;
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
-      Action sut = () => configurator.SetDriver(driver: null, new TestBrokerEgressDriverConfiguration());
+      Action sut = () => { driverConfigurator.SetDriver(driver: null, new TestBrokerEgressDriverConfiguration()); };
       sut.Should().Throw<ArgumentNullException>();
     }
 
@@ -76,8 +77,9 @@ namespace Eshva.Poezd.Core.UnitTests
     public void when_setting_null_as_driver_configuration_it_should_fail()
     {
       var configurator = new BrokerEgressConfigurator(new BrokerEgressConfiguration());
+      var driverConfigurator = (IBrokerEgressDriverConfigurator) configurator;
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
-      Action sut = () => configurator.SetDriver(new TestBrokerEgressDriver(new TestDriverState()), configuration: null);
+      Action sut = () => driverConfigurator.SetDriver(new TestBrokerEgressDriver(new TestDriverState()), configuration: null);
       sut.Should().Throw<ArgumentNullException>();
     }
 

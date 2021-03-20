@@ -79,7 +79,7 @@ namespace Venture.IntegrationTests
 
       await kafkaTestContext.Produce(
         topic,
-        int.MaxValue, 
+        int.MaxValue,
         serialized,
         headers);
 

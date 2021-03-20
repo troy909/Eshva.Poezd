@@ -73,7 +73,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         logger,
         clock,
         new IEgressApi[0],
-        Mock.Of<IServiceProvider>());
+        Mock.Of<IDiContainerAdapter>());
 
       brokerId = null;
       sut.Should().ThrowExactly<ArgumentNullException>()
@@ -110,7 +110,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
         new TestClock(DateTimeOffset.UtcNow),
         new IEgressApi[0],
-        Mock.Of<IServiceProvider>());
+        Mock.Of<IDiContainerAdapter>());
       sut.Should().NotThrow();
       sut.Should().ThrowExactly<PoezdOperationException>().Where(exception => exception.Message.Contains("already initialized"));
     }
@@ -162,7 +162,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
         new TestClock(DateTimeOffset.UtcNow),
         new IEgressApi[0],
-        Mock.Of<IServiceProvider>());
+        Mock.Of<IDiContainerAdapter>());
       const int key = 555;
       var payload = Encoding.UTF8.GetBytes("payload");
       const string topic1 = "commands1";
@@ -223,7 +223,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
         new TestClock(DateTimeOffset.UtcNow),
         new IEgressApi[0],
-        Mock.Of<IServiceProvider>());
+        Mock.Of<IDiContainerAdapter>());
       const int key = 555;
       var payload = Encoding.UTF8.GetBytes("payload");
       const string topic1 = "commands1";
@@ -289,7 +289,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
         new TestClock(DateTimeOffset.UtcNow),
         new IEgressApi[0],
-        Mock.Of<IServiceProvider>());
+        Mock.Of<IDiContainerAdapter>());
       const int key = 555;
       const string topic1 = "commands1";
       const string topic2 = "audit2";
@@ -332,7 +332,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
         new TestClock(DateTimeOffset.UtcNow),
         new IEgressApi[0],
-        Mock.Of<IServiceProvider>());
+        Mock.Of<IDiContainerAdapter>());
 
       const int key = 555;
       var payload = Encoding.UTF8.GetBytes("payload");
@@ -407,7 +407,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         container.GetInstance<ILogger<IBrokerEgressDriver>>(),
         new TestClock(DateTimeOffset.UtcNow),
         new IEgressApi[0],
-        Mock.Of<IServiceProvider>());
+        Mock.Of<IDiContainerAdapter>());
 
       var cancelledToken = new CancellationToken(canceled: true);
       var context = new MessagePublishingContext

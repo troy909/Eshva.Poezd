@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Common.Testing;
+using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using SimpleInjector;
@@ -39,7 +40,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         container.Register(handler);
       }
 
-      var sut = new FindMessageHandlersStep(container);
+      var sut = new FindMessageHandlersStep(new SimpleInjectorAdapter(container));
       var context = new MessageHandlingContext
       {
         MessageType = typeof(Message01),
@@ -68,7 +69,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
       container.AddLogging(_testOutput);
-      var step = new FindMessageHandlersStep(container);
+      var step = new FindMessageHandlersStep(new SimpleInjectorAdapter(container));
 
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test.
       Action sut = () => step.Execute(context: null);

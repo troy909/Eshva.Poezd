@@ -223,9 +223,9 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       return configuration;
     }
 
-    private static Mock<IServiceProvider> MakeServiceProviderMock()
+    private static Mock<IDiContainerAdapter> MakeServiceProviderMock()
     {
-      var mock = new Mock<IServiceProvider>();
+      var mock = new Mock<IDiContainerAdapter>();
       mock.Setup(provider => provider.GetService(typeof(TestDeserializerFactory))).Returns(new TestDeserializerFactory());
       mock.Setup(provider => provider.GetService(typeof(TestConsumerFactory))).Returns(new TestConsumerFactory());
       mock.Setup(provider => provider.GetService(typeof(TestConsumerConfigurator))).Returns(new TestConsumerConfigurator());

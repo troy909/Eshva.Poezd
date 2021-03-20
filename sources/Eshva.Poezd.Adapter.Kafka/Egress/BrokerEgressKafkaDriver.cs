@@ -32,7 +32,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       ILogger<IBrokerEgressDriver> logger,
       IClock clock,
       IEnumerable<IEgressApi> apis,
-      IServiceProvider serviceProvider)
+      IDiContainerAdapter serviceProvider)
     {
       if (_isInitialized) throw new PoezdOperationException($"Kafka driver for broker with ID {_brokerId} is already initialized.");
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
@@ -101,7 +101,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     {
       var producer = _producerRegistry.Get<TKey, TValue>(context.Api);
       var headers = MakeHeaders(context.Metadata);
-      var timestamp = new Timestamp(_clock.GetNowUtc());
+      var timestamp = new Timestamp(_clock.GetCurrentTimeUtc());
       var brokerId = context.Broker.Id;
       foreach (var queueName in context.QueueNames)
       {
@@ -159,7 +159,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     private IProducerConfigurator _producerConfigurator;
     private IProducerFactory _producerFactory;
     private ISerializerFactory _serializerFactory;
-    private IServiceProvider _serviceProvider;
+    private IDiContainerAdapter _serviceProvider;
 
     private static readonly MethodInfo PublishMethod =
       typeof(BrokerEgressKafkaDriver).GetMethod(nameof(Publish), BindingFlags.Instance | BindingFlags.NonPublic);

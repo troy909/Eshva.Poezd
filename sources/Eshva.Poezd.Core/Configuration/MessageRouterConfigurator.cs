@@ -8,27 +8,27 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Configuration
 {
   /// <summary>
-  /// Message router configurator.
+  /// Poezd message router configurator.
   /// </summary>
   public sealed class MessageRouterConfigurator
   {
     /// <summary>
-    /// Gets the message router configuration object handled by this configurator.
+    /// Gets the message router configuration used by this configurator.
     /// </summary>
     [NotNull]
     public MessageRouterConfiguration Configuration { get; } = new();
 
     /// <summary>
-    /// Adds a message broker handled by configuring message router.
+    /// Adds a message broker to message router.
     /// </summary>
     /// <param name="configurator">
     /// Message broker configurator.
     /// </param>
     /// <returns>
-    /// This configurator object.
+    /// This configurator.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// The configurator is not specified.
+    /// The message broker configurator is not specified.
     /// </exception>
     [NotNull]
     public MessageRouterConfigurator AddMessageBroker([NotNull] Action<MessageBrokerConfigurator> configurator)

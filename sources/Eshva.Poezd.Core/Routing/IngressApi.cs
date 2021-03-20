@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// One of arguments is not specified.
     /// </exception>
-    public IngressApi([NotNull] IngressApiConfiguration configuration, [NotNull] IServiceProvider serviceProvider)
+    public IngressApi([NotNull] IngressApiConfiguration configuration, [NotNull] IDiContainerAdapter serviceProvider)
     {
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
@@ -61,7 +61,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
 
-    private IPipeFitter GetIngressPipeFitter(IServiceProvider serviceProvider)
+    private IPipeFitter GetIngressPipeFitter(IDiContainerAdapter serviceProvider)
     {
       var pipeFitter = (IPipeFitter) serviceProvider.GetService(
         Configuration.PipeFitterType,
@@ -71,7 +71,7 @@ namespace Eshva.Poezd.Core.Routing
       return pipeFitter;
     }
 
-    private IIngressMessageTypesRegistry GetMessageTypesRegistry(IServiceProvider serviceProvider)
+    private IIngressMessageTypesRegistry GetMessageTypesRegistry(IDiContainerAdapter serviceProvider)
     {
       var registry = (IIngressMessageTypesRegistry) serviceProvider.GetService(
         Configuration.MessageTypesRegistryType,
@@ -81,7 +81,7 @@ namespace Eshva.Poezd.Core.Routing
       return registry;
     }
 
-    private IHandlerRegistry GetHandlerRegistry(IServiceProvider serviceProvider)
+    private IHandlerRegistry GetHandlerRegistry(IDiContainerAdapter serviceProvider)
     {
       var registry = (IHandlerRegistry) serviceProvider.GetService(
         Configuration.HandlerRegistryType,
@@ -91,7 +91,7 @@ namespace Eshva.Poezd.Core.Routing
       return registry;
     }
 
-    private IQueueNamePatternsProvider GetQueueNamePatternsProvider(IServiceProvider serviceProvider)
+    private IQueueNamePatternsProvider GetQueueNamePatternsProvider(IDiContainerAdapter serviceProvider)
     {
       var provider = (IQueueNamePatternsProvider) serviceProvider.GetService(
         Configuration.QueueNamePatternsProviderType,

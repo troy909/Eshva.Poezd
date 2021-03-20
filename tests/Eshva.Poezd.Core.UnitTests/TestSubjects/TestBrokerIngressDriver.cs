@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 
 #endregion
@@ -26,7 +27,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       string brokerId,
       IMessageRouter messageRouter,
       IEnumerable<IIngressApi> apis,
-      IServiceProvider serviceProvider)
+      IDiContainerAdapter serviceProvider)
     {
       _state.InitializedCount++;
     }

@@ -14,7 +14,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       _time = time;
     }
 
-    public DateTimeOffset GetNowUtc() => _time;
+    public DateTimeOffset GetCurrentTimeUtc() => _time;
 
     private readonly DateTimeOffset _time;
   }

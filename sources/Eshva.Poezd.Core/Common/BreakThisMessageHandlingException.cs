@@ -9,10 +9,10 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Common
 {
   /// <summary>
-  /// Break further this message handling signal.
+  /// Break this message handling signal.
   /// </summary>
   /// <remarks>
-  /// This exception used as a signal to stop further message handling and to skip following steps in the message handling
+  /// This exception used as a signal to stop further message handling and skip following steps in the message handling
   /// pipeline.
   /// </remarks>
   [PublicAPI]

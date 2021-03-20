@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
 
@@ -12,7 +13,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
   // ReSharper disable once ClassNeverInstantiated.Global
   public class WithThrowingHandlerPipeFitter : TypeBasedPipeFitter
   {
-    public WithThrowingHandlerPipeFitter([NotNull] IServiceProvider serviceProvider) : base(serviceProvider) { }
+    public WithThrowingHandlerPipeFitter([NotNull] IDiContainerAdapter serviceProvider) : base(serviceProvider) { }
 
     protected override IEnumerable<Type> GetStepTypes()
     {

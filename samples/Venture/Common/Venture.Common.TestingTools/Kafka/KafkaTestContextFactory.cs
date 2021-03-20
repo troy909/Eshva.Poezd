@@ -17,8 +17,8 @@ namespace Venture.Common.TestingTools.Kafka
       _bootstrapServers = bootstrapServers;
     }
 
-    public KafkaTestContext<TValue> Create<TValue>(CancellationToken cancellationToken = default) =>
-      new KafkaTestContext<TValue>(_bootstrapServers, cancellationToken);
+    public KafkaTestContext<TKey, TValue> Create<TKey, TValue>(CancellationToken cancellationToken = default) =>
+      new KafkaTestContext<TKey, TValue>(_bootstrapServers, cancellationToken);
 
     private readonly string _bootstrapServers;
   }

@@ -6,8 +6,12 @@ using Confluent.Kafka;
 
 namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
-  public class DefaultProducerFactory : IProducerFactory
+  /// <summary>
+  /// The default producer factory.
+  /// </summary>
+  public sealed class DefaultProducerFactory : IProducerFactory
   {
+    /// <inheritdoc />
     public IProducer<TKey, TValue> Create<TKey, TValue>(
       ProducerConfig config,
       IProducerConfigurator configurator,

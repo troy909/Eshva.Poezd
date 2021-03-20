@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.CaseOffice.Messages
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Application.UnitTests", "Venture.Common.Application.UnitTests\Venture.Common.Application.UnitTests.csproj", "{24400E98-D54C-4C25-A853-139C4006F19E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Adapter.Kafka.IntegrationTests", "tests\Eshva.Poezd.Adapter.Kafka.IntegrationTests\Eshva.Poezd.Adapter.Kafka.IntegrationTests.csproj", "{7A7532FC-28EE-4E00-BA6E-65230214054D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,10 @@ Global
 		{24400E98-D54C-4C25-A853-139C4006F19E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24400E98-D54C-4C25-A853-139C4006F19E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24400E98-D54C-4C25-A853-139C4006F19E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A7532FC-28EE-4E00-BA6E-65230214054D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A7532FC-28EE-4E00-BA6E-65230214054D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A7532FC-28EE-4E00-BA6E-65230214054D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A7532FC-28EE-4E00-BA6E-65230214054D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,6 +160,7 @@ Global
 		{513BA58C-AE6F-4EB0-98DC-FD8A632078C5} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 		{BD4031A0-836A-46EE-8DD9-B6CD1864B2FC} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 		{24400E98-D54C-4C25-A853-139C4006F19E} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
+		{7A7532FC-28EE-4E00-BA6E-65230214054D} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

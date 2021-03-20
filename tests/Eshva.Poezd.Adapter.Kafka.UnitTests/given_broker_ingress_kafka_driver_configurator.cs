@@ -83,7 +83,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     private class StabConsumerFactory : IConsumerFactory
     {
       public IConsumer<TKey, TValue> Create<TKey, TValue>(
-        ConsumerConfig consumerConfig,
+        ConsumerConfig config,
         IConsumerConfigurator configurator,
         IDeserializerFactory deserializerFactory) =>
         null;

@@ -6,8 +6,17 @@ using Confluent.Kafka;
 
 namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
+  /// <summary>
+  /// The default serializer factory for keys and values.
+  /// </summary>
+  /// <remarks>
+  /// Use this class as a base for your serializer factories if your key or value types differ from supported by the
+  /// Confluent .NET Kafka API or use it itself if you use only supported. See <see cref="Serializers" /> the find the
+  /// supported data types.
+  /// </remarks>
   public class DefaultSerializerFactory : ISerializerFactory
   {
+    /// <inheritdoc />
     public ISerializer<TData> Create<TData>()
     {
       var type = typeof(TData);

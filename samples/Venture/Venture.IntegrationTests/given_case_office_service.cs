@@ -64,7 +64,7 @@ namespace Venture.IntegrationTests
 
       const string topic = "venture.commands.case-office.v1";
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-      await using var kafkaTestContext = _kafkaTestContextFactory.Create<byte[]>(timeout);
+      await using var kafkaTestContext = _kafkaTestContextFactory.Create<int, byte[]>(timeout);
       await kafkaTestContext.CreateTopics(topic);
 
       var testIsFinished = RoutingTests.AddTestFinishSemaphore(container);
@@ -79,6 +79,7 @@ namespace Venture.IntegrationTests
 
       await kafkaTestContext.Produce(
         topic,
+        int.MaxValue, 
         serialized,
         headers);
 

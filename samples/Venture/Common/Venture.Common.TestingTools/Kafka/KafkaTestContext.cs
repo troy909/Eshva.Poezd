@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ using Confluent.Kafka.Admin;
 
 namespace Venture.Common.TestingTools.Kafka
 {
-  public class KafkaTestContext<TValue> : IAsyncDisposable
+  public class KafkaTestContext<TKey, TValue> : IAsyncDisposable
   {
     public KafkaTestContext(string bootstrapServers, CancellationToken cancellationToken = default)
     {
@@ -34,8 +35,10 @@ namespace Venture.Common.TestingTools.Kafka
       return _adminClient.CreateTopicsAsync(topicNames.Select(topicName => new TopicSpecification {Name = topicName, NumPartitions = 1}));
     }
 
-    public async Task<DeliveryResult<Null, TValue>> Produce(
+    [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+    public async Task<DeliveryResult<TKey, TValue>> Produce(
       string topicName,
+      TKey key,
       TValue value,
       IDictionary<string, byte[]> headers = default)
     {
@@ -55,13 +58,14 @@ namespace Venture.Common.TestingTools.Kafka
 
       var result = await _producer.ProduceAsync(
         topicName,
-        new Message<Null, TValue> {Value = value, Headers = headersToSend},
+        new Message<TKey, TValue> {Key = key, Value = value, Headers = headersToSend},
         _cancellationToken);
       _producer.Flush(_cancellationToken);
       return result;
     }
 
-    public ConsumeResult<Ignore, TValue> Consume(string topicName)
+    [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Global")]
+    public ConsumeResult<TKey, TValue> Consume(string topicName)
     {
       if (string.IsNullOrWhiteSpace(topicName)) throw new ArgumentNullException(nameof(topicName));
 
@@ -100,14 +104,14 @@ namespace Venture.Common.TestingTools.Kafka
     {
       if (_producer != null) return;
 
-      _producer = new ProducerBuilder<Null, TValue>(new ProducerConfig {BootstrapServers = _bootstrapServers}).Build();
+      _producer = new ProducerBuilder<TKey, TValue>(new ProducerConfig {BootstrapServers = _bootstrapServers}).Build();
     }
 
     private void EnsureConsumer()
     {
       if (_consumer != null) return;
 
-      _consumer = new ConsumerBuilder<Ignore, TValue>(
+      _consumer = new ConsumerBuilder<TKey, TValue>(
         new ConsumerConfig
         {
           BootstrapServers = _bootstrapServers,
@@ -125,7 +129,7 @@ namespace Venture.Common.TestingTools.Kafka
     private readonly CancellationToken _cancellationToken;
     private readonly List<string> _createdTopics = new List<string>();
     private IAdminClient _adminClient;
-    private IConsumer<Ignore, TValue> _consumer;
-    private IProducer<Null, TValue> _producer;
+    private IConsumer<TKey, TValue> _consumer;
+    private IProducer<TKey, TValue> _producer;
   }
 }

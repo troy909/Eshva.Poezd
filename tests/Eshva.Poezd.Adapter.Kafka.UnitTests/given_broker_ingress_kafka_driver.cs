@@ -268,7 +268,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     private class TestConsumerFactory : IConsumerFactory
     {
       public IConsumer<TKey, TValue> Create<TKey, TValue>(
-        ConsumerConfig consumerConfig,
+        ConsumerConfig config,
         IConsumerConfigurator configurator,
         IDeserializerFactory deserializerFactory) =>
         Mock.Of<IConsumer<TKey, TValue>>();

@@ -8,13 +8,16 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// The contract of an egress message types registry.
+  /// </summary>
   public interface IEgressMessageTypesRegistry
   {
     /// <summary>
     /// Gets message type name by CLR-message type.
     /// </summary>
     /// <param name="messageType">
-    /// THe message type.
+    /// The message CLR-type.
     /// </param>
     /// <returns>
     /// The message type name.
@@ -26,7 +29,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Message type doesn't belongs to this API.
     /// </exception>
     [NotNull]
-    string GetMessageTypeNameByItsMessageType(Type messageType);
+    string GetMessageTypeNameByItsMessageType([NotNull] Type messageType);
 
     /// <summary>
     /// Gets message descriptor be the message CLR-Type.

@@ -9,6 +9,9 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// The base of an egress message types registry.
+  /// </summary>
   public abstract class EgressMessageTypesRegistry : IEgressMessageTypesRegistry
   {
     /// <inheritdoc />
@@ -26,6 +29,7 @@ namespace Eshva.Poezd.Core.Pipeline
       return (IEgressMessageTypeDescriptor<TMessage>) descriptor;
     }
 
+    /// <inheritdoc />
     public bool DoesOwn<TMessage>() where TMessage : class => _typeToDescriptor.ContainsKey(typeof(TMessage));
 
     /// <summary>
@@ -35,15 +39,20 @@ namespace Eshva.Poezd.Core.Pipeline
     public abstract void Initialize();
 
     /// <summary>
-    /// Adds message type descriptor into internal descriptors collection.
+    /// Adds a message type descriptor into internal descriptors collection.
     /// </summary>
     /// <param name="messageTypeName">
-    /// Message type name as taken from a broker message.
+    /// The message type name used to identify a broker message type.
     /// </param>
-    /// <param name="messageType"></param>
+    /// <param name="messageType">
+    /// The message CLR-type.
+    /// </param>
     /// <param name="descriptor">
-    /// A message type descriptor to be added.
+    /// The message type descriptor to be added.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// One of arguments is not specified.
+    /// </exception>
     protected void AddDescriptor(
       [NotNull] string messageTypeName,
       [NotNull] Type messageType,

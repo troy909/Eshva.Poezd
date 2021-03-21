@@ -9,6 +9,9 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// The base of an ingress message types registry.
+  /// </summary>
   public abstract class IngressMessageTypesRegistry : IIngressMessageTypesRegistry
   {
     /// <inheritdoc />
@@ -24,13 +27,9 @@ namespace Eshva.Poezd.Core.Pipeline
       return type;
     }
 
-    /// <summary>
-    /// In derived types should be overridden an create message types descriptors and add them using
-    /// <see cref="AddDescriptor" />.
-    /// </summary>
-    public abstract void Initialize();
-
-    public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName) where TMessage : class
+    /// <inheritdoc />
+    public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
+      where TMessage : class
     {
       if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
 
@@ -43,15 +42,26 @@ namespace Eshva.Poezd.Core.Pipeline
     }
 
     /// <summary>
-    /// Adds message type descriptor into internal descriptors collection.
+    /// In derived types should be overridden an create message types descriptors and add them using
+    /// <see cref="AddDescriptor" />.
+    /// </summary>
+    public abstract void Initialize();
+
+    /// <summary>
+    /// Adds a message type descriptor into internal descriptors collection.
     /// </summary>
     /// <param name="messageTypeName">
-    /// Message type name as taken from a broker message.
+    /// The message type name used to identify a broker message type.
     /// </param>
-    /// <param name="messageType"></param>
+    /// <param name="messageType">
+    /// The message CLR-type.
+    /// </param>
     /// <param name="descriptor">
-    /// A message type descriptor to be added.
+    /// The message type descriptor to be added.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// One of arguments is not specified.
+    /// </exception>
     protected void AddDescriptor(
       [NotNull] string messageTypeName,
       [NotNull] Type messageType,

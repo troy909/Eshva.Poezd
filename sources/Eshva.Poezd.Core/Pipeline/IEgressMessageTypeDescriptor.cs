@@ -8,6 +8,12 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// The contract of an egress message type descriptor.
+  /// </summary>
+  /// <typeparam name="TMessage">
+  /// The message type descriptor.
+  /// </typeparam>
   public interface IEgressMessageTypeDescriptor<in TMessage> where TMessage : class
   {
     /// <summary>
@@ -20,7 +26,7 @@ namespace Eshva.Poezd.Core.Pipeline
     IReadOnlyCollection<string> QueueNames { get; }
 
     /// <summary>
-    /// Gets a functor that returns the partition key (if required by API or message broker) for the message type.
+    /// Gets a functor that returns the key (if required by API or message broker) for the message type.
     /// </summary>
     [NotNull]
     Func<TMessage, byte[]> GetKey { get; }

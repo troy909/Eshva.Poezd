@@ -8,12 +8,17 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// The contract of an ingress message types registry.
+  /// </summary>
   public interface IIngressMessageTypesRegistry
   {
     /// <summary>
     /// Gets message CLR-type by message type name.
     /// </summary>
-    /// <param name="messageTypeName"></param>
+    /// <param name="messageTypeName">
+    /// The message type name used to identify a broker message type.
+    /// </param>
     /// <returns>
     /// The message CLR-type.
     /// </returns>
@@ -30,7 +35,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Gets message descriptor by message type name.
     /// </summary>
     /// <param name="messageTypeName">
-    /// Message type name from a broker message metadata.
+    /// The message type name used to identify a broker message type.
     /// </param>
     /// <returns>
     /// The found message descriptor.

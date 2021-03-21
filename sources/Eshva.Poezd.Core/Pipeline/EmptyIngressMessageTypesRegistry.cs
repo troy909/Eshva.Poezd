@@ -2,17 +2,21 @@
 
 using System;
 using System.Collections.Generic;
-using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
-namespace Eshva.Poezd.Core.Routing
+namespace Eshva.Poezd.Core.Pipeline
 {
+  /// <summary>
+  /// An empty ingress message types registry.
+  /// </summary>
   internal sealed class EmptyIngressMessageTypesRegistry : IIngressMessageTypesRegistry
   {
+    /// <inheritdoc />
     public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) =>
       throw new KeyNotFoundException("An empty ingress message types registry knows nothing about any message types.");
 
+    /// <inheritdoc />
     public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
       where TMessage : class =>
       throw new KeyNotFoundException("An empty ingress message types registry knows nothing about any message types.");

@@ -8,10 +8,13 @@ using System.Collections.Generic;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// A stab for handler registry.
+  /// An empty handler registry.
   /// </summary>
   internal class EmptyHandlerRegistry : IHandlerRegistry
   {
+    /// <summary>
+    /// Creates a new instance of handler registry.
+    /// </summary>
     public EmptyHandlerRegistry()
     {
       HandlersGroupedByMessageType = new Dictionary<Type, Type[]>

@@ -47,7 +47,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// Gets the type of message types registry.
     /// </summary>
     /// <remarks>
-    /// It should implement <see cref="IEgressMessageTypesRegistry" />.
+    /// It should implement <see cref="IEgressApiMessageTypesRegistry" />.
     /// </remarks>
     public Type MessageTypesRegistryType { get; internal set; }
 
@@ -70,7 +70,7 @@ namespace Eshva.Poezd.Core.Configuration
     private static EgressApiConfiguration CreateValidEmpty() => new()
     {
       Id = "empty egress API configuration",
-      MessageTypesRegistryType = typeof(EmptyEgressMessageTypesRegistry),
+      MessageTypesRegistryType = typeof(EmptyEgressApiMessageTypesRegistry),
       PipeFitterType = typeof(EmptyPipeFitter)
     };
   }

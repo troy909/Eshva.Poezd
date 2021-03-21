@@ -14,7 +14,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <typeparam name="TMessage">
   /// The message type descriptor.
   /// </typeparam>
-  public interface IEgressMessageTypeDescriptor<in TMessage> where TMessage : class
+  public interface IEgressApiMessageTypeDescriptor<in TMessage> where TMessage : class
   {
     /// <summary>
     /// Gets queue names to which this message type belongs and should be published to.
@@ -29,7 +29,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Gets a functor that returns the key (if required by API or message broker) for the message type.
     /// </summary>
     [NotNull]
-    Func<TMessage, byte[]> GetKey { get; }
+    object GetKey(TMessage message);
 
     /// <summary>
     /// Serializes a message object into byte array using standard for this API method.

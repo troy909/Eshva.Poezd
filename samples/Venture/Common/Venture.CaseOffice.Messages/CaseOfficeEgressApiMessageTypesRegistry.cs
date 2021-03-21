@@ -12,7 +12,7 @@ using Venture.CaseOffice.Messages.V1.Events;
 
 namespace Venture.CaseOffice.Messages
 {
-  public sealed class CaseOfficeIngressMessageTypesRegistry : IngressMessageTypesRegistry
+  public sealed class CaseOfficeEgressApiMessageTypesRegistry : EgressApiMessageTypesRegistry
   {
     public override void Initialize()
     {
@@ -35,17 +35,22 @@ namespace Venture.CaseOffice.Messages
 
     private IDictionary<Type, object> _routeMap;
 
-    private class Descriptor<TMessage> : IIngressMessageTypeDescriptor<TMessage>
+    private class Descriptor<TMessage> : IEgressApiMessageTypeDescriptor<TMessage>
       where TMessage : class
     {
-      public Descriptor(string queueName)
+      public Descriptor(string queueName, Func<TMessage, object> getKey)
       {
+        _getKey = getKey;
         _queueNames.Add(queueName);
       }
 
       public IReadOnlyCollection<string> QueueNames => _queueNames.AsReadOnly();
 
-      public TMessage Parse(Memory<byte> bytes) => FlatBufferSerializer.Default.Parse<TMessage>(bytes);
+      public object GetKey(TMessage message) => _getKey(message);
+
+      public int Serialize(TMessage message, Memory<byte> buffer) => FlatBufferSerializer.Default.Serialize(message, buffer.Span);
+
+      private readonly Func<TMessage, object> _getKey;
 
       private readonly List<string> _queueNames = new List<string>(capacity: 1);
     }
@@ -59,10 +64,10 @@ namespace Venture.CaseOffice.Messages
         const string researchCaseFacts = "case.facts.research-case.v1";
         return new Dictionary<Type, object>
         {
-          {typeof(CreateJusticeCase), new Descriptor<CreateJusticeCase>(officeCommands)},
-          {typeof(CreateResearchCase), new Descriptor<CreateResearchCase>(officeCommands)},
-          {typeof(JusticeCaseCreated), new Descriptor<JusticeCaseCreated>(justiceCaseFacts)},
-          {typeof(ResearchCaseCreated), new Descriptor<ResearchCaseCreated>(researchCaseFacts)}
+          {typeof(CreateJusticeCase), new Descriptor<CreateJusticeCase>(officeCommands, message => Guid.NewGuid().ToByteArray())},
+          {typeof(CreateResearchCase), new Descriptor<CreateResearchCase>(officeCommands, message => Guid.NewGuid().ToByteArray())},
+          {typeof(JusticeCaseCreated), new Descriptor<JusticeCaseCreated>(justiceCaseFacts, message => message.CaseId.value)},
+          {typeof(ResearchCaseCreated), new Descriptor<ResearchCaseCreated>(researchCaseFacts, message => message.CaseId.value)}
         };
       }
     }

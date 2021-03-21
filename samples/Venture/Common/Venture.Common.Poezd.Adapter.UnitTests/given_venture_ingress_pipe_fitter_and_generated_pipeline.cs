@@ -104,7 +104,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
     private static MessageHandlingContext CreateContext()
     {
-      var typesRegistry = new IngressMessageTypesRegistry1();
+      var typesRegistry = new IngressApiMessageTypesRegistry1();
       typesRegistry.Initialize();
 
       var context = new MessageHandlingContext
@@ -141,7 +141,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       return container;
     }
 
-    private class IngressMessageTypesRegistry1 : IngressMessageTypesRegistry
+    private class IngressApiMessageTypesRegistry1 : IngressApiMessageTypesRegistry
     {
       public override void Initialize()
       {

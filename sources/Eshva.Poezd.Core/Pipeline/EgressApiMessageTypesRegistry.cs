@@ -10,36 +10,27 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// The base of an ingress message types registry.
+  /// The base of an egress message types registry.
   /// </summary>
-  public abstract class IngressMessageTypesRegistry : IIngressMessageTypesRegistry
+  public abstract class EgressApiMessageTypesRegistry : IEgressApiMessageTypesRegistry
   {
     /// <inheritdoc />
-    public Type GetMessageTypeByItsMessageTypeName(string messageTypeName)
-    {
-      if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
+    public string GetMessageTypeNameByItsMessageType(Type messageType) => _typeToTypeName[messageType];
 
+    /// <inheritdoc />
+    public IEgressApiMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class
+    {
       EnsureInitialized();
 
-      if (!_typeNameToType.TryGetValue(messageTypeName, out var type))
-        throw new KeyNotFoundException($"Message of type '{messageTypeName}' is unknown.");
+      var messageType = typeof(TMessage);
+      if (!_typeToDescriptor.TryGetValue(messageType, out var descriptor))
+        throw new KeyNotFoundException($"Message of type '{messageType.FullName}' is unknown.");
 
-      return type;
+      return (IEgressApiMessageTypeDescriptor<TMessage>) descriptor;
     }
 
     /// <inheritdoc />
-    public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
-      where TMessage : class
-    {
-      if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
-
-      EnsureInitialized();
-
-      if (!_typeNameToDescriptor.TryGetValue(messageTypeName, out var descriptor))
-        throw new KeyNotFoundException($"Message of type '{messageTypeName}' is unknown.");
-
-      return (IIngressMessageTypeDescriptor<TMessage>) descriptor;
-    }
+    public bool DoesOwn<TMessage>() where TMessage : class => _typeToDescriptor.ContainsKey(typeof(TMessage));
 
     /// <summary>
     /// In derived types should be overridden an create message types descriptors and add them using
@@ -71,20 +62,20 @@ namespace Eshva.Poezd.Core.Pipeline
       if (messageType == null) throw new ArgumentNullException(nameof(messageType));
       if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
 
-      _typeNameToType.Add(messageTypeName, messageType);
-      _typeNameToDescriptor.Add(messageTypeName, descriptor);
+      _typeToTypeName.Add(messageType, messageTypeName);
+      _typeToDescriptor.Add(messageType, descriptor);
     }
 
     private void EnsureInitialized()
     {
-      if (_typeNameToDescriptor.Count == 0)
+      if (_typeToDescriptor.Count == 0)
       {
         throw new PoezdOperationException(
           $"The registry isn't initialized. You have to call {nameof(Initialize)} method before you can use this registry.");
       }
     }
 
-    private readonly Dictionary<string, object> _typeNameToDescriptor = new();
-    private readonly Dictionary<string, Type> _typeNameToType = new();
+    private readonly Dictionary<Type, object> _typeToDescriptor = new();
+    private readonly Dictionary<Type, string> _typeToTypeName = new();
   }
 }

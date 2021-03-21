@@ -10,7 +10,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// An empty ingress message types registry.
   /// </summary>
-  internal sealed class EmptyIngressMessageTypesRegistry : IIngressMessageTypesRegistry
+  internal sealed class EmptyIngressApiMessageTypesRegistry : IIngressApiMessageTypesRegistry
   {
     /// <inheritdoc />
     public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) =>

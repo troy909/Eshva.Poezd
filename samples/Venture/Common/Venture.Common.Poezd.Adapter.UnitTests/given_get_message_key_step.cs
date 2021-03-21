@@ -24,7 +24,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       sut.Execute(context);
 
-      context.Key.Should().BeEquivalentTo(new[] {expected}, "key should be set after step executed");
+      context.Key.Should().Be(expected, "key should be set after step executed");
     }
 
     [Fact]
@@ -39,9 +39,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
     private static IEgressApi CreateEgressApi()
     {
-      var descriptorMock = new Mock<IEgressMessageTypeDescriptor<Message1>>();
-      descriptorMock.SetupGet(descriptor => descriptor.GetKey).Returns(() => message => new[] {message.Byte});
-      var registryMock = new Mock<IEgressMessageTypesRegistry>();
+      var descriptorMock = new Mock<IEgressApiMessageTypeDescriptor<Message1>>();
+      descriptorMock.Setup(descriptor => descriptor.GetKey(It.IsAny<Message1>())).Returns((Message1 message) => message.Byte);
+      var registryMock = new Mock<IEgressApiMessageTypesRegistry>();
       registryMock.Setup(registry => registry.GetDescriptorByMessageType<Message1>()).Returns(descriptorMock.Object);
       var egressApiMock = new Mock<IEgressApi>();
       egressApiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => registryMock.Object);

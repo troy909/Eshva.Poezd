@@ -47,18 +47,18 @@ namespace Venture.IntegrationTests
           .WithPipeFitter<VentureIngressPipeFitter>()
           .WithMessageKey<Ignore>()
           .WithMessagePayload<byte[]>()
-          .WithMessageTypesRegistry<CaseOfficeIngressMessageTypesRegistry>()
+          .WithMessageTypesRegistry<CaseOfficeIngressApiMessageTypesRegistry>()
           .WithHandlerRegistry<VentureServiceHandlersRegistry>(),
         api => api
           .WithId("egress-case-office")
           .WithMessageKey<int>()
           .WithMessagePayload<byte[]>()
-          .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()
+          .WithMessageTypesRegistry<EmptyEgressApiMessageTypesRegistry>()
           .WithPipeFitter<EmptyPipeFitter>(),
         _testOutput);
       container.RegisterSingleton<VentureQueueNamePatternsProvider>();
       AddIngressPipeline(container);
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       registry.Initialize();
       container.RegisterInstance(registry);
 
@@ -92,7 +92,7 @@ namespace Venture.IntegrationTests
 
     private static (CreateJusticeCase, byte[]) CreateSerializedMessage(string expectedReason)
     {
-      var registry = new CaseOfficeEgressMessageTypesRegistry();
+      var registry = new CaseOfficeEgressApiMessageTypesRegistry();
       registry.Initialize();
       var descriptor = registry.GetDescriptorByMessageType<CreateJusticeCase>();
       var serialized = new byte[1024];
@@ -105,7 +105,7 @@ namespace Venture.IntegrationTests
     {
       // TODO: I need to test this pipeline itself because for the moment it fails.
       container.RegisterSingleton<VentureIngressPipeFitter>();
-      container.RegisterSingleton<EmptyEgressMessageTypesRegistry>();
+      container.RegisterSingleton<EmptyEgressApiMessageTypesRegistry>();
       container.Register<IHandlersExecutionStrategy, ParallelHandlersExecutionStrategy>();
       container.RegisterSingleton<IAggregateStorage<ResearchCase>, AlmostRealAggregateStorage<ResearchCase>>();
       container.RegisterSingleton<IAggregateStorage<JusticeCase>, AlmostRealAggregateStorage<JusticeCase>>();

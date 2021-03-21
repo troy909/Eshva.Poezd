@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Eshva.Poezd.Core.Pipeline;
-using Eshva.Poezd.Core.Routing;
 
 #endregion
 
@@ -48,7 +47,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// Gets the type of message types registry.
     /// </summary>
     /// <remarks>
-    /// It should implement <see cref="IIngressMessageTypesRegistry" />.
+    /// It should implement <see cref="IIngressApiMessageTypesRegistry" />.
     /// </remarks>
     public Type MessageTypesRegistryType { get; internal set; }
 
@@ -97,7 +96,7 @@ namespace Eshva.Poezd.Core.Configuration
     {
       Id = "empty ingress API configuration",
       HandlerRegistryType = typeof(EmptyHandlerRegistry),
-      MessageTypesRegistryType = typeof(EmptyIngressMessageTypesRegistry),
+      MessageTypesRegistryType = typeof(EmptyIngressApiMessageTypesRegistry),
       PipeFitterType = typeof(EmptyPipeFitter),
       QueueNamePatternsProviderType = typeof(ProvidingNothingQueueNamePatternsProvider),
       MessageKeyType = typeof(int),

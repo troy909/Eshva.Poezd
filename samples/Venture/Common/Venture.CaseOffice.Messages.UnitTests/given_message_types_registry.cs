@@ -17,7 +17,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     [Fact]
     public void when_registry_initialized_and_clr_type_for_known_message_type_requested_it_should_return_clr_type()
     {
-      var sut = new CaseOfficeIngressMessageTypesRegistry();
+      var sut = new CaseOfficeIngressApiMessageTypesRegistry();
       sut.Initialize();
       sut.GetMessageTypeByItsMessageTypeName(typeof(CreateJusticeCase).FullName!).Should().NotBeNull("type is known");
     }
@@ -25,7 +25,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     [Fact]
     public void when_registry_initialized_and_descriptor_for_known_message_type_requested_it_should_return_descriptor()
     {
-      var sut = new CaseOfficeIngressMessageTypesRegistry();
+      var sut = new CaseOfficeIngressApiMessageTypesRegistry();
       sut.Initialize();
       sut.GetDescriptorByMessageTypeName<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!).Should()
         .NotBeNull("descriptor is present").And
@@ -35,11 +35,11 @@ namespace Venture.CaseOffice.Messages.UnitTests
     [Fact]
     public void when_descriptor_given_it_should_serialize_and_parse_message()
     {
-      var ingressRegistry = new CaseOfficeIngressMessageTypesRegistry();
+      var ingressRegistry = new CaseOfficeIngressApiMessageTypesRegistry();
       ingressRegistry.Initialize();
       var ingressDescriptor = ingressRegistry.GetDescriptorByMessageTypeName<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
 
-      var egressRegistry = new CaseOfficeEgressMessageTypesRegistry();
+      var egressRegistry = new CaseOfficeEgressApiMessageTypesRegistry();
       egressRegistry.Initialize();
       var egressDescriptor = egressRegistry.GetDescriptorByMessageType<CreateJusticeCase>();
 
@@ -56,7 +56,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     [Fact]
     public void when_registry_not_initialized_and_clr_type_for_known_message_type_requested_it_should_fail()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       Action sut = () => registry.GetMessageTypeByItsMessageTypeName(typeof(CreateJusticeCase).FullName!);
       sut.Should().Throw<PoezdOperationException>("without initialization registry can not serve");
     }
@@ -64,7 +64,7 @@ namespace Venture.CaseOffice.Messages.UnitTests
     [Fact]
     public void when_registry_not_initialized_and_descriptor_for_known_message_type_requested_it_should_fail()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       Action sut = () => registry.GetDescriptorByMessageTypeName<CreateJusticeCase>(typeof(CreateJusticeCase).FullName!);
       sut.Should().Throw<PoezdOperationException>("without initialization registry can not serve");
     }

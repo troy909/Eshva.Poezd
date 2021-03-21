@@ -114,7 +114,7 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     // ReSharper disable once ClassNeverInstantiated.Local
-    private class MessageTypesRegistry1 : IIngressMessageTypesRegistry
+    private class MessageTypesRegistry1 : IIngressApiMessageTypesRegistry
     {
       public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) => typeof(object);
 

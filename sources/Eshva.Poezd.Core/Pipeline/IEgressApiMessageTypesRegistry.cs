@@ -11,7 +11,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// The contract of an egress message types registry.
   /// </summary>
-  public interface IEgressMessageTypesRegistry
+  public interface IEgressApiMessageTypesRegistry
   {
     /// <summary>
     /// Gets message type name by CLR-message type.
@@ -47,7 +47,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// Message type doesn't belongs to this API.
     /// </exception>
     [NotNull]
-    IEgressMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class;
+    IEgressApiMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class;
 
     /// <summary>
     /// Checks if message of <typeparamref name="TMessage" /> belongs to this API.

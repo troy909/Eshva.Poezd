@@ -10,27 +10,36 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// The base of an egress message types registry.
+  /// The base of an ingress message types registry.
   /// </summary>
-  public abstract class EgressMessageTypesRegistry : IEgressMessageTypesRegistry
+  public abstract class IngressApiMessageTypesRegistry : IIngressApiMessageTypesRegistry
   {
     /// <inheritdoc />
-    public string GetMessageTypeNameByItsMessageType(Type messageType) => _typeToTypeName[messageType];
-
-    /// <inheritdoc />
-    public IEgressMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class
+    public Type GetMessageTypeByItsMessageTypeName(string messageTypeName)
     {
+      if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
+
       EnsureInitialized();
 
-      var messageType = typeof(TMessage);
-      if (!_typeToDescriptor.TryGetValue(messageType, out var descriptor))
-        throw new KeyNotFoundException($"Message of type '{messageType.FullName}' is unknown.");
+      if (!_typeNameToType.TryGetValue(messageTypeName, out var type))
+        throw new KeyNotFoundException($"Message of type '{messageTypeName}' is unknown.");
 
-      return (IEgressMessageTypeDescriptor<TMessage>) descriptor;
+      return type;
     }
 
     /// <inheritdoc />
-    public bool DoesOwn<TMessage>() where TMessage : class => _typeToDescriptor.ContainsKey(typeof(TMessage));
+    public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
+      where TMessage : class
+    {
+      if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
+
+      EnsureInitialized();
+
+      if (!_typeNameToDescriptor.TryGetValue(messageTypeName, out var descriptor))
+        throw new KeyNotFoundException($"Message of type '{messageTypeName}' is unknown.");
+
+      return (IIngressMessageTypeDescriptor<TMessage>) descriptor;
+    }
 
     /// <summary>
     /// In derived types should be overridden an create message types descriptors and add them using
@@ -62,20 +71,20 @@ namespace Eshva.Poezd.Core.Pipeline
       if (messageType == null) throw new ArgumentNullException(nameof(messageType));
       if (descriptor == null) throw new ArgumentNullException(nameof(descriptor));
 
-      _typeToTypeName.Add(messageType, messageTypeName);
-      _typeToDescriptor.Add(messageType, descriptor);
+      _typeNameToType.Add(messageTypeName, messageType);
+      _typeNameToDescriptor.Add(messageTypeName, descriptor);
     }
 
     private void EnsureInitialized()
     {
-      if (_typeToDescriptor.Count == 0)
+      if (_typeNameToDescriptor.Count == 0)
       {
         throw new PoezdOperationException(
           $"The registry isn't initialized. You have to call {nameof(Initialize)} method before you can use this registry.");
       }
     }
 
-    private readonly Dictionary<Type, object> _typeToDescriptor = new();
-    private readonly Dictionary<Type, string> _typeToTypeName = new();
+    private readonly Dictionary<string, object> _typeNameToDescriptor = new();
+    private readonly Dictionary<string, Type> _typeNameToType = new();
   }
 }

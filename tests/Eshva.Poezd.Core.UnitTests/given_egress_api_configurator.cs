@@ -96,11 +96,11 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     // ReSharper disable once ClassNeverInstantiated.Local
-    private class MessageTypesRegistry1 : IEgressMessageTypesRegistry
+    private class MessageTypesRegistry1 : IEgressApiMessageTypesRegistry
     {
       public string GetMessageTypeNameByItsMessageType(Type messageType) => string.Empty;
 
-      public IEgressMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class => null!;
+      public IEgressApiMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class => null!;
 
       public bool DoesOwn<TMessage>() where TMessage : class => false;
     }

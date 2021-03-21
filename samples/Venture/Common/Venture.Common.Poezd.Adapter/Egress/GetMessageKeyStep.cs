@@ -23,11 +23,11 @@ namespace Venture.Common.Poezd.Adapter.Egress
       var message = context.Message;
       var registry = context.Api.MessageTypesRegistry;
       var getKey = GenericGetKey!.MakeGenericMethod(message.GetType());
-      context.Key = (byte[]) getKey.Invoke(this, new[] {message, registry});
+      context.Key = getKey.Invoke(this, new[] {message, registry});
       return Task.CompletedTask;
     }
 
-    private object GetKey<TMessage>(TMessage message, IEgressMessageTypesRegistry registry) where TMessage : class =>
+    private object GetKey<TMessage>(TMessage message, IEgressApiMessageTypesRegistry registry) where TMessage : class =>
       registry.GetDescriptorByMessageType<TMessage>().GetKey(message);
 
     private static readonly MethodInfo GenericGetKey =

@@ -9,27 +9,27 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
-  public class OwningEverythingEgressMessageTypesRegistry : IEgressMessageTypesRegistry
+  public class OwningEverythingEgressApiMessageTypesRegistry : IEgressApiMessageTypesRegistry
   {
     public string GetMessageTypeNameByItsMessageType(Type messageType) => "fixed-message-type-name";
 
-    public IEgressMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class =>
+    public IEgressApiMessageTypeDescriptor<TMessage> GetDescriptorByMessageType<TMessage>() where TMessage : class =>
       new Descriptor<TMessage>("egress-queue-name", message => Encoding.UTF8.GetBytes("fixed-key"));
 
     public bool DoesOwn<TMessage>() where TMessage : class => true;
 
-    private class Descriptor<TMessage> : IEgressMessageTypeDescriptor<TMessage>
+    private class Descriptor<TMessage> : IEgressApiMessageTypeDescriptor<TMessage>
       where TMessage : class
     {
-      public Descriptor(string queueName, Func<TMessage, byte[]> getKey)
+      public Descriptor(string queueName, Func<TMessage, object> getKey)
       {
-        GetKey = getKey;
         _queueNames.Add(queueName);
+        _getKey = getKey;
       }
 
-      public Func<TMessage, byte[]> GetKey { get; }
-
       public IReadOnlyCollection<string> QueueNames => _queueNames.AsReadOnly();
+
+      public object GetKey(TMessage message) => _getKey(message);
 
       public int Serialize(TMessage message, Memory<byte> buffer)
       {
@@ -37,6 +37,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
         Encoding.UTF8.GetBytes(messageContent).AsMemory().CopyTo(buffer);
         return Encoding.UTF8.GetByteCount(messageContent);
       }
+
+      private readonly Func<TMessage, object> _getKey;
 
       private readonly List<string> _queueNames = new List<string>(capacity: 1);
     }

@@ -28,7 +28,7 @@ namespace Venture.Common.Poezd.Adapter.Egress
       return Task.CompletedTask;
     }
 
-    private byte[] Serialize<TMessage>(TMessage message, IEgressMessageTypesRegistry registry) where TMessage : class
+    private byte[] Serialize<TMessage>(TMessage message, IEgressApiMessageTypesRegistry registry) where TMessage : class
     {
       var descriptor = registry.GetDescriptorByMessageType<TMessage>();
       using var memoryOwner = MemoryPool<byte>.Shared.Rent();

@@ -51,7 +51,7 @@ namespace Venture.Common.Poezd.Adapter.Ingress
         context.MessageType = messageType;
 
         var getDescriptorMethod =
-          typeof(IIngressMessageTypesRegistry).GetMethod(nameof(IIngressMessageTypesRegistry.GetDescriptorByMessageTypeName))!
+          typeof(IIngressApiMessageTypesRegistry).GetMethod(nameof(IIngressApiMessageTypesRegistry.GetDescriptorByMessageTypeName))!
             .MakeGenericMethod(messageType);
 
         context.Descriptor = getDescriptorMethod.Invoke(messageTypesRegistry, new object?[] {messageTypeName});

@@ -11,7 +11,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// The contract of an ingress message types registry.
   /// </summary>
-  public interface IIngressMessageTypesRegistry
+  public interface IIngressApiMessageTypesRegistry
   {
     /// <summary>
     /// Gets message CLR-type by message type name.

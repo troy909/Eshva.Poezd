@@ -21,7 +21,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public async Task when_executed_with_context_containing_message_type_within_broker_message_metadata_it_should_store_it_in_context()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       registry.Initialize();
 
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateJusticeCase";
@@ -42,7 +42,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_missing_message_type_within_broker_message_metadata_it_should_fail()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       registry.Initialize();
       var context = new MessageHandlingContext
       {
@@ -59,7 +59,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_wrong_message_type_within_broker_message_metadata_it_should_fail()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       registry.Initialize();
       var context = new MessageHandlingContext {Api = new FakeIngressApi {MessageTypesRegistry = registry}};
       var step = new ExtractMessageTypeStep();
@@ -83,7 +83,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_with_unknown_message_type_within_broker_message_metadata_it_should_fail_skip_message_exception()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       registry.Initialize();
       var step = new ExtractMessageTypeStep();
       var context = new MessageHandlingContext
@@ -100,7 +100,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_with_context_without_message_type_registry_it_should_fail()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       registry.Initialize();
       const string expectedTypeName = "Venture.CaseOffice.Messages.V1.Commands.CreateCase";
       var context = new MessageHandlingContext
@@ -116,7 +116,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
     [Fact]
     public void when_executed_without_context_it_should_fail()
     {
-      var registry = new CaseOfficeIngressMessageTypesRegistry();
+      var registry = new CaseOfficeIngressApiMessageTypesRegistry();
       registry.Initialize();
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Func<Task> sut = async () => await new ExtractMessageTypeStep().Execute(context: null);

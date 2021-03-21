@@ -33,7 +33,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       container.RegisterSingleton<TestBrokerEgressExitPipeFitter>();
       container.RegisterSingleton<TestBrokerEgressEnterPipeFitter>();
       container.RegisterSingleton<TestBrokerEgressApiPipeFitter>();
-      container.RegisterSingleton<OwningEverythingEgressMessageTypesRegistry>();
+      container.RegisterSingleton<OwningEverythingEgressApiMessageTypesRegistry>();
       container.RegisterSingleton<WithBreakingHandlerPipeFitter>();
       container.RegisterSingleton<BreakingIngressStep>();
       container.RegisterSingleton<WithThrowingHandlerPipeFitter>();
@@ -41,8 +41,8 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       container.RegisterSingleton<MatchingNothingQueueNameMatcher>();
       container.RegisterSingleton<MatchingEverythingQueueNameMatcher>();
       container.RegisterSingleton<ProvidingNothingQueueNamePatternsProvider>();
-      container.RegisterSingleton<EmptyIngressMessageTypesRegistry>();
-      container.RegisterSingleton<EmptyEgressMessageTypesRegistry>();
+      container.RegisterSingleton<EmptyIngressApiMessageTypesRegistry>();
+      container.RegisterSingleton<EmptyEgressApiMessageTypesRegistry>();
       container.RegisterSingleton<EmptyHandlerRegistry>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<Service1QueueNamePatternsProvider>();
@@ -92,7 +92,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<Service1PipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>())
                     .AddApi(
                       api => api
@@ -101,7 +101,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<Service2PipeFitter>()
                         .WithMessageKey<long>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>())
                     .AddApi(
                       api => api
@@ -110,7 +110,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<CdcNotificationsPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<string>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
@@ -123,7 +123,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()))));
+                        .WithMessageTypesRegistry<EmptyEgressApiMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;
@@ -153,7 +153,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
@@ -166,7 +166,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<OwningEverythingEgressMessageTypesRegistry>()))));
+                        .WithMessageTypesRegistry<OwningEverythingEgressApiMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;
@@ -196,7 +196,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
@@ -209,7 +209,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()))));
+                        .WithMessageTypesRegistry<EmptyEgressApiMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;
@@ -241,7 +241,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
@@ -254,7 +254,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>())))
+                        .WithMessageTypesRegistry<EmptyEgressApiMessageTypesRegistry>())))
             .AddMessageBroker(
               broker => broker
                 .WithId(broker2Name)
@@ -271,7 +271,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
@@ -284,7 +284,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>())))
+                        .WithMessageTypesRegistry<EmptyEgressApiMessageTypesRegistry>())))
             .AddMessageBroker(
               broker => broker
                 .WithId(broker3Name)
@@ -301,7 +301,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
@@ -314,7 +314,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyEgressMessageTypesRegistry>()))));
+                        .WithMessageTypesRegistry<EmptyEgressApiMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;
@@ -341,7 +341,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<EmptyIngressMessageTypesRegistry>()
+                        .WithMessageTypesRegistry<EmptyIngressApiMessageTypesRegistry>()
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
@@ -354,7 +354,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithPipeFitter<TestBrokerEgressApiPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
-                        .WithMessageTypesRegistry<OwningEverythingEgressMessageTypesRegistry>()))));
+                        .WithMessageTypesRegistry<OwningEverythingEgressApiMessageTypesRegistry>()))));
 
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container;

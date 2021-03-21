@@ -28,7 +28,7 @@ namespace Venture.Common.Poezd.Adapter.Egress
       return Task.CompletedTask;
     }
 
-    private IReadOnlyCollection<string> GetQueueNames<TMessage>(IEgressMessageTypesRegistry registry) where TMessage : class =>
+    private IReadOnlyCollection<string> GetQueueNames<TMessage>(IEgressApiMessageTypesRegistry registry) where TMessage : class =>
       registry.GetDescriptorByMessageType<TMessage>().QueueNames;
 
     private static readonly MethodInfo GenericGetQueueName =

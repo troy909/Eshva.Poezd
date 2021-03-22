@@ -15,7 +15,7 @@ namespace Eshva.Poezd.Core.Routing
   public interface IBrokerEgressDriver : IDisposable
   {
     /// <summary>
-    /// Initializes the egress message broker driver.
+    /// Initializes the message broker egress driver.
     /// </summary>
     /// <param name="brokerId">
     /// The broker ID to bind to.
@@ -23,9 +23,17 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="logger">
     /// A logger.
     /// </param>
-    /// <param name="clock"></param>
+    /// <param name="clock">
+    /// The service of the current time.
+    /// </param>
+    /// <param name="apis">
+    /// The egress API list.
+    /// </param>
+    /// <param name="serviceProvider">
+    /// The service provider.
+    /// </param>
     /// <exception cref="ArgumentNullException">
-    /// One of arguments is null, an empty or whitespace string.
+    /// One of arguments is null, an empty or a whitespace string.
     /// </exception>
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
@@ -38,27 +46,22 @@ namespace Eshva.Poezd.Core.Routing
       [NotNull] IDiContainerAdapter serviceProvider);
 
     /// <summary>
-    /// Publishes a message using the broker client.
+    /// Publishes a message using the message broker driver.
     /// </summary>
-    /// <param name="key">
-    /// The message broker key if required like in case of Kafka.
+    /// <param name="context">
+    /// Message publishing context containing everything to publish the message to the message broker driver.
     /// </param>
-    /// <param name="payload">
-    /// The message broker payload.
+    /// <param name="cancellationToken">
+    /// A cancellation token.
     /// </param>
-    /// <param name="api"></param>
-    /// <param name="metadata">
-    /// The message broker metadata.
-    /// </param>
-    /// <param name="queueNames">
-    /// The message broker queue/topic names to which the message should be published.
-    /// </param>
-    /// <param name="cancellationToken"></param>
     /// <returns>
-    /// A task that can be used for waiting when publishing finished.
+    /// A task that could be used for waiting when publishing finished.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// One of arguments is <c>null</c>, an empty or a whitespace string.
+    /// Message publishing context is not specified.
+    /// </exception>
+    /// <exception cref="PoezdOperationException">
+    /// The driver is not initialized or the message publishing context missing some required data.
     /// </exception>
     [NotNull]
     Task Publish([NotNull] MessagePublishingContext context, CancellationToken cancellationToken);

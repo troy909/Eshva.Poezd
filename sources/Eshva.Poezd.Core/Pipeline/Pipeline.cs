@@ -12,7 +12,7 @@ using Eshva.Poezd.Core.Common;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// Message handling pipeline using a linked list.
+  /// Message processing pipeline which using a linked list.
   /// </summary>
   public sealed class Pipeline<TContext> : IPipeline<TContext> where TContext : class, IPocket
   {

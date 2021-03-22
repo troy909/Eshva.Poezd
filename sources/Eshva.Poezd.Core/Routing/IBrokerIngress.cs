@@ -14,12 +14,13 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Routing
 {
   /// <summary>
-  /// The contract of broker ingress.
+  /// The contract of the message broker ingress.
   /// </summary>
+  [PublicAPI]
   public interface IBrokerIngress : IDisposable
   {
     /// <summary>
-    /// The message broker ingress configuration.
+    /// Gets the message broker ingress configuration.
     /// </summary>
     [NotNull]
     BrokerIngressConfiguration Configuration { get; }
@@ -31,51 +32,84 @@ namespace Eshva.Poezd.Core.Routing
     IBrokerIngressDriver Driver { get; }
 
     /// <summary>
-    /// Gets list of ingress APIs bound to this message broker.
+    /// Gets the list of ingress APIs.
     /// </summary>
     [NotNull]
     IReadOnlyCollection<IIngressApi> Apis { get; }
 
     /// <summary>
-    /// Gets enter pipe fitter. Configures the very beginning of pipeline.
+    /// Gets enter pipe fitter which configures the very beginning of pipeline.
     /// </summary>
     [NotNull]
     IPipeFitter EnterPipeFitter { get; }
 
     /// <summary>
-    /// Gets exit pipe fitter. Configures the very end of pipeline.
+    /// Gets exit pipe fitter which configures the very end of pipeline.
     /// </summary>
     [NotNull]
     IPipeFitter ExitPipeFitter { get; }
 
     /// <summary>
-    /// Gets an ingress API by queue name.
+    /// Initializes the message broker ingress.
     /// </summary>
-    /// <param name="queueName">
-    /// Queue name that should belong to one of ingress APIs bound to this broker.
-    /// </param>
     /// <returns>
-    /// The ingress API to which queue name belongs or a stab ingress API for an unknown queue name.
+    /// A task that could be used for waiting when message consumption finished.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Queue name is null, an empty or a whitespace string.
-    /// </exception>
-    IIngressApi GetApiByQueueName([NotNull] string queueName);
-
-    /// <summary>
-    /// Initializes the message broker driver.
-    /// </summary>
-    /// <exception cref="ArgumentNullException">
-    /// One of arguments is null, an empty or whitespace string.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// The configuration object has wrong type.
-    /// </exception>
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
     /// </exception>
+    void Initialize();
+
+    [NotNull]
     public Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default);
 
-    void Initialize([NotNull] IMessageRouter messageRouter, [NotNull] string brokerId);
+    /// <summary>
+    /// Routes an incoming message to message broker. Used by message broker drivers.
+    /// </summary>
+    /// <param name="queueName">
+    /// The queue/topic name from which the message is arrived.
+    /// </param>
+    /// <param name="receivedOnUtc">
+    /// The moment in time the message was received.
+    /// TODO: Should be the original message timestamp?
+    /// </param>
+    /// <param name="key">
+    /// The message key.
+    /// </param>
+    /// <param name="payload">
+    /// The message payload.
+    /// </param>
+    /// <param name="metadata">
+    /// The message metadata.
+    /// </param>
+    /// <returns>
+    /// A task that can be used for waiting the message routing finished.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// One of arguments is null, an empty or a whitespace string.
+    /// </exception>
+    [NotNull]
+    Task RouteIngressMessage(
+      string queueName,
+      DateTimeOffset receivedOnUtc,
+      object key,
+      object payload,
+      IReadOnlyDictionary<string, string> metadata);
+
+    /// <summary>
+    /// Gets ingress API by queue name.
+    /// </summary>
+    /// <param name="queueName">
+    /// The queue name a message received from.
+    /// </param>
+    /// <returns>
+    /// The ingress API to which queue name belongs or an empty ingress API for an unknown queue name.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Queue name is <c>null</c>, an empty or a whitespace string.
+    /// </exception>
+    /// TODO: Should throw if queue name belongs to a few APIs.
+    [NotNull]
+    IIngressApi GetApiByQueueName([NotNull] string queueName);
   }
 }

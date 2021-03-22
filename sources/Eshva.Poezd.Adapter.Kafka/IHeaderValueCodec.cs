@@ -11,7 +11,7 @@ namespace Eshva.Poezd.Adapter.Kafka
   /// </summary>
   /// <remarks>
   /// Kafka handles header values as byte arrays. Poezd handles broker headers as strings. This parser should translate bytes
-  /// to string in accordance to way headers are encoded on producer side.
+  /// to string in accordance the way headers are encoded on producer side.
   /// </remarks>
   public interface IHeaderValueCodec
   {
@@ -22,7 +22,9 @@ namespace Eshva.Poezd.Adapter.Kafka
     /// Header values in Kafka can be <c>null</c> but it's not allowed in Poezd to get a header with <c>null</c> as its value.
     /// The implementation of this method should produce an empty string for <c>null</c> input value.
     /// </remarks>
-    /// <param name="value">Byte array to parse.</param>
+    /// <param name="value">
+    /// Byte array to parse.
+    /// </param>
     /// <returns>
     /// String representation of header <paramref name="value" />.
     /// </returns>
@@ -31,12 +33,19 @@ namespace Eshva.Poezd.Adapter.Kafka
     string Decode([CanBeNull] byte[] value);
 
     /// <summary>
-    /// 
+    /// Converts Kafka header value from string to byte array.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <remarks>
+    /// The implementation of this method should produce an empty array for <c>null</c> input value.
+    /// </remarks>
+    /// <param name="value">
+    /// String to encode as byte array.
+    /// </param>
+    /// <returns>
+    /// String encoded as byte array.
+    /// </returns>
     [Pure]
     [NotNull]
-    byte[] Encode([NotNull] string value);
+    byte[] Encode([CanBeNull] string value);
   }
 }

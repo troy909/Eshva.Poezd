@@ -10,6 +10,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
   /// <summary>
   /// The contract of deserializer factory for keys and values.
   /// </summary>
+  [PublicAPI]
   public interface IDeserializerFactory
   {
     /// <summary>

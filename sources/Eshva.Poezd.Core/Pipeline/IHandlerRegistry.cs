@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 #endregion
 
@@ -15,6 +16,7 @@ namespace Eshva.Poezd.Core.Pipeline
     /// <summary>
     /// Gets message handler types grouped by handled message type.
     /// </summary>
+    [NotNull]
     IReadOnlyDictionary<Type, Type[]> HandlersGroupedByMessageType { get; }
   }
 }

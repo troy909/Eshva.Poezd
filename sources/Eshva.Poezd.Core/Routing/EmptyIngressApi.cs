@@ -11,12 +11,12 @@ using Eshva.Poezd.Core.Pipeline;
 namespace Eshva.Poezd.Core.Routing
 {
   /// <summary>
-  /// A stab for ingress API.
+  /// An empty ingress API.
   /// </summary>
   internal sealed class EmptyIngressApi : IIngressApi
   {
     /// <inheritdoc />
-    public string Id { get; }
+    public string Id { get; } = "An empty ingress API";
 
     /// <inheritdoc />
     public IngressApiConfiguration Configuration => new();

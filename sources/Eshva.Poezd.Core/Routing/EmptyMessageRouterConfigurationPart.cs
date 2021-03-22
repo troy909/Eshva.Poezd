@@ -8,8 +8,12 @@ using Eshva.Poezd.Core.Configuration;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /// <summary>
+  /// An empty message router configuration part.
+  /// </summary>
   internal sealed class EmptyMessageRouterConfigurationPart : IMessageRouterConfigurationPart
   {
+    /// <inheritdoc />
     public IEnumerable<string> Validate() => Enumerable.Empty<string>();
   }
 }

@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Runtime.Serialization;
 using JetBrains.Annotations;
 
 #endregion
@@ -18,10 +17,9 @@ namespace Eshva.Poezd.Core.Common
   [PublicAPI]
   public class BreakThisMessageHandlingException : PoezdException
   {
+    // TODO: Replace this exception with message handling method.
     public BreakThisMessageHandlingException([CanBeNull] string? message) : base(message) { }
 
     public BreakThisMessageHandlingException([CanBeNull] string? message, Exception innerException) : base(message, innerException) { }
-
-    public BreakThisMessageHandlingException(SerializationInfo info, StreamingContext context) : base(info, context) { }
   }
 }

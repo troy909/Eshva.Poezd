@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// Contract of type that constructs pipeline.
+  /// Contract of type that constructs a message processing pipeline.
   /// </summary>
   public interface IPipeFitter
   {

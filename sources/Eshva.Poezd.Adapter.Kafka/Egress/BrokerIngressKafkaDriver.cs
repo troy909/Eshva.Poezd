@@ -17,8 +17,26 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
+  /// <summary>
+  /// Broker ingress Kafka driver.
+  /// </summary>
   internal class BrokerIngressKafkaDriver : IBrokerIngressDriver
   {
+    /// <summary>
+    /// Constructs a new instance of broker ingress Kafka driver.
+    /// </summary>
+    /// <param name="configuration">
+    /// The driver configuration.
+    /// </param>
+    /// <param name="consumerRegistry">
+    /// The consumer registry used to manage Kafka consumers.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// One of parameters is not specified.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// One of required driver configuration fields is not specified.
+    /// </exception>
     public BrokerIngressKafkaDriver(
       [NotNull] BrokerIngressKafkaDriverConfiguration configuration,
       [NotNull] IConsumerRegistry consumerRegistry)
@@ -39,19 +57,16 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
 
     /// <inheritdoc />
     public void Initialize(
-      string brokerId,
-      IMessageRouter messageRouter,
+      IBrokerIngress brokerIngress,
       IEnumerable<IIngressApi> apis,
       IDiContainerAdapter serviceProvider)
     {
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
-      _brokerId = brokerId;
-      _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
+      _brokerIngress = brokerIngress ?? throw new ArgumentNullException(nameof(brokerIngress));
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _apis = apis ?? throw new ArgumentNullException(nameof(apis));
 
       if (_isInitialized)
-        throw new PoezdOperationException($"Kafka driver for broker with ID '{_brokerId}' is already initialized.");
+        throw new PoezdOperationException("Kafka ingress driver is already initialized.");
 
       GetRequiredServices();
       CreateAndRegisterConsumerPerApi();
@@ -60,9 +75,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     }
 
     /// <inheritdoc />
-    public Task StartConsumeMessages(
-      IEnumerable<string> queueNamePatterns,
-      CancellationToken cancellationToken = default)
+    public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {
       if (!_isInitialized)
       {
@@ -81,20 +94,11 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
 
     private void GetRequiredServices()
     {
-      _consumerConfigurator = GetService<IConsumerConfigurator>(_driverConfiguration.ConsumerConfiguratorType);
-      _consumerFactory = GetService<IConsumerFactory>(_driverConfiguration.ConsumerFactoryType);
-      _deserializerFactory = GetService<IDeserializerFactory>(_driverConfiguration.DeserializerFactoryType);
-      _headerValueCodecType = GetService<IHeaderValueCodec>(_driverConfiguration.HeaderValueCodecType);
-      _loggerFactory = GetService<ILoggerFactory>(typeof(ILoggerFactory));
-    }
-
-    private TResult GetService<TResult>(Type serviceType)
-    {
-      // ReSharper disable once NotResolvedInText
-      var service = _serviceProvider.GetService(serviceType) ?? throw new ArgumentException(
-        $"Service of type {serviceType.FullName} is missing in your DI-container.",
-        "serviceProvider");
-      return (TResult) service;
+      _consumerConfigurator = _serviceProvider.GetService<IConsumerConfigurator>(_driverConfiguration.ConsumerConfiguratorType);
+      _consumerFactory = _serviceProvider.GetService<IConsumerFactory>(_driverConfiguration.ConsumerFactoryType);
+      _deserializerFactory = _serviceProvider.GetService<IDeserializerFactory>(_driverConfiguration.DeserializerFactoryType);
+      _headerValueCodecType = _serviceProvider.GetService<IHeaderValueCodec>(_driverConfiguration.HeaderValueCodecType);
+      _loggerFactory = _serviceProvider.GetService<ILoggerFactory>(typeof(ILoggerFactory));
     }
 
     private void CreateAndRegisterConsumerPerApi()
@@ -102,19 +106,19 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       foreach (var api in _apis)
       {
         var concreteMethod = CreateAndRegisterConsumerMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
-        concreteMethod.Invoke(this, new object?[] {api});
+        concreteMethod.Invoke(this, new object[] {api});
       }
     }
 
     private void CreateAndRegisterConsumer<TKey, TValue>(IIngressApi api)
     {
-      var apiConsumer = new ApiConsumer<TKey, TValue>(
+      var apiConsumer = new DefaultApiConsumer<TKey, TValue>(
         api,
         _consumerFactory.Create<TKey, TValue>(
           _driverConfiguration.ConsumerConfig,
           _consumerConfigurator,
           _deserializerFactory),
-        _loggerFactory.CreateLogger<ApiConsumer<TKey, TValue>>());
+        _loggerFactory.CreateLogger<DefaultApiConsumer<TKey, TValue>>());
       _consumerRegistry.Add(api, apiConsumer);
     }
 
@@ -123,7 +127,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       foreach (var api in _apis)
       {
         var concreteMethod = StartConsumeFromApiTopicsMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
-        concreteMethod.Invoke(this, new object?[] {api, cancellationToken});
+        concreteMethod.Invoke(this, new object[] {api, cancellationToken});
       }
     }
 
@@ -136,8 +140,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       var headers = consumeResult.Message.Headers.ToDictionary(
         header => header.Key,
         header => _headerValueCodecType.Decode(header.GetValueBytes()));
-      await _messageRouter.RouteIngressMessage(
-        _brokerId,
+      await _brokerIngress.RouteIngressMessage(
         consumeResult.Topic,
         consumeResult.Message.Timestamp.UtcDateTime,
         consumeResult.Message.Key,
@@ -148,14 +151,13 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     private readonly IConsumerRegistry _consumerRegistry;
     private readonly BrokerIngressKafkaDriverConfiguration _driverConfiguration;
     private IEnumerable<IIngressApi> _apis;
-    private string _brokerId;
+    private IBrokerIngress _brokerIngress;
     private IConsumerConfigurator _consumerConfigurator;
     private IConsumerFactory _consumerFactory;
     private IDeserializerFactory _deserializerFactory;
     private IHeaderValueCodec _headerValueCodecType;
     private bool _isInitialized;
     private ILoggerFactory _loggerFactory;
-    private IMessageRouter _messageRouter;
     private IDiContainerAdapter _serviceProvider;
 
     private static readonly MethodInfo CreateAndRegisterConsumerMethod =

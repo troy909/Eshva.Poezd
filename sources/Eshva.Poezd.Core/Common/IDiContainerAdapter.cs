@@ -22,7 +22,7 @@ namespace Eshva.Poezd.Core.Common
     IDisposable BeginScope();
 
     /// <summary>
-    /// Gets an object of <typeparamref name="TService" /> type from the DI-container.
+    /// Gets an instance of <typeparamref name="TService" /> type from the DI-container.
     /// </summary>
     /// <typeparam name="TService">
     /// The type of an object to get from the DI-container.

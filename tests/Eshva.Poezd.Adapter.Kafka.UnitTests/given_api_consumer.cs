@@ -34,10 +34,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     public void when_constructed_with_valid_arguments_it_should_fail()
     {
       var container = new Container().AddLogging(_testOutput);
-      Action sut = () => new ApiConsumer<int, string>(
+      Action sut = () => new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         Mock.Of<IConsumer<int, string>>(),
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
       sut.Should().NotThrow();
     }
 
@@ -49,8 +49,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var container = new Container().AddLogging(_testOutput);
       var api = Mock.Of<IIngressApi>();
       var consumer = Mock.Of<IConsumer<int, string>>();
-      var logger = container.GetInstance<ILogger<ApiConsumer<int, string>>>();
-      Action sut = () => new ApiConsumer<int, string>(
+      var logger = container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>();
+      Action sut = () => new DefaultApiConsumer<int, string>(
         api,
         consumer,
         logger);
@@ -89,10 +89,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         return Task.CompletedTask;
       };
 
-      var sut = new ApiConsumer<int, string>(
+      var sut = new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         consumerMock.Object,
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
 
       await sut.Start(onMessageReceived, tokenSource.Token);
 
@@ -119,10 +119,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         return Task.CompletedTask;
       };
 
-      var sut = new ApiConsumer<int, string>(
+      var sut = new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         consumerMock.Object,
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
 
       await sut.Start(onMessageReceived, tokenSource.Token);
 
@@ -149,10 +149,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         return Task.CompletedTask;
       };
 
-      var sut = new ApiConsumer<int, string>(
+      var sut = new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         consumerMock.Object,
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
 
       await sut.Start(onMessageReceived, tokenSource.Token);
 
@@ -180,10 +180,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         return Task.CompletedTask;
       };
 
-      var apiConsumer = new ApiConsumer<int, string>(
+      var apiConsumer = new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         consumerMock.Object,
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
 
       var result = apiConsumer.Start(onMessageReceived, tokenSource.Token);
       await result;
@@ -204,10 +204,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       consumerMock.SetupGet(consumer => consumer.MemberId).Returns(string.Empty);
       var loggerFactoryMock = new Mock<ILoggerFactory>();
       loggerFactoryMock.Setup(factory => factory.CreateLogger(It.IsAny<string>())).Returns(Mock.Of<ILogger>);
-      var sut = new ApiConsumer<int, string>(
+      var sut = new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         consumerMock.Object,
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
       sut.Start(result => Task.CompletedTask, cancellationToken);
       tokenSource.Cancel();
       sut.Dispose();
@@ -223,10 +223,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var consumerMock = new Mock<IConsumer<int, string>>();
       consumerMock.Setup(consumer => consumer.Commit()).Throws<Exception>();
 
-      var apiConsumer = new ApiConsumer<int, string>(
+      var apiConsumer = new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         consumerMock.Object,
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
       Action sut = () => apiConsumer.Dispose();
 
       sut.Should().NotThrow("Exceptions should be ignored.");
@@ -246,10 +246,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       consumerMock.SetupGet(consumer => consumer.MemberId).Returns(string.Empty);
       consumerMock.Setup(consumer => consumer.Consume(cancellationToken)).Returns(() => MakeConsumeResult());
       consumerMock.Setup(consumer => consumer.Close()).Throws<Exception>();
-      var apiConsumer = new ApiConsumer<int, string>(
+      var apiConsumer = new DefaultApiConsumer<int, string>(
         Mock.Of<IIngressApi>(),
         consumerMock.Object,
-        container.GetInstance<ILogger<ApiConsumer<int, string>>>());
+        container.GetInstance<ILogger<DefaultApiConsumer<int, string>>>());
       apiConsumer.Start(result => Task.CompletedTask, cancellationToken);
       tokenSource.Cancel();
 

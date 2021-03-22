@@ -10,6 +10,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
   /// <summary>
   /// The contract of a producer factory.
   /// </summary>
+  [PublicAPI]
   public interface IConsumerFactory
   {
     /// <summary>

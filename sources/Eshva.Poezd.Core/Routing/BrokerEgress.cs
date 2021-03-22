@@ -15,18 +15,39 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class BrokerEgress : IBrokerEgress
+  /// <summary>
+  /// The message broker egress.
+  /// </summary>
+  internal class BrokerEgress : IBrokerEgress
   {
+    /// <summary>
+    /// Constructs a new instance of message broker egress.
+    /// </summary>
+    /// <param name="brokerId">
+    /// The message broker ID.
+    /// </param>
+    /// <param name="configuration">
+    /// The message broker egress configuration.
+    /// </param>
+    /// <param name="serviceProvider">
+    /// Service provider.
+    /// </param>
+    /// TODO: Eliminate this parameter.
+    /// <param name="clock">
+    /// The current time service.
+    /// </param>
     public BrokerEgress(
+      string brokerId,
       [NotNull] BrokerEgressConfiguration configuration,
       [NotNull] IDiContainerAdapter serviceProvider,
       [NotNull] IClock clock)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _clock = clock ?? throw new ArgumentNullException(nameof(clock));
+      _brokerId = brokerId;
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
-      Apis = configuration.Apis.Select(api => new EgressApi(api, serviceProvider)).ToList().AsReadOnly();
+      Apis = configuration.Apis.Select(api => new EgressApi(api, serviceProvider)).Cast<IEgressApi>().ToList().AsReadOnly();
       EnterPipeFitter = GetEnterPipeFitter(serviceProvider);
       ExitPipeFitter = GetExitPipeFitter(serviceProvider);
     }
@@ -44,68 +65,41 @@ namespace Eshva.Poezd.Core.Routing
     public IPipeFitter ExitPipeFitter { get; }
 
     /// <inheritdoc />
-    public ReadOnlyCollection<EgressApi> Apis { get; }
+    public ReadOnlyCollection<IEgressApi> Apis { get; }
 
-    public void Initialize(IMessageRouter messageRouter, string brokerId)
-    {
-      var logger = (ILogger<IBrokerEgressDriver>) _serviceProvider.GetService(typeof(ILogger<IBrokerEgressDriver>));
+    /// <inheritdoc />
+    public void Initialize() =>
       Driver.Initialize(
-        brokerId,
-        logger,
+        _brokerId,
+        _serviceProvider.GetService<ILogger<IBrokerEgressDriver>>(),
         _clock,
         Apis,
         _serviceProvider);
-    }
 
+    /// <inheritdoc />
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) =>
       Driver.Publish(context, cancellationToken);
-    /*
-    public Task Publish(
-      [NotNull] object key,
-      [NotNull] object payload,
-      [NotNull] IEgressApi api,
-      [NotNull] IReadOnlyDictionary<string, string> metadata,
-      [NotNull] IReadOnlyCollection<string> queueNames,
-      CancellationToken cancellationToken)
-    {
-      if (key == null) throw new ArgumentNullException(nameof(key));
-      if (payload == null) throw new ArgumentNullException(nameof(payload));
-      if (api == null) throw new ArgumentNullException(nameof(api));
-      if (metadata == null) throw new ArgumentNullException(nameof(metadata));
-      if (queueNames == null) throw new ArgumentNullException(nameof(queueNames));
 
-      return Driver.Publish(
-        key,
-        payload,
-        api,
-        metadata,
-        queueNames,
-        cancellationToken);
-    }
-    */
+    /// <inheritdoc />
+    public void Dispose() => Driver.Dispose();
 
-    public void Dispose()
-    {
-      Driver.Dispose();
-    }
-
-    private IPipeFitter GetEnterPipeFitter(IDiContainerAdapter serviceProvider)
-    {
-      return (IPipeFitter) serviceProvider.GetService(
+    private IPipeFitter GetEnterPipeFitter(IDiContainerAdapter serviceProvider) =>
+      serviceProvider.GetService<IPipeFitter>(
         Configuration.EnterPipeFitterType,
-        type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker egress enter pipe fitter of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-    }
+        exception => new PoezdConfigurationException(
+          $"Can not get instance of the message broker egress enter pipe fitter of type '{Configuration.EnterPipeFitterType}'. " +
+          "You should register this type in DI-container.",
+          exception));
 
-    private IPipeFitter GetExitPipeFitter(IDiContainerAdapter serviceProvider)
-    {
-      return (IPipeFitter) serviceProvider.GetService(
+    private IPipeFitter GetExitPipeFitter(IDiContainerAdapter serviceProvider) =>
+      serviceProvider.GetService<IPipeFitter>(
         Configuration.ExitPipeFitterType,
-        type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker egress exit pipe fitter of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-    }
+        exception => new PoezdConfigurationException(
+          $"Can not get instance of the message broker egress exit pipe fitter of type '{Configuration.ExitPipeFitterType}'. " +
+          "You should register this type in DI-container.",
+          exception));
+
+    private readonly string _brokerId;
 
     private readonly IClock _clock;
     private readonly IDiContainerAdapter _serviceProvider;

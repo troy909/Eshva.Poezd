@@ -20,46 +20,55 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Construct a new instance of message broker.
     /// </summary>
+    /// <param name="messageRouter">
+    /// The message router this broker belongs to.
+    /// </param>
     /// <param name="configuration">
     /// The message broker configuration.
     /// </param>
     /// <param name="serviceProvider">
     /// Service provider.
     /// </param>
-    /// <param name="clock"></param>
+    /// <param name="clock">
+    /// The current time service.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     /// One of arguments is not specified.
     /// </exception>
     public MessageBroker(
+      [NotNull] IMessageRouter messageRouter,
       [NotNull] MessageBrokerConfiguration configuration,
       [NotNull] IDiContainerAdapter serviceProvider,
       [NotNull] IClock clock)
     {
-      if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-
+      _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-      Ingress = new BrokerIngress(configuration.Ingress, serviceProvider);
+      if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
+      Ingress = new BrokerIngress(
+        this,
+        configuration.Ingress,
+        serviceProvider);
       Egress = new BrokerEgress(
+        // TODO: Pass broker itself like for ingress.
+        configuration.Id,
         configuration.Egress,
         serviceProvider,
         clock);
     }
 
-    /// <summary>
-    /// Gets the message broker ID.
-    /// </summary>
+    /// <inheritdoc />
     [NotNull]
     public string Id => Configuration.Id;
 
+    /// <inheritdoc />
     [NotNull]
     public IBrokerIngress Ingress { get; }
 
+    /// <inheritdoc />
     [NotNull]
     public IBrokerEgress Egress { get; }
 
-    /// <summary>
-    /// The message broker configuration.
-    /// </summary>
+    /// <inheritdoc />
     [NotNull]
     public MessageBrokerConfiguration Configuration { get; }
 
@@ -70,20 +79,40 @@ namespace Eshva.Poezd.Core.Routing
       Egress.Dispose();
     }
 
-    public void Initialize(IMessageRouter messageRouter, string brokerId)
+    /// <inheritdoc />
+    public void Initialize()
     {
-      Ingress.Initialize(messageRouter, brokerId);
-      Egress.Initialize(messageRouter, brokerId);
+      Ingress.Initialize();
+      Egress.Initialize();
     }
 
-    public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) =>
-      Egress.Publish(context, cancellationToken);
-
-    public Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
+    /// <inheritdoc />
+    public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {
       if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
 
       return Ingress.StartConsumeMessages(queueNamePatterns, cancellationToken);
     }
+
+    /// <inheritdoc />
+    public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) =>
+      Egress.Publish(context, cancellationToken);
+
+    /// <inheritdoc />
+    public Task RouteIngressMessage(
+      string queueName,
+      DateTimeOffset receivedOnUtc,
+      object key,
+      object payload,
+      IReadOnlyDictionary<string, string> metadata) =>
+      _messageRouter.RouteIngressMessage(
+        Id,
+        queueName,
+        receivedOnUtc,
+        key,
+        payload,
+        metadata);
+
+    private readonly IMessageRouter _messageRouter;
   }
 }

@@ -7,7 +7,7 @@ using System.Text;
 namespace Eshva.Poezd.Adapter.Kafka
 {
   /// <summary>
-  /// Header value parser for UTF-8 encoded byte arrays.
+  /// UTF-8 header value codec.
   /// </summary>
   public class Utf8ByteStringHeaderValueCodec : IHeaderValueCodec
   {
@@ -15,6 +15,6 @@ namespace Eshva.Poezd.Adapter.Kafka
     public string Decode(byte[] value) => value != null ? Encoding.UTF8.GetString(value) : string.Empty;
 
     /// <inheritdoc />
-    public byte[] Encode(string value) => Encoding.UTF8.GetBytes(value);
+    public byte[] Encode(string value) => value != null ? Encoding.UTF8.GetBytes(value) : new byte[0];
   }
 }

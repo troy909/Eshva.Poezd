@@ -18,18 +18,17 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public bool DoesMatch([NotNull] string queueName, [NotNull] string queueNamePattern)
     {
-      if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(NotWhitespace, nameof(queueName));
-      if (string.IsNullOrWhiteSpace(queueNamePattern)) throw new ArgumentNullException(NotWhitespace, nameof(queueNamePattern));
+      if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
+      if (string.IsNullOrWhiteSpace(queueNamePattern)) throw new ArgumentNullException(nameof(queueNamePattern));
 
       if (!queueNamePattern.StartsWith(value: '^')) return queueName.Equals(queueNamePattern, StringComparison.InvariantCulture);
 
       var regex = _knownRegex.GetOrAdd(
         queueNamePattern,
-        pattern => new Regex(queueNamePattern, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant));
+        pattern => new Regex(pattern, RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant));
       return regex.IsMatch(queueName);
     }
 
     private readonly ConcurrentDictionary<string, Regex> _knownRegex = new();
-    private const string NotWhitespace = "Value cannot be null or whitespace.";
   }
 }

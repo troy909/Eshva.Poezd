@@ -14,11 +14,17 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class BrokerIngress : IBrokerIngress
+  /// <summary>
+  /// The message broker ingress.
+  /// </summary>
+  internal class BrokerIngress : IBrokerIngress
   {
     /// <summary>
     /// Construct a new instance of message broker.
     /// </summary>
+    /// <param name="messageBroker">
+    /// The message broker this ingress belongs to.
+    /// </param>
     /// <param name="configuration">
     /// The message broker configuration.
     /// </param>
@@ -28,17 +34,22 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// One of arguments is not specified.
     /// </exception>
+    /// <exception cref="PoezdConfigurationException">
+    /// Can not get a required service from <paramref name="serviceProvider" />.
+    /// </exception>
     public BrokerIngress(
+      [NotNull] IMessageBroker messageBroker,
       [NotNull] BrokerIngressConfiguration configuration,
       [NotNull] IDiContainerAdapter serviceProvider)
     {
-      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      _messageBroker = messageBroker ?? throw new ArgumentNullException(nameof(messageBroker));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
       Apis = configuration.Apis.Select(api => new IngressApi(api, serviceProvider)).ToList().AsReadOnly();
       _queueNameMatcher = (IQueueNameMatcher) serviceProvider.GetService(configuration.QueueNameMatcherType);
-      EnterPipeFitter = GetEnterPipeFitter(serviceProvider);
-      ExitPipeFitter = GetExitPipeFitter(serviceProvider);
+      EnterPipeFitter = GetEnterPipeFitter();
+      ExitPipeFitter = GetExitPipeFitter();
     }
 
     /// <inheritdoc />
@@ -56,38 +67,38 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public IPipeFitter ExitPipeFitter { get; }
 
-    /// <summary>
-    /// Gets ingress API by queue name.
-    /// </summary>
-    /// <param name="queueName">
-    /// Queue name that should belong to one of ingress APIs bound to this broker.
-    /// </param>
-    /// <returns>
-    /// The ingress API to which queue name belongs or a stab ingress API for an unknown queue name.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Queue name is null, an empty or a whitespace string.
-    /// </exception>
+    /// <inheritdoc />
+    public Task RouteIngressMessage(
+      string queueName,
+      DateTimeOffset receivedOnUtc,
+      object key,
+      object payload,
+      IReadOnlyDictionary<string, string> metadata) =>
+      _messageBroker.RouteIngressMessage(
+        queueName,
+        receivedOnUtc,
+        key,
+        payload,
+        metadata);
+
+    /// <inheritdoc />
     public IIngressApi GetApiByQueueName(string queueName)
     {
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
+      // TODO: Enforce single or default in API configuration.
       var ingressApi = Apis.FirstOrDefault(
         api => api.GetQueueNamePatterns().Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
-      return ingressApi ?? IngressApi.Empty; // TODO: Do I need an empty API here at all?
+      return ingressApi ?? IngressApi.Empty;
     }
 
-    public void Initialize(IMessageRouter messageRouter, string brokerId)
-    {
-      if (messageRouter == null) throw new ArgumentNullException(nameof(messageRouter));
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
-
+    /// <inheritdoc />
+    public void Initialize() =>
       Driver.Initialize(
-        brokerId,
-        messageRouter,
+        this,
         Apis,
         _serviceProvider);
-    }
 
+    /// <inheritdoc />
     public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {
       if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
@@ -95,29 +106,26 @@ namespace Eshva.Poezd.Core.Routing
       return Driver.StartConsumeMessages(queueNamePatterns, cancellationToken);
     }
 
-    public void Dispose()
-    {
-      Driver.Dispose();
-    }
+    /// <inheritdoc />
+    public void Dispose() => Driver.Dispose();
 
-    private IPipeFitter GetEnterPipeFitter(IDiContainerAdapter serviceProvider)
-    {
-      return (IPipeFitter) serviceProvider.GetService(
+    private IPipeFitter GetEnterPipeFitter() =>
+      _serviceProvider.GetService<IPipeFitter>(
         Configuration.EnterPipeFitterType,
-        type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker ingress enter pipe fitter of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-    }
+        exception => new PoezdConfigurationException(
+          "Can not get instance of the message broker ingress enter pipe fitter of type " +
+          $"'{Configuration.EnterPipeFitterType.FullName}'. You should register this type in DI-container.",
+          exception));
 
-    private IPipeFitter GetExitPipeFitter(IDiContainerAdapter serviceProvider)
-    {
-      return (IPipeFitter) serviceProvider.GetService(
+    private IPipeFitter GetExitPipeFitter() =>
+      _serviceProvider.GetService<IPipeFitter>(
         Configuration.ExitPipeFitterType,
-        type => new PoezdConfigurationException(
-          $"Can not get instance of the message broker ingress exit pipe fitter of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-    }
+        exception => new PoezdConfigurationException(
+          $"Can not get instance of the message broker ingress exit pipe fitter of type '{Configuration.ExitPipeFitterType.FullName}'. " +
+          "You should register this type in DI-container.",
+          exception));
 
+    private readonly IMessageBroker _messageBroker;
     private readonly IQueueNameMatcher _queueNameMatcher;
     private readonly IDiContainerAdapter _serviceProvider;
   }

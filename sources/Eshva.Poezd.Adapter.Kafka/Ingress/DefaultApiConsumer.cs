@@ -12,18 +12,43 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Adapter.Kafka.Ingress
 {
-  internal class ApiConsumer<TKey, TValue> : IApiConsumer<TKey, TValue>
+  /// <summary>
+  /// Default API consumer.
+  /// </summary>
+  /// <typeparam name="TKey">
+  /// The message key type.
+  /// </typeparam>
+  /// <typeparam name="TValue">
+  /// The message payload type.
+  /// </typeparam>
+  internal class DefaultApiConsumer<TKey, TValue> : IApiConsumer<TKey, TValue>
   {
-    public ApiConsumer(
+    /// <summary>
+    /// Constructs a new instance of default API consumer.
+    /// </summary>
+    /// <param name="api">
+    /// The ingress API which messages this consumer process.
+    /// </param>
+    /// <param name="consumer">
+    /// The Kafka API consumer.
+    /// </param>
+    /// <param name="logger">
+    /// The logger.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// One of arguments is not specified.
+    /// </exception>
+    public DefaultApiConsumer(
       [NotNull] IIngressApi api,
       [NotNull] IConsumer<TKey, TValue> consumer,
-      [NotNull] ILogger<ApiConsumer<TKey, TValue>> logger)
+      [NotNull] ILogger<DefaultApiConsumer<TKey, TValue>> logger)
     {
       _api = api ?? throw new ArgumentNullException(nameof(api));
       _consumer = consumer ?? throw new ArgumentNullException(nameof(consumer));
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    /// <inheritdoc />
     public Task Start(Func<ConsumeResult<TKey, TValue>, Task> onMessageReceived, CancellationToken cancellationToken)
     {
       SubscribeToTopics();
@@ -84,6 +109,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
       return result;
     }
 
+    /// <inheritdoc />
     public void Stop()
     {
       if (!_started || _stopped) return;
@@ -109,6 +135,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
         _consumer.MemberId);
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
       Stop();
@@ -123,7 +150,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
 
     private readonly IIngressApi _api;
     private readonly IConsumer<TKey, TValue> _consumer;
-    private readonly ILogger<ApiConsumer<TKey, TValue>> _logger;
+    private readonly ILogger<DefaultApiConsumer<TKey, TValue>> _logger;
     private bool _started;
     private bool _stopped;
   }

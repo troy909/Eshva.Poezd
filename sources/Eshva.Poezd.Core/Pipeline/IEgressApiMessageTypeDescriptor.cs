@@ -26,10 +26,10 @@ namespace Eshva.Poezd.Core.Pipeline
     IReadOnlyCollection<string> QueueNames { get; }
 
     /// <summary>
-    /// Gets a functor that returns the key (if required by API or message broker) for the message type.
+    /// Gets the broker message key.
     /// </summary>
     [NotNull]
-    object GetKey(TMessage message);
+    object GetKey([NotNull] TMessage message);
 
     /// <summary>
     /// Serializes a message object into byte array using standard for this API method.

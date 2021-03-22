@@ -17,10 +17,11 @@ namespace Venture.Common.Poezd.Adapter.Ingress
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    /// <inheritdoc />
     public ProducerBuilder<TKey, TValue> Configure<TKey, TValue>(
-      [NotNull] ProducerBuilder<TKey, TValue> builder,
-      [NotNull] ISerializer<TKey> keySerializer,
-      [NotNull] ISerializer<TValue> valueSerializer)
+      ProducerBuilder<TKey, TValue> builder,
+      ISerializer<TKey> keySerializer,
+      ISerializer<TValue> valueSerializer)
     {
       if (builder == null) throw new ArgumentNullException(nameof(builder));
       if (keySerializer == null) throw new ArgumentNullException(nameof(keySerializer));

@@ -41,7 +41,7 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<MessageBroker> Brokers => _brokers.AsReadOnly();
+    public IReadOnlyCollection<IMessageBroker> Brokers => _brokers.AsReadOnly();
 
     /// <inheritdoc />
     public async Task Start(CancellationToken cancellationToken = default)
@@ -72,6 +72,7 @@ namespace Eshva.Poezd.Core.Routing
       _isStarted = true;
     }
 
+    /// <inheritdoc />
     public async Task RouteIngressMessage(
       string brokerId,
       string queueName,
@@ -184,6 +185,7 @@ namespace Eshva.Poezd.Core.Routing
       return poezdConfigurator.Configuration;
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
       _brokers.ForEach(broker => broker.Dispose());
@@ -197,20 +199,21 @@ namespace Eshva.Poezd.Core.Routing
           configuration =>
           {
             var broker = new MessageBroker(
+              this,
               configuration,
               _diContainerAdapter,
               _diContainerAdapter.GetService<IClock>());
-            broker.Initialize(this, configuration.Id);
+            broker.Initialize();
             return broker;
           }));
     }
 
-    private Task PublishMessageWithDriver(
+    private static Task PublishMessageWithDriver(
       MessagePublishingContext context,
       CancellationToken cancellationToken) =>
       context.Broker.Publish(context, cancellationToken);
 
-    private static Pipeline<MessageHandlingContext> BuildIngressPipeline(MessageBroker messageBroker, IIngressApi api)
+    private static Pipeline<MessageHandlingContext> BuildIngressPipeline(IMessageBroker messageBroker, IIngressApi api)
     {
       try
       {
@@ -228,9 +231,7 @@ namespace Eshva.Poezd.Core.Routing
       }
     }
 
-    private static Pipeline<MessagePublishingContext> BuildEgressPipeline(
-      MessageBroker messageBroker,
-      IEgressApi api)
+    private static Pipeline<MessagePublishingContext> BuildEgressPipeline(IMessageBroker messageBroker, IEgressApi api)
     {
       try
       {
@@ -260,9 +261,8 @@ namespace Eshva.Poezd.Core.Routing
       throw new PoezdConfigurationException(message.ToString());
     }
 
-    private readonly List<MessageBroker> _brokers = new();
+    private readonly List<IMessageBroker> _brokers = new();
     private readonly MessageRouterConfiguration _configuration;
-
     private readonly IDiContainerAdapter _diContainerAdapter;
 
     // TODO: Use the State pattern.

@@ -9,8 +9,23 @@ using Eshva.Poezd.Core.Pipeline;
 
 namespace Eshva.Poezd.Core.Routing
 {
-  public class EgressApi : IEgressApi
+  /// <summary>
+  /// An egress API.
+  /// </summary>
+  internal class EgressApi : IEgressApi
   {
+    /// <summary>
+    /// Constructs a new instance of egress API.
+    /// </summary>
+    /// <param name="configuration">
+    /// The egress API configuration.
+    /// </param>
+    /// <param name="serviceProvider">
+    /// Service provider.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// On of arguments is not specified.
+    /// </exception>
     public EgressApi(EgressApiConfiguration configuration, IDiContainerAdapter serviceProvider)
     {
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -20,8 +35,10 @@ namespace Eshva.Poezd.Core.Routing
       PipeFitter = GetPipeFitter(serviceProvider);
     }
 
+    /// <inheritdoc />
     public string Id => Configuration.Id;
 
+    /// <inheritdoc />
     public EgressApiConfiguration Configuration { get; }
 
     /// <inheritdoc />
@@ -30,28 +47,26 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public Type MessagePayloadType => Configuration.MessagePayloadType;
 
+    /// <inheritdoc />
     public IPipeFitter PipeFitter { get; }
 
+    /// <inheritdoc />
     public IEgressApiMessageTypesRegistry MessageTypesRegistry { get; }
 
-    private IPipeFitter GetPipeFitter(IDiContainerAdapter serviceProvider)
-    {
-      var pipeFitter = (IPipeFitter) serviceProvider.GetService(
+    private IPipeFitter GetPipeFitter(IDiContainerAdapter serviceProvider) =>
+      serviceProvider.GetService<IPipeFitter>(
         Configuration.PipeFitterType,
-        type => new PoezdOperationException(
-          $"Can not get an instance of an egress API pipe fitter of type '{type.FullName}'." +
-          "You should register this type in DI-container."));
-      return pipeFitter;
-    }
+        exception => new PoezdConfigurationException(
+          $"Can not get an instance of an egress API pipe fitter of type '{Configuration.PipeFitterType}'." +
+          "You should register this type in DI-container.",
+          exception));
 
-    private IEgressApiMessageTypesRegistry GetMessageTypesRegistry(IDiContainerAdapter serviceProvider)
-    {
-      var registry = (IEgressApiMessageTypesRegistry) serviceProvider.GetService(
+    private IEgressApiMessageTypesRegistry GetMessageTypesRegistry(IDiContainerAdapter serviceProvider) =>
+      serviceProvider.GetService<IEgressApiMessageTypesRegistry>(
         Configuration.MessageTypesRegistryType,
-        type => new PoezdOperationException(
-          $"Can not get an instance of message types registry of type '{type.FullName}'. " +
-          "You should register this type in DI-container."));
-      return registry;
-    }
+        exception => new PoezdConfigurationException(
+          $"Can not get an instance of message types registry of type '{Configuration.MessageTypesRegistryType}'. " +
+          "You should register this type in DI-container.",
+          exception));
   }
 }

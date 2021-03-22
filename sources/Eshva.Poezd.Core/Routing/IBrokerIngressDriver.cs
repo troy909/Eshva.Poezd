@@ -16,36 +16,34 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Initializes the message broker driver.
     /// </summary>
-    /// <param name="brokerId">
-    /// The broker ID to bind to.
+    /// <param name="brokerIngress">
+    /// The broker ingress.
     /// </param>
-    /// <param name="messageRouter">
-    /// Message router to bind to.
+    /// <param name="apis">
+    /// The list of ingress APIs bound to this driver.
     /// </param>
-    /// <param name="apiConfigurations"></param>
     /// <param name="serviceProvider">
     /// The service provider.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// One of arguments is null, an empty or whitespace string.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// The configuration object has wrong type.
+    /// One of arguments is not specified.
     /// </exception>
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
     /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// On of required service not found in DI-container.
+    /// </exception>
     void Initialize(
-      [NotNull] string brokerId,
-      [NotNull] IMessageRouter messageRouter,
+      [NotNull] IBrokerIngress brokerIngress,
       [NotNull] IEnumerable<IIngressApi> apis,
       [NotNull] IDiContainerAdapter serviceProvider);
 
     /// <summary>
-    /// Starts message consuming from the broker client.
+    /// Starts message consuming from this driver.
     /// </summary>
     /// <param name="queueNamePatterns">
-    /// List of queue name patterns to subscribe to.
+    /// List of queue name patterns the driver should subscribe to.
     /// </param>
     /// <param name="cancellationToken">
     /// Cancellation token used to finish message consumption.
@@ -60,11 +58,9 @@ namespace Eshva.Poezd.Core.Routing
     /// List of patterns contains no patterns.
     /// </exception>
     /// <exception cref="PoezdOperationException">
-    /// The driver is not yet initialized.
+    /// The driver is not initialized yet.
     /// </exception>
     [NotNull]
-    Task StartConsumeMessages(
-      [NotNull] IEnumerable<string> queueNamePatterns,
-      CancellationToken cancellationToken = default);
+    Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default);
   }
 }

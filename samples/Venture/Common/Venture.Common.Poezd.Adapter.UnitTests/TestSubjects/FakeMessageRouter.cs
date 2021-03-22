@@ -14,7 +14,7 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
   {
     // ReSharper disable once NotNullMemberIsNotInitialized
     // ReSharper disable once UnassignedGetOnlyAutoProperty
-    public IReadOnlyCollection<MessageBroker> Brokers { get; }
+    public IReadOnlyCollection<IMessageBroker> Brokers { get; }
 
     public object Message { get; private set; }
 

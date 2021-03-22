@@ -24,8 +24,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     }
 
     public void Initialize(
-      string brokerId,
-      IMessageRouter messageRouter,
+      IBrokerIngress brokerIngress,
       IEnumerable<IIngressApi> apis,
       IDiContainerAdapter serviceProvider)
     {

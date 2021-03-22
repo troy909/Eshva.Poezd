@@ -20,7 +20,7 @@ namespace Eshva.Poezd.Core.Routing
     /// A list of message brokers connected to the router.
     /// </summary>
     [NotNull]
-    IReadOnlyCollection<MessageBroker> Brokers { get; }
+    IReadOnlyCollection<IMessageBroker> Brokers { get; }
 
     /// <summary>
     /// Starts message routing.
@@ -38,7 +38,7 @@ namespace Eshva.Poezd.Core.Routing
     Task Start(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Route an incoming message to message handlers. Used by broker drivers.
+    /// Route an ingress message to message handlers.
     /// </summary>
     /// <param name="brokerId">
     /// The message broker ID from which the message is arrived.
@@ -48,7 +48,9 @@ namespace Eshva.Poezd.Core.Routing
     /// </param>
     /// <param name="receivedOnUtc">
     /// The moment in time the message was received.
-    /// TODO: Should be the original message timestamp?
+    /// </param>
+    /// <param name="key">
+    /// The message key.
     /// </param>
     /// <param name="payload">
     /// The message payload.
@@ -62,6 +64,9 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// One of arguments is null, an empty or a whitespace string.
     /// </exception>
+    /// <exception cref="PoezdConfigurationException">
+    /// An error occurred during ingress message handling.
+    /// </exception>
     [NotNull]
     Task RouteIngressMessage(
       string brokerId,
@@ -72,7 +77,7 @@ namespace Eshva.Poezd.Core.Routing
       IReadOnlyDictionary<string, string> metadata);
 
     /// <summary>
-    /// Route an outgoing message to message brokers queues/topics.
+    /// Route an egress message to message brokers queues/topics.
     /// </summary>
     /// <typeparam name="TMessage">
     /// The message type.

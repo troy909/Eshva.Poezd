@@ -82,8 +82,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var sut = new BrokerIngressKafkaDriver(configuration, consumerRegistryMock.Object);
 
       sut.Initialize(
-        "broker-1",
-        Mock.Of<IMessageRouter>(),
+        Mock.Of<IBrokerIngress>(),
         new[] {MakeApi<int, byte[]>(), MakeApi<int, string>()},
         MakeServiceProviderMock().Object);
 
@@ -95,28 +94,18 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     public void when_initialized_with_invalid_arguments_it_should_fail()
     {
       var driver = new BrokerIngressKafkaDriver(MakeDriverConfiguration(), Mock.Of<IConsumerRegistry>());
-      var brokerId = "broker-1";
-      var messageRouter = Mock.Of<IMessageRouter>();
       var apis = new[] {MakeApi<int, string>()};
       var serviceProvider = MakeServiceProviderMock().Object;
 
+      var brokerIngress = Mock.Of<IBrokerIngress>();
       Action sut = () => driver.Initialize(
-        brokerId,
-        messageRouter,
+        brokerIngress,
         apis,
         serviceProvider);
 
-      brokerId = null;
-      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("brokerId"));
-      brokerId = string.Empty;
-      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("brokerId"));
-      brokerId = WhitespaceString;
-      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("brokerId"));
-      brokerId = "broker-1";
-
-      messageRouter = null;
-      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("messageRouter"));
-      messageRouter = Mock.Of<IMessageRouter>();
+      brokerIngress = null;
+      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("brokerIngress"));
+      brokerIngress = Mock.Of<IBrokerIngress>();
 
       apis = null;
       sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("apis"));
@@ -135,29 +124,28 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
 
       var serviceProviderMock = MakeServiceProviderMock();
       Action sut = () => driver.Initialize(
-        "broker-1",
-        Mock.Of<IMessageRouter>(),
+        Mock.Of<IBrokerIngress>(),
         new[] {MakeApi<int, string>()},
         serviceProviderMock.Object);
 
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerConfigurator))).Returns(valueFunction: null);
-      sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("serviceProvider"));
+      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerConfigurator))).Throws<InvalidOperationException>();
+      sut.Should().ThrowExactly<InvalidOperationException>();
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerConfigurator))).Returns(new TestConsumerConfigurator());
 
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerFactory))).Returns(valueFunction: null);
-      sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("serviceProvider"));
+      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerFactory))).Throws<InvalidOperationException>();
+      sut.Should().ThrowExactly<InvalidOperationException>();
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerFactory))).Returns(new TestConsumerFactory());
 
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestDeserializerFactory))).Returns(valueFunction: null);
-      sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("serviceProvider"));
+      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestDeserializerFactory))).Throws<InvalidOperationException>();
+      sut.Should().ThrowExactly<InvalidOperationException>();
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestDeserializerFactory))).Returns(new TestDeserializerFactory());
 
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Returns(valueFunction: null);
-      sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("serviceProvider"));
+      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Throws<InvalidOperationException>();
+      sut.Should().ThrowExactly<InvalidOperationException>();
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Returns(new TestHeaderValueCodec());
 
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Returns(valueFunction: null);
-      sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("serviceProvider"));
+      serviceProviderMock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Throws<InvalidOperationException>();
+      sut.Should().ThrowExactly<InvalidOperationException>();
       serviceProviderMock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Returns(Mock.Of<ILoggerFactory>());
     }
 
@@ -167,8 +155,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var driver = new BrokerIngressKafkaDriver(MakeDriverConfiguration(), Mock.Of<IConsumerRegistry>());
 
       Action sut = () => driver.Initialize(
-        "broker-1",
-        Mock.Of<IMessageRouter>(),
+        Mock.Of<IBrokerIngress>(),
         new[] {MakeApi<int, byte[]>(), MakeApi<int, string>()},
         MakeServiceProviderMock().Object);
 
@@ -190,8 +177,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var driver = new BrokerIngressKafkaDriver(MakeDriverConfiguration(), Mock.Of<IConsumerRegistry>());
       driver.Initialize(
-        "broker-1",
-        Mock.Of<IMessageRouter>(),
+        Mock.Of<IBrokerIngress>(),
         new[] {MakeApi<int, byte[]>(), MakeApi<int, string>()},
         MakeServiceProviderMock().Object);
       Action sut = () => driver.StartConsumeMessages(queueNamePatterns: null, CancellationToken.None);
@@ -241,8 +227,6 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       mock.SetupGet(api => api.MessagePayloadType).Returns(typeof(TValue));
       return mock.Object;
     }
-
-    private const string WhitespaceString = " \t\n\r";
 
     private class TestHeaderValueCodec : IHeaderValueCodec
     {

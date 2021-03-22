@@ -10,6 +10,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
   /// <summary>
   /// The contract of a serializer factory for keys and values.
   /// </summary>
+  [PublicAPI]
   public interface ISerializerFactory
   {
     /// <summary>

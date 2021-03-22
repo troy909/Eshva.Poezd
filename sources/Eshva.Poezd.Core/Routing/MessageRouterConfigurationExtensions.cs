@@ -24,6 +24,9 @@ namespace Eshva.Poezd.Core.Routing
     /// <returns>
     /// Configured message router.
     /// </returns>
+    /// <exception cref="System.ArgumentNullException">
+    /// DI-container adapter is not specified.
+    /// </exception>
     public static IMessageRouter CreateMessageRouter(
       this MessageRouterConfiguration configuration,
       IDiContainerAdapter diContainerAdapter) =>

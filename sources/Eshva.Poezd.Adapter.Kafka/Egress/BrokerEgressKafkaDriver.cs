@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -16,9 +15,21 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
-  public class BrokerEgressKafkaDriver : IBrokerEgressDriver
+  /// <summary>
+  /// Broker egress Kafka driver.
+  /// </summary>
+  internal class BrokerEgressKafkaDriver : IBrokerEgressDriver
   {
-    internal BrokerEgressKafkaDriver(
+    /// <summary>
+    /// Constructs a new instance of broker egress Kafka driver.
+    /// </summary>
+    /// <param name="driverConfiguration">
+    /// The driver configuration.
+    /// </param>
+    /// <param name="producerRegistry">
+    /// The producer registry.
+    /// </param>
+    public BrokerEgressKafkaDriver(
       [NotNull] BrokerEgressKafkaDriverConfiguration driverConfiguration,
       [NotNull] IProducerRegistry producerRegistry)
     {
@@ -38,9 +49,10 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
 
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-      _serializerFactory = (ISerializerFactory) _serviceProvider.GetService(_driverConfiguration.SerializerFactoryType);
-      _producerFactory = (IProducerFactory) _serviceProvider.GetService(_driverConfiguration.ProducerFactoryType);
-      _producerConfigurator = (IProducerConfigurator) _serviceProvider.GetService(_driverConfiguration.ProducerConfiguratorType);
+      _serializerFactory = _serviceProvider.GetService<ISerializerFactory>(_driverConfiguration.SerializerFactoryType);
+      _producerFactory = _serviceProvider.GetService<IProducerFactory>(_driverConfiguration.ProducerFactoryType);
+      _producerConfigurator = _serviceProvider.GetService<IProducerConfigurator>(_driverConfiguration.ProducerConfiguratorType);
+      _headerValueCodec = _serviceProvider.GetService<IHeaderValueCodec>(_driverConfiguration.HeaderValueCodecType);
       _apis = apis;
       _logger = logger ?? throw new ArgumentNullException(nameof(logger));
       _clock = clock ?? throw new ArgumentNullException(nameof(clock));
@@ -71,7 +83,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       foreach (var api in _apis)
       {
         var concreteMethod = CreateAndRegisterProducerMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
-        concreteMethod.Invoke(this, new object?[] {api});
+        concreteMethod.Invoke(this, new object[] {api});
       }
     }
 
@@ -138,12 +150,12 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       }
     }
 
-    private static Headers MakeHeaders(IReadOnlyDictionary<string, string> metadata)
+    private Headers MakeHeaders(IReadOnlyDictionary<string, string> metadata)
     {
       var headers = new Headers();
       foreach (var (key, value) in metadata)
       {
-        headers.Add(key, Encoding.UTF8.GetBytes(value));
+        headers.Add(key, _headerValueCodec.Encode(value));
       }
 
       return headers;
@@ -154,6 +166,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     private IEnumerable<IEgressApi> _apis;
     private string _brokerId;
     private IClock _clock;
+    private IHeaderValueCodec _headerValueCodec;
     private bool _isInitialized;
     private ILogger<IBrokerEgressDriver> _logger;
     private IProducerConfigurator _producerConfigurator;

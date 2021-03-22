@@ -8,12 +8,18 @@ using Eshva.Common.Collections;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /// <summary>
+  /// The ingress message handling context.
+  /// </summary>
   public class MessageHandlingContext : ConcurrentPocket
   {
+    /// <summary>
+    /// Gets/sets the broker message key.
+    /// </summary>
     public object Key { get; set; }
 
     /// <summary>
-    /// Gets/sets the broker message payload as a byte array.
+    /// Gets/sets the broker message payload.
     /// </summary>
     public object Payload { get; set; }
 
@@ -33,12 +39,12 @@ namespace Eshva.Poezd.Core.Routing
     public string QueueName { get; set; }
 
     /// <summary>
-    /// Gets/sets the message broker CLR-object that will be used to handle the message.
+    /// Gets/sets the message broker the message received from.
     /// </summary>
-    public MessageBroker Broker { get; set; }
+    public IMessageBroker Broker { get; set; }
 
     /// <summary>
-    /// Gets/sets the ingress API CLR-object that will rule the handling process.
+    /// Gets/sets the ingress API the broker message belongs to.
     /// </summary>
     public IIngressApi Api { get; set; }
 
@@ -87,5 +93,6 @@ namespace Eshva.Poezd.Core.Routing
     public object Handlers { get; set; }
 
     // TODO: May be I should add a log property: List<LogRecord> Log here and into publishing context?
+    // TODO: Add a method to signal this message further handling should be stopped.
   }
 }

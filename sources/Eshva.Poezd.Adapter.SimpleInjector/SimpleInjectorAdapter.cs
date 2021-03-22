@@ -21,14 +21,34 @@ namespace Eshva.Poezd.Adapter.SimpleInjector
     }
 
     /// <inheritdoc />
-    public object GetService(Type serviceType) =>
-      _container.GetInstance(serviceType ?? throw new ArgumentNullException(nameof(serviceType)));
-
-    /// <inheritdoc />
     public IDisposable BeginScope() => AsyncScopedLifestyle.BeginScope(_container);
 
     /// <inheritdoc />
-    public TService GetService<TService>() where TService : class => _container.GetInstance<TService>();
+    public object GetService(Type serviceType)
+    {
+      if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
+      try
+      {
+        return _container.GetInstance(serviceType);
+      }
+      catch (ActivationException exception)
+      {
+        throw new InvalidOperationException($"Service of type {serviceType.FullName} not found in DI-container.", exception);
+      }
+    }
+
+    /// <inheritdoc />
+    public TService GetService<TService>() where TService : class
+    {
+      try
+      {
+        return _container.GetInstance<TService>();
+      }
+      catch (ActivationException exception)
+      {
+        throw new InvalidOperationException($"Service of type {typeof(TService).FullName} not found in DI-container.", exception);
+      }
+    }
 
     private readonly Container _container;
   }

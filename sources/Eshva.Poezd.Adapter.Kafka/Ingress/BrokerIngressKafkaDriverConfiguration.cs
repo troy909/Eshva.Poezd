@@ -9,18 +9,37 @@ using Eshva.Poezd.Core.Configuration;
 
 namespace Eshva.Poezd.Adapter.Kafka.Ingress
 {
+  /// <summary>
+  /// Broker ingress Kafka driver configuration.
+  /// </summary>
   public class BrokerIngressKafkaDriverConfiguration : IMessageRouterConfigurationPart
   {
+    /// <summary>
+    /// Gets Kafka consumer configuration.
+    /// </summary>
     public ConsumerConfig ConsumerConfig { get; internal set; }
 
-    public Type HeaderValueCodecType { get; internal set; }
-
-    public Type ConsumerConfiguratorType { get; internal set; }
-
-    public Type DeserializerFactoryType { get; internal set; }
-
+    /// <summary>
+    /// Gets the consumer factory type.
+    /// </summary>
     public Type ConsumerFactoryType { get; internal set; }
 
+    /// <summary>
+    /// Gets the consumer configurator type.
+    /// </summary>
+    public Type ConsumerConfiguratorType { get; internal set; }
+
+    /// <summary>
+    /// Gets the deserializer factory type.
+    /// </summary>
+    public Type DeserializerFactoryType { get; internal set; }
+
+    /// <summary>
+    /// Gets the header value codec type.
+    /// </summary>
+    public Type HeaderValueCodecType { get; internal set; }
+
+    /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
       if (ConsumerConfig == null) yield return "Consumer configuration for broker ingress Kafka driver should be specified.";

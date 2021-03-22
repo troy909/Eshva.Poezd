@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Core.Pipeline
 {
   /// <summary>
-  /// Contract of message handling pipeline.
+  /// Contract of message processing pipeline.
   /// </summary>
   [UsedImplicitly(ImplicitUseTargetFlags.Members)]
   public interface IPipeline<TContext> where TContext : class

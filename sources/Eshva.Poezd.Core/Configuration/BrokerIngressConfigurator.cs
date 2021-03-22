@@ -31,32 +31,32 @@ namespace Eshva.Poezd.Core.Configuration
     /// <summary>
     /// Sets the type of the ingress pipe fitter that set the very beginning of ingress pipeline up.
     /// </summary>
-    /// <typeparam name="TConfigurator">
-    /// The type of the ingress pipe fitter. It should implement <see cref="IPipeFitter" />.
+    /// <typeparam name="TPipeFitter">
+    /// The type of the ingress pipe fitter.
     /// </typeparam>
     /// <returns>
     /// This configurator.
     /// </returns>
     [NotNull]
-    public BrokerIngressConfigurator WithEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    public BrokerIngressConfigurator WithEnterPipeFitter<TPipeFitter>() where TPipeFitter : IPipeFitter
     {
-      _configuration.EnterPipeFitterType = typeof(TConfigurator);
+      _configuration.EnterPipeFitterType = typeof(TPipeFitter);
       return this;
     }
 
     /// <summary>
     /// Sets the type of the ingress pipe fitter that sets the very end of ingress pipeline up.
     /// </summary>
-    /// <typeparam name="TConfigurator">
-    /// The type of the ingress pipe fitter. It should implement <see cref="IPipeFitter" />.
+    /// <typeparam name="TPipeFitter">
+    /// The type of the ingress pipe fitter.
     /// </typeparam>
     /// <returns>
     /// This configurator.
     /// </returns>
     [NotNull]
-    public BrokerIngressConfigurator WithExitPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
+    public BrokerIngressConfigurator WithExitPipeFitter<TPipeFitter>() where TPipeFitter : IPipeFitter
     {
-      _configuration.ExitPipeFitterType = typeof(TConfigurator);
+      _configuration.ExitPipeFitterType = typeof(TPipeFitter);
       return this;
     }
 

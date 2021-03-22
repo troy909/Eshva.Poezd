@@ -10,10 +10,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /// <summary>
+  /// An empty broker egress driver.
+  /// </summary>
   internal sealed class EmptyBrokerEgressDriver : IBrokerEgressDriver
   {
+    /// <inheritdoc />
     public void Dispose() { }
 
+    /// <inheritdoc />
     public void Initialize(
       string brokerId,
       ILogger<IBrokerEgressDriver> logger,
@@ -21,6 +26,7 @@ namespace Eshva.Poezd.Core.Routing
       IEnumerable<IEgressApi> apis,
       IDiContainerAdapter serviceProvider) { }
 
+    /// <inheritdoc />
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) => Task.CompletedTask;
   }
 }

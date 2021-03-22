@@ -13,10 +13,14 @@ using JetBrains.Annotations;
 
 namespace Eshva.Poezd.Core.Routing
 {
+  /// <summary>
+  /// Contract of message broker egress.
+  /// </summary>
+  [PublicAPI]
   public interface IBrokerEgress : IDisposable
   {
     /// <summary>
-    /// The message broker egress configuration.
+    /// Gets the message broker egress configuration.
     /// </summary>
     [NotNull]
     BrokerEgressConfiguration Configuration { get; }
@@ -43,17 +47,11 @@ namespace Eshva.Poezd.Core.Routing
     /// Gets list of APIs bound to this message broker egress.
     /// </summary>
     [NotNull]
-    ReadOnlyCollection<EgressApi> Apis { get; }
+    ReadOnlyCollection<IEgressApi> Apis { get; }
 
     /// <summary>
     /// Initializes the message broker driver.
     /// </summary>
-    /// <param name="messageRouter">
-    /// Message router to bind to.
-    /// </param>
-    /// <param name="brokerId">
-    /// The broker ID to bind to.
-    /// </param>
     /// <exception cref="ArgumentNullException">
     /// One of arguments is null, an empty or whitespace string.
     /// </exception>
@@ -63,8 +61,27 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="PoezdOperationException">
     /// The driver is already initialized.
     /// </exception>
-    public void Initialize([NotNull] IMessageRouter messageRouter, [NotNull] string brokerId);
+    public void Initialize();
 
-    Task Publish(MessagePublishingContext context, CancellationToken cancellationToken);
+    /// <summary>
+    /// Publishes a message to the message broker egress.
+    /// </summary>
+    /// <param name="context">
+    /// Message publishing context containing everything to publish the message to the message broker egress.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// A cancellation token.
+    /// </param>
+    /// <returns>
+    /// A task that could be used for waiting when publishing finished.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Message publishing context is not specified.
+    /// </exception>
+    /// <exception cref="PoezdOperationException">
+    /// The driver is not initialized or the message publishing context missing some required data.
+    /// </exception>
+    [NotNull]
+    Task Publish([NotNull] MessagePublishingContext context, CancellationToken cancellationToken);
   }
 }

@@ -14,8 +14,7 @@ namespace Eshva.Poezd.Core.Routing
     public void Dispose() { }
 
     public void Initialize(
-      string brokerId,
-      IMessageRouter messageRouter,
+      IBrokerIngress brokerIngress,
       IEnumerable<IIngressApi> apis,
       IDiContainerAdapter serviceProvider) { }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Adapter.Kafka.Ingress;
+using Eshva.Poezd.Core.Routing;
 
 #endregion
 
@@ -13,7 +14,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
   public static class ConfigurationTests
   {
     public static BrokerEgressKafkaDriverConfiguration CreateBrokerEgressKafkaDriverConfiguration(
-      Dictionary<string, object> publishedMessages = default,
+      List<MessagePublishingContext> publishedMessages = default,
       Exception exceptionToThrowOnPublishing = default) =>
       new BrokerEgressKafkaDriverConfiguration
       {

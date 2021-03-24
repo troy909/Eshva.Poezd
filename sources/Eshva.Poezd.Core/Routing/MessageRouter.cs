@@ -124,44 +124,45 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public async Task RouteEgressMessage<TMessage>(
+    public Task RouteEgressMessage<TMessage>(
       TMessage message,
       string correlationId = default,
       string causationId = default,
       string messageId = default)
       where TMessage : class
     {
-      var egressApi = _brokers.SelectMany(broker => broker.Egress.Apis).Single(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
-      var messageBroker = _brokers.Single(broker => broker.Egress.Apis.Contains(egressApi));
-
-      using (_diContainerAdapter.BeginScope())
-      {
-        var context = new MessagePublishingContext
+      var apis = _brokers.SelectMany(broker => broker.Egress.Apis).Where(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
+      var tasks = apis.Select(
+        async api =>
         {
-          Message = message,
-          Broker = messageBroker,
-          Api = egressApi,
-          CorrelationId = correlationId,
-          CausationId = causationId,
-          MessageId = messageId
-        };
+          var context = new MessagePublishingContext
+          {
+            Message = message,
+            Broker = _brokers.Single(broker => broker.Egress.Apis.Contains(api)),
+            Api = api,
+            CorrelationId = correlationId,
+            CausationId = causationId,
+            MessageId = messageId
+          };
 
-        var pipeline = BuildEgressPipeline(messageBroker, egressApi);
+          var pipeline = BuildEgressPipeline(_brokers.Single(broker => broker.Egress.Apis.Contains(api)), api);
 
-        try
-        {
-          await pipeline.Execute(context);
-          // TODO: Add timeout configuration using router configuration fluent interface.
-          var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-          await PublishMessageWithDriver(context, timeout);
-        }
-        catch (Exception exception)
-        {
-          throw new PoezdOperationException(
-            "An error occurred during message publishing. Inspect the inner exceptions for more details.",
-            exception);
-        }
-      }
+          try
+          {
+            await pipeline.Execute(context);
+            // TODO: Add timeout configuration using router configuration fluent interface.
+            var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+            await PublishMessageWithDriver(context, timeout);
+          }
+          catch (Exception exception)
+          {
+            throw new PoezdOperationException(
+              "An error occurred during message publishing. Inspect the inner exceptions for more details.",
+              exception);
+          }
+        });
+
+      return Task.WhenAll(tasks);
     }
 
     /// <summary>
@@ -201,8 +202,7 @@ namespace Eshva.Poezd.Core.Routing
             var broker = new MessageBroker(
               this,
               configuration,
-              _diContainerAdapter,
-              _diContainerAdapter.GetService<IClock>());
+              _diContainerAdapter);
             broker.Initialize();
             return broker;
           }));

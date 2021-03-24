@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using Confluent.Kafka;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
@@ -22,12 +21,6 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// <summary>
     /// Adds a <paramref name="producer" /> belonging to the egress <paramref name="api" />.
     /// </summary>
-    /// <typeparam name="TKey">
-    /// The message key type.
-    /// </typeparam>
-    /// <typeparam name="TValue">
-    /// The message payload type.
-    /// </typeparam>
     /// <param name="api">
     /// The egress API to which the adding <paramref name="producer" /> belongs to.
     /// </param>
@@ -40,17 +33,11 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// <exception cref="PoezdConfigurationException">
     /// An egress API and its producer already registered.
     /// </exception>
-    void Add<TKey, TValue>([NotNull] IEgressApi api, [NotNull] IProducer<TKey, TValue> producer);
+    void Add([NotNull] IEgressApi api, [NotNull] IApiProducer producer);
 
     /// <summary>
     /// Gets the producer that belongs to the egress <paramref name="api" />.
     /// </summary>
-    /// <typeparam name="TKey">
-    /// The message key type.
-    /// </typeparam>
-    /// <typeparam name="TValue">
-    /// The message payload type.
-    /// </typeparam>
     /// <param name="api">
     /// The egress API the looking producer belongs to.
     /// </param>
@@ -64,6 +51,6 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// There is no registered producer for the egress API specified.
     /// </exception>
     [NotNull]
-    IProducer<TKey, TValue> Get<TKey, TValue>([NotNull] IEgressApi api);
+    IApiProducer Get([NotNull] IEgressApi api);
   }
 }

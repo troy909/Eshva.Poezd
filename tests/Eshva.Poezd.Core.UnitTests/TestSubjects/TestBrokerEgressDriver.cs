@@ -25,8 +25,6 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 
     public void Initialize(
       string brokerId,
-      ILogger<IBrokerEgressDriver> logger,
-      IClock clock,
       IEnumerable<IEgressApi> apis,
       IDiContainerAdapter serviceProvider)
     {

@@ -1,4 +1,4 @@
-﻿#region Usings
+#region Usings
 
 using System;
 using System.Text;
@@ -28,7 +28,6 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
     [Fact]
     public async Task when_create_producer_it_should_configure_it_using_configurator()
     {
-      var producerFactory = new DefaultProducerFactory();
       var configuratorMock = new Mock<IProducerConfigurator>();
       configuratorMock
         .Setup(
@@ -54,6 +53,7 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
       serializerFactoryMock.Setup(factory => factory.Create<byte[]>()).Returns(Serializers.ByteArray)
         .Verifiable("serializer for the value should be gotten");
 
+      var producerFactory = new DefaultProducerFactory();
       var producer = producerFactory.Create<string, byte[]>(
         CreateProducerConfig(),
         configuratorMock.Object,

@@ -20,12 +20,6 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="brokerId">
     /// The broker ID to bind to.
     /// </param>
-    /// <param name="logger">
-    /// A logger.
-    /// </param>
-    /// <param name="clock">
-    /// The service of the current time.
-    /// </param>
     /// <param name="apis">
     /// The egress API list.
     /// </param>
@@ -40,8 +34,6 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     void Initialize(
       [NotNull] string brokerId,
-      [NotNull] ILogger<IBrokerEgressDriver> logger,
-      [NotNull] IClock clock,
       [NotNull] IEnumerable<IEgressApi> apis,
       [NotNull] IDiContainerAdapter serviceProvider);
 

@@ -20,21 +20,21 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var sut = new DefaultProducerRegistry();
       var api1 = Mock.Of<IEgressApi>();
-      var producer1 = Mock.Of<IProducer<int, int>>();
+      var producer1 = Mock.Of<IApiProducer>();
       sut.Add(api1, producer1);
       var api2 = Mock.Of<IEgressApi>();
-      var producer2 = Mock.Of<IProducer<string, byte[]>>();
+      var producer2 = Mock.Of<IApiProducer>();
       sut.Add(api2, producer2);
 
-      sut.Get<int, int>(api1).Should().Be(producer1, "this producer registered for this API");
-      sut.Get<string, byte[]>(api2).Should().Be(producer2, "this producer registered for this API");
+      sut.Get(api1).Should().Be(producer1, "this producer registered for this API");
+      sut.Get(api2).Should().Be(producer2, "this producer registered for this API");
     }
 
     [Fact]
     public void when_get_not_registered_producer_it_should_fail()
     {
       var registry = new DefaultProducerRegistry();
-      Action sut = () => registry.Get<int, int>(Mock.Of<IEgressApi>());
+      Action sut = () => registry.Get(Mock.Of<IEgressApi>());
       sut.Should().ThrowExactly<ArgumentException>().Where(exception => exception.ParamName.Equals("api"), "API is required");
     }
 
@@ -44,7 +44,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var registry = new DefaultProducerRegistry();
       var apiMock = new Mock<IEgressApi>();
       apiMock.SetupGet(api => api.Id).Returns("id-1");
-      Action sut = () => registry.Get<string, string>(Mock.Of<IEgressApi>());
+      Action sut = () => registry.Get(Mock.Of<IEgressApi>());
       sut.Should().ThrowExactly<ArgumentException>()
         .Where(exception => exception.Message.Contains("There is no registered producers for API with ID"), "should fail");
     }
@@ -54,7 +54,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var registry = new DefaultProducerRegistry();
       var api = Mock.Of<IEgressApi>();
-      Action sut = () => registry.Add(api, Mock.Of<IProducer<int, int>>());
+      Action sut = () => registry.Add(api, Mock.Of<IApiProducer>());
       sut.Should().NotThrow("producer for this API is not registered yet");
       sut.Should().ThrowExactly<PoezdConfigurationException>("producer for this API is registered already");
     }
@@ -64,16 +64,16 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var sut = new DefaultProducerRegistry();
       var api1 = Mock.Of<IEgressApi>();
-      var producer1 = new Mock<IProducer<string, byte[]>>();
+      var producer1 = new Mock<IApiProducer>();
       var disposed = 0;
       producer1.Setup(producer => producer.Dispose()).Callback(() => disposed++);
       sut.Add(api1, producer1.Object);
       var api2 = Mock.Of<IEgressApi>();
-      var producer2 = new Mock<IProducer<Null, byte[]>>();
+      var producer2 = new Mock<IApiProducer>();
       producer2.Setup(producer => producer.Dispose()).Callback(() => disposed++);
       sut.Add(api2, producer2.Object);
       var api3 = Mock.Of<IEgressApi>();
-      var producer3 = new Mock<IProducer<string, byte[]>>();
+      var producer3 = new Mock<IApiProducer>();
       producer3.Setup(producer => producer.Dispose()).Callback(() => disposed++);
       sut.Add(api3, producer3.Object);
 

@@ -1,6 +1,8 @@
 #region Usings
 
+using System;
 using Confluent.Kafka;
+using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
 
 #endregion
@@ -36,6 +38,12 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// <returns>
     /// Configured Kafka producer.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// One of parameters is not specified.
+    /// </exception>
+    /// <exception cref="PoezdOperationException">
+    /// Can not create a serializer using <paramref name="serializerFactory" /> for key or value type.
+    /// </exception>
     [NotNull]
     IProducer<TKey, TValue> Create<TKey, TValue>(
       [NotNull] ProducerConfig config,

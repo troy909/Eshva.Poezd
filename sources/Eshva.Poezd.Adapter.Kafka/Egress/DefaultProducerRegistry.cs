@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using Confluent.Kafka;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 
@@ -16,7 +15,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
   internal class DefaultProducerRegistry : IProducerRegistry
   {
     /// <inheritdoc />
-    public void Add<TKey, TValue>(IEgressApi api, IProducer<TKey, TValue> producer)
+    public void Add(IEgressApi api, IApiProducer producer)
     {
       if (api == null) throw new ArgumentNullException(nameof(api));
       if (producer == null) throw new ArgumentNullException(nameof(producer));
@@ -26,14 +25,14 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     }
 
     /// <inheritdoc />
-    public IProducer<TKey, TValue> Get<TKey, TValue>(IEgressApi api)
+    public IApiProducer Get(IEgressApi api)
     {
       if (api == null) throw new ArgumentNullException(nameof(api));
 
       if (!_producers.TryGetValue(api, out var producer))
         throw new ArgumentException($"There is no registered producers for API with ID '{api.Id}'.", nameof(api));
 
-      return (IProducer<TKey, TValue>) producer;
+      return (IApiProducer) producer;
     }
 
     /// <inheritdoc />

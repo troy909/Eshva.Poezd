@@ -9,7 +9,6 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 
 #endregion
 
@@ -33,17 +32,12 @@ namespace Eshva.Poezd.Core.Routing
     /// Service provider.
     /// </param>
     /// TODO: Eliminate this parameter.
-    /// <param name="clock">
-    /// The current time service.
-    /// </param>
     public BrokerEgress(
       string brokerId,
       [NotNull] BrokerEgressConfiguration configuration,
-      [NotNull] IDiContainerAdapter serviceProvider,
-      [NotNull] IClock clock)
+      [NotNull] IDiContainerAdapter serviceProvider)
     {
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-      _clock = clock ?? throw new ArgumentNullException(nameof(clock));
       _brokerId = brokerId;
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
@@ -71,8 +65,6 @@ namespace Eshva.Poezd.Core.Routing
     public void Initialize() =>
       Driver.Initialize(
         _brokerId,
-        _serviceProvider.GetService<ILogger<IBrokerEgressDriver>>(),
-        _clock,
         Apis,
         _serviceProvider);
 
@@ -100,8 +92,6 @@ namespace Eshva.Poezd.Core.Routing
           exception));
 
     private readonly string _brokerId;
-
-    private readonly IClock _clock;
     private readonly IDiContainerAdapter _serviceProvider;
   }
 }

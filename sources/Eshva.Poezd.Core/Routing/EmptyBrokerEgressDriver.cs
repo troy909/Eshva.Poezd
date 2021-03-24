@@ -21,8 +21,6 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public void Initialize(
       string brokerId,
-      ILogger<IBrokerEgressDriver> logger,
-      IClock clock,
       IEnumerable<IEgressApi> apis,
       IDiContainerAdapter serviceProvider) { }
 

@@ -2,8 +2,8 @@
 
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Egress;
-using Eshva.Poezd.Adapter.Kafka.UnitTests.Tools;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 #endregion
@@ -38,6 +38,14 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var sut = new BrokerEgressKafkaDriverConfigurator(configuration);
       sut.WithDefaultProducerFactory().Should().BeSameAs(sut);
       configuration.ProducerFactoryType.Should().Be<DefaultProducerFactory>();
+    }
+
+    private class TestProducerFactory : IProducerFactory
+    {
+      public IProducer<TKey, TValue> Create<TKey, TValue>(
+        ProducerConfig config,
+        IProducerConfigurator configurator,
+        ISerializerFactory serializerFactory) => Mock.Of<IProducer<TKey, TValue>>();
     }
   }
 }

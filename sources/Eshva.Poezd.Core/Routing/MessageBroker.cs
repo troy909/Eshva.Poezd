@@ -29,17 +29,13 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="serviceProvider">
     /// Service provider.
     /// </param>
-    /// <param name="clock">
-    /// The current time service.
-    /// </param>
     /// <exception cref="ArgumentNullException">
     /// One of arguments is not specified.
     /// </exception>
     public MessageBroker(
       [NotNull] IMessageRouter messageRouter,
       [NotNull] MessageBrokerConfiguration configuration,
-      [NotNull] IDiContainerAdapter serviceProvider,
-      [NotNull] IClock clock)
+      [NotNull] IDiContainerAdapter serviceProvider)
     {
       _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -52,8 +48,7 @@ namespace Eshva.Poezd.Core.Routing
         // TODO: Pass broker itself like for ingress.
         configuration.Id,
         configuration.Egress,
-        serviceProvider,
-        clock);
+        serviceProvider);
     }
 
     /// <inheritdoc />

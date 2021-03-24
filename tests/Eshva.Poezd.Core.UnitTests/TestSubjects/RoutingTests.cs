@@ -1,6 +1,5 @@
 #region Usings
 
-using System;
 using Eshva.Common.Testing;
 using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Common;
@@ -24,7 +23,6 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       container.AddLogging(testOutput);
 
       container.RegisterInstance<IDiContainerAdapter>(new SimpleInjectorAdapter(container));
-      container.RegisterInstance<IClock>(new TestClock(DateTimeOffset.UtcNow));
       container.RegisterSingleton<ThrowingEgressStep>();
       container.RegisterSingleton<WithThrowingStepPipeFitter>();
       container.RegisterSingleton<TestBrokerEgressEnterStep>();

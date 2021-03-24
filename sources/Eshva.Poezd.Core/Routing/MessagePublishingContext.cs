@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using System.Collections.Generic;
 using Eshva.Common.Collections;
 
@@ -75,5 +76,10 @@ namespace Eshva.Poezd.Core.Routing
     /// Gets/sets the queue/topic name the publishing message should be published to.
     /// </summary>
     public IReadOnlyCollection<string> QueueNames { get; set; }
+
+    /// <summary>
+    /// Gets/sets the message timestamp.
+    /// </summary>
+    public DateTimeOffset Timestamp { get; set; }
   }
 }

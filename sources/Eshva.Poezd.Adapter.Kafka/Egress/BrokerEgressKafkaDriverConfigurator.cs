@@ -38,12 +38,12 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     }
 
     /// <summary>
-    /// Sets the producer factory type.
+    /// Sets the API producer factory type.
     /// </summary>
     /// <remarks>
-    /// The producer factory used to create instances of <see cref="IProducer{TKey,TValue}" />.
+    /// The producer factory used to create instances of <see cref="IApiProducer" />.
     /// </remarks>
-    public BrokerEgressKafkaDriverConfigurator WithProducerFactory<TProducerFactory>() where TProducerFactory : IProducerFactory
+    public BrokerEgressKafkaDriverConfigurator WithProducerFactory<TProducerFactory>() where TProducerFactory : IApiProducerFactory
     {
       _configuration.ProducerFactoryType = typeof(TProducerFactory);
       return this;
@@ -96,7 +96,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// </remarks>
     public BrokerEgressKafkaDriverConfigurator WithDefaultProducerFactory()
     {
-      _configuration.ProducerFactoryType = typeof(DefaultProducerFactory);
+      _configuration.ProducerFactoryType = typeof(DefaultApiProducerFactory);
       return this;
     }
 

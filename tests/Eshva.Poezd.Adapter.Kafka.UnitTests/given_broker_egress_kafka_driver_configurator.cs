@@ -29,8 +29,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var configuration = new BrokerEgressKafkaDriverConfiguration();
       var sut = new BrokerEgressKafkaDriverConfigurator(configuration);
-      sut.WithProducerFactory<ConfigurationTests.ProducerFactory>().Should().BeSameAs(sut);
-      configuration.ProducerFactoryType.Should().Be(typeof(ConfigurationTests.ProducerFactory));
+      sut.WithProducerFactory<ConfigurationTests.ApiProducerFactory>().Should().BeSameAs(sut);
+      configuration.ProducerFactoryType.Should().Be(typeof(ConfigurationTests.ApiProducerFactory));
     }
 
     [Fact]
@@ -39,7 +39,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var configuration = new BrokerEgressKafkaDriverConfiguration();
       var sut = new BrokerEgressKafkaDriverConfigurator(configuration);
       sut.WithDefaultProducerFactory().Should().BeSameAs(sut);
-      configuration.ProducerFactoryType.Should().Be<DefaultProducerFactory>();
+      configuration.ProducerFactoryType.Should().Be<DefaultApiProducerFactory>();
     }
 
     [Fact]

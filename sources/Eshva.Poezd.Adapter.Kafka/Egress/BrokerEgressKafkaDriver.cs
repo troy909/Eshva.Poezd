@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 
 #endregion
 
@@ -55,15 +54,6 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       _isInitialized = true;
     }
 
-    private void GetRequiredServices()
-    {
-      _serializerFactory = _serviceProvider.GetService<ISerializerFactory>(_driverConfiguration.SerializerFactoryType);
-      _producerFactory = _serviceProvider.GetService<IProducerFactory>(_driverConfiguration.ProducerFactoryType);
-      _producerConfigurator = _serviceProvider.GetService<IProducerConfigurator>(_driverConfiguration.ProducerConfiguratorType);
-      _headerValueCodec = _serviceProvider.GetService<IHeaderValueCodec>(_driverConfiguration.HeaderValueCodecType);
-      _loggerFactory = _serviceProvider.GetService<ILoggerFactory>(typeof(ILoggerFactory));
-    }
-
     /// <inheritdoc />
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken)
     {
@@ -76,40 +66,33 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// <inheritdoc />
     public void Dispose() => _producerRegistry.Dispose();
 
+    private void GetRequiredServices()
+    {
+      _apiProducerFactory = _serviceProvider.GetService<IApiProducerFactory>(_driverConfiguration.ProducerFactoryType);
+    }
+
     private void CreateAndRegisterProducerPerApi()
     {
       foreach (var api in _apis)
       {
-        var concreteMethod = CreateAndRegisterProducerMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
-        concreteMethod.Invoke(this, new object[] {api});
+        var concreteMethod = CreateApiProducerMethod.MakeGenericMethod(api.MessageKeyType, api.MessagePayloadType);
+        var producer = (IApiProducer) concreteMethod.Invoke(this, new object[] { });
+        _producerRegistry.Add(api, producer);
       }
     }
 
-    private void CreateAndRegisterProducer<TKey, TValue>(IEgressApi api)
-    {
-      var producer = new DefaultApiProducer<TKey, TValue>(
-        _producerFactory.Create<TKey, TValue>(
-          _driverConfiguration.ProducerConfig,
-          _producerConfigurator,
-          _serializerFactory),
-        _headerValueCodec,
-        _loggerFactory.CreateLogger<DefaultApiProducer<TKey, TValue>>());
-      _producerRegistry.Add(api, producer);
-    }
+    private IApiProducer CreateApiProducer<TKey, TValue>() =>
+      _apiProducerFactory.Create<TKey, TValue>(_driverConfiguration.ProducerConfig);
 
     private readonly BrokerEgressKafkaDriverConfiguration _driverConfiguration;
     private readonly IProducerRegistry _producerRegistry;
+    private IApiProducerFactory _apiProducerFactory;
     private IEnumerable<IEgressApi> _apis;
     private string _brokerId;
-    private IHeaderValueCodec _headerValueCodec;
     private bool _isInitialized;
-    private ILoggerFactory _loggerFactory;
-    private IProducerConfigurator _producerConfigurator;
-    private IProducerFactory _producerFactory;
-    private ISerializerFactory _serializerFactory;
     private IDiContainerAdapter _serviceProvider;
 
-    private static readonly MethodInfo CreateAndRegisterProducerMethod =
-      typeof(BrokerEgressKafkaDriver).GetMethod(nameof(CreateAndRegisterProducer), BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly MethodInfo CreateApiProducerMethod =
+      typeof(BrokerEgressKafkaDriver).GetMethod(nameof(CreateApiProducer), BindingFlags.Instance | BindingFlags.NonPublic);
   }
 }

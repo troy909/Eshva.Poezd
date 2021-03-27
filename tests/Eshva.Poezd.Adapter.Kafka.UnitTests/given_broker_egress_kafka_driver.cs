@@ -92,7 +92,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       Action sut = () => driver.Initialize(
         "broker-1",
         new IEgressApi[0],
-        Mock.Of<IDiContainerAdapter>());
+        MakeServiceProvider());
       sut.Should().NotThrow();
       sut.Should().ThrowExactly<PoezdOperationException>().Where(exception => exception.Message.Contains("already initialized"));
     }
@@ -187,9 +187,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       return apiMock.Object;
     }
 
-    private static MessagePublishingContext MakeContext()
-    {
-      var context = new MessagePublishingContext
+    private static MessagePublishingContext MakeContext() =>
+      new MessagePublishingContext
       {
         Key = "key",
         Payload = "payload",
@@ -198,8 +197,6 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         QueueNames = new string[0],
         Broker = Mock.Of<IMessageBroker>()
       };
-      return context;
-    }
 
     private static IDiContainerAdapter MakeServiceProvider()
     {
@@ -216,6 +213,9 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       mock
         .Setup(adapter => adapter.GetService(typeof(ConfigurationTests.ProducerFactory)))
         .Returns(() => new ConfigurationTests.ProducerFactory());
+      mock
+        .Setup(adapter => adapter.GetService(typeof(ConfigurationTests.ApiProducerFactory)))
+        .Returns(() => new ConfigurationTests.ApiProducerFactory());
       mock
         .Setup(adapter => adapter.GetService(typeof(ILoggerFactory)))
         .Returns(Mock.Of<ILoggerFactory>());

@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,11 +54,8 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
       serializerFactoryMock.Setup(factory => factory.Create<byte[]>()).Returns(Serializers.ByteArray)
         .Verifiable("serializer for the value should be gotten");
 
-      var producerFactory = new DefaultProducerFactory();
-      var producer = producerFactory.Create<string, byte[]>(
-        CreateProducerConfig(),
-        configuratorMock.Object,
-        serializerFactoryMock.Object);
+      var producerFactory = new DefaultProducerFactory(configuratorMock.Object, serializerFactoryMock.Object);
+      var producer = producerFactory.Create<string, byte[]>(CreateProducerConfig());
 
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<string, byte[]>(timeout);
@@ -80,6 +78,38 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
       var consumeResult = kafkaTestContext.Consume(topic);
       consumeResult.Message.Key.Should().Be(key);
       consumeResult.Message.Value.Should().BeEquivalentTo(value);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
+    public void when_constructed_with_invalid_arguments_it_should_fail()
+    {
+      var configurator = Mock.Of<IProducerConfigurator>();
+      var serializerFactory = Mock.Of<ISerializerFactory>();
+
+      Action sut = () => new DefaultProducerFactory(configurator, serializerFactory);
+
+      configurator = null;
+      sut.Should().ThrowExactly<ArgumentNullException>();
+      configurator = Mock.Of<IProducerConfigurator>();
+
+      serializerFactory = null;
+      sut.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+    public void when_create_producer_with_invalid_arguments_it_should_fail()
+    {
+      var configurator = Mock.Of<IProducerConfigurator>();
+      var serializerFactory = Mock.Of<ISerializerFactory>();
+
+      var factory = new DefaultProducerFactory(configurator, serializerFactory);
+
+      Action sut = () => factory.Create<int, string>(config: null);
+
+      sut.Should().ThrowExactly<ArgumentNullException>();
     }
 
     private static ProducerConfig CreateProducerConfig()

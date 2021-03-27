@@ -17,8 +17,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
   {
     /// <summary>
     /// Creates a producer with <typeparamref name="TKey" /> and <typeparamref name="TValue" />, configuration
-    /// <paramref name="config" />. It configures it using <paramref name="configurator" /> and uses
-    /// <paramref name="serializerFactory" /> to create key and value serializers.
+    /// <paramref name="config" />.
     /// </summary>
     /// <typeparam name="TKey">
     /// The key type.
@@ -29,12 +28,6 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// <param name="config">
     /// The producer configuration.
     /// </param>
-    /// <param name="configurator">
-    /// The producer configurator to configure different callbacks.
-    /// </param>
-    /// <param name="serializerFactory">
-    /// The key and value serializers factory.
-    /// </param>
     /// <returns>
     /// Configured Kafka producer.
     /// </returns>
@@ -42,12 +35,9 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     /// One of parameters is not specified.
     /// </exception>
     /// <exception cref="PoezdOperationException">
-    /// Can not create a serializer using <paramref name="serializerFactory" /> for key or value type.
+    /// Can not create a serializer for key or value type.
     /// </exception>
     [NotNull]
-    IProducer<TKey, TValue> Create<TKey, TValue>(
-      [NotNull] ProducerConfig config,
-      [NotNull] IProducerConfigurator configurator,
-      [NotNull] ISerializerFactory serializerFactory);
+    IProducer<TKey, TValue> Create<TKey, TValue>([NotNull] ProducerConfig config);
   }
 }

@@ -43,7 +43,10 @@ namespace Venture.IntegrationTests
           configureEgressApi);
 
       container.RegisterInstance<IDiContainerAdapter>(new SimpleInjectorAdapter(container));
-      container.RegisterSingleton<DefaultProducerFactory>();
+      container.RegisterSingleton<DefaultApiProducerFactory>();
+      container.RegisterSingleton<ISerializerFactory, DefaultSerializerFactory>();
+      container.RegisterSingleton<IProducerConfigurator, VentureProducerConfigurator>();
+      container.RegisterSingleton<IProducerFactory, DefaultProducerFactory>();
       container.RegisterSingleton<VentureProducerConfigurator>();
       container.RegisterSingleton<DefaultSerializerFactory>();
       container.RegisterSingleton<VentureConsumerConfigurator>();
@@ -51,6 +54,7 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<DefaultDeserializerFactory>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipeFitter>();
+      container.RegisterSingleton<IHeaderValueCodec, Utf8ByteStringHeaderValueCodec>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueCodec>();
       container.RegisterSingleton<IngressApi1QueueNamePatternsProvider>();
       container.RegisterSingleton<EmptyHandlerRegistry>();

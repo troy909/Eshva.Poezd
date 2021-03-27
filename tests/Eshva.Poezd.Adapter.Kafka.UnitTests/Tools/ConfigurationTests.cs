@@ -20,7 +20,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
       new BrokerEgressKafkaDriverConfiguration
       {
         ProducerConfig = new ProducerConfig(),
-        ProducerFactoryType = typeof(ProducerFactory),
+        ProducerFactoryType = typeof(ApiProducerFactory),
         HeaderValueCodecType = typeof(HeaderValueCodec),
         ProducerConfiguratorType = typeof(ProducerConfigurator),
         SerializerFactoryType = typeof(SerializerFactory)
@@ -75,11 +75,12 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
 
     public class ProducerFactory : IProducerFactory
     {
-      public IProducer<TKey, TValue> Create<TKey, TValue>(
-        ProducerConfig config,
-        IProducerConfigurator configurator,
-        ISerializerFactory serializerFactory) =>
-        Mock.Of<IProducer<TKey, TValue>>();
+      public IProducer<TKey, TValue> Create<TKey, TValue>(ProducerConfig config) => Mock.Of<IProducer<TKey, TValue>>();
+    }
+
+    public class ApiProducerFactory : IApiProducerFactory
+    {
+      public IApiProducer Create<TKey, TValue>(ProducerConfig config) => null;
     }
   }
 }

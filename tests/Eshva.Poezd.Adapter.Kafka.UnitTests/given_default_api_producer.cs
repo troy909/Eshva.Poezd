@@ -96,8 +96,22 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     }
 
     [Fact]
+    public void when_publish_with_invalid_arguments_it_should_fail()
+    {
+      var apiProducer = new DefaultApiProducer<string, string>(
+        Mock.Of<IProducer<string, string>>(),
+        Mock.Of<IHeaderValueCodec>(),
+        Mock.Of<ILogger<DefaultApiProducer<string, string>>>());
+
+      // ReSharper disable once AssignNullToNotNullAttribute
+      Func<Task> sut = () => apiProducer.Publish(context: null, CancellationToken.None);
+
+      sut.Should().ThrowExactly<ArgumentNullException>("null is not valid context");
+    }
+
+    [Fact]
     [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
-    public void when_publishing_with_invalid_arguments_it_should_fail()
+    public void when_publishing_with_invalid_context_content_it_should_fail()
     {
       var apiProducer = new DefaultApiProducer<string, string>(
         Mock.Of<IProducer<string, string>>(),
@@ -274,6 +288,43 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         .And.Contain(key.ToString())
         .And.Contain(topic1)
         .And.Contain(brokerId);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
+    [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
+    public void when_construct_with_invalid_arguments_it_should_fail()
+    {
+      var producer = Mock.Of<IProducer<int, string>>();
+      var headerValueCodec = Mock.Of<IHeaderValueCodec>();
+      var logger = new Mock<ILogger<DefaultApiProducer<int, string>>>().Object;
+      Action sut = () => new DefaultApiProducer<int, string>(
+        producer,
+        headerValueCodec,
+        logger);
+
+      producer = null;
+      sut.Should().ThrowExactly<ArgumentNullException>("null is invalid producer");
+      producer = Mock.Of<IProducer<int, string>>();
+
+      headerValueCodec = null;
+      sut.Should().ThrowExactly<ArgumentNullException>("null is invalid header value codec");
+      headerValueCodec = Mock.Of<IHeaderValueCodec>();
+
+      logger = null;
+      sut.Should().ThrowExactly<ArgumentNullException>("null is invalid logger");
+    }
+
+    [Fact]
+    public void when_dispose_it_should_dispose_producer()
+    {
+      var producerMock = new Mock<IProducer<int, string>>();
+      producerMock.Setup(producer => producer.Dispose()).Verifiable("producer should be disposed");
+      var sut = new DefaultApiProducer<int, string>(
+        producerMock.Object,
+        Mock.Of<IHeaderValueCodec>(),
+        new Mock<ILogger<DefaultApiProducer<int, string>>>().Object);
+      sut.Dispose();
     }
 
     private readonly ITestOutputHelper _testOutput;

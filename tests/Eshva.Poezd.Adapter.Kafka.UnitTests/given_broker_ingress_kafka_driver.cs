@@ -1,8 +1,11 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Adapter.Kafka.Ingress;
@@ -73,9 +76,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     {
       var consumers = 0;
       var consumerRegistryMock = new Mock<IConsumerRegistry>();
-      consumerRegistryMock.Setup(
-          registry => registry
-            .Add(It.IsAny<IIngressApi>(), It.IsAny<IApiConsumer<It.IsAnyType, It.IsAnyType>>()))
+      consumerRegistryMock
+        .Setup(registry => registry.Add(It.IsAny<IIngressApi>(), It.IsAny<IApiConsumer<It.IsAnyType, It.IsAnyType>>()))
         .Callback(() => consumers++);
       var configuration = MakeDriverConfiguration();
 
@@ -183,6 +185,44 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       Action sut = () => driver.StartConsumeMessages(queueNamePatterns: null, CancellationToken.None);
       sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("queueNamePatterns"));
     }
+
+    /*
+    [Fact]
+    public void when_start_consume_messages_it_should_consume_messages()
+    {
+      var consumerRegistryMock = new Mock<IConsumerRegistry>();
+      var apiConsumerMock = new Mock<IApiConsumer<int, byte[]>>();
+      apiConsumerMock
+        .Setup(consumer => consumer.Start(result => Task.CompletedTask, It.IsAny<CancellationToken>()))
+        .Returns(() => Task.CompletedTask);
+      consumerRegistryMock
+        .Setup(registry => registry.Get<int, byte[]>(It.IsAny<IIngressApi>()))
+        .Returns(() => apiConsumerMock.Object);
+
+      var sut = new BrokerIngressKafkaDriver(MakeDriverConfiguration(), consumerRegistryMock.Object);
+
+      var ingressMock = new Mock<IBrokerIngress>();
+      var consumedMessages = 0;
+      ingressMock
+        .Setup(
+          ingress => ingress.RouteIngressMessage(
+            It.IsAny<string>(),
+            It.IsAny<DateTimeOffset>(),
+            It.IsAny<int>(),
+            It.IsAny<byte[]>(),
+            It.IsAny<IReadOnlyDictionary<string, string>>()))
+        .Callback(() => consumedMessages++);
+      sut.Initialize(
+        ingressMock.Object,
+        new[] {MakeApi<int, byte[]>()},
+        MakeServiceProviderMock().Object);
+
+      await sut.StartConsumeMessages(new[] {"topic1"}, CancellationToken.None);
+
+      consumedMessages.Should().Be(1);
+    }
+    */
+
 
     [Fact]
     public void when_dispose_it_should_dispose_consumer_registry()

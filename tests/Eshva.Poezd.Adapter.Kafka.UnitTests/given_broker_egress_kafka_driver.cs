@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Adapter.Kafka.UnitTests.Tools;
 using Eshva.Poezd.Core.Common;
+using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -101,19 +103,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var driver = new BrokerEgressKafkaDriver(
         ConfigurationTests.CreateBrokerEgressKafkaDriverConfiguration(),
         new Mock<IProducerRegistry>().Object);
-      Func<Task> sut = () =>
-      {
-        var context = new MessagePublishingContext
-        {
-          Key = "key",
-          Payload = "payload",
-          Api = Mock.Of<IEgressApi>(),
-          Metadata = new Dictionary<string, string>(),
-          QueueNames = new string[0],
-          Broker = Mock.Of<IMessageBroker>()
-        };
-        return driver.Publish(context, CancellationToken.None);
-      };
+      Func<Task> sut = () => driver.Publish(MakeContext(), CancellationToken.None);
 
       sut.Should().ThrowExactly<PoezdOperationException>()
         .Where(
@@ -129,6 +119,107 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var sut = new BrokerEgressKafkaDriver(new BrokerEgressKafkaDriverConfiguration(), registryMock.Object);
       sut.Dispose();
       registryMock.Verify();
+    }
+
+    [Fact]
+    public async Task when_publish_using_initialized_driver_it_should_publish_to_api_publisher()
+    {
+      var published = 0;
+
+      var apiProducerMock = new Mock<IApiProducer>();
+      apiProducerMock
+        .Setup(producer => producer.Publish(It.IsAny<MessagePublishingContext>(), It.IsAny<CancellationToken>()))
+        .Callback(() => published++)
+        .Returns(() => Task.CompletedTask);
+
+      var producerRegistryMock = new Mock<IProducerRegistry>();
+      producerRegistryMock.Setup(registry => registry.Get(It.IsAny<IEgressApi>())).Returns(() => apiProducerMock.Object);
+
+      var driver = new BrokerEgressKafkaDriver(
+        ConfigurationTests.CreateBrokerEgressKafkaDriverConfiguration(new List<MessagePublishingContext>()),
+        producerRegistryMock.Object);
+
+      driver.Initialize(
+        "broker-1",
+        new[] {MakeApi()},
+        MakeServiceProvider());
+
+      await driver.Publish(MakeContext(), CancellationToken.None);
+      published.Should().Be(expected: 1, "message should be published");
+    }
+
+    [Fact]
+    public void when_publish_with_invalid_arguments_it_should_fail()
+    {
+      var apiProducerMock = new Mock<IApiProducer>();
+      apiProducerMock
+        .Setup(producer => producer.Publish(It.IsAny<MessagePublishingContext>(), It.IsAny<CancellationToken>()))
+        .Returns(() => Task.CompletedTask);
+
+      var producerRegistryMock = new Mock<IProducerRegistry>();
+      producerRegistryMock.Setup(registry => registry.Get(It.IsAny<IEgressApi>())).Returns(() => apiProducerMock.Object);
+
+      var driver = new BrokerEgressKafkaDriver(
+        ConfigurationTests.CreateBrokerEgressKafkaDriverConfiguration(new List<MessagePublishingContext>()),
+        producerRegistryMock.Object);
+
+      driver.Initialize(
+        "broker-1",
+        new[] {MakeApi()},
+        MakeServiceProvider());
+
+      // ReSharper disable once AssignNullToNotNullAttribute
+      Func<Task> sut = () => driver.Publish(null, CancellationToken.None);
+      sut.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    private static IEgressApi MakeApi()
+    {
+      var descriptorMock = new Mock<IEgressApiMessageTypeDescriptor<It.IsAnyType>>();
+      descriptorMock.Setup(descriptor => descriptor.QueueNames).Returns(() => new[] {"topic1"});
+      var typesRegistryMock = new Mock<IEgressApiMessageTypesRegistry>();
+      typesRegistryMock.Setup(registry => registry.DoesOwn<It.IsAnyType>()).Returns(value: true);
+      typesRegistryMock.Setup(registry => registry.GetDescriptorByMessageType<It.IsAnyType>()).Returns(() => descriptorMock.Object);
+      var apiMock = new Mock<IEgressApi>();
+      apiMock.SetupGet(api => api.MessageTypesRegistry).Returns(() => typesRegistryMock.Object);
+      apiMock.SetupGet(api => api.MessageKeyType).Returns(() => typeof(int));
+      apiMock.SetupGet(api => api.MessagePayloadType).Returns(() => typeof(string));
+      return apiMock.Object;
+    }
+
+    private static MessagePublishingContext MakeContext()
+    {
+      var context = new MessagePublishingContext
+      {
+        Key = "key",
+        Payload = "payload",
+        Api = Mock.Of<IEgressApi>(),
+        Metadata = new Dictionary<string, string>(),
+        QueueNames = new string[0],
+        Broker = Mock.Of<IMessageBroker>()
+      };
+      return context;
+    }
+
+    private static IDiContainerAdapter MakeServiceProvider()
+    {
+      var mock = new Mock<IDiContainerAdapter>();
+      mock
+        .Setup(adapter => adapter.GetService(typeof(ConfigurationTests.SerializerFactory)))
+        .Returns(() => new ConfigurationTests.SerializerFactory());
+      mock
+        .Setup(adapter => adapter.GetService(typeof(ConfigurationTests.HeaderValueCodec)))
+        .Returns(() => new ConfigurationTests.HeaderValueCodec());
+      mock
+        .Setup(adapter => adapter.GetService(typeof(ConfigurationTests.ProducerConfigurator)))
+        .Returns(() => new ConfigurationTests.ProducerConfigurator());
+      mock
+        .Setup(adapter => adapter.GetService(typeof(ConfigurationTests.ProducerFactory)))
+        .Returns(() => new ConfigurationTests.ProducerFactory());
+      mock
+        .Setup(adapter => adapter.GetService(typeof(ILoggerFactory)))
+        .Returns(Mock.Of<ILoggerFactory>());
+      return mock.Object;
     }
 
     private const string WhitespaceString = "\t\n ";

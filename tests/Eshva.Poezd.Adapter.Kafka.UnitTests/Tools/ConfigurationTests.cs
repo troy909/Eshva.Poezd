@@ -6,6 +6,7 @@ using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Adapter.Kafka.Ingress;
 using Eshva.Poezd.Core.Routing;
+using Moq;
 
 #endregion
 
@@ -19,10 +20,10 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
       new BrokerEgressKafkaDriverConfiguration
       {
         ProducerConfig = new ProducerConfig(),
-        ProducerFactoryType = typeof(object),
-        HeaderValueCodecType = typeof(object),
-        ProducerConfiguratorType = typeof(object),
-        SerializerFactoryType = typeof(object)
+        ProducerFactoryType = typeof(ProducerFactory),
+        HeaderValueCodecType = typeof(HeaderValueCodec),
+        ProducerConfiguratorType = typeof(ProducerConfigurator),
+        SerializerFactoryType = typeof(SerializerFactory)
       };
 
     public static BrokerEgressKafkaDriverConfiguration CreateBrokerEgressKafkaDriverConfigurationWithout(
@@ -49,6 +50,36 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests.Tools
       var configuration = CreateBrokerIngressKafkaDriverConfiguration();
       updater(configuration);
       return configuration;
+    }
+
+    public class SerializerFactory : ISerializerFactory
+    {
+      public ISerializer<TData> Create<TData>() => (ISerializer<TData>) Serializers.ByteArray;
+    }
+
+    public class ProducerConfigurator : IProducerConfigurator
+    {
+      public ProducerBuilder<TKey, TValue> Configure<TKey, TValue>(
+        ProducerBuilder<TKey, TValue> builder,
+        ISerializer<TKey> keySerializer,
+        ISerializer<TValue> valueSerializer) =>
+        builder;
+    }
+
+    public class HeaderValueCodec : IHeaderValueCodec
+    {
+      public string Decode(byte[] value) => string.Empty;
+
+      public byte[] Encode(string value) => new byte[0];
+    }
+
+    public class ProducerFactory : IProducerFactory
+    {
+      public IProducer<TKey, TValue> Create<TKey, TValue>(
+        ProducerConfig config,
+        IProducerConfigurator configurator,
+        ISerializerFactory serializerFactory) =>
+        Mock.Of<IProducer<TKey, TValue>>();
     }
   }
 }

@@ -45,18 +45,23 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       if (_isInitialized) throw new PoezdOperationException($"Kafka driver for broker with ID {_brokerId} is already initialized.");
       if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
 
+      _brokerId = brokerId;
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      _apis = apis ?? throw new ArgumentNullException(nameof(apis));
+
+      GetRequiredServices();
+      CreateAndRegisterProducerPerApi();
+
+      _isInitialized = true;
+    }
+
+    private void GetRequiredServices()
+    {
       _serializerFactory = _serviceProvider.GetService<ISerializerFactory>(_driverConfiguration.SerializerFactoryType);
       _producerFactory = _serviceProvider.GetService<IProducerFactory>(_driverConfiguration.ProducerFactoryType);
       _producerConfigurator = _serviceProvider.GetService<IProducerConfigurator>(_driverConfiguration.ProducerConfiguratorType);
       _headerValueCodec = _serviceProvider.GetService<IHeaderValueCodec>(_driverConfiguration.HeaderValueCodecType);
-      _loggerFactory = _serviceProvider.GetService<ILoggerFactory>();
-      _apis = apis ?? throw new ArgumentNullException(nameof(apis));
-      _brokerId = brokerId;
-
-      CreateAndRegisterProducerPerApi();
-
-      _isInitialized = true;
+      _loggerFactory = _serviceProvider.GetService<ILoggerFactory>(typeof(ILoggerFactory));
     }
 
     /// <inheritdoc />

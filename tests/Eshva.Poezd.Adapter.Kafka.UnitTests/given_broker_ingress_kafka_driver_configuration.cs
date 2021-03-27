@@ -40,6 +40,12 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateBrokerIngressKafkaDriverConfigurationWithout(configuration => configuration.ConsumerConfiguratorType = null)
         .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerIngressKafkaDriverConfigurationWithout(configuration => configuration.HeaderValueCodecType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerIngressKafkaDriverConfigurationWithout(configuration => configuration.ConsumerFactoryType = null)
+        .Validate().Should().HaveCount(expected: 1);
+      ConfigurationTests.CreateBrokerIngressKafkaDriverConfigurationWithout(configuration => configuration.DeserializerFactoryType = null)
+        .Validate().Should().HaveCount(expected: 1);
     }
   }
 }

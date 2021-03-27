@@ -20,7 +20,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
     public ConsumerConfig ConsumerConfig { get; internal set; }
 
     /// <summary>
-    /// Gets the consumer factory type.
+    /// Gets the API consumer factory type.
     /// </summary>
     public Type ConsumerFactoryType { get; internal set; }
 

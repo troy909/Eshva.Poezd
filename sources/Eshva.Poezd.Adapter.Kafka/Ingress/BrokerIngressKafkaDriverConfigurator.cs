@@ -30,7 +30,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
     }
 
     public BrokerIngressKafkaDriverConfigurator WithConsumerFactory<TConsumerFactory>()
-      where TConsumerFactory : IConsumerFactory
+      where TConsumerFactory : IApiConsumerFactory
     {
       _configuration.ConsumerFactoryType = typeof(TConsumerFactory);
       return this;

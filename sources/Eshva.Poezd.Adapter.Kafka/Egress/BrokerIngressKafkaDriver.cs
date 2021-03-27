@@ -11,7 +11,6 @@ using Eshva.Poezd.Adapter.Kafka.Ingress;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 
 #endregion
 
@@ -61,12 +60,11 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       IEnumerable<IIngressApi> apis,
       IDiContainerAdapter serviceProvider)
     {
+      if (_isInitialized) throw new PoezdOperationException("Kafka ingress driver is already initialized.");
+
       _brokerIngress = brokerIngress ?? throw new ArgumentNullException(nameof(brokerIngress));
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _apis = apis ?? throw new ArgumentNullException(nameof(apis));
-
-      if (_isInitialized)
-        throw new PoezdOperationException("Kafka ingress driver is already initialized.");
 
       GetRequiredServices();
       CreateAndRegisterConsumerPerApi();
@@ -94,11 +92,8 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
 
     private void GetRequiredServices()
     {
-      _consumerConfigurator = _serviceProvider.GetService<IConsumerConfigurator>(_driverConfiguration.ConsumerConfiguratorType);
-      _consumerFactory = _serviceProvider.GetService<IConsumerFactory>(_driverConfiguration.ConsumerFactoryType);
-      _deserializerFactory = _serviceProvider.GetService<IDeserializerFactory>(_driverConfiguration.DeserializerFactoryType);
       _headerValueCodecType = _serviceProvider.GetService<IHeaderValueCodec>(_driverConfiguration.HeaderValueCodecType);
-      _loggerFactory = _serviceProvider.GetService<ILoggerFactory>(typeof(ILoggerFactory));
+      _apiConsumerFactory = _serviceProvider.GetService<IApiConsumerFactory>(_driverConfiguration.ConsumerFactoryType);
     }
 
     private void CreateAndRegisterConsumerPerApi()
@@ -110,17 +105,8 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       }
     }
 
-    private void CreateAndRegisterConsumer<TKey, TValue>(IIngressApi api)
-    {
-      var apiConsumer = new DefaultApiConsumer<TKey, TValue>(
-        api,
-        _consumerFactory.Create<TKey, TValue>(
-          _driverConfiguration.ConsumerConfig,
-          _consumerConfigurator,
-          _deserializerFactory),
-        _loggerFactory.CreateLogger<DefaultApiConsumer<TKey, TValue>>());
-      _consumerRegistry.Add(api, apiConsumer);
-    }
+    private void CreateAndRegisterConsumer<TKey, TValue>(IIngressApi api) =>
+      _consumerRegistry.Add(api, _apiConsumerFactory.Create<TKey, TValue>(_driverConfiguration.ConsumerConfig, api));
 
     private void StartConsumeMessagesFromApis(CancellationToken cancellationToken)
     {
@@ -150,14 +136,11 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
 
     private readonly IConsumerRegistry _consumerRegistry;
     private readonly BrokerIngressKafkaDriverConfiguration _driverConfiguration;
+    private IApiConsumerFactory _apiConsumerFactory;
     private IEnumerable<IIngressApi> _apis;
     private IBrokerIngress _brokerIngress;
-    private IConsumerConfigurator _consumerConfigurator;
-    private IConsumerFactory _consumerFactory;
-    private IDeserializerFactory _deserializerFactory;
     private IHeaderValueCodec _headerValueCodecType;
     private bool _isInitialized;
-    private ILoggerFactory _loggerFactory;
     private IDiContainerAdapter _serviceProvider;
 
     private static readonly MethodInfo CreateAndRegisterConsumerMethod =

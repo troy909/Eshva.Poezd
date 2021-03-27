@@ -50,8 +50,11 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<VentureProducerConfigurator>();
       container.RegisterSingleton<DefaultSerializerFactory>();
       container.RegisterSingleton<VentureConsumerConfigurator>();
-      container.RegisterSingleton<DefaultConsumerFactory>();
-      container.RegisterSingleton<DefaultDeserializerFactory>();
+      container.RegisterSingleton<IConsumerFactory, DefaultConsumerFactory>();
+      container.RegisterSingleton<IDeserializerFactory, DefaultDeserializerFactory>();
+      container.RegisterSingleton<IApiConsumerFactory, DefaultApiConsumerFactory>();
+      container.RegisterSingleton<DefaultApiConsumerFactory>();
+      container.RegisterSingleton<IConsumerConfigurator, VentureConsumerConfigurator>();
       container.RegisterSingleton<RegexQueueNameMatcher>();
       container.RegisterSingleton<EmptyPipeFitter>();
       container.RegisterSingleton<IHeaderValueCodec, Utf8ByteStringHeaderValueCodec>();
@@ -97,7 +100,7 @@ namespace Venture.IntegrationTests
                     .WithKafkaDriver(
                       driver => driver
                         .WithConsumerConfig(CreateConsumerConfig())
-                        .WithConsumerFactory<DefaultConsumerFactory>()
+                        .WithConsumerFactory<DefaultApiConsumerFactory>()
                         .WithDeserializerFactory<DefaultDeserializerFactory>()
                         .WithConsumerConfigurator<VentureConsumerConfigurator>()
                         .WithHeaderValueCodec<Utf8ByteStringHeaderValueCodec>())

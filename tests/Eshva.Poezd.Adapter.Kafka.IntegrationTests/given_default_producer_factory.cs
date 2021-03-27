@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Egress;
+using Eshva.Poezd.Core.Common;
 using FluentAssertions;
 using Moq;
 using RandomStringCreator;
@@ -110,6 +111,22 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
       Action sut = () => factory.Create<int, string>(config: null);
 
       sut.Should().ThrowExactly<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void when_create_producer_without_required_serializers_it_should_fail()
+    {
+      var serializerFactoryMock = new Mock<ISerializerFactory>();
+      serializerFactoryMock.Setup(factory => factory.Create<string>()).Returns(Mock.Of<ISerializer<string>>);
+      serializerFactoryMock.Setup(factory => factory.Create<int>()).Returns(() => null);
+
+      var producerFactory = new DefaultProducerFactory(Mock.Of<IProducerConfigurator>(), serializerFactoryMock.Object);
+
+      Action sutBadKey = () => producerFactory.Create<int, string>(CreateProducerConfig());
+      sutBadKey.Should().ThrowExactly<PoezdOperationException>().Where(exception => exception.Message.Contains("key"));
+
+      Action sutBadValue = () => producerFactory.Create<string, int>(CreateProducerConfig());
+      sutBadValue.Should().ThrowExactly<PoezdOperationException>().Where(exception => exception.Message.Contains("value"));
     }
 
     private static ProducerConfig CreateProducerConfig()

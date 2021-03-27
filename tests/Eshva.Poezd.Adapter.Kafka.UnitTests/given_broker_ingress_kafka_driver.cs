@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -130,25 +129,13 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         new[] {MakeApi<int, string>()},
         serviceProviderMock.Object);
 
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerConfigurator))).Throws<InvalidOperationException>();
-      sut.Should().ThrowExactly<InvalidOperationException>();
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerConfigurator))).Returns(new TestConsumerConfigurator());
-
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerFactory))).Throws<InvalidOperationException>();
       sut.Should().ThrowExactly<InvalidOperationException>();
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestConsumerFactory))).Returns(new TestConsumerFactory());
 
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestDeserializerFactory))).Throws<InvalidOperationException>();
-      sut.Should().ThrowExactly<InvalidOperationException>();
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(TestDeserializerFactory))).Returns(new TestDeserializerFactory());
-
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Throws<InvalidOperationException>();
       sut.Should().ThrowExactly<InvalidOperationException>();
       serviceProviderMock.Setup(provider => provider.GetService(typeof(TestHeaderValueCodec))).Returns(new TestHeaderValueCodec());
-
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Throws<InvalidOperationException>();
-      sut.Should().ThrowExactly<InvalidOperationException>();
-      serviceProviderMock.Setup(provider => provider.GetService(typeof(ILoggerFactory))).Returns(Mock.Of<ILoggerFactory>());
     }
 
     [Fact]
@@ -186,14 +173,24 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("queueNamePatterns"));
     }
 
-    /*
     [Fact]
-    public void when_start_consume_messages_it_should_consume_messages()
+    public async Task when_start_consume_messages_it_should_consume_messages()
     {
       var consumerRegistryMock = new Mock<IConsumerRegistry>();
       var apiConsumerMock = new Mock<IApiConsumer<int, byte[]>>();
+      var headers = new Headers {{"header1", new byte[0]}};
       apiConsumerMock
-        .Setup(consumer => consumer.Start(result => Task.CompletedTask, It.IsAny<CancellationToken>()))
+        .Setup(consumer => consumer.Start(It.IsAny<Func<ConsumeResult<int, byte[]>, Task>>(), It.IsAny<CancellationToken>()))
+        .Callback(
+          (Func<ConsumeResult<int, byte[]>, Task> onMessageReceivedFunc, CancellationToken cancellationToken) =>
+          {
+            onMessageReceivedFunc(
+              new ConsumeResult<int, byte[]>
+              {
+                Topic = "topic1",
+                Message = new Message<int, byte[]> {Headers = headers, Key = 555, Timestamp = Timestamp.Default, Value = new byte[0]}
+              });
+          })
         .Returns(() => Task.CompletedTask);
       consumerRegistryMock
         .Setup(registry => registry.Get<int, byte[]>(It.IsAny<IIngressApi>()))
@@ -201,8 +198,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
 
       var sut = new BrokerIngressKafkaDriver(MakeDriverConfiguration(), consumerRegistryMock.Object);
 
+      var consumed = 0;
       var ingressMock = new Mock<IBrokerIngress>();
-      var consumedMessages = 0;
       ingressMock
         .Setup(
           ingress => ingress.RouteIngressMessage(
@@ -211,7 +208,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
             It.IsAny<int>(),
             It.IsAny<byte[]>(),
             It.IsAny<IReadOnlyDictionary<string, string>>()))
-        .Callback(() => consumedMessages++);
+        .Callback(() => consumed++);
       sut.Initialize(
         ingressMock.Object,
         new[] {MakeApi<int, byte[]>()},
@@ -219,10 +216,8 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
 
       await sut.StartConsumeMessages(new[] {"topic1"}, CancellationToken.None);
 
-      consumedMessages.Should().Be(1);
+      consumed.Should().Be(expected: 1, "a message should be consumed");
     }
-    */
-
 
     [Fact]
     public void when_dispose_it_should_dispose_consumer_registry()
@@ -289,13 +284,9 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         builder;
     }
 
-    private class TestConsumerFactory : IConsumerFactory
+    private class TestConsumerFactory : IApiConsumerFactory
     {
-      public IConsumer<TKey, TValue> Create<TKey, TValue>(
-        ConsumerConfig config,
-        IConsumerConfigurator configurator,
-        IDeserializerFactory deserializerFactory) =>
-        Mock.Of<IConsumer<TKey, TValue>>();
+      public IApiConsumer<TKey, TValue> Create<TKey, TValue>(ConsumerConfig config, IIngressApi api) => null;
     }
   }
 }

@@ -1,8 +1,10 @@
 #region Usings
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Ingress;
+using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using Xunit;
 
@@ -21,6 +23,16 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       var expected = new ConsumerConfig();
       sut.WithConsumerConfig(expected).Should().BeSameAs(sut);
       configuration.ConsumerConfig.Should().BeSameAs(expected);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+    public void when_null_set_as_consumer_configuration_it_should_fail()
+    {
+      var configuration = new BrokerIngressKafkaDriverConfiguration();
+      var configurator = new BrokerIngressKafkaDriverConfigurator(configuration);
+      Action sut = () => configurator.WithConsumerConfig(consumerConfig: null);
+      sut.Should().ThrowExactly<ArgumentNullException>();
     }
 
     [Fact]
@@ -80,13 +92,9 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       public IDeserializer<TData> Create<TData>() => null;
     }
 
-    private class StabConsumerFactory : IConsumerFactory
+    private class StabConsumerFactory : IApiConsumerFactory
     {
-      public IConsumer<TKey, TValue> Create<TKey, TValue>(
-        ConsumerConfig config,
-        IConsumerConfigurator configurator,
-        IDeserializerFactory deserializerFactory) =>
-        null;
+      public IApiConsumer<TKey, TValue> Create<TKey, TValue>(ConsumerConfig config, IIngressApi api) => null;
     }
   }
 }

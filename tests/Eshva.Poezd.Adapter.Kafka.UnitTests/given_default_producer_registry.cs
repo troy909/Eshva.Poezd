@@ -1,7 +1,7 @@
 #region Usings
 
 using System;
-using Confluent.Kafka;
+using System.Diagnostics.CodeAnalysis;
 using Eshva.Poezd.Adapter.Kafka.Egress;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
@@ -31,6 +31,24 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+    public void when_add_producer_for_not_specified_api_it_should_fail()
+    {
+      var registry = new DefaultProducerRegistry();
+      Action sut = () => registry.Add(api: null, Mock.Of<IApiProducer>());
+      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("api"));
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+    public void when_add_null_as_producer_it_should_fail()
+    {
+      var registry = new DefaultProducerRegistry();
+      Action sut = () => registry.Add(Mock.Of<IEgressApi>(), producer: null);
+      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("producer"));
+    }
+
+    [Fact]
     public void when_get_not_registered_producer_it_should_fail()
     {
       var registry = new DefaultProducerRegistry();
@@ -47,6 +65,15 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
       Action sut = () => registry.Get(Mock.Of<IEgressApi>());
       sut.Should().ThrowExactly<ArgumentException>()
         .Where(exception => exception.Message.Contains("There is no registered producers for API with ID"), "should fail");
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+    public void when_get_producer_for_null_as_api_it_should_fail()
+    {
+      var registry = new DefaultProducerRegistry();
+      Action sut = () => registry.Get(api: null);
+      sut.Should().ThrowExactly<ArgumentNullException>();
     }
 
     [Fact]

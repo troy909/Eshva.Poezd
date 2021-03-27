@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 namespace Eshva.Poezd.Adapter.Kafka.Egress
 {
   /// <summary>
-  /// Egress API producer factory.
+  /// Contract of egress API producer factory.
   /// </summary>
   public interface IApiProducerFactory
   {

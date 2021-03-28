@@ -15,6 +15,18 @@ namespace Eshva.Poezd.Adapter.SimpleInjector
   /// </summary>
   public sealed class SimpleInjectorAdapter : IDiContainerAdapter
   {
+    /// <summary>
+    /// Creates a new instance of Simple Injector DI-container adapter.
+    /// </summary>
+    /// <param name="container">
+    /// The wrapped Simple Injector container.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// The container is not specified.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Container contains scoped registrations but the default scope lifestyle is not configured.
+    /// </exception>
     public SimpleInjectorAdapter([NotNull] Container container)
     {
       _container = container ?? throw new ArgumentNullException(nameof(container));

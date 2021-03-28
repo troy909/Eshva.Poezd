@@ -12,6 +12,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// Contract of an egress API.
   /// </summary>
+  [PublicAPI]
   public interface IEgressApi
   {
     /// <summary>
@@ -34,7 +35,7 @@ namespace Eshva.Poezd.Core.Routing
     /// message to. This type used to select proper serializer for the message key.
     /// </remarks>
     [NotNull]
-    Type MessageKeyType => Configuration.MessageKeyType;
+    Type MessageKeyType { get; }
 
     /// <summary>
     /// Gets the type of message payload.
@@ -43,7 +44,7 @@ namespace Eshva.Poezd.Core.Routing
     /// This type used to select proper serializer for the message payload.
     /// </remarks>
     [NotNull]
-    Type MessagePayloadType => Configuration.MessagePayloadType;
+    Type MessagePayloadType { get; }
 
     /// <summary>
     /// Gets the egress pipe fitter that sets up the pipeline used to prepare published messages.

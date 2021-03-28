@@ -37,9 +37,10 @@ namespace Eshva.Poezd.Core.Routing
       [NotNull] BrokerEgressConfiguration configuration,
       [NotNull] IDiContainerAdapter serviceProvider)
     {
-      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
       _brokerId = brokerId;
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+      _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
       Apis = configuration.Apis.Select(api => new EgressApi(api, serviceProvider)).Cast<IEgressApi>().ToList().AsReadOnly();
       EnterPipeFitter = GetEnterPipeFitter(serviceProvider);
@@ -62,11 +63,10 @@ namespace Eshva.Poezd.Core.Routing
     public ReadOnlyCollection<IEgressApi> Apis { get; }
 
     /// <inheritdoc />
-    public void Initialize() =>
-      Driver.Initialize(
-        _brokerId,
-        Apis,
-        _serviceProvider);
+    public void Initialize() => Driver.Initialize(
+      _brokerId,
+      Apis,
+      _serviceProvider);
 
     /// <inheritdoc />
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) =>
@@ -79,7 +79,7 @@ namespace Eshva.Poezd.Core.Routing
       serviceProvider.GetService<IPipeFitter>(
         Configuration.EnterPipeFitterType,
         exception => new PoezdConfigurationException(
-          $"Can not get instance of the message broker egress enter pipe fitter of type '{Configuration.EnterPipeFitterType}'. " +
+          $"Can not get instance of the message broker egress enter pipe fitter of type '{Configuration.EnterPipeFitterType.FullName}'. " +
           "You should register this type in DI-container.",
           exception));
 
@@ -87,7 +87,7 @@ namespace Eshva.Poezd.Core.Routing
       serviceProvider.GetService<IPipeFitter>(
         Configuration.ExitPipeFitterType,
         exception => new PoezdConfigurationException(
-          $"Can not get instance of the message broker egress exit pipe fitter of type '{Configuration.ExitPipeFitterType}'. " +
+          $"Can not get instance of the message broker egress exit pipe fitter of type '{Configuration.ExitPipeFitterType.FullName}'. " +
           "You should register this type in DI-container.",
           exception));
 

@@ -1,15 +1,13 @@
 #region Usings
 
-#endregion
-
-#region Usings
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
 namespace Eshva.Poezd.Core.Common
 {
+  [ExcludeFromCodeCoverage]
   public sealed class PoezdConfigurationException : PoezdException
   {
     /// <summary>

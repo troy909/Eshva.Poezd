@@ -13,6 +13,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// Contract of an ingress API.
   /// </summary>
+  [PublicAPI]
   public interface IIngressApi
   {
     /// <summary>

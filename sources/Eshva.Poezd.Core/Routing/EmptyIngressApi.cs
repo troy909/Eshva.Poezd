@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
@@ -13,6 +14,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// An empty ingress API.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   internal sealed class EmptyIngressApi : IIngressApi
   {
     /// <inheritdoc />

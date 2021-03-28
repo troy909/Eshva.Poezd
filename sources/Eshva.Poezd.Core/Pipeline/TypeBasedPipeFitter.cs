@@ -33,7 +33,11 @@ namespace Eshva.Poezd.Core.Pipeline
     {
       foreach (var stepType in GetStepTypes())
       {
-        pipeline.Append((IStep<TContext>) _serviceProvider.GetService(stepType, MakeException));
+        pipeline.Append(
+          _serviceProvider.GetService<IStep<TContext>>(
+            stepType,
+            _ => new PoezdConfigurationException(
+              $"Can not find a step of type '{stepType.FullName}'. You should register this step type in your DI-container.")));
       }
     }
 
@@ -45,10 +49,6 @@ namespace Eshva.Poezd.Core.Pipeline
     /// </returns>
     [NotNull]
     protected abstract IEnumerable<Type> GetStepTypes();
-
-    private static Exception MakeException(Type stepType) =>
-      new PoezdConfigurationException(
-        $"Can not find a step of type '{stepType.FullName}'. You should register this step type in your DI-container.");
 
     private readonly IDiContainerAdapter _serviceProvider;
   }

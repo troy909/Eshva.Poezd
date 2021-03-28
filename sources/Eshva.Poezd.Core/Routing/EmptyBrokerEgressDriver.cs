@@ -1,6 +1,7 @@
 #region Usings
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
@@ -13,11 +14,9 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// An empty broker egress driver.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   internal sealed class EmptyBrokerEgressDriver : IBrokerEgressDriver
   {
-    /// <inheritdoc />
-    public void Dispose() { }
-
     /// <inheritdoc />
     public void Initialize(
       string brokerId,
@@ -26,5 +25,8 @@ namespace Eshva.Poezd.Core.Routing
 
     /// <inheritdoc />
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) => Task.CompletedTask;
+
+    /// <inheritdoc />
+    public void Dispose() { }
   }
 }

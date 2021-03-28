@@ -25,7 +25,7 @@ namespace Eshva.Poezd.Core.Pipeline
       if (GetStepOfType(stepType) != null)
         throw new ArgumentException($"A step with type {stepType.FullName} already present in the pipeline.", nameof(step));
 
-      _steps.AddLast(step ?? throw new ArgumentNullException(nameof(step)));
+      _steps.AddLast(step);
 
       return this;
     }
@@ -60,7 +60,6 @@ namespace Eshva.Poezd.Core.Pipeline
     }
 
     private IStep<TContext> GetStepOfType(Type stepType) => _steps.FirstOrDefault(step => step.GetType() == stepType);
-
     private readonly LinkedList<IStep<TContext>> _steps = new();
   }
 }

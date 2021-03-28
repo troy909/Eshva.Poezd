@@ -1,5 +1,7 @@
 #region Usings
 
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Eshva.Poezd.Core.Configuration;
 using FluentAssertions;
 using Xunit;
@@ -22,6 +24,15 @@ namespace Eshva.Poezd.Core.UnitTests
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
       new MessageRouterConfiguration().Validate().Should().HaveCount(expected: 1);
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+    public void when_add_null_as_broker_it_should_fail()
+    {
+      var configuration = ConfigurationTests.CreateMessageRouterConfiguration();
+      Action sut = () => configuration.AddBroker(configuration: null);
+      sut.Should().ThrowExactly<ArgumentNullException>();
     }
   }
 }

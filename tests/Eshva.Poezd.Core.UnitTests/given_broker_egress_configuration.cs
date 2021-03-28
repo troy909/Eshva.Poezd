@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
@@ -56,7 +57,7 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var configuration = new BrokerEgressConfiguration();
       var api = new EgressApiConfiguration();
-      Action sut = () => { configuration.AddApi(api); };
+      Action sut = () => configuration.AddApi(api);
       sut.Should().NotThrow();
       sut.Should().ThrowExactly<PoezdConfigurationException>();
     }
@@ -68,12 +69,21 @@ namespace Eshva.Poezd.Core.UnitTests
 
       const string sameId = "same id";
       var api1 = new EgressApiConfiguration {Id = sameId};
-      Action sut1 = () => { configuration.AddApi(api1); };
+      Action sut1 = () => configuration.AddApi(api1);
       sut1.Should().NotThrow();
 
       var api2 = new EgressApiConfiguration {Id = sameId};
-      Action sut2 = () => { configuration.AddApi(api2); };
+      Action sut2 = () => configuration.AddApi(api2);
       sut2.Should().ThrowExactly<PoezdConfigurationException>();
+    }
+
+    [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+    public void when_add_null_as_api_it_should_fail()
+    {
+      var configuration = new BrokerEgressConfiguration();
+      Action sut = () => configuration.AddApi(configuration: null);
+      sut.Should().ThrowExactly<ArgumentNullException>();
     }
 
     [Fact]

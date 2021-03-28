@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -10,6 +11,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// An empty egress message types registry.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   internal sealed class EmptyEgressApiMessageTypesRegistry : IEgressApiMessageTypesRegistry
   {
     /// <inheritdoc />

@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Xunit;
 
@@ -19,6 +20,7 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
+    [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
       ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.Id = null)

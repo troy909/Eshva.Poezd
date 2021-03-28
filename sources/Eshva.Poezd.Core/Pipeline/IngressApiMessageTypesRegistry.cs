@@ -2,8 +2,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Eshva.Poezd.Core.Common;
-using JetBrains.Annotations;
 
 #endregion
 
@@ -12,6 +12,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// The base of an ingress message types registry.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   public abstract class IngressApiMessageTypesRegistry : IIngressApiMessageTypesRegistry
   {
     /// <inheritdoc />
@@ -63,9 +64,9 @@ namespace Eshva.Poezd.Core.Pipeline
     /// One of arguments is not specified.
     /// </exception>
     protected void AddDescriptor(
-      [NotNull] string messageTypeName,
-      [NotNull] Type messageType,
-      [NotNull] object descriptor)
+      [JetBrains.Annotations.NotNull] string messageTypeName,
+      [JetBrains.Annotations.NotNull] Type messageType,
+      [JetBrains.Annotations.NotNull] object descriptor)
     {
       if (string.IsNullOrWhiteSpace(messageTypeName)) throw new ArgumentNullException(nameof(messageTypeName));
       if (messageType == null) throw new ArgumentNullException(nameof(messageType));

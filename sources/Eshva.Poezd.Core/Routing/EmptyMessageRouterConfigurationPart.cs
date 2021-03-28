@@ -1,6 +1,7 @@
 #region Usings
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Eshva.Poezd.Core.Configuration;
 
@@ -11,6 +12,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// An empty message router configuration part.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   internal sealed class EmptyMessageRouterConfigurationPart : IMessageRouterConfigurationPart
   {
     /// <inheritdoc />

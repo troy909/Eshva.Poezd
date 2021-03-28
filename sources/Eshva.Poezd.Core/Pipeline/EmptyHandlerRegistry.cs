@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -10,6 +11,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// An empty handler registry.
   /// </summary>
+  [ExcludeFromCodeCoverage]
   internal class EmptyHandlerRegistry : IHandlerRegistry
   {
     /// <summary>

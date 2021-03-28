@@ -34,7 +34,7 @@ namespace Eshva.Poezd.Core.Common
     /// The service of <paramref name="serviceType" /> is not registered in the DI-container.
     /// </exception>
     [NotNull]
-    public static TResult GetService<TResult>([NotNull] this IDiContainerAdapter serviceProvider, Type serviceType) =>
+    public static TResult GetService<TResult>(this IDiContainerAdapter serviceProvider, [NotNull] Type serviceType) =>
       (TResult) serviceProvider.GetService(serviceType ?? throw new ArgumentNullException(nameof(serviceProvider)));
 
     /// <summary>

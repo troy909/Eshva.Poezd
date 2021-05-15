@@ -35,9 +35,18 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public BrokerEgressConfiguration Egress
     {
-      get => _egress;
+      get
+      {
+        if (HasNoEgress) throw new InvalidOperationException("This broker doesn't handle egress messages.");
+        return _egress;
+      }
       internal set => _egress = value ?? throw new ArgumentNullException(nameof(value));
     }
+
+    /// <summary>
+    /// Gets indicator that this broker doesn't handle egress messages.
+    /// </summary>
+    public bool HasNoEgress { get; internal set; }
 
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()

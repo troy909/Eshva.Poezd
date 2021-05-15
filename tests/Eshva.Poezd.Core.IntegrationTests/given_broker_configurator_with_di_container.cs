@@ -2,7 +2,9 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Eshva.Poezd.Adapter.SimpleInjector;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.IntegrationTests.Tools;
 using Eshva.Poezd.Core.Routing;
@@ -76,7 +78,7 @@ namespace Eshva.Poezd.Core.IntegrationTests
     }
 
     [Fact]
-    public void when_configure_only_ingress_it_should_configure_router_expected_way_using_services_from_container()
+    public void when_configure_without_egress_it_should_configure_router_expected_way_using_services_from_container()
     {
       var (routerConfiguration, router) = CreateRouterWithoutEgress();
 
@@ -90,6 +92,14 @@ namespace Eshva.Poezd.Core.IntegrationTests
       };
 
       egressGetter.Should().ThrowExactly<InvalidOperationException>("egress должен быть недоступен");
+    }
+
+    [Fact]
+    public void when_configure_without_any_egress_and_publish_message_it_should_fail()
+    {
+      var (_, router) = CreateRouterWithoutEgress();
+      Func<Task> sut = () => router.RouteEgressMessage(new object());
+      sut.Should().ThrowExactly<PoezdOperationException>().Which.Message.Should().Contain(typeof(object).FullName);
     }
 
     private static (MessageRouterConfiguration, IMessageRouter) CreateRouterWithoutEgress()

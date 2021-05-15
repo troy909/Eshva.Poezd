@@ -19,6 +19,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// A list of message brokers connected to the router.
     /// </summary>
+    // TODO: Should I remove this property? It's useless for client code.
     [NotNull]
     IReadOnlyCollection<IMessageBroker> Brokers { get; }
 

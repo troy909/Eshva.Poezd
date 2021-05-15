@@ -131,7 +131,9 @@ namespace Eshva.Poezd.Core.Routing
       string messageId = default)
       where TMessage : class
     {
-      var apis = _brokers.SelectMany(broker => broker.Egress.Apis).Where(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
+      var apis = _brokers.SelectMany(broker => broker.Egress.Apis).Where(api => api.MessageTypesRegistry.DoesOwn<TMessage>()).ToArray();
+      if (!apis.Any()) throw new PoezdOperationException($"Unable to find destinations for message of type {message.GetType().FullName}.");
+
       var tasks = apis.Select(
         async api =>
         {
@@ -152,7 +154,7 @@ namespace Eshva.Poezd.Core.Routing
             await pipeline.Execute(context);
             // TODO: Add timeout configuration using router configuration fluent interface.
             var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-            await PublishMessageWithDriver(context, timeout);
+            await context.Broker.Publish(context, timeout);
           }
           catch (Exception exception)
           {
@@ -207,11 +209,6 @@ namespace Eshva.Poezd.Core.Routing
             return broker;
           }));
     }
-
-    private static Task PublishMessageWithDriver(
-      MessagePublishingContext context,
-      CancellationToken cancellationToken) =>
-      context.Broker.Publish(context, cancellationToken);
 
     private static Pipeline<MessageHandlingContext> BuildIngressPipeline(IMessageBroker messageBroker, IIngressApi api)
     {

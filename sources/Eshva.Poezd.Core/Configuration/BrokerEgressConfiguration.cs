@@ -49,11 +49,6 @@ namespace Eshva.Poezd.Core.Configuration
     public IMessageRouterConfigurationPart DriverConfiguration { get; internal set; }
 
     /// <summary>
-    /// Gets an empty egress object.
-    /// </summary>
-    public static BrokerEgressConfiguration Empty { get; } = CreateValidEmpty();
-
-    /// <summary>
     /// Adds an egress API configuration.
     /// </summary>
     /// <param name="configuration">
@@ -75,6 +70,7 @@ namespace Eshva.Poezd.Core.Configuration
           $"You try to add an egress API {configuration.Id} which already present in the list of APIs. It's not allowed.");
       }
 
+      // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
       if (_apis.Any(api => api.Id.Equals(configuration.Id, StringComparison.InvariantCulture)))
       {
         throw new PoezdConfigurationException(
@@ -100,19 +96,6 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() =>
       _apis.AsReadOnly().Append(DriverConfiguration);
-
-    private static BrokerEgressConfiguration CreateValidEmpty()
-    {
-      var configuration = new BrokerEgressConfiguration
-      {
-        Driver = new EmptyBrokerEgressDriver(),
-        DriverConfiguration = new EmptyMessageRouterConfigurationPart(),
-        EnterPipeFitterType = typeof(EmptyPipeFitter),
-        ExitPipeFitterType = typeof(EmptyPipeFitter)
-      };
-      configuration.AddApi(EgressApiConfiguration.Empty);
-      return configuration;
-    }
 
     private readonly List<EgressApiConfiguration> _apis = new();
   }

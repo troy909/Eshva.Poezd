@@ -84,7 +84,7 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var state = new TestDriverState();
       const string brokerName = "broker-1";
-      const string queueName = "queue-1";
+      const string queueName = "sample.facts.service-2.v1";
       await using var container = RoutingTests.SetupContainer(_testOutputHelper).AddRouterWithThrowingHandler(state, brokerName);
       var messageRouter = container.GetMessageRouter();
       await messageRouter.Start();
@@ -109,7 +109,7 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var state = new TestDriverState();
       const string brokerName = "broker-1";
-      const string queueName = "queue-1";
+      const string queueName = "sample.facts.service-2.v1";
       await using var container = RoutingTests.SetupContainer(_testOutputHelper).AddRouterWithBreakHandlingStep(state, brokerName);
       var messageRouter = container.GetMessageRouter();
       await messageRouter.Start();

@@ -17,8 +17,8 @@ namespace Eshva.Poezd.Core.UnitTests
       var sut = new MessageBrokerConfiguration
       {
         Id = "id",
-        Ingress = BrokerIngressConfiguration.Empty,
-        Egress = BrokerEgressConfiguration.Empty
+        Ingress = CreateBrokerIngressConfiguration(),
+        Egress = CreateBrokerEgressConfiguration()
       };
 
       return sut;
@@ -37,7 +37,7 @@ namespace Eshva.Poezd.Core.UnitTests
       var configuration = new BrokerIngressConfiguration
       {
         Driver = Mock.Of<IBrokerIngressDriver>(),
-        DriverConfiguration = new EmptyMessageRouterConfigurationPart(),
+        DriverConfiguration = CreateDriverConfiguration(),
         EnterPipeFitterType = someType,
         ExitPipeFitterType = someType,
         QueueNameMatcherType = someType
@@ -116,5 +116,7 @@ namespace Eshva.Poezd.Core.UnitTests
       updater(configuration);
       return configuration;
     }
+
+    private static IMessageRouterConfigurationPart CreateDriverConfiguration() => Mock.Of<IMessageRouterConfigurationPart>();
   }
 }

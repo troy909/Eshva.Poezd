@@ -147,7 +147,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .AddApi(
                       api => api
                         .WithId("api-1-ingress")
-                        .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
+                        .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()
@@ -190,7 +190,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                     .AddApi(
                       api => api
                         .WithId("api-1-ingress")
-                        .WithQueueNamePatternsProvider<ProvidingNothingQueueNamePatternsProvider>()
+                        .WithQueueNamePatternsProvider<Service1QueueNamePatternsProvider>()
                         .WithPipeFitter<EmptyPipeFitter>()
                         .WithMessageKey<int>()
                         .WithMessagePayload<byte[]>()

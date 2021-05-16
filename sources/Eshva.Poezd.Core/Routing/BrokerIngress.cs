@@ -86,9 +86,9 @@ namespace Eshva.Poezd.Core.Routing
     {
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
       // TODO: Enforce single or default in API configuration.
-      var ingressApi = Apis.FirstOrDefault(
+      var ingressApi = Apis.First(
         api => api.GetQueueNamePatterns().Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
-      return ingressApi ?? IngressApi.Empty;
+      return ingressApi;
     }
 
     /// <inheritdoc />

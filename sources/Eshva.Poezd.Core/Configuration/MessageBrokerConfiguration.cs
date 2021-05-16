@@ -76,7 +76,7 @@ namespace Eshva.Poezd.Core.Configuration
       if (!HasNoEgress) yield return Egress;
     }
 
-    private BrokerEgressConfiguration _egress = BrokerEgressConfiguration.Empty;
-    private BrokerIngressConfiguration _ingress = BrokerIngressConfiguration.Empty;
+    private BrokerEgressConfiguration _egress;
+    private BrokerIngressConfiguration _ingress;
   }
 }

@@ -95,7 +95,7 @@ namespace Eshva.Poezd.Core.Configuration
     }
 
     /// <summary>
-    /// Configures broker with no egress message handling/
+    /// Configures broker with no egress message handling.
     /// </summary>
     /// <returns>
     /// This configurator.
@@ -104,6 +104,19 @@ namespace Eshva.Poezd.Core.Configuration
     {
       _configuration.Egress = new BrokerEgressConfiguration();
       _configuration.HasNoEgress = true;
+      return this;
+    }
+
+    /// <summary>
+    /// Configures broker with no ingress message handling.
+    /// </summary>
+    /// <returns>
+    /// This configurator.
+    /// </returns>
+    public MessageBrokerConfigurator WithoutIngress()
+    {
+      _configuration.Ingress = new BrokerIngressConfiguration();
+      _configuration.HasNoIngress = true;
       return this;
     }
 

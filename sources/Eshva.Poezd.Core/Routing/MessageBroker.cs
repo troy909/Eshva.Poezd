@@ -40,15 +40,21 @@ namespace Eshva.Poezd.Core.Routing
       _messageRouter = messageRouter ?? throw new ArgumentNullException(nameof(messageRouter));
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-      Ingress = new BrokerIngress(
-        this,
-        configuration.Ingress,
-        serviceProvider);
-      Egress = new BrokerEgress(
-        // TODO: Pass broker itself like for ingress.
-        configuration.Id,
-        configuration.Egress,
-        serviceProvider);
+
+      Ingress = !Configuration.HasNoIngress
+        ? new BrokerIngress(
+          this,
+          configuration.Ingress,
+          serviceProvider)
+        : new NonFunctionalBrokerIngress();
+      Egress = !Configuration.HasNoEgress
+        ? new BrokerEgress(
+          // TODO: Pass broker itself like for ingress.
+          configuration.Id,
+          configuration.Egress,
+          serviceProvider)
+        : new NonFunctionalBrokerEgress();
+      ;
     }
 
     /// <inheritdoc />
@@ -77,8 +83,8 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public void Initialize()
     {
-      Ingress.Initialize();
-      Egress.Initialize();
+      if (!Configuration.HasNoIngress) Ingress.Initialize();
+      if (!Configuration.HasNoEgress) Egress.Initialize();
     }
 
     /// <inheritdoc />

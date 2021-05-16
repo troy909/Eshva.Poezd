@@ -17,13 +17,6 @@ namespace Eshva.Poezd.Core.Routing
   public interface IMessageRouter : IDisposable
   {
     /// <summary>
-    /// A list of message brokers connected to the router.
-    /// </summary>
-    // TODO: Should I remove this property? It's useless for client code.
-    [NotNull]
-    IReadOnlyCollection<IMessageBroker> Brokers { get; }
-
-    /// <summary>
     /// Starts message routing.
     /// </summary>
     /// <param name="cancellationToken">

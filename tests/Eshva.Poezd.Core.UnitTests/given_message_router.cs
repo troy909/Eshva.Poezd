@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Common;
@@ -21,28 +20,6 @@ namespace Eshva.Poezd.Core.UnitTests
     public given_message_router(ITestOutputHelper testOutputHelper)
     {
       _testOutputHelper = testOutputHelper;
-    }
-
-    [Fact]
-    public async Task when_started_it_should_list_all_brokers()
-    {
-      var broker1Name = RoutingTests.RandomString();
-      var broker2Name = RoutingTests.RandomString();
-      var broker3Name = RoutingTests.RandomString();
-      var state = new TestDriverState();
-      await using var container = RoutingTests
-        .SetupContainer(_testOutputHelper)
-        .AddRouterWithThreeBrokers(
-          broker1Name,
-          broker2Name,
-          broker3Name,
-          state);
-      var messageRouter = container.GetMessageRouter();
-      await messageRouter.Start();
-
-      messageRouter.Brokers.Select(broker => broker.Id).Should().BeEquivalentTo(
-        new[] {broker1Name, broker2Name, broker3Name},
-        "all declared brokers should be listed");
     }
 
     [Fact]

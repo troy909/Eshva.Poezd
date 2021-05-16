@@ -41,9 +41,6 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public IReadOnlyCollection<IMessageBroker> Brokers => _brokers.AsReadOnly();
-
-    /// <inheritdoc />
     public async Task Start(CancellationToken cancellationToken = default)
     {
       if (_isDisposed) throw new PoezdOperationException("It's not possible to start a disposed message router");
@@ -55,7 +52,7 @@ namespace Eshva.Poezd.Core.Routing
       {
         InitializeMessageBrokers();
 
-        var starters = Brokers
+        var starters = _brokers
           .Where(broker => !broker.Configuration.HasNoIngress)
           .Select(
             broker => broker.StartConsumeMessages(

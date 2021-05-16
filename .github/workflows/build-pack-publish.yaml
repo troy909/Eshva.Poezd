@@ -9,17 +9,26 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
+    - name: Output Run ID
+      run: echo ${{ github.run_id }}
+    - name: Output Run Number
+      run: echo ${{ github.run_number }}
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup .NET 3.1
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
+    - name: Setup .NET 2.2
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.x
     - name: Restore dependencies
-      run: dotnet restore ./Eshva.Poezd.sln
-    - name: Build
-      run: dotnet build --no-restore ./Eshva.Poezd.sln
-    - name: Test
-      run: dotnet test --no-build --verbosity normal --nologo --filter "FullyQualifiedName~UnitTests" ./Eshva.Poezd.sln
+      run: dotnet restore Eshva.Poezd.sln
+    - name: Build all projects
+      run: dotnet build --no-restore Eshva.Poezd.sln
+    - name: Run unit tests
+      run: dotnet test --no-build --verbosity normal --nologo --filter "FullyQualifiedName~UnitTests" Eshva.Poezd.sln

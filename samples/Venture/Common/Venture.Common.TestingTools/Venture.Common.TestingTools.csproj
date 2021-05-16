@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.6.2" />
+    <PackageReference Include="Confluent.Kafka" Version="1.6.3" />
     <PackageReference Include="DotNet.Testcontainers" Version="1.5.0-beta.20210306.6" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
   </ItemGroup>

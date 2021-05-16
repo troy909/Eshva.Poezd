@@ -260,7 +260,7 @@ namespace Eshva.Poezd.Core.Routing
       throw new PoezdConfigurationException(message.ToString());
     }
 
-    private readonly List<IMessageBroker> _brokers = new();
+    private readonly List<IMessageBroker> _brokers = new List<IMessageBroker>();
     private readonly MessageRouterConfiguration _configuration;
     private readonly IDiContainerAdapter _diContainerAdapter;
 

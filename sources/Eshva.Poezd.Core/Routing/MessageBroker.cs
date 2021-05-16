@@ -42,19 +42,18 @@ namespace Eshva.Poezd.Core.Routing
       if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
 
       Ingress = !Configuration.HasNoIngress
-        ? new BrokerIngress(
+        ? (IBrokerIngress) new BrokerIngress(
           this,
           configuration.Ingress,
           serviceProvider)
         : new NonFunctionalBrokerIngress();
       Egress = !Configuration.HasNoEgress
-        ? new BrokerEgress(
+        ? (IBrokerEgress) new BrokerEgress(
           // TODO: Pass broker itself like for ingress.
           configuration.Id,
           configuration.Egress,
           serviceProvider)
         : new NonFunctionalBrokerEgress();
-      ;
     }
 
     /// <inheritdoc />

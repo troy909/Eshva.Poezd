@@ -29,6 +29,6 @@ namespace Eshva.Poezd.Core.Routing
       return regex.IsMatch(queueName);
     }
 
-    private readonly ConcurrentDictionary<string, Regex> _knownRegex = new();
+    private readonly ConcurrentDictionary<string, Regex> _knownRegex = new ConcurrentDictionary<string, Regex>();
   }
 }

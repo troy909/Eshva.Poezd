@@ -97,6 +97,6 @@ namespace Eshva.Poezd.Core.Configuration
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() =>
       _apis.AsReadOnly().Append(DriverConfiguration);
 
-    private readonly List<EgressApiConfiguration> _apis = new();
+    private readonly List<EgressApiConfiguration> _apis = new List<EgressApiConfiguration>();
   }
 }

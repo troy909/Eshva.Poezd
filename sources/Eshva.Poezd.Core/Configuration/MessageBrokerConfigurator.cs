@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
 
 #endregion
@@ -62,13 +63,37 @@ namespace Eshva.Poezd.Core.Configuration
     /// <exception cref="ArgumentNullException">
     /// The the message broker ingress configurator is not specified.
     /// </exception>
+    /// <exception cref="PoezdConfigurationException">
+    /// Ingress() and WithoutIngress() called for the same broker.
+    /// </exception>
     [NotNull]
     public MessageBrokerConfigurator Ingress([NotNull] Action<BrokerIngressConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
+      EnsureIngressIsNotConfiguredYet();
 
       _configuration.Ingress = new BrokerIngressConfiguration();
       configurator(new BrokerIngressConfigurator(_configuration.Ingress));
+      _isIngressConfiguredAlready = true;
+      return this;
+    }
+
+    /// <summary>
+    /// Configures broker with no ingress message handling.
+    /// </summary>
+    /// <returns>
+    /// This configurator.
+    /// </returns>
+    /// <exception cref="PoezdConfigurationException">
+    /// Ingress() and WithoutIngress() called for the same broker.
+    /// </exception>
+    public MessageBrokerConfigurator WithoutIngress()
+    {
+      EnsureIngressIsNotConfiguredYet();
+
+      _configuration.Ingress = new BrokerIngressConfiguration();
+      _configuration.HasNoIngress = true;
+      _isIngressConfiguredAlready = true;
       return this;
     }
 
@@ -84,13 +109,18 @@ namespace Eshva.Poezd.Core.Configuration
     /// <exception cref="ArgumentNullException">
     /// The the message broker egress configurator is not specified.
     /// </exception>
+    /// <exception cref="PoezdConfigurationException">
+    /// Egress() and WithoutEgress() called for the same broker.
+    /// </exception>
     [NotNull]
     public MessageBrokerConfigurator Egress([NotNull] Action<BrokerEgressConfigurator> configurator)
     {
       if (configurator == null) throw new ArgumentNullException(nameof(configurator));
+      EnsureEgressIsNotConfiguredYet();
 
       _configuration.Egress = new BrokerEgressConfiguration();
       configurator(new BrokerEgressConfigurator(_configuration.Egress));
+      _isEgressConfiguredAlready = true;
       return this;
     }
 
@@ -100,26 +130,39 @@ namespace Eshva.Poezd.Core.Configuration
     /// <returns>
     /// This configurator.
     /// </returns>
+    /// <exception cref="PoezdConfigurationException">
+    /// Egress() and WithoutEgress() called for the same broker.
+    /// </exception>
     public MessageBrokerConfigurator WithoutEgress()
     {
+      EnsureEgressIsNotConfiguredYet();
+
       _configuration.Egress = new BrokerEgressConfiguration();
       _configuration.HasNoEgress = true;
+      _isEgressConfiguredAlready = true;
       return this;
     }
 
-    /// <summary>
-    /// Configures broker with no ingress message handling.
-    /// </summary>
-    /// <returns>
-    /// This configurator.
-    /// </returns>
-    public MessageBrokerConfigurator WithoutIngress()
+    private void EnsureIngressIsNotConfiguredYet()
     {
-      _configuration.Ingress = new BrokerIngressConfiguration();
-      _configuration.HasNoIngress = true;
-      return this;
+      if (_isIngressConfiguredAlready)
+      {
+        throw new PoezdConfigurationException(
+          $"It's not allowed to call {nameof(Ingress)}() and {nameof(WithoutIngress)}() for the same broker.");
+      }
+    }
+
+    private void EnsureEgressIsNotConfiguredYet()
+    {
+      if (_isEgressConfiguredAlready)
+      {
+        throw new PoezdConfigurationException(
+          $"It's not allowed to call {nameof(Egress)}() and {nameof(WithoutEgress)}() for the same broker.");
+      }
     }
 
     private readonly MessageBrokerConfiguration _configuration;
+    private bool _isEgressConfiguredAlready;
+    private bool _isIngressConfiguredAlready;
   }
 }

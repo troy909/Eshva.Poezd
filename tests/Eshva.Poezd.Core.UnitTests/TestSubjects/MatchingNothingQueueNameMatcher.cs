@@ -1,10 +1,11 @@
 #region Usings
 
 using System.Diagnostics.CodeAnalysis;
+using Eshva.Poezd.Core.Routing;
 
 #endregion
 
-namespace Eshva.Poezd.Core.Routing
+namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   /// <summary>
   /// Matching nothing queue name matcher.

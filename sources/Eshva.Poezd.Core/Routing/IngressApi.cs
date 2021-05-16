@@ -60,11 +60,6 @@ namespace Eshva.Poezd.Core.Routing
     /// <inheritdoc />
     public Type MessagePayloadType => Configuration.MessagePayloadType;
 
-    /// <summary>
-    /// Gets an empty ingress API.
-    /// </summary>
-    public static IIngressApi Empty { get; } = new EmptyIngressApi();
-
     /// <inheritdoc />
     public IEnumerable<string> GetQueueNamePatterns() => _queueNamePatternsProvider.GetQueueNamePatterns();
 

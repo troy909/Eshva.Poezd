@@ -16,7 +16,7 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
   public interface IApiProducer : IDisposable
   {
     /// <summary>
-    /// Publishes a message from publishing <paramref name="context"/>.
+    /// Publishes a message from publishing <paramref name="context" />.
     /// </summary>
     /// <param name="context">
     /// The publishing context containing message.

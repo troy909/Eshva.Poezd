@@ -68,11 +68,6 @@ namespace Eshva.Poezd.Core.Configuration
     /// </remarks>
     public Type HandlerRegistryType { get; internal set; }
 
-    /// <summary>
-    /// An empty ingress API configuration.
-    /// </summary>
-    public static IngressApiConfiguration Empty { get; } = CreateValidEmpty();
-
     /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
@@ -91,16 +86,5 @@ namespace Eshva.Poezd.Core.Configuration
       if (MessagePayloadType == null)
         yield return $"The message payload type should be set for the API with ID '{Id}'.";
     }
-
-    private static IngressApiConfiguration CreateValidEmpty() => new()
-    {
-      Id = "empty ingress API configuration",
-      HandlerRegistryType = typeof(EmptyHandlerRegistry),
-      MessageTypesRegistryType = typeof(EmptyIngressApiMessageTypesRegistry),
-      PipeFitterType = typeof(EmptyPipeFitter),
-      QueueNamePatternsProviderType = typeof(ProvidingNothingQueueNamePatternsProvider),
-      MessageKeyType = typeof(int),
-      MessagePayloadType = typeof(byte[])
-    };
   }
 }

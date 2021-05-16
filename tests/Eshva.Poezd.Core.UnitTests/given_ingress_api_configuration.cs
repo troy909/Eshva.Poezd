@@ -32,18 +32,6 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
-    public void when_getting_empty_api_configuration_it_should_return_valid_instance()
-    {
-      IngressApiConfiguration.Empty.Validate().Should().BeEmpty("empty instance should be valid");
-    }
-
-    [Fact]
-    public void when_getting_empty_api_configuration_few_times_it_should_return_same_instance()
-    {
-      IngressApiConfiguration.Empty.Should().BeSameAs(IngressApiConfiguration.Empty, "it always should be the same instance");
-    }
-
-    [Fact]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
       ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.QueueNamePatternsProviderType = null)

@@ -22,22 +22,46 @@ namespace Eshva.Poezd.Core.Configuration
     /// <summary>
     /// Gets the message broker ingress.
     /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// Gets ingress but this broker doesn't handle ingress messages.
+    /// </exception>
     [NotNull]
     public BrokerIngressConfiguration Ingress
     {
-      get => _ingress;
+      get
+      {
+        if (HasNoIngress) throw new InvalidOperationException("This broker doesn't handle ingress messages.");
+        return _ingress;
+      }
       internal set => _ingress = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     /// <summary>
     /// Gets the message broker egress.
     /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// Gets ingress but this broker doesn't handle egress messages.
+    /// </exception>
     [NotNull]
     public BrokerEgressConfiguration Egress
     {
-      get => _egress;
+      get
+      {
+        if (HasNoEgress) throw new InvalidOperationException("This broker doesn't handle egress messages.");
+        return _egress;
+      }
       internal set => _egress = value ?? throw new ArgumentNullException(nameof(value));
     }
+
+    /// <summary>
+    /// Gets indicator that this broker doesn't handle ingress messages.
+    /// </summary>
+    public bool HasNoIngress { get; internal set; }
+
+    /// <summary>
+    /// Gets indicator that this broker doesn't handle egress messages.
+    /// </summary>
+    public bool HasNoEgress { get; internal set; }
 
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
@@ -48,14 +72,11 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations()
     {
-      yield return Ingress;
-      yield return Egress;
+      if (!HasNoIngress) yield return Ingress;
+      if (!HasNoEgress) yield return Egress;
     }
 
-    [NotNull]
-    private BrokerEgressConfiguration _egress = BrokerEgressConfiguration.Empty;
-
-    [NotNull]
-    private BrokerIngressConfiguration _ingress = BrokerIngressConfiguration.Empty;
+    private BrokerEgressConfiguration _egress;
+    private BrokerIngressConfiguration _ingress;
   }
 }

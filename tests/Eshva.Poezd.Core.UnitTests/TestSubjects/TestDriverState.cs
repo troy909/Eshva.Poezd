@@ -12,7 +12,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 
     public int MessageConsumingStartedCount { get; set; }
 
-    public List<string> SubscribedQueueNamePatters { get; set; } = new List<string>();
+    public List<string> SubscribedQueueNamePatters { get; } = new List<string>();
 
     public int DisposedCount { get; set; }
 

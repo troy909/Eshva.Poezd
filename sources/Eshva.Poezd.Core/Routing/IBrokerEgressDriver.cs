@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
 
 #endregion
 

@@ -59,7 +59,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.Application.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.Kafka.IntegrationTests", "tests\Eshva.Poezd.Adapter.Kafka.IntegrationTests\Eshva.Poezd.Adapter.Kafka.IntegrationTests.csproj", "{7A7532FC-28EE-4E00-BA6E-65230214054D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Adapter.SimpleInjector.UnitTests", "tests\Eshva.Poezd.Adapter.SimpleInjector.UnitTests\Eshva.Poezd.Adapter.SimpleInjector.UnitTests.csproj", "{D49D761B-B80B-4301-AA37-F3B97A380CF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.SimpleInjector.UnitTests", "tests\Eshva.Poezd.Adapter.SimpleInjector.UnitTests\Eshva.Poezd.Adapter.SimpleInjector.UnitTests.csproj", "{D49D761B-B80B-4301-AA37-F3B97A380CF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Core.IntegrationTests", "tests\Eshva.Poezd.Core.IntegrationTests\Eshva.Poezd.Core.IntegrationTests.csproj", "{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,6 +145,10 @@ Global
 		{D49D761B-B80B-4301-AA37-F3B97A380CF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D49D761B-B80B-4301-AA37-F3B97A380CF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D49D761B-B80B-4301-AA37-F3B97A380CF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -168,6 +174,7 @@ Global
 		{24400E98-D54C-4C25-A853-139C4006F19E} = {DA7B0FDC-3612-4FBB-8C17-D169B54871AE}
 		{7A7532FC-28EE-4E00-BA6E-65230214054D} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 		{D49D761B-B80B-4301-AA37-F3B97A380CF3} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
+		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

@@ -51,11 +51,6 @@ namespace Eshva.Poezd.Core.Configuration
     /// </remarks>
     public Type MessageTypesRegistryType { get; internal set; }
 
-    /// <summary>
-    /// An empty egress API configuration.
-    /// </summary>
-    public static EgressApiConfiguration Empty { get; } = CreateValidEmpty();
-
     /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
@@ -66,12 +61,5 @@ namespace Eshva.Poezd.Core.Configuration
       if (MessageTypesRegistryType == null)
         yield return $"The message registry type should be set for the API with ID '{Id}'.";
     }
-
-    private static EgressApiConfiguration CreateValidEmpty() => new()
-    {
-      Id = "empty egress API configuration",
-      MessageTypesRegistryType = typeof(EmptyEgressApiMessageTypesRegistry),
-      PipeFitterType = typeof(EmptyPipeFitter)
-    };
   }
 }

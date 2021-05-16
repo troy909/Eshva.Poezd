@@ -32,18 +32,6 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
-    public void when_getting_empty_api_configuration_it_should_return_valid_instance()
-    {
-      EgressApiConfiguration.Empty.Validate().Should().BeEmpty("empty instance should be valid");
-    }
-
-    [Fact]
-    public void when_getting_empty_api_configuration_few_times_it_should_return_same_instance()
-    {
-      EgressApiConfiguration.Empty.Should().BeSameAs(EgressApiConfiguration.Empty, "it always should be the same instance");
-    }
-
-    [Fact]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
       ConfigurationTests.CreateEgressApiConfigurationWithout(configuration => configuration.Id = null)

@@ -55,10 +55,12 @@ namespace Eshva.Poezd.Core.Routing
       {
         InitializeMessageBrokers();
 
-        var starters = Brokers.Select(
-          broker => broker.StartConsumeMessages(
-            broker.Ingress.Apis.SelectMany(api => api.GetQueueNamePatterns()),
-            cancellationToken));
+        var starters = Brokers
+          .Where(broker => !broker.Configuration.HasNoIngress)
+          .Select(
+            broker => broker.StartConsumeMessages(
+              broker.Ingress.Apis.SelectMany(api => api.GetQueueNamePatterns()),
+              cancellationToken));
         // TODO: Are exceptions here handled correctly?
         await Task.WhenAll(starters);
       }
@@ -81,7 +83,6 @@ namespace Eshva.Poezd.Core.Routing
       object payload,
       IReadOnlyDictionary<string, string> metadata)
     {
-      // TODO: Message handling shouldn't stop but decision what to do with erroneous message should be carried to some API-related strategy.
       if (_isStopped)
         throw new PoezdOperationException("Further message handling is stopped due an error during handling another message.");
       if (payload == null) throw new ArgumentNullException(nameof(payload));
@@ -91,8 +92,10 @@ namespace Eshva.Poezd.Core.Routing
 
       using (_diContainerAdapter.BeginScope())
       {
-        // TODO: Move getting broker and API into a pipeline step.
         var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
+        if (messageBroker.Configuration.HasNoIngress)
+          throw new PoezdOperationException("Driver shouldn't route ingress messages if no ingress configured.");
+
         var api = messageBroker.Ingress.GetApiByQueueName(queueName);
 
         var messageHandlingContext = new MessageHandlingContext
@@ -115,6 +118,8 @@ namespace Eshva.Poezd.Core.Routing
         }
         catch (Exception exception)
         {
+          // TODO: Message handling shouldn't stop but decision what to do with erroneous message should be carried to
+          // some API-related strategy.
           _isStopped = true;
           throw new PoezdOperationException(
             "An error occurred during ingress message handling. Inspect the inner exceptions for more details.",
@@ -131,7 +136,9 @@ namespace Eshva.Poezd.Core.Routing
       string messageId = default)
       where TMessage : class
     {
-      var apis = _brokers.SelectMany(broker => broker.Egress.Apis).Where(api => api.MessageTypesRegistry.DoesOwn<TMessage>());
+      var apis = _brokers.SelectMany(broker => broker.Egress.Apis).Where(api => api.MessageTypesRegistry.DoesOwn<TMessage>()).ToArray();
+      if (!apis.Any()) throw new PoezdOperationException($"Unable to find destinations for message of type {message.GetType().FullName}.");
+
       var tasks = apis.Select(
         async api =>
         {
@@ -152,7 +159,7 @@ namespace Eshva.Poezd.Core.Routing
             await pipeline.Execute(context);
             // TODO: Add timeout configuration using router configuration fluent interface.
             var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-            await PublishMessageWithDriver(context, timeout);
+            await context.Broker.Publish(context, timeout);
           }
           catch (Exception exception)
           {
@@ -207,11 +214,6 @@ namespace Eshva.Poezd.Core.Routing
             return broker;
           }));
     }
-
-    private static Task PublishMessageWithDriver(
-      MessagePublishingContext context,
-      CancellationToken cancellationToken) =>
-      context.Broker.Publish(context, cancellationToken);
 
     private static Pipeline<MessageHandlingContext> BuildIngressPipeline(IMessageBroker messageBroker, IIngressApi api)
     {

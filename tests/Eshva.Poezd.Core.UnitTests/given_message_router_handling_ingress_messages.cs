@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
-using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
 using FluentAssertions;

@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Routing;
-using Microsoft.Extensions.Logging;
 
 #endregion
 

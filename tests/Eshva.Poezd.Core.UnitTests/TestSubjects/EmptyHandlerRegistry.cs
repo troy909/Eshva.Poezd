@@ -3,10 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
-namespace Eshva.Poezd.Core.Pipeline
+namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 {
   /// <summary>
   /// An empty handler registry.

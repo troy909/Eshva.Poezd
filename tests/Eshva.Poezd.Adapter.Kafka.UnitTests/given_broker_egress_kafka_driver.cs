@@ -169,7 +169,7 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         MakeServiceProvider());
 
       // ReSharper disable once AssignNullToNotNullAttribute
-      Func<Task> sut = () => driver.Publish(null, CancellationToken.None);
+      Func<Task> sut = () => driver.Publish(context: null, CancellationToken.None);
       sut.Should().ThrowExactly<ArgumentNullException>();
     }
 

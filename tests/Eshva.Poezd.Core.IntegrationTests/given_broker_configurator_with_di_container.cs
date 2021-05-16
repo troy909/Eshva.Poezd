@@ -21,8 +21,6 @@ namespace Eshva.Poezd.Core.IntegrationTests
 {
   public class given_broker_configurator_with_di_container
   {
-    private const string BrokerId = "single broker";
-
     [Fact]
     public void when_configure_ingress_and_egress_it_should_configure_router_expected_way_using_services_from_container()
     {
@@ -102,6 +100,7 @@ namespace Eshva.Poezd.Core.IntegrationTests
       sut.Should().ThrowExactly<PoezdOperationException>("ingress не сконфигурирован и должен быть недоступен")
         .Which.Message.Should().Contain("ingress");
     }
+
     private static (MessageRouterConfiguration, IMessageRouter) CreateRouterWithBothIngressAndEgress()
     {
       var container = new Container();
@@ -237,5 +236,7 @@ namespace Eshva.Poezd.Core.IntegrationTests
 
       return (routerConfiguration, container.GetInstance<IMessageRouter>());
     }
+
+    private const string BrokerId = "single broker";
   }
 }

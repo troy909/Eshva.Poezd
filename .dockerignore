@@ -1,7 +1,6 @@
 **/.dockerignore
 **/.env
 **/.git
-**/.gitignore
 **/.project
 **/.settings
 **/.toolstarget
@@ -12,5 +11,5 @@
 **/docker-compose*
 **/Dockerfile*
 **/obj
-LICENSE
-readme.md
+**/LICENSE
+**/readme.md

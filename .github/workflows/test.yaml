@@ -1,0 +1,21 @@
+name: .NET
+
+on:
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Output Run ID
+      run: echo ${{ github.run_id }}
+    - name: Output Run Number
+      run: echo ${{ github.run_number }}
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: PS1
+      shell: pwsh
+      run: .github/workflows/build.ps1

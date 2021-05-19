@@ -63,12 +63,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.SimpleI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Core.IntegrationTests", "tests\Eshva.Poezd.Core.IntegrationTests\Eshva.Poezd.Core.IntegrationTests.csproj", "{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{A55541B8-8FC1-427E-B15B-B5C52C63EC32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A55541B8-8FC1-427E-B15B-B5C52C63EC32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A55541B8-8FC1-427E-B15B-B5C52C63EC32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7C781DF-77DB-435B-95F1-24D3928B9916}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7C781DF-77DB-435B-95F1-24D3928B9916}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7C781DF-77DB-435B-95F1-24D3928B9916}.Release|Any CPU.ActiveCfg = Release|Any CPU

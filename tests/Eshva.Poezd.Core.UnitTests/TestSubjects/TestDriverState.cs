@@ -1,6 +1,7 @@
 #region Usings
 
 using System.Collections.Generic;
+using Eshva.Poezd.Core.Routing;
 
 #endregion
 
@@ -17,5 +18,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     public int DisposedCount { get; set; }
 
     public int PublishedMessageCount { get; set; }
+
+    public MessagePublishingContext PublishingContext { get; set; }
   }
 }

@@ -79,6 +79,33 @@ namespace Eshva.Poezd.Core.UnitTests
         .Where(exception => exception.Message.Contains("message publishing"), "exception in a step should break publishing");
     }
 
+    [Fact]
+    public async Task when_publish_with_all_parameters_it_should_pass_them_to_driver()
+    {
+      var state = new TestDriverState();
+      await using var container = RoutingTests
+        .SetupContainer(_testOutputHelper)
+        .AddRouterWithConfiguredEgressApi(state);
+      var messageRouter = container.GetMessageRouter();
+      await messageRouter.Start();
+
+      const string correlationId = "correlation ID";
+      const string causationId = "causation ID";
+      const string messageId = "message ID";
+      var timestamp = DateTimeOffset.UtcNow;
+      await messageRouter.RouteEgressMessage(
+        new TestEgressMessage1(),
+        correlationId,
+        causationId,
+        messageId,
+        timestamp);
+
+      state.PublishingContext.CorrelationId.Should().Be(correlationId);
+      state.PublishingContext.CausationId.Should().Be(causationId);
+      state.PublishingContext.MessageId.Should().Be(messageId);
+      state.PublishingContext.Timestamp.Should().Be(timestamp);
+    }
+
     private readonly ITestOutputHelper _testOutputHelper;
   }
 }

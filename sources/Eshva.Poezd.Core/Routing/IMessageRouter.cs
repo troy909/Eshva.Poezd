@@ -79,14 +79,17 @@ namespace Eshva.Poezd.Core.Routing
     /// <param name="message">
     /// The message to route.
     /// </param>
-    /// <param name="messageId">
-    /// The message ID that will be used in broker message headers.
-    /// </param>
     /// <param name="correlationId">
     /// The correlation ID that will be used in broker message headers.
     /// </param>
     /// <param name="causationId">
     /// The causation ID that will be used in broker message headers.
+    /// </param>
+    /// <param name="messageId">
+    /// The message ID that will be used in broker message headers.
+    /// </param>
+    /// <param name="timestamp">
+    /// Timestamp of the message in UTC.
     /// </param>
     /// <returns>
     /// A task that can be used for waiting the message routing finished.
@@ -99,7 +102,8 @@ namespace Eshva.Poezd.Core.Routing
       [NotNull] TMessage message,
       string correlationId = default,
       string causationId = default,
-      string messageId = default)
+      string messageId = default,
+      DateTimeOffset timestamp = default)
       where TMessage : class;
   }
 }

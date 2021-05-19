@@ -32,6 +32,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
 
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken)
     {
+      _state.PublishingContext = context;
       _state.PublishedMessageCount++;
       return Task.CompletedTask;
     }

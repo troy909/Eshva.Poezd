@@ -92,15 +92,18 @@ namespace Eshva.Poezd.Core.UnitTests
       const string correlationId = "correlation ID";
       const string causationId = "causation ID";
       const string messageId = "message ID";
+      var timestamp = DateTimeOffset.UtcNow;
       await messageRouter.RouteEgressMessage(
         new TestEgressMessage1(),
         correlationId,
         causationId,
-        messageId);
+        messageId,
+        timestamp);
 
       state.PublishingContext.CorrelationId.Should().Be(correlationId);
       state.PublishingContext.CausationId.Should().Be(causationId);
       state.PublishingContext.MessageId.Should().Be(messageId);
+      state.PublishingContext.Timestamp.Should().Be(timestamp);
     }
 
     private readonly ITestOutputHelper _testOutputHelper;

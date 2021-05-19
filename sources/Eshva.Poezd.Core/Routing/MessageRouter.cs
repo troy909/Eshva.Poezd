@@ -130,7 +130,8 @@ namespace Eshva.Poezd.Core.Routing
       TMessage message,
       string correlationId = default,
       string causationId = default,
-      string messageId = default)
+      string messageId = default,
+      DateTimeOffset timestamp = default)
       where TMessage : class
     {
       var apis = _brokers.SelectMany(broker => broker.Egress.Apis).Where(api => api.MessageTypesRegistry.DoesOwn<TMessage>()).ToArray();
@@ -146,7 +147,8 @@ namespace Eshva.Poezd.Core.Routing
             Api = api,
             CorrelationId = correlationId,
             CausationId = causationId,
-            MessageId = messageId
+            MessageId = messageId,
+            Timestamp = timestamp
           };
 
           var pipeline = BuildEgressPipeline(_brokers.Single(broker => broker.Egress.Apis.Contains(api)), api);

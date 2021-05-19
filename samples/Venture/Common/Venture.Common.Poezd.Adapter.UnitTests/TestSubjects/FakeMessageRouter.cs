@@ -39,7 +39,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests.TestSubjects
       TMessage message,
       string correlationId = default,
       string causationId = default,
-      string messageId = default)
+      string messageId = default,
+      DateTimeOffset timestamp = default)
       where TMessage : class
     {
       Message = message;

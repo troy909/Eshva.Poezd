@@ -106,21 +106,24 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public async Task when_some_message_handling_step_request_to_break_pipeline_execution_it_should_be_allowed_to_handle_next_message()
     {
-      var state = new TestDriverState();
       const string brokerName = "broker-1";
-      const string queueName = "sample.facts.service-2.v1";
-      await using var container = RoutingTests.SetupContainer(_testOutputHelper).AddRouterWithBreakHandlingStep(state, brokerName);
+      await using var container = RoutingTests.SetupContainer(_testOutputHelper).AddRouterWithBreakHandlingStep(brokerName);
       var messageRouter = container.GetMessageRouter();
       await messageRouter.Start();
-      Func<Task> sut = () => messageRouter.RouteIngressMessage(
+      await messageRouter.RouteIngressMessage(
         brokerName,
-        queueName,
+        "sample.facts.service-2.v1",
         DateTimeOffset.UtcNow,
         new byte[0],
         new byte[0],
         new Dictionary<string, string>());
-      sut.Should().NotThrow("message just skipped");
-      sut.Should().NotThrow("further message handling should not be stopped");
+
+      InMemorySink.Instance.LogEvents
+        .Where(@event => @event.Level == LogEventLevel.Information)
+        .Select(@event => @event.MessageTemplate.Text)
+        .Should().BeEquivalentTo(
+          new[] {nameof(BreakingIngressStep)},
+          "after message skipped in a step following steps shouldn't be executed");
     }
 
     private readonly ITestOutputHelper _testOutputHelper;

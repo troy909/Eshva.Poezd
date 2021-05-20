@@ -1,10 +1,14 @@
 #region Usings
 
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Eshva.Common.Testing;
 using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
+using Moq;
 using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -170,11 +174,16 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       return container;
     }
 
-    public static Container AddRouterWithBreakHandlingStep(
-      this Container container,
-      TestDriverState state,
-      string brokerName)
+    public static Container AddRouterWithBreakHandlingStep(this Container container, string brokerName)
     {
+      var ingressDriverMock = new Mock<IBrokerIngressDriver>();
+      ingressDriverMock.Setup(driver => driver.StartConsumeMessages(It.IsAny<IEnumerable<string>>(), CancellationToken.None))
+        .Returns(Task.CompletedTask);
+
+      var egressDriverMock = new Mock<IBrokerEgressDriver>();
+      egressDriverMock.Setup(driver => driver.Publish(It.IsAny<MessagePublishingContext>(), CancellationToken.None))
+        .Returns(Task.CompletedTask);
+
       var messageRouterConfiguration =
         MessageRouter.Configure(
           router => router
@@ -183,7 +192,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                 .WithId(brokerName)
                 .Ingress(
                   ingress => ingress
-                    .WithTestDriver(state)
+                    .WithSpecificDriver(ingressDriverMock.Object)
                     .WithEnterPipeFitter<WithBreakingHandlerPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .WithQueueNameMatcher<MatchingEverythingQueueNameMatcher>()
@@ -198,7 +207,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
                         .WithHandlerRegistry<EmptyHandlerRegistry>()))
                 .Egress(
                   egress => egress
-                    .WithTestDriver(state)
+                    .WithSpecificDriver(egressDriverMock.Object)
                     .WithEnterPipeFitter<EmptyPipeFitter>()
                     .WithExitPipeFitter<EmptyPipeFitter>()
                     .AddApi(

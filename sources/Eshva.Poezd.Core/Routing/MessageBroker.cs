@@ -50,7 +50,6 @@ namespace Eshva.Poezd.Core.Routing
       Egress = !Configuration.HasNoEgress
         ? new BrokerEgress(
           // TODO: Pass broker itself like for ingress.
-          configuration.Id,
           configuration.Egress,
           serviceProvider)
         : new NonFunctionalBrokerEgress();

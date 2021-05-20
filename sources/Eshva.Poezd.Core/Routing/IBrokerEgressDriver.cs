@@ -16,9 +16,6 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Initializes the message broker egress driver.
     /// </summary>
-    /// <param name="brokerId">
-    /// The broker ID to bind to.
-    /// </param>
     /// <param name="apis">
     /// The egress API list.
     /// </param>
@@ -32,7 +29,6 @@ namespace Eshva.Poezd.Core.Routing
     /// The driver is already initialized.
     /// </exception>
     void Initialize(
-      [NotNull] string brokerId,
       [NotNull] IEnumerable<IEgressApi> apis,
       [NotNull] IDiContainerAdapter serviceProvider);
 

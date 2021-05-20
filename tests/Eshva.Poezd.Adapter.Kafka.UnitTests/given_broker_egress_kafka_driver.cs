@@ -51,25 +51,12 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         ConfigurationTests.CreateBrokerEgressKafkaDriverConfiguration(publishedMessages),
         new Mock<IProducerRegistry>().Object);
 
-      var brokerId = "broker-1";
       var apis = new IEgressApi[0];
       var serviceProvider = Mock.Of<IDiContainerAdapter>();
 
       Action sut = () => driver.Initialize(
-        brokerId,
         apis,
         serviceProvider);
-
-      brokerId = null;
-      sut.Should().ThrowExactly<ArgumentNullException>()
-        .Which.ParamName.Should().Be("brokerId", "null is an invalid brokerId");
-      brokerId = string.Empty;
-      sut.Should().ThrowExactly<ArgumentNullException>()
-        .Which.ParamName.Should().Be("brokerId", "an empty string is an invalid brokerId");
-      brokerId = WhitespaceString;
-      sut.Should().ThrowExactly<ArgumentNullException>()
-        .Which.ParamName.Should().Be("brokerId", "a whitespace string is an invalid brokerId");
-      brokerId = "broker-1";
 
       apis = null;
       sut.Should().ThrowExactly<ArgumentNullException>()
@@ -90,7 +77,6 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         new Mock<IProducerRegistry>().Object);
 
       Action sut = () => driver.Initialize(
-        "broker-1",
         new IEgressApi[0],
         MakeServiceProvider());
       sut.Should().NotThrow();
@@ -140,7 +126,6 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         producerRegistryMock.Object);
 
       driver.Initialize(
-        "broker-1",
         new[] {MakeApi()},
         MakeServiceProvider());
 
@@ -164,7 +149,6 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         producerRegistryMock.Object);
 
       driver.Initialize(
-        "broker-1",
         new[] {MakeApi()},
         MakeServiceProvider());
 
@@ -221,7 +205,5 @@ namespace Eshva.Poezd.Adapter.Kafka.UnitTests
         .Returns(Mock.Of<ILoggerFactory>());
       return mock.Object;
     }
-
-    private const string WhitespaceString = "\t\n ";
   }
 }

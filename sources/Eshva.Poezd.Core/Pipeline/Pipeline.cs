@@ -14,7 +14,7 @@ namespace Eshva.Poezd.Core.Pipeline
   /// <summary>
   /// Message processing pipeline which using a linked list.
   /// </summary>
-  public sealed class Pipeline<TContext> : IPipeline<TContext> where TContext : class, IPocket
+  public sealed class Pipeline<TContext> : IPipeline<TContext> where TContext : class, IPocket, ICanSkipFurtherMessageHandling
   {
     /// <inheritdoc />
     public IPipeline<TContext> Append(IStep<TContext> step)
@@ -42,11 +42,7 @@ namespace Eshva.Poezd.Core.Pipeline
         try
         {
           await currentStep.Execute(context);
-        }
-        catch (BreakThisMessageHandlingException)
-        {
-          // Intentionally skip this message and commit its handling success.
-          break;
+          if (context.ShouldSkipFurtherMessageHandling) break;
         }
         catch (Exception exception)
         {

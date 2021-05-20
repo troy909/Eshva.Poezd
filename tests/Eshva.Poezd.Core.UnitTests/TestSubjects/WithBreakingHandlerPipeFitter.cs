@@ -17,6 +17,7 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     protected override IEnumerable<Type> GetStepTypes()
     {
       yield return typeof(BreakingIngressStep);
+      yield return typeof(LogMessageHandlingContextStep);
     }
   }
 }

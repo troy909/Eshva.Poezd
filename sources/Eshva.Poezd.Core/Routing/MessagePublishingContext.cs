@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Eshva.Common.Collections;
+using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
@@ -15,7 +16,7 @@ namespace Eshva.Poezd.Core.Routing
   /// This class implements <see cref="IPocket" /> contract. That means you can use this context to pass any data between
   /// your pipeline steps using this interface.
   /// </remarks>
-  public class MessagePublishingContext : ConcurrentPocket
+  public class MessagePublishingContext : ConcurrentPocket, ICanSkipFurtherMessageHandling
   {
     /// <summary>
     /// Gets/sets the publishing message CLR-object.
@@ -81,5 +82,11 @@ namespace Eshva.Poezd.Core.Routing
     /// Gets/sets the message timestamp.
     /// </summary>
     public DateTimeOffset Timestamp { get; set; }
+
+    /// <inheritdoc />
+    public bool ShouldSkipFurtherMessageHandling { get; private set; }
+
+    /// <inheritdoc />
+    public void SkipFurtherMessageHandling() => ShouldSkipFurtherMessageHandling = true;
   }
 }

@@ -79,7 +79,12 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
-    private class TestContext : ConcurrentPocket { }
+    private class TestContext : ConcurrentPocket, ICanSkipFurtherMessageHandling
+    {
+      public bool ShouldSkipFurtherMessageHandling { get; private set; }
+
+      public void SkipFurtherMessageHandling() => ShouldSkipFurtherMessageHandling = true;
+    }
 
     private class ThrowingStep : IStep<TestContext>
     {

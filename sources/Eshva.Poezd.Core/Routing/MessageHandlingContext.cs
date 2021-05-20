@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Eshva.Common.Collections;
+using Eshva.Poezd.Core.Pipeline;
 
 #endregion
 
@@ -11,7 +12,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// The ingress message handling context.
   /// </summary>
-  public class MessageHandlingContext : ConcurrentPocket
+  public class MessageHandlingContext : ConcurrentPocket, ICanSkipFurtherMessageHandling
   {
     /// <summary>
     /// Gets/sets the broker message key.
@@ -92,7 +93,17 @@ namespace Eshva.Poezd.Core.Routing
     /// </value>
     public object Handlers { get; set; }
 
+    /// <summary>
+    /// Gets sign that this message should be skipped.
+    /// </summary>
+    public bool ShouldSkipFurtherMessageHandling { get; private set; }
+
     // TODO: May be I should add a log property: List<LogRecord> Log here and into publishing context?
     // TODO: Add a method to signal this message further handling should be stopped.
+
+    /// <summary>
+    /// Sets sign that this message should be skipped.
+    /// </summary>
+    public void SkipFurtherMessageHandling() => ShouldSkipFurtherMessageHandling = true;
   }
 }

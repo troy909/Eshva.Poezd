@@ -34,8 +34,12 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
-      // TODO: Extend error messages with code samples.
-      if (!_brokers.Any()) yield return "At least one message broker should be configured.";
+      if (!_brokers.Any())
+      {
+        yield return "At least one message broker should be configured. " +
+                     $"Use {nameof(MessageRouterConfigurator)}.{nameof(MessageRouterConfigurator.AddMessageBroker)} " +
+                     "to add a message broker.";
+      }
     }
 
     /// <inheritdoc />

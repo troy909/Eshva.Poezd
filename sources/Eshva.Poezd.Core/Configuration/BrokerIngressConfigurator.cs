@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
@@ -12,7 +13,6 @@ namespace Eshva.Poezd.Core.Configuration
   /// <summary>
   /// Broker ingress configurator.
   /// </summary>
-  // TODO: Disallow call methods more than once.
   public class BrokerIngressConfigurator : IBrokerIngressDriverConfigurator
   {
     /// <summary>
@@ -41,6 +41,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public BrokerIngressConfigurator WithEnterPipeFitter<TPipeFitter>() where TPipeFitter : IPipeFitter
     {
+      if (_configuration.EnterPipeFitterType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "enter pipe fitter type",
+          "broker ingress",
+          nameof(WithEnterPipeFitter));
+      }
+
       _configuration.EnterPipeFitterType = typeof(TPipeFitter);
       return this;
     }
@@ -57,6 +65,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public BrokerIngressConfigurator WithExitPipeFitter<TPipeFitter>() where TPipeFitter : IPipeFitter
     {
+      if (_configuration.ExitPipeFitterType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "exit pipe fitter type",
+          "broker ingress",
+          nameof(WithExitPipeFitter));
+      }
+
       _configuration.ExitPipeFitterType = typeof(TPipeFitter);
       return this;
     }
@@ -76,6 +92,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public BrokerIngressConfigurator WithQueueNameMatcher<TMatcher>() where TMatcher : IQueueNameMatcher
     {
+      if (_configuration.QueueNameMatcherType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "queue name matcher type",
+          "broker ingress",
+          nameof(WithQueueNameMatcher));
+      }
+
       _configuration.QueueNameMatcherType = typeof(TMatcher);
       return this;
     }
@@ -106,6 +130,13 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     void IBrokerIngressDriverConfigurator.SetDriver(IBrokerIngressDriver driver, IMessageRouterConfigurationPart configuration)
     {
+      if (_configuration.Driver != null)
+      {
+        throw new PoezdConfigurationException(
+          "It's not allowed to set driver on broker ingress more than once. Inspect your message " +
+          "router configuration and eliminate excess calls to WithXXXDriver.");
+      }
+
       _configuration.Driver = driver ?? throw new ArgumentNullException(nameof(driver));
       _configuration.DriverConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }

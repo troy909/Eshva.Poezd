@@ -98,9 +98,6 @@ namespace Eshva.Poezd.Core.Routing
     /// </summary>
     public bool ShouldSkipFurtherMessageHandling { get; private set; }
 
-    // TODO: May be I should add a log property: List<LogRecord> Log here and into publishing context?
-    // TODO: Add a method to signal this message further handling should be stopped.
-
     /// <summary>
     /// Sets sign that this message should be skipped.
     /// </summary>

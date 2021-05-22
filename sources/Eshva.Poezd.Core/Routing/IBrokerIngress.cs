@@ -108,7 +108,16 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// Queue name is <c>null</c>, an empty or a whitespace string.
     /// </exception>
-    /// TODO: Should throw if queue name belongs to a few APIs.
+    /// <exception cref="PoezdOperationException">
+    /// <list type="bullet">
+    /// <item>
+    /// Queue name belongs to a few ingress APIs.
+    /// </item>
+    /// <item>
+    /// Queue name doesn't belong to any ingress API.
+    /// </item>
+    /// </list>
+    /// </exception>
     [NotNull]
     IIngressApi GetApiByQueueName([NotNull] string queueName);
   }

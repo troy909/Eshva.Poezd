@@ -85,10 +85,19 @@ namespace Eshva.Poezd.Core.Routing
     public IIngressApi GetApiByQueueName(string queueName)
     {
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
-      // TODO: Enforce single or default in API configuration.
-      var ingressApi = Apis.First(
-        api => api.GetQueueNamePatterns().Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
-      return ingressApi;
+      var ingressApi = Apis
+        .Where(api => api.GetQueueNamePatterns().Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)))
+        .ToArray();
+
+      // TODO: May be I should specify error code in PoezdOperationException to distinct errors.
+      if (!ingressApi.Any()) throw new PoezdOperationException($"Message queue '{queueName}' doesn't belong to any API.");
+      if (ingressApi.Length > 1)
+      {
+        throw new PoezdOperationException(
+          $"Message queue '{queueName}' belongs to a few APIs: {string.Join(", ", ingressApi.Select(api => $"'{api.Id}'"))}.");
+      }
+
+      return ingressApi.Single();
     }
 
     /// <inheritdoc />

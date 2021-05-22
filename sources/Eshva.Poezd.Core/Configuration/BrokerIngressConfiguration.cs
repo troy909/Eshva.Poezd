@@ -90,17 +90,38 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
-      // TODO: Extend error messages with code samples.
       if (!_apis.Any())
-        yield return "At least one API should be configured for broker ingress.";
+      {
+        yield return "At least one API should be configured for broker ingress. " +
+                     $"Use {nameof(BrokerIngressConfigurator)}.{nameof(BrokerIngressConfigurator.AddApi)} to add an API.";
+      }
+
       if (QueueNameMatcherType == null)
-        yield return "The queue name matcher type should be set for the broker ingress.";
+      {
+        yield return "The queue name matcher type should be set for the broker ingress. " +
+                     $"Use {nameof(BrokerIngressConfigurator)}.{nameof(BrokerIngressConfigurator.WithQueueNameMatcher)} " +
+                     "to set the queue name matcher type.";
+      }
+
       if (EnterPipeFitterType == null)
-        yield return "The enter pipe fitter type should be set for the broker ingress.";
+      {
+        yield return "The enter pipe fitter type should be set for the broker ingress. " +
+                     $"Use {nameof(BrokerIngressConfigurator)}.{nameof(BrokerIngressConfigurator.WithEnterPipeFitter)} " +
+                     "to set the enter pipe fitter type.";
+      }
+
       if (ExitPipeFitterType == null)
-        yield return "The exit pipe fitter type should be set for the broker ingress.";
+      {
+        yield return "The exit pipe fitter type should be set for the broker ingress. " +
+                     $"Use {nameof(BrokerIngressConfigurator)}.{nameof(BrokerIngressConfigurator.WithExitPipeFitter)} " +
+                     "to set the exit pipe fitter type.";
+      }
+
       if (Driver == null)
-        yield return "The driver should be set for the broker ingress.";
+      {
+        yield return "The driver should be set for the broker ingress. " +
+                     $"Use {nameof(BrokerIngressConfigurator)}.WithXXXDriver to set the driver.";
+      }
     }
 
     /// <inheritdoc />

@@ -61,7 +61,7 @@ namespace Eshva.Poezd.Core.Routing
     void Initialize();
 
     /// <summary>
-    /// Starts message consumption from <paramref name="queueNamePatterns"/> by this broker ingress.
+    /// Starts message consumption from <paramref name="queueNamePatterns" /> by this broker ingress.
     /// </summary>
     /// <param name="queueNamePatterns">
     /// Queue name patterns to start message consumption from.
@@ -88,8 +88,7 @@ namespace Eshva.Poezd.Core.Routing
     /// The queue/topic name from which the message is arrived.
     /// </param>
     /// <param name="receivedOnUtc">
-    /// The moment in time the message was received.
-    /// TODO: Should be the original message timestamp?
+    /// The timestamp of the message.
     /// </param>
     /// <param name="key">
     /// The message key.

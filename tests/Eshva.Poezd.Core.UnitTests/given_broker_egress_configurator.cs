@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
@@ -26,12 +27,40 @@ namespace Eshva.Poezd.Core.UnitTests
     }
 
     [Fact]
+    public void when_enter_pipe_fitter_set_more_than_once_it_should_fail()
+    {
+      var configuration = new BrokerEgressConfiguration();
+      var configurator = new BrokerEgressConfigurator(configuration);
+      Action sut = () => configurator.WithEnterPipeFitter<StabPipeFitter>().Should().BeSameAs(configurator);
+
+      sut.Should().NotThrow();
+      configuration.EnterPipeFitterType.Should().Be<StabPipeFitter>();
+      sut.Should().ThrowExactly<PoezdConfigurationException>().Which.Message.Should().Contain(
+        "more than once",
+        "configuration method should complain about it called twice with exception");
+    }
+
+    [Fact]
     public void when_exit_pipe_fitter_set_it_should_be_set_in_configuration()
     {
       var configuration = new BrokerEgressConfiguration();
       var sut = new BrokerEgressConfigurator(configuration);
       sut.WithExitPipeFitter<StabPipeFitter>().Should().BeSameAs(sut);
       configuration.ExitPipeFitterType.Should().Be<StabPipeFitter>();
+    }
+
+    [Fact]
+    public void when_exit_pipe_fitter_set_more_than_once_it_should_fail()
+    {
+      var configuration = new BrokerEgressConfiguration();
+      var configurator = new BrokerEgressConfigurator(configuration);
+      Action sut = () => configurator.WithExitPipeFitter<StabPipeFitter>().Should().BeSameAs(configurator);
+
+      sut.Should().NotThrow();
+      configuration.ExitPipeFitterType.Should().Be<StabPipeFitter>();
+      sut.Should().ThrowExactly<PoezdConfigurationException>().Which.Message.Should().Contain(
+        "more than once",
+        "configuration method should complain about it called twice with exception");
     }
 
     [Fact]

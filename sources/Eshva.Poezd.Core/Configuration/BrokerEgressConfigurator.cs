@@ -1,6 +1,7 @@
 #region Usings
 
 using System;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
@@ -12,7 +13,6 @@ namespace Eshva.Poezd.Core.Configuration
   /// <summary>
   /// Broker egress configurator.
   /// </summary>
-  // TODO: Disallow call methods more than once.
   public class BrokerEgressConfigurator : IBrokerEgressDriverConfigurator
   {
     /// <summary>
@@ -41,6 +41,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public BrokerEgressConfigurator WithEnterPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
+      if (_configuration.EnterPipeFitterType != null)
+      {
+        throw MakeConfigurationMethodCalledMoreThanOnceException(
+          "enter pipe fitter",
+          "broker egress",
+          nameof(WithEnterPipeFitter));
+      }
+
       _configuration.EnterPipeFitterType = typeof(TConfigurator);
       return this;
     }
@@ -57,6 +65,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public BrokerEgressConfigurator WithExitPipeFitter<TConfigurator>() where TConfigurator : IPipeFitter
     {
+      if (_configuration.ExitPipeFitterType != null)
+      {
+        throw MakeConfigurationMethodCalledMoreThanOnceException(
+          "exit pipe fitter",
+          "broker egress",
+          nameof(WithExitPipeFitter));
+      }
+
       _configuration.ExitPipeFitterType = typeof(TConfigurator);
       return this;
     }
@@ -83,6 +99,14 @@ namespace Eshva.Poezd.Core.Configuration
       configurator(new EgressApiConfigurator(configuration));
       return this;
     }
+
+    private static PoezdConfigurationException MakeConfigurationMethodCalledMoreThanOnceException(
+      string propertyDescription,
+      string targetOfConfiguration,
+      string configurationMethodName) =>
+      new PoezdConfigurationException(
+        $"It's not allowed to set {propertyDescription} on {targetOfConfiguration} more than once.{Environment.NewLine}" +
+        $"Check your message router configuration and unsure you call {configurationMethodName}() once per broker egress");
 
     /// <inheritdoc />
     void IBrokerEgressDriverConfigurator.SetDriver(IBrokerEgressDriver driver, IMessageRouterConfigurationPart configuration)

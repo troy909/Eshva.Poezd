@@ -31,13 +31,11 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var configuration = new BrokerEgressConfiguration();
       var configurator = new BrokerEgressConfigurator(configuration);
-      Action sut = () => configurator.WithEnterPipeFitter<StabPipeFitter>().Should().BeSameAs(configurator);
+      Action sut = () => configurator.WithEnterPipeFitter<StabPipeFitter>();
 
       sut.Should().NotThrow();
       configuration.EnterPipeFitterType.Should().Be<StabPipeFitter>();
-      sut.Should().ThrowExactly<PoezdConfigurationException>().Which.Message.Should().Contain(
-        "more than once",
-        "configuration method should complain about it called twice with exception");
+      EnsureSecondCallOfConfigurationMethodFails(sut);
     }
 
     [Fact]
@@ -54,13 +52,11 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var configuration = new BrokerEgressConfiguration();
       var configurator = new BrokerEgressConfigurator(configuration);
-      Action sut = () => configurator.WithExitPipeFitter<StabPipeFitter>().Should().BeSameAs(configurator);
+      Action sut = () => configurator.WithExitPipeFitter<StabPipeFitter>();
 
       sut.Should().NotThrow();
       configuration.ExitPipeFitterType.Should().Be<StabPipeFitter>();
-      sut.Should().ThrowExactly<PoezdConfigurationException>().Which.Message.Should().Contain(
-        "more than once",
-        "configuration method should complain about it called twice with exception");
+      EnsureSecondCallOfConfigurationMethodFails(sut);
     }
 
     [Fact]
@@ -110,6 +106,13 @@ namespace Eshva.Poezd.Core.UnitTests
       // ReSharper disable once AssignNullToNotNullAttribute - it's a test against null.
       Action sut = () => driverConfigurator.SetDriver(new TestBrokerEgressDriver(new TestDriverState()), configuration: null);
       sut.Should().Throw<ArgumentNullException>();
+    }
+
+    private static void EnsureSecondCallOfConfigurationMethodFails(Action sut)
+    {
+      sut.Should().ThrowExactly<PoezdConfigurationException>().Which.Message.Should().Contain(
+        "more than once",
+        "configuration method should complain about it called twice with exception");
     }
 
     [UsedImplicitly]

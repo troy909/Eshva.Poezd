@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using JetBrains.Annotations;
@@ -43,7 +42,7 @@ namespace Eshva.Poezd.Core.Configuration
     {
       if (_configuration.EnterPipeFitterType != null)
       {
-        throw MakeConfigurationMethodCalledMoreThanOnceException(
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
           "enter pipe fitter",
           "broker egress",
           nameof(WithEnterPipeFitter));
@@ -67,7 +66,7 @@ namespace Eshva.Poezd.Core.Configuration
     {
       if (_configuration.ExitPipeFitterType != null)
       {
-        throw MakeConfigurationMethodCalledMoreThanOnceException(
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
           "exit pipe fitter",
           "broker egress",
           nameof(WithExitPipeFitter));
@@ -99,14 +98,6 @@ namespace Eshva.Poezd.Core.Configuration
       configurator(new EgressApiConfigurator(configuration));
       return this;
     }
-
-    private static PoezdConfigurationException MakeConfigurationMethodCalledMoreThanOnceException(
-      string propertyDescription,
-      string targetOfConfiguration,
-      string configurationMethodName) =>
-      new PoezdConfigurationException(
-        $"It's not allowed to set {propertyDescription} on {targetOfConfiguration} more than once.{Environment.NewLine}" +
-        $"Check your message router configuration and unsure you call {configurationMethodName}() once per broker egress");
 
     /// <inheritdoc />
     void IBrokerEgressDriverConfigurator.SetDriver(IBrokerEgressDriver driver, IMessageRouterConfigurationPart configuration)

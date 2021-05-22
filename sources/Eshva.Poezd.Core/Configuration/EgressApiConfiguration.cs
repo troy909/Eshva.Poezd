@@ -54,13 +54,40 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
-      // TODO: Extend error messages with code samples.
       if (string.IsNullOrWhiteSpace(Id))
-        yield return "ID of egress API should be specified.";
+      {
+        yield return "ID of egress API should be specified. " +
+                     $"Use {nameof(EgressApiConfigurator)}.{nameof(EgressApiConfigurator.WithId)} " +
+                     "to set the API ID.";
+      }
+
       if (PipeFitterType == null)
-        yield return $"The egress pipe fitter type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The egress pipe fitter type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(EgressApiConfigurator)}.{nameof(EgressApiConfigurator.WithPipeFitter)} " +
+                     "to set the pipe fitter type.";
+      }
+
       if (MessageTypesRegistryType == null)
-        yield return $"The message registry type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The message registry type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(EgressApiConfigurator)}.{nameof(EgressApiConfigurator.WithMessageTypesRegistry)} " +
+                     "to set the message types registry type.";
+      }
+
+      if (MessageKeyType == null)
+      {
+        yield return $"The message key type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(EgressApiConfigurator)}.{nameof(EgressApiConfigurator.WithMessageKey)} " +
+                     "to set the message key type.";
+      }
+
+      if (MessagePayloadType == null)
+      {
+        yield return $"The message payload type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(EgressApiConfigurator)}.{nameof(EgressApiConfigurator.WithMessagePayload)} " +
+                     "to set the message payload type.";
+      }
     }
   }
 }

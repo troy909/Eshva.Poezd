@@ -60,6 +60,18 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     void Initialize();
 
+    /// <summary>
+    /// Starts message consumption from <paramref name="queueNamePatterns"/> by this broker ingress.
+    /// </summary>
+    /// <param name="queueNamePatterns">
+    /// Queue name patterns to start message consumption from.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// Cancellation token that could be used to stop message consumption.
+    /// </param>
+    /// <returns>
+    /// A task that can be used for waiting the message consumption finished.
+    /// </returns>
     [NotNull]
     public Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default);
 

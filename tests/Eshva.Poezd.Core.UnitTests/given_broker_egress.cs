@@ -128,7 +128,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
     public void when_constructed_with_invalid_configuration_it_should_fail()
     {
-      var egressConfiguration = ConfigurationTests.CreateBrokerEgressConfigurationWithout(configuration => configuration.Driver = null);
+      var egressConfiguration = ConfigurationTests.CreateBrokerEgressConfiguration().With(configuration => configuration.Driver = null);
       var serviceProvider = Mock.Of<IDiContainerAdapter>();
 
       Action sut = () => new BrokerEgress(

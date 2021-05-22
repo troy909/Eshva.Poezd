@@ -23,7 +23,7 @@ namespace Eshva.Poezd.Core.UnitTests
     [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
-      ConfigurationTests.CreateMessageBrokerConfigurationWithout(configuration => configuration.Id = null)
+      ConfigurationTests.CreateMessageBrokerConfiguration().With(configuration => configuration.Id = null)
         .Validate().Should().HaveCount(expected: 1);
 
       Action sutIngress = () => ConfigurationTests.CreateMessageBrokerConfiguration().Ingress = null;

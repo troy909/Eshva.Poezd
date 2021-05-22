@@ -40,13 +40,13 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
-      ConfigurationTests.CreateBrokerEgressConfigurationWithout(configuration => configuration.Driver = null)
+      ConfigurationTests.CreateBrokerEgressConfiguration().With(configuration => configuration.Driver = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerEgressConfigurationWithout(configuration => configuration.DriverConfiguration = null)
+      ConfigurationTests.CreateBrokerEgressConfiguration().With(configuration => configuration.DriverConfiguration = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerEgressConfigurationWithout(configuration => configuration.EnterPipeFitterType = null)
+      ConfigurationTests.CreateBrokerEgressConfiguration().With(configuration => configuration.EnterPipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerEgressConfigurationWithout(configuration => configuration.ExitPipeFitterType = null)
+      ConfigurationTests.CreateBrokerEgressConfiguration().With(configuration => configuration.ExitPipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateBrokerEgressConfiguration(shouldAddApis: false)
         .Validate().Should().HaveCount(expected: 1);

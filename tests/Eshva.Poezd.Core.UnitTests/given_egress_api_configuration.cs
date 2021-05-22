@@ -34,15 +34,15 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
-      ConfigurationTests.CreateEgressApiConfigurationWithout(configuration => configuration.Id = null)
+      ConfigurationTests.CreateEgressApiConfiguration().With(configuration => configuration.Id = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateEgressApiConfigurationWithout(configuration => configuration.PipeFitterType = null)
+      ConfigurationTests.CreateEgressApiConfiguration().With(configuration => configuration.PipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateEgressApiConfigurationWithout(configuration => configuration.MessageTypesRegistryType = null)
+      ConfigurationTests.CreateEgressApiConfiguration().With(configuration => configuration.MessageTypesRegistryType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.MessageKeyType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.MessageKeyType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.MessagePayloadType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.MessagePayloadType = null)
         .Validate().Should().HaveCount(expected: 1);
     }
   }

@@ -72,6 +72,12 @@ namespace Eshva.Poezd.Core.Routing
     /// <returns>
     /// A task that can be used for waiting the message consumption finished.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Queue name patterns not specified.
+    /// </exception>
+    /// <exception cref="PoezdOperationException">
+    /// Broker ingress is not initialized yet.
+    /// </exception>
     [NotNull]
     public Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default);
 

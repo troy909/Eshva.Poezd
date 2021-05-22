@@ -101,16 +101,27 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public void Initialize() =>
+    public void Initialize()
+    {
+      if (_isInitialized) throw new PoezdOperationException($"Broker '{_messageBroker.Id}' ingress already initialized.");
+
       Driver.Initialize(
         this,
         Apis,
         _serviceProvider);
+      _isInitialized = true;
+    }
 
     /// <inheritdoc />
     public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {
       if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
+      if (!_isInitialized)
+      {
+        throw new PoezdOperationException(
+          $"Broker '{_messageBroker.Id}' ingress is not initialized yet. " +
+          "You should call Initialize() before calling StartConsumeMessages().");
+      }
 
       return Driver.StartConsumeMessages(queueNamePatterns, cancellationToken);
     }
@@ -137,5 +148,6 @@ namespace Eshva.Poezd.Core.Routing
     private readonly IMessageBroker _messageBroker;
     private readonly IQueueNameMatcher _queueNameMatcher;
     private readonly IDiContainerAdapter _serviceProvider;
+    private bool _isInitialized;
   }
 }

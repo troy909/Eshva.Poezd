@@ -17,7 +17,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// Gets the ID of the message broker.
     /// </summary>
     [NotNull]
-    public string Id { get; internal set; } = string.Empty;
+    public string Id { get; internal set; }
 
     /// <summary>
     /// Gets the message broker ingress.

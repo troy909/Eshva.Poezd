@@ -11,7 +11,6 @@ namespace Eshva.Poezd.Core.Configuration
   /// <summary>
   /// A message broker configurator.
   /// </summary>
-  // TODO: Disallow call methods more than once.
   public sealed class MessageBrokerConfigurator
   {
     /// <summary>
@@ -47,6 +46,13 @@ namespace Eshva.Poezd.Core.Configuration
     public MessageBrokerConfigurator WithId([NotNull] string id)
     {
       if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
+      if (_configuration.Id != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "ID",
+          "broker",
+          nameof(WithId));
+      }
 
       _configuration.Id = id;
       return this;
@@ -149,7 +155,8 @@ namespace Eshva.Poezd.Core.Configuration
       if (_isIngressConfiguredAlready)
       {
         throw new PoezdConfigurationException(
-          $"It's not allowed to call {nameof(Ingress)}() and {nameof(WithoutIngress)}() for the same broker.");
+          $"It's not allowed to call {nameof(Ingress)}() and {nameof(WithoutIngress)}() " +
+          "or call these methods more than once for the same broker.");
       }
     }
 
@@ -158,7 +165,8 @@ namespace Eshva.Poezd.Core.Configuration
       if (_isEgressConfiguredAlready)
       {
         throw new PoezdConfigurationException(
-          $"It's not allowed to call {nameof(Egress)}() and {nameof(WithoutEgress)}() for the same broker.");
+          $"It's not allowed to call {nameof(Egress)}() and {nameof(WithoutEgress)}() " +
+          "or call these methods more than once for the same broker.");
       }
     }
 

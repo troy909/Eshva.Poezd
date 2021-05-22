@@ -44,6 +44,6 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       }
     }
 
-    private readonly Dictionary<IEgressApi, object> _producers = new();
+    private readonly Dictionary<IEgressApi, object> _producers = new Dictionary<IEgressApi, object>();
   }
 }

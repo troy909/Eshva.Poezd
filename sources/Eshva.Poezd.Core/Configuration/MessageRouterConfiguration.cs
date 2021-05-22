@@ -41,6 +41,6 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => Brokers;
 
-    private readonly List<MessageBrokerConfiguration> _brokers = new();
+    private readonly List<MessageBrokerConfiguration> _brokers = new List<MessageBrokerConfiguration>();
   }
 }

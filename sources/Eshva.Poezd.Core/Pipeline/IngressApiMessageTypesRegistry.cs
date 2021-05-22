@@ -85,7 +85,7 @@ namespace Eshva.Poezd.Core.Pipeline
       }
     }
 
-    private readonly Dictionary<string, object> _typeNameToDescriptor = new();
-    private readonly Dictionary<string, Type> _typeNameToType = new();
+    private readonly Dictionary<string, object> _typeNameToDescriptor = new Dictionary<string, object>();
+    private readonly Dictionary<string, Type> _typeNameToType = new Dictionary<string, Type>();
   }
 }

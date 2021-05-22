@@ -45,6 +45,6 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
       }
     }
 
-    private readonly Dictionary<IIngressApi, object> _consumers = new();
+    private readonly Dictionary<IIngressApi, object> _consumers = new Dictionary<IIngressApi, object>();
   }
 }

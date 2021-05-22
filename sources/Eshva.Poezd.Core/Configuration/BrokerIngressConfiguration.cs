@@ -90,6 +90,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
+      // TODO: Extend error messages with code samples.
       if (!_apis.Any())
         yield return "At least one API should be configured for broker ingress.";
       if (QueueNameMatcherType == null)

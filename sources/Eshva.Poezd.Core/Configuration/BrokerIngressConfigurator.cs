@@ -12,6 +12,7 @@ namespace Eshva.Poezd.Core.Configuration
   /// <summary>
   /// Broker ingress configurator.
   /// </summary>
+  // TODO: Disallow call methods more than once.
   public class BrokerIngressConfigurator : IBrokerIngressDriverConfigurator
   {
     /// <summary>

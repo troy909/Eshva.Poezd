@@ -54,6 +54,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     public IEnumerable<string> Validate()
     {
+      // TODO: Extend error messages with code samples.
       if (string.IsNullOrWhiteSpace(Id))
         yield return "ID of egress API should be specified.";
       if (PipeFitterType == null)

@@ -59,7 +59,9 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
       var headers = MakeHeaders(context.Metadata);
       var timestamp = new Timestamp(context.Timestamp);
       var brokerId = context.Broker.Id;
+      // TODO: Handle type conversion errors.
       var key = (TKey) context.Key;
+      // TODO: Handle type conversion errors.
       var payload = (TValue) context.Payload;
       var message = new Message<TKey, TValue> {Key = key, Value = payload, Headers = headers, Timestamp = timestamp};
       var publishTasks = context.QueueNames.Select(

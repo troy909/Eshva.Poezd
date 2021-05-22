@@ -11,6 +11,7 @@ namespace Eshva.Poezd.Core.Configuration
   /// <summary>
   /// A message broker configurator.
   /// </summary>
+  // TODO: Disallow call methods more than once.
   public sealed class MessageBrokerConfigurator
   {
     /// <summary>

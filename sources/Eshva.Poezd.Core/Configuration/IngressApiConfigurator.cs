@@ -11,6 +11,7 @@ namespace Eshva.Poezd.Core.Configuration
   /// <summary>
   /// An ingress API configurator.
   /// </summary>
+  // TODO: Disallow call methods more than once.
   public class IngressApiConfigurator
   {
     /// <summary>

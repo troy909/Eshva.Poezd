@@ -66,8 +66,12 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
-      // TODO: Extend error messages with code samples.
-      if (string.IsNullOrWhiteSpace(Id)) yield return "ID of the message broker should be specified.";
+      if (string.IsNullOrWhiteSpace(Id))
+      {
+        yield return "ID of the message broker should be specified. " +
+                     $"Use {nameof(MessageBrokerConfigurator)}.{nameof(IngressApiConfigurator.WithId)} " +
+                     "to set the API ID.";
+      }
     }
 
     /// <inheritdoc />

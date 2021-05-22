@@ -34,19 +34,19 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.QueueNamePatternsProviderType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.QueueNamePatternsProviderType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.Id = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.Id = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.HandlerRegistryType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.HandlerRegistryType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.PipeFitterType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.PipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.MessageTypesRegistryType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.MessageTypesRegistryType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.MessageKeyType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.MessageKeyType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateIngressApiConfigurationWithout(configuration => configuration.MessagePayloadType = null)
+      ConfigurationTests.CreateIngressApiConfiguration().With(configuration => configuration.MessagePayloadType = null)
         .Validate().Should().HaveCount(expected: 1);
     }
   }

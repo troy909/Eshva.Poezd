@@ -1,7 +1,10 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
+using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
+using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using Eshva.Poezd.Core.UnitTests.TestSubjects;
 using Moq;
@@ -24,9 +27,10 @@ namespace Eshva.Poezd.Core.UnitTests
       return sut;
     }
 
-    public static MessageBrokerConfiguration CreateMessageBrokerConfigurationWithout(Action<MessageBrokerConfiguration> updater)
+    public static MessageBrokerConfiguration With(
+      this MessageBrokerConfiguration configuration,
+      Action<MessageBrokerConfiguration> updater)
     {
-      var configuration = CreateMessageBrokerConfiguration();
       updater(configuration);
       return configuration;
     }
@@ -48,11 +52,109 @@ namespace Eshva.Poezd.Core.UnitTests
       return configuration;
     }
 
-    public static BrokerIngressConfiguration CreateBrokerIngressConfigurationWithout(Action<BrokerIngressConfiguration> updater)
+    public static BrokerIngressConfiguration With(
+      this BrokerIngressConfiguration configuration,
+      Action<BrokerIngressConfiguration> updater)
     {
-      var configuration = CreateBrokerIngressConfiguration();
       updater(configuration);
       return configuration;
+    }
+
+    public static (BrokerIngressConfiguration, IDiContainerAdapter)
+      CreateBrokerIngressConfigurationWithTwoApisHandlingMessageFromDifferentQueues()
+    {
+      var configuration = CreateBrokerIngressConfiguration(shouldAddApis: false)
+        .With(ingressConfiguration => ingressConfiguration.QueueNameMatcherType = typeof(RegexQueueNameMatcher));
+
+      configuration.AddApi(
+        CreateIngressApiConfiguration().With(
+          api =>
+          {
+            api.Id = "api1";
+            api.QueueNamePatternsProviderType = typeof(MatchingQueue1QueueNamePatternsProvider);
+          }));
+      configuration.AddApi(
+        CreateIngressApiConfiguration().With(
+          api =>
+          {
+            api.Id = "api2";
+            api.QueueNamePatternsProviderType = typeof(MatchingQueue2QueueNamePatternsProvider);
+          }));
+
+      var serviceProviderMock = new Mock<IDiContainerAdapter>();
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(EmptyPipeFitter))).Returns(() => new EmptyPipeFitter());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(RegexQueueNameMatcher)))
+        .Returns(() => new RegexQueueNameMatcher());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(TestQueueNamePatternsProvider)))
+        .Returns(() => new TestQueueNamePatternsProvider());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(MatchingQueue1QueueNamePatternsProvider)))
+        .Returns(() => new MatchingQueue1QueueNamePatternsProvider());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(MatchingQueue2QueueNamePatternsProvider)))
+        .Returns(() => new MatchingQueue2QueueNamePatternsProvider());
+
+      return (configuration, serviceProviderMock.Object);
+    }
+
+    public static (BrokerIngressConfiguration, IDiContainerAdapter)
+      CreateBrokerIngressConfigurationWithTwoApisHandlingMessageFromAnyQueue()
+    {
+      var configuration = CreateBrokerIngressConfiguration(shouldAddApis: false)
+        .With(ingressConfiguration => ingressConfiguration.QueueNameMatcherType = typeof(MatchingEverythingQueueNameMatcher));
+
+      configuration.AddApi(
+        CreateIngressApiConfiguration().With(
+          api =>
+          {
+            api.Id = "api1";
+            api.QueueNamePatternsProviderType = typeof(TestQueueNamePatternsProvider);
+          }));
+      configuration.AddApi(
+        CreateIngressApiConfiguration().With(
+          api =>
+          {
+            api.Id = "api2";
+            api.QueueNamePatternsProviderType = typeof(TestQueueNamePatternsProvider);
+          }));
+
+      var serviceProviderMock = new Mock<IDiContainerAdapter>();
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(EmptyPipeFitter))).Returns(() => new EmptyPipeFitter());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(MatchingEverythingQueueNameMatcher)))
+        .Returns(() => new MatchingEverythingQueueNameMatcher());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(TestQueueNamePatternsProvider)))
+        .Returns(() => new TestQueueNamePatternsProvider());
+
+      return (configuration, serviceProviderMock.Object);
+    }
+
+    public static (BrokerIngressConfiguration, IDiContainerAdapter)
+      CreateBrokerIngressConfigurationWithTwoApisNotHandlingMessageFromAnyQueue()
+    {
+      var configuration = CreateBrokerIngressConfiguration(shouldAddApis: false)
+        .With(ingressConfiguration => ingressConfiguration.QueueNameMatcherType = typeof(MatchingNothingQueueNameMatcher));
+
+      configuration.AddApi(
+        CreateIngressApiConfiguration().With(
+          api =>
+          {
+            api.Id = "api1";
+            api.QueueNamePatternsProviderType = typeof(TestQueueNamePatternsProvider);
+          }));
+      configuration.AddApi(
+        CreateIngressApiConfiguration().With(
+          api =>
+          {
+            api.Id = "api2";
+            api.QueueNamePatternsProviderType = typeof(TestQueueNamePatternsProvider);
+          }));
+
+      var serviceProviderMock = new Mock<IDiContainerAdapter>();
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(EmptyPipeFitter))).Returns(() => new EmptyPipeFitter());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(MatchingNothingQueueNameMatcher)))
+        .Returns(() => new MatchingNothingQueueNameMatcher());
+      serviceProviderMock.Setup(adapter => adapter.GetService(typeof(TestQueueNamePatternsProvider)))
+        .Returns(() => new TestQueueNamePatternsProvider());
+
+      return (configuration, serviceProviderMock.Object);
     }
 
     public static IngressApiConfiguration CreateIngressApiConfiguration() => new IngressApiConfiguration
@@ -66,9 +168,10 @@ namespace Eshva.Poezd.Core.UnitTests
       MessagePayloadType = typeof(object)
     };
 
-    public static IngressApiConfiguration CreateIngressApiConfigurationWithout(Action<IngressApiConfiguration> updater)
+    public static IngressApiConfiguration With(
+      this IngressApiConfiguration configuration,
+      Action<IngressApiConfiguration> updater)
     {
-      var configuration = CreateIngressApiConfiguration();
       updater(configuration);
       return configuration;
     }
@@ -82,9 +185,10 @@ namespace Eshva.Poezd.Core.UnitTests
       MessagePayloadType = typeof(object)
     };
 
-    public static EgressApiConfiguration CreateEgressApiConfigurationWithout(Action<EgressApiConfiguration> updater)
+    public static EgressApiConfiguration With(
+      this EgressApiConfiguration configuration,
+      Action<EgressApiConfiguration> updater)
     {
-      var configuration = CreateEgressApiConfiguration();
       updater(configuration);
       return configuration;
     }
@@ -110,13 +214,29 @@ namespace Eshva.Poezd.Core.UnitTests
       return configuration;
     }
 
-    public static BrokerEgressConfiguration CreateBrokerEgressConfigurationWithout(Action<BrokerEgressConfiguration> updater)
+    public static BrokerEgressConfiguration With(
+      this BrokerEgressConfiguration configuration,
+      Action<BrokerEgressConfiguration> updater)
     {
-      var configuration = CreateBrokerEgressConfiguration();
       updater(configuration);
       return configuration;
     }
 
-    private static IMessageRouterConfigurationPart CreateDriverConfiguration() => Mock.Of<IMessageRouterConfigurationPart>();
+    public static IMessageRouterConfigurationPart CreateDriverConfiguration() => Mock.Of<IMessageRouterConfigurationPart>();
+
+    private class MatchingQueue1QueueNamePatternsProvider : IQueueNamePatternsProvider
+    {
+      public IEnumerable<string> GetQueueNamePatterns() => new[] {"queue1"};
+    }
+
+    private class MatchingQueue2QueueNamePatternsProvider : IQueueNamePatternsProvider
+    {
+      public IEnumerable<string> GetQueueNamePatterns() => new[] {"queue2"};
+    }
+
+    private class TestQueueNamePatternsProvider : IQueueNamePatternsProvider
+    {
+      public IEnumerable<string> GetQueueNamePatterns() => new[] {"queue name"};
+    }
   }
 }

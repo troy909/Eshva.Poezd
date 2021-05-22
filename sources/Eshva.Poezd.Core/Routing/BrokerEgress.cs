@@ -22,23 +22,16 @@ namespace Eshva.Poezd.Core.Routing
     /// <summary>
     /// Constructs a new instance of message broker egress.
     /// </summary>
-    /// <param name="brokerId">
-    /// The message broker ID.
-    /// </param>
     /// <param name="configuration">
     /// The message broker egress configuration.
     /// </param>
     /// <param name="serviceProvider">
     /// Service provider.
     /// </param>
-    /// TODO: Eliminate this parameter.
     public BrokerEgress(
-      string brokerId,
       [NotNull] BrokerEgressConfiguration configuration,
       [NotNull] IDiContainerAdapter serviceProvider)
     {
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
-      _brokerId = brokerId;
       Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       Driver = configuration.Driver ?? throw new ArgumentNullException($"{nameof(configuration)}.{nameof(configuration.Driver)}");
@@ -63,10 +56,7 @@ namespace Eshva.Poezd.Core.Routing
     public ReadOnlyCollection<IEgressApi> Apis { get; }
 
     /// <inheritdoc />
-    public void Initialize() => Driver.Initialize(
-      _brokerId,
-      Apis,
-      _serviceProvider);
+    public void Initialize() => Driver.Initialize(Apis, _serviceProvider);
 
     /// <inheritdoc />
     public Task Publish(MessagePublishingContext context, CancellationToken cancellationToken) =>
@@ -91,7 +81,6 @@ namespace Eshva.Poezd.Core.Routing
           "You should register this type in DI-container.",
           exception));
 
-    private readonly string _brokerId;
     private readonly IDiContainerAdapter _serviceProvider;
   }
 }

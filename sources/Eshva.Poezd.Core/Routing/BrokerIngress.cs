@@ -85,23 +85,43 @@ namespace Eshva.Poezd.Core.Routing
     public IIngressApi GetApiByQueueName(string queueName)
     {
       if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
-      // TODO: Enforce single or default in API configuration.
-      var ingressApi = Apis.First(
-        api => api.GetQueueNamePatterns().Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)));
-      return ingressApi;
+      var ingressApi = Apis
+        .Where(api => api.GetQueueNamePatterns().Any(queueNamePattern => _queueNameMatcher.DoesMatch(queueName, queueNamePattern)))
+        .ToArray();
+
+      // TODO: May be I should specify error code in PoezdOperationException to distinct errors.
+      if (!ingressApi.Any()) throw new PoezdOperationException($"Message queue '{queueName}' doesn't belong to any API.");
+      if (ingressApi.Length > 1)
+      {
+        throw new PoezdOperationException(
+          $"Message queue '{queueName}' belongs to a few APIs: {string.Join(", ", ingressApi.Select(api => $"'{api.Id}'"))}.");
+      }
+
+      return ingressApi.Single();
     }
 
     /// <inheritdoc />
-    public void Initialize() =>
+    public void Initialize()
+    {
+      if (_isInitialized) throw new PoezdOperationException($"Broker '{_messageBroker.Id}' ingress already initialized.");
+
       Driver.Initialize(
         this,
         Apis,
         _serviceProvider);
+      _isInitialized = true;
+    }
 
     /// <inheritdoc />
     public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default)
     {
       if (queueNamePatterns == null) throw new ArgumentNullException(nameof(queueNamePatterns));
+      if (!_isInitialized)
+      {
+        throw new PoezdOperationException(
+          $"Broker '{_messageBroker.Id}' ingress is not initialized yet. " +
+          "You should call Initialize() before calling StartConsumeMessages().");
+      }
 
       return Driver.StartConsumeMessages(queueNamePatterns, cancellationToken);
     }
@@ -128,5 +148,6 @@ namespace Eshva.Poezd.Core.Routing
     private readonly IMessageBroker _messageBroker;
     private readonly IQueueNameMatcher _queueNameMatcher;
     private readonly IDiContainerAdapter _serviceProvider;
+    private bool _isInitialized;
   }
 }

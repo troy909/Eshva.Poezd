@@ -23,7 +23,6 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
     }
 
     public void Initialize(
-      string brokerId,
       IEnumerable<IEgressApi> apis,
       IDiContainerAdapter serviceProvider)
     {

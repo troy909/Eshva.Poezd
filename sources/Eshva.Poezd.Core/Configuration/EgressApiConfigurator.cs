@@ -43,6 +43,13 @@ namespace Eshva.Poezd.Core.Configuration
     public EgressApiConfigurator WithId(string id)
     {
       if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
+      if (_configuration.Id != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "ID",
+          "broker egress API",
+          nameof(WithId));
+      }
 
       _configuration.Id = id;
       return this;
@@ -60,6 +67,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public EgressApiConfigurator WithPipeFitter<TPipeFitter>() where TPipeFitter : IPipeFitter
     {
+      if (_configuration.PipeFitterType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "pipe fitter",
+          "broker egress API",
+          nameof(WithPipeFitter));
+      }
+
       _configuration.PipeFitterType = typeof(TPipeFitter);
       return this;
     }
@@ -77,6 +92,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public EgressApiConfigurator WithMessageKey<TMessageKey>()
     {
+      if (_configuration.MessageKeyType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "message key type",
+          "broker egress API",
+          nameof(WithMessageKey));
+      }
+
       _configuration.MessageKeyType = typeof(TMessageKey);
       return this;
     }
@@ -93,6 +116,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public EgressApiConfigurator WithMessagePayload<TMessagePayload>()
     {
+      if (_configuration.MessagePayloadType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "message payload type",
+          "broker egress API",
+          nameof(WithMessagePayload));
+      }
+
       _configuration.MessagePayloadType = typeof(TMessagePayload);
       return this;
     }
@@ -107,6 +138,14 @@ namespace Eshva.Poezd.Core.Configuration
     public EgressApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
       where TMessageTypesRegistry : IEgressApiMessageTypesRegistry
     {
+      if (_configuration.MessageTypesRegistryType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "message types registry type",
+          "broker egress API",
+          nameof(WithMessageTypesRegistry));
+      }
+
       _configuration.MessageTypesRegistryType = typeof(TMessageTypesRegistry);
       return this;
     }

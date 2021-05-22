@@ -13,7 +13,6 @@ namespace Eshva.Poezd.Core.Configuration
   /// </summary>
   public abstract class CompositeMessageRouterConfigurationPart : IMessageRouterConfigurationPart
   {
-    // TODO: Write tests.
     /// <inheritdoc />
     public IEnumerable<string> Validate()
     {

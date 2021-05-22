@@ -58,7 +58,7 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// One of arguments is null, an empty or a whitespace string.
     /// </exception>
-    /// <exception cref="PoezdConfigurationException">
+    /// <exception cref="PoezdOperationException">
     /// An error occurred during ingress message handling.
     /// </exception>
     [NotNull]

@@ -43,6 +43,13 @@ namespace Eshva.Poezd.Core.Configuration
     public IngressApiConfigurator WithId([NotNull] string id)
     {
       if (string.IsNullOrWhiteSpace(id)) throw new ArgumentNullException(nameof(id));
+      if (_configuration.Id != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "ID",
+          "broker ingress API",
+          nameof(WithId));
+      }
 
       _configuration.Id = id;
       return this;
@@ -60,6 +67,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public IngressApiConfigurator WithPipeFitter<TPipeFitter>() where TPipeFitter : IPipeFitter
     {
+      if (_configuration.PipeFitterType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "pipe fitter type",
+          "broker ingress API",
+          nameof(WithPipeFitter));
+      }
+
       _configuration.PipeFitterType = typeof(TPipeFitter);
       return this;
     }
@@ -77,6 +92,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public IngressApiConfigurator WithMessageKey<TMessageKey>()
     {
+      if (_configuration.MessageKeyType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "message key type",
+          "broker ingress API",
+          nameof(WithMessageKey));
+      }
+
       _configuration.MessageKeyType = typeof(TMessageKey);
       return this;
     }
@@ -93,6 +116,14 @@ namespace Eshva.Poezd.Core.Configuration
     [NotNull]
     public IngressApiConfigurator WithMessagePayload<TMessagePayload>()
     {
+      if (_configuration.MessagePayloadType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "message payload type",
+          "broker ingress API",
+          nameof(WithMessagePayload));
+      }
+
       _configuration.MessagePayloadType = typeof(TMessagePayload);
       return this;
     }
@@ -107,6 +138,14 @@ namespace Eshva.Poezd.Core.Configuration
     public IngressApiConfigurator WithMessageTypesRegistry<TMessageTypesRegistry>()
       where TMessageTypesRegistry : IIngressApiMessageTypesRegistry
     {
+      if (_configuration.MessageTypesRegistryType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "message types registry type",
+          "broker ingress API",
+          nameof(WithMessageTypesRegistry));
+      }
+
       _configuration.MessageTypesRegistryType = typeof(TMessageTypesRegistry);
       return this;
     }
@@ -125,6 +164,14 @@ namespace Eshva.Poezd.Core.Configuration
     public IngressApiConfigurator WithQueueNamePatternsProvider<TQueueNamePatternsProvider>()
       where TQueueNamePatternsProvider : IQueueNamePatternsProvider
     {
+      if (_configuration.QueueNamePatternsProviderType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "queue name patterns provider type",
+          "broker ingress API",
+          nameof(WithQueueNamePatternsProvider));
+      }
+
       _configuration.QueueNamePatternsProviderType = typeof(TQueueNamePatternsProvider);
       return this;
     }
@@ -142,6 +189,14 @@ namespace Eshva.Poezd.Core.Configuration
     public IngressApiConfigurator WithHandlerRegistry<THandlerRegistryType>()
       where THandlerRegistryType : IHandlerRegistry
     {
+      if (_configuration.HandlerRegistryType != null)
+      {
+        throw ConfiguratorTools.MakeConfigurationMethodCalledMoreThanOnceException(
+          "handler registry type",
+          "broker ingress API",
+          nameof(WithHandlerRegistry));
+      }
+
       _configuration.HandlerRegistryType = typeof(THandlerRegistryType);
       return this;
     }

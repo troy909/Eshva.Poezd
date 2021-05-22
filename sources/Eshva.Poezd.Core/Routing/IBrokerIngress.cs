@@ -60,6 +60,24 @@ namespace Eshva.Poezd.Core.Routing
     /// </exception>
     void Initialize();
 
+    /// <summary>
+    /// Starts message consumption from <paramref name="queueNamePatterns" /> by this broker ingress.
+    /// </summary>
+    /// <param name="queueNamePatterns">
+    /// Queue name patterns to start message consumption from.
+    /// </param>
+    /// <param name="cancellationToken">
+    /// Cancellation token that could be used to stop message consumption.
+    /// </param>
+    /// <returns>
+    /// A task that can be used for waiting the message consumption finished.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Queue name patterns not specified.
+    /// </exception>
+    /// <exception cref="PoezdOperationException">
+    /// Broker ingress is not initialized yet.
+    /// </exception>
     [NotNull]
     public Task StartConsumeMessages([NotNull] IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default);
 
@@ -70,8 +88,7 @@ namespace Eshva.Poezd.Core.Routing
     /// The queue/topic name from which the message is arrived.
     /// </param>
     /// <param name="receivedOnUtc">
-    /// The moment in time the message was received.
-    /// TODO: Should be the original message timestamp?
+    /// The timestamp of the message.
     /// </param>
     /// <param name="key">
     /// The message key.
@@ -108,7 +125,16 @@ namespace Eshva.Poezd.Core.Routing
     /// <exception cref="ArgumentNullException">
     /// Queue name is <c>null</c>, an empty or a whitespace string.
     /// </exception>
-    /// TODO: Should throw if queue name belongs to a few APIs.
+    /// <exception cref="PoezdOperationException">
+    /// <list type="bullet">
+    /// <item>
+    /// Queue name belongs to a few ingress APIs.
+    /// </item>
+    /// <item>
+    /// Queue name doesn't belong to any ingress API.
+    /// </item>
+    /// </list>
+    /// </exception>
     [NotNull]
     IIngressApi GetApiByQueueName([NotNull] string queueName);
   }

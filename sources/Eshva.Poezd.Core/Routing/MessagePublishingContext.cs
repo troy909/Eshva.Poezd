@@ -55,13 +55,11 @@ namespace Eshva.Poezd.Core.Routing
     /// For Kafka you should specify this key when publishing messages to be able to process messages with a few instances of
     /// an application. But not every message broker requires this key.
     /// </remarks>
-    /// TODO: May be I should change the property type to string or byte array?
     public object Key { get; set; }
 
     /// <summary>
     /// Gets/sets the message payload as a byte array.
     /// </summary>
-    // TODO: Can I change it to Memory<byte> or Span<byte>?
     public object Payload { get; set; }
 
     /// <summary>

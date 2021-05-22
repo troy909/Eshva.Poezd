@@ -72,19 +72,53 @@ namespace Eshva.Poezd.Core.Configuration
     public IEnumerable<string> Validate()
     {
       if (string.IsNullOrWhiteSpace(Id))
-        yield return "ID of ingress API should be specified.";
+      {
+        yield return "ID of ingress API should be specified. " +
+                     $"Use {nameof(IngressApiConfigurator)}.{nameof(IngressApiConfigurator.WithId)} " +
+                     "to set the API ID.";
+      }
+
       if (PipeFitterType == null)
-        yield return $"The ingress pipe fitter type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The ingress pipe fitter type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(IngressApiConfigurator)}.{nameof(IngressApiConfigurator.WithPipeFitter)} " +
+                     "to set the pipe fitter type.";
+      }
+
       if (HandlerRegistryType == null)
-        yield return $"The handler factory type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The handler registry type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(IngressApiConfigurator)}.{nameof(IngressApiConfigurator.WithHandlerRegistry)} " +
+                     "to set the handler registry type.";
+      }
+
       if (QueueNamePatternsProviderType == null)
-        yield return $"The queue name patterns provider type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The queue name patterns provider type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(IngressApiConfigurator)}.{nameof(IngressApiConfigurator.WithQueueNamePatternsProvider)} " +
+                     "to set the queue name patterns provider type.";
+      }
+
       if (MessageTypesRegistryType == null)
-        yield return $"The message registry type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The message types registry type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(IngressApiConfigurator)}.{nameof(IngressApiConfigurator.WithMessageTypesRegistry)} " +
+                     "to set the message types registry type.";
+      }
+
       if (MessageKeyType == null)
-        yield return $"The message key type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The message key type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(IngressApiConfigurator)}.{nameof(IngressApiConfigurator.WithMessageKey)} " +
+                     "to set the message key type.";
+      }
+
       if (MessagePayloadType == null)
-        yield return $"The message payload type should be set for the API with ID '{Id}'.";
+      {
+        yield return $"The message payload type should be set for the API with ID '{Id}'. " +
+                     $"Use {nameof(IngressApiConfigurator)}.{nameof(IngressApiConfigurator.WithMessagePayload)} " +
+                     "to set the message payload type.";
+      }
     }
   }
 }

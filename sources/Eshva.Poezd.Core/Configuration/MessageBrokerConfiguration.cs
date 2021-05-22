@@ -17,7 +17,7 @@ namespace Eshva.Poezd.Core.Configuration
     /// Gets the ID of the message broker.
     /// </summary>
     [NotNull]
-    public string Id { get; internal set; } = string.Empty;
+    public string Id { get; internal set; }
 
     /// <summary>
     /// Gets the message broker ingress.
@@ -66,7 +66,12 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
-      if (string.IsNullOrWhiteSpace(Id)) yield return "ID of the message broker should be specified.";
+      if (string.IsNullOrWhiteSpace(Id))
+      {
+        yield return "ID of the message broker should be specified. " +
+                     $"Use {nameof(MessageBrokerConfigurator)}.{nameof(IngressApiConfigurator.WithId)} " +
+                     "to set the API ID.";
+      }
     }
 
     /// <inheritdoc />

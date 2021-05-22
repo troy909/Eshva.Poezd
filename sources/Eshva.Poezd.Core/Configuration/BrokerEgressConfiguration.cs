@@ -84,19 +84,36 @@ namespace Eshva.Poezd.Core.Configuration
     protected override IEnumerable<string> ValidateItself()
     {
       if (!_apis.Any())
-        yield return "At least one API should be configured for broker egress.";
+      {
+        yield return "At least one API should be configured for broker egress. " +
+                     $"Use {nameof(BrokerEgressConfigurator)}.{nameof(BrokerEgressConfigurator.AddApi)} to add an API.";
+      }
+
       if (EnterPipeFitterType == null)
-        yield return "The enter pipe fitter type should be set for the broker egress.";
+      {
+        yield return "The enter pipe fitter type should be set for the broker egress. " +
+                     $"Use {nameof(BrokerEgressConfigurator)}.{nameof(BrokerEgressConfigurator.WithEnterPipeFitter)} " +
+                     "to set the enter pipe fitter type.";
+      }
+
       if (ExitPipeFitterType == null)
-        yield return "The exit pipe fitter type should be set for the broker egress.";
+      {
+        yield return "The exit pipe fitter type should be set for the broker egress. " +
+                     $"Use {nameof(BrokerEgressConfigurator)}.{nameof(BrokerEgressConfigurator.WithExitPipeFitter)} " +
+                     "to set the exit pipe fitter type.";
+      }
+
       if (Driver == null)
-        yield return "The driver should be set for the broker egress.";
+      {
+        yield return "The driver should be set for the broker egress. " +
+                     $"Use {nameof(BrokerEgressConfigurator)}.WithXXXDriver to set the driver.";
+      }
     }
 
     /// <inheritdoc />
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() =>
       _apis.AsReadOnly().Append(DriverConfiguration);
 
-    private readonly List<EgressApiConfiguration> _apis = new();
+    private readonly List<EgressApiConfiguration> _apis = new List<EgressApiConfiguration>();
   }
 }

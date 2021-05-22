@@ -38,15 +38,15 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_some_required_property_not_set_it_should_be_not_validated()
     {
-      ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.Driver = null)
+      ConfigurationTests.CreateBrokerIngressConfiguration().With(configuration => configuration.Driver = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.DriverConfiguration = null)
+      ConfigurationTests.CreateBrokerIngressConfiguration().With(configuration => configuration.DriverConfiguration = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.EnterPipeFitterType = null)
+      ConfigurationTests.CreateBrokerIngressConfiguration().With(configuration => configuration.EnterPipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.ExitPipeFitterType = null)
+      ConfigurationTests.CreateBrokerIngressConfiguration().With(configuration => configuration.ExitPipeFitterType = null)
         .Validate().Should().HaveCount(expected: 1);
-      ConfigurationTests.CreateBrokerIngressConfigurationWithout(configuration => configuration.QueueNameMatcherType = null)
+      ConfigurationTests.CreateBrokerIngressConfiguration().With(configuration => configuration.QueueNameMatcherType = null)
         .Validate().Should().HaveCount(expected: 1);
       ConfigurationTests.CreateBrokerIngressConfiguration(shouldAddApis: false)
         .Validate().Should().HaveCount(expected: 1);

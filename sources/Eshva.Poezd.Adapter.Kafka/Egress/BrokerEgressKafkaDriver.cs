@@ -36,15 +36,11 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     }
 
     /// <inheritdoc />
-    public void Initialize(
-      string brokerId,
-      IEnumerable<IEgressApi> apis,
-      IDiContainerAdapter serviceProvider)
+    public void Initialize(IEnumerable<IEgressApi> apis, IDiContainerAdapter serviceProvider)
     {
-      if (_isInitialized) throw new PoezdOperationException($"Kafka driver for broker with ID {_brokerId} is already initialized.");
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
-
-      _brokerId = brokerId;
+      if (_isInitialized)
+        throw new PoezdOperationException(
+          $"Kafka driver for broker with bootstrap servers{_driverConfiguration.ProducerConfig.BootstrapServers} is already initialized.");
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _apis = apis ?? throw new ArgumentNullException(nameof(apis));
 
@@ -88,7 +84,6 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     private readonly IProducerRegistry _producerRegistry;
     private IApiProducerFactory _apiProducerFactory;
     private IEnumerable<IEgressApi> _apis;
-    private string _brokerId;
     private bool _isInitialized;
     private IDiContainerAdapter _serviceProvider;
 

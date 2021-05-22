@@ -22,7 +22,6 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_constructed_it_should_initialize_properties()
     {
-      const string brokerId = "broker-1";
       var configuration = ConfigurationTests.CreateBrokerEgressConfiguration();
       configuration.EnterPipeFitterType = typeof(EmptyPipeFitter);
       configuration.ExitPipeFitterType = typeof(EmptyPipeFitter);
@@ -31,7 +30,6 @@ namespace Eshva.Poezd.Core.UnitTests
       serviceProviderMock.Setup(adapter => adapter.GetService(typeof(EmptyPipeFitter))).Returns(() => new EmptyPipeFitter());
 
       var sut = new BrokerEgress(
-        brokerId,
         configuration,
         serviceProviderMock.Object);
 
@@ -45,13 +43,11 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_initialize_it_should_initialize_driver()
     {
-      const string brokerId = "broker-1";
       var configuration = ConfigurationTests.CreateBrokerEgressConfiguration();
       var driverMock = new Mock<IBrokerEgressDriver>();
       driverMock
         .Setup(
           driver => driver.Initialize(
-            It.IsAny<string>(),
             It.IsAny<IEnumerable<IEgressApi>>(),
             It.IsAny<IDiContainerAdapter>()))
         .Verifiable();
@@ -61,7 +57,6 @@ namespace Eshva.Poezd.Core.UnitTests
       serviceProviderMock.Setup(adapter => adapter.GetService(typeof(EmptyPipeFitter))).Returns(() => new EmptyPipeFitter());
 
       var sut = new BrokerEgress(
-        brokerId,
         configuration,
         serviceProviderMock.Object);
       sut.Initialize();
@@ -72,7 +67,6 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_publish_it_should_publish_to_driver()
     {
-      const string brokerId = "broker-1";
       var configuration = ConfigurationTests.CreateBrokerEgressConfiguration();
       var driverMock = new Mock<IBrokerEgressDriver>();
       driverMock
@@ -84,7 +78,6 @@ namespace Eshva.Poezd.Core.UnitTests
       serviceProviderMock.Setup(adapter => adapter.GetService(typeof(EmptyPipeFitter))).Returns(() => new EmptyPipeFitter());
 
       var sut = new BrokerEgress(
-        brokerId,
         configuration,
         serviceProviderMock.Object);
       sut.Publish(new MessagePublishingContext(), CancellationToken.None);
@@ -95,7 +88,6 @@ namespace Eshva.Poezd.Core.UnitTests
     [Fact]
     public void when_dispose_it_should_dispose_driver()
     {
-      const string brokerId = "broker-1";
       var configuration = ConfigurationTests.CreateBrokerEgressConfiguration();
       var driverMock = new Mock<IBrokerEgressDriver>();
       driverMock.Setup(driver => driver.Dispose()).Verifiable();
@@ -105,7 +97,6 @@ namespace Eshva.Poezd.Core.UnitTests
       serviceProviderMock.Setup(adapter => adapter.GetService(typeof(EmptyPipeFitter))).Returns(() => new EmptyPipeFitter());
 
       var sut = new BrokerEgress(
-        brokerId,
         configuration,
         serviceProviderMock.Object);
       sut.Dispose();
@@ -118,22 +109,12 @@ namespace Eshva.Poezd.Core.UnitTests
     [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
     public void when_constructed_with_invalid_arguments_it_should_fail()
     {
-      var brokerId = "some";
       var configuration = ConfigurationTests.CreateBrokerEgressConfiguration();
       var serviceProvider = Mock.Of<IDiContainerAdapter>();
 
       Action sut = () => new BrokerEgress(
-        brokerId,
         configuration,
         serviceProvider);
-
-      brokerId = null;
-      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("brokerId"));
-      brokerId = string.Empty;
-      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("brokerId"));
-      brokerId = WhitespaceString;
-      sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("brokerId"));
-      brokerId = "some";
 
       configuration = null;
       sut.Should().ThrowExactly<ArgumentNullException>().Where(exception => exception.ParamName.Equals("configuration"));
@@ -147,12 +128,10 @@ namespace Eshva.Poezd.Core.UnitTests
     [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
     public void when_constructed_with_invalid_configuration_it_should_fail()
     {
-      const string brokerId = "some";
-      var egressConfiguration = ConfigurationTests.CreateBrokerEgressConfigurationWithout(configuration => configuration.Driver = null);
+      var egressConfiguration = ConfigurationTests.CreateBrokerEgressConfiguration().With(configuration => configuration.Driver = null);
       var serviceProvider = Mock.Of<IDiContainerAdapter>();
 
       Action sut = () => new BrokerEgress(
-        brokerId,
         egressConfiguration,
         serviceProvider);
 
@@ -163,7 +142,6 @@ namespace Eshva.Poezd.Core.UnitTests
     [SuppressMessage("ReSharper", "ObjectCreationAsStatement")]
     public void when_constructed_with_invalid_pipe_fitters_in_configuration_it_should_fail()
     {
-      const string brokerId = "some";
       var configuration = ConfigurationTests.CreateBrokerEgressConfiguration();
       configuration.EnterPipeFitterType = typeof(IPipeFitter);
       configuration.ExitPipeFitterType = typeof(IPipeFitter);
@@ -171,7 +149,6 @@ namespace Eshva.Poezd.Core.UnitTests
       serviceProviderMock.Setup(adapter => adapter.GetService(It.IsAny<Type>())).Throws<InvalidOperationException>();
 
       Action sut = () => new BrokerEgress(
-        brokerId,
         configuration,
         serviceProviderMock.Object);
 
@@ -182,7 +159,5 @@ namespace Eshva.Poezd.Core.UnitTests
       configuration.ExitPipeFitterType = typeof(object);
       sut.Should().ThrowExactly<PoezdConfigurationException>().Where(exception => exception.Message.Contains(typeof(object).FullName));
     }
-
-    private const string WhitespaceString = " \t\n";
   }
 }

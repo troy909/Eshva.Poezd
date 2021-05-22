@@ -34,12 +34,17 @@ namespace Eshva.Poezd.Core.Configuration
     /// <inheritdoc />
     protected override IEnumerable<string> ValidateItself()
     {
-      if (!_brokers.Any()) yield return "At least one message broker should be configured.";
+      if (!_brokers.Any())
+      {
+        yield return "At least one message broker should be configured. " +
+                     $"Use {nameof(MessageRouterConfigurator)}.{nameof(MessageRouterConfigurator.AddMessageBroker)} " +
+                     "to add a message broker.";
+      }
     }
 
     /// <inheritdoc />
     protected override IEnumerable<IMessageRouterConfigurationPart> GetChildConfigurations() => Brokers;
 
-    private readonly List<MessageBrokerConfiguration> _brokers = new();
+    private readonly List<MessageBrokerConfiguration> _brokers = new List<MessageBrokerConfiguration>();
   }
 }

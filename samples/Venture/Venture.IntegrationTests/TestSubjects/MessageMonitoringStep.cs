@@ -1,6 +1,5 @@
 #region Usings
 
-using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
@@ -9,16 +8,18 @@ using Eshva.Poezd.Core.Routing;
 
 namespace Venture.IntegrationTests.TestSubjects
 {
-  public class FinishTestStep : IStep<MessageHandlingContext>
+  public class MessageMonitoringStep : IStep<MessageHandlingContext>
   {
-    public FinishTestStep(Properties props)
+    public MessageMonitoringStep(Properties props)
     {
       _props = props;
     }
 
     public Task Execute(MessageHandlingContext context)
     {
-      _props.Semaphore.Release();
+      _props.Counter++;
+      _props.LastMessageKey = context.Key;
+      _props.LastMessagePayload = context.Payload;
       return Task.CompletedTask;
     }
 
@@ -26,12 +27,11 @@ namespace Venture.IntegrationTests.TestSubjects
 
     public class Properties
     {
-      public Properties(int totalMessageCount = 1)
-      {
-        Semaphore = new SemaphoreSlim(initialCount: 0, totalMessageCount);
-      }
+      public int Counter { get; set; }
 
-      public SemaphoreSlim Semaphore { get; }
+      public object LastMessageKey { get; set; }
+
+      public object LastMessagePayload { get; set; }
     }
   }
 }

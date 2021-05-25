@@ -68,9 +68,9 @@ namespace Venture.IntegrationTests
             .WithPipeFitter<EmptyPipeFitter>(),
           _testOutput);
 
-      var topic = RoutingTests.GetRandomTopic();
       var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<string, byte[]>(timeout);
+      var topic = RoutingTests.GetRandomTopic();
       await kafkaTestContext.CreateTopics(topic);
 
       var expectedValue = new byte[10];
@@ -85,8 +85,8 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<EmptyEgressApiMessageTypesRegistry>();
       container.RegisterSingleton<MessageCountingPipeFitter>();
       container.RegisterSingleton<CaseOfficeIngressApiMessageTypesRegistry>();
-      container.Register<CounterStep>(Lifestyle.Scoped);
-      var counter = new CounterStep.Properties();
+      container.Register<MessageMonitoringStep>(Lifestyle.Scoped);
+      var counter = new MessageMonitoringStep.Properties();
       container.RegisterInstance(counter);
 
       var testIsFinished = RoutingTests.AddTestFinishSemaphore(container);

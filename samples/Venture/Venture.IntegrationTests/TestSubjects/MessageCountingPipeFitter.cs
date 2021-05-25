@@ -16,7 +16,7 @@ namespace Venture.IntegrationTests.TestSubjects
 
     protected override IEnumerable<Type> GetStepTypes()
     {
-      yield return typeof(CounterStep);
+      yield return typeof(MessageMonitoringStep);
     }
   }
 }

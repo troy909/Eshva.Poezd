@@ -33,6 +33,8 @@ namespace Eshva.Poezd.Core.IntegrationTests
     public void when_configured_with_egress_and_publish_but_no_api_knows_about_message_type_it_should_fail()
     {
       var (_, router) = CreateRouterWithBothIngressAndEgress();
+      router.Start(CancellationToken.None);
+
       Func<Task> sut = () => router.RouteEgressMessage(new object());
       sut.Should().ThrowExactly<PoezdOperationException>("egress сконфигурирован, но ни один брокер не знает о данном типе сообщения")
         .Which.Message.Should().Contain(typeof(object).FullName);

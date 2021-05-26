@@ -2,13 +2,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
-using Eshva.Poezd.Core.Pipeline;
 using JetBrains.Annotations;
 
 #endregion
@@ -18,7 +15,7 @@ namespace Eshva.Poezd.Core.Routing
   /// <summary>
   /// The Poezd message router. The core part of Poezd.
   /// </summary>
-  public sealed class MessageRouter : IMessageRouter
+  public sealed partial class MessageRouter : IMessageRouter
   {
     /// <summary>
     /// Constructs a new instance of message router.
@@ -38,41 +35,20 @@ namespace Eshva.Poezd.Core.Routing
     {
       _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
       _diContainerAdapter = diContainerAdapter ?? throw new ArgumentNullException(nameof(diContainerAdapter));
+      _currentState = new NotStartedState(this);
     }
 
     /// <inheritdoc />
-    public async Task Start(CancellationToken cancellationToken = default)
+    public Task Start(CancellationToken cancellationToken = default)
     {
-      if (_isDisposed) throw new PoezdOperationException("It's not possible to start a disposed message router");
-      if (_isStarted) throw new PoezdOperationException("The router is started already.");
-
-      EnsureConfigurationValid();
-
-      try
+      lock (_currentStateSyncObject)
       {
-        InitializeMessageBrokers();
-
-        var starters = _brokers
-          .Where(broker => !broker.Configuration.HasNoIngress)
-          .Select(
-            broker => broker.StartConsumeMessages(
-              broker.Ingress.Apis.SelectMany(api => api.GetQueueNamePatterns()),
-              cancellationToken));
-        // TODO: Are exceptions here handled correctly?
-        await Task.WhenAll(starters);
+        return _currentState.Start(cancellationToken);
       }
-      catch (Exception exception)
-      {
-        throw new PoezdOperationException(
-          "Unable to start message router due an error. Inspect the inner exception for detailed information.",
-          exception);
-      }
-
-      _isStarted = true;
     }
 
     /// <inheritdoc />
-    public async Task RouteIngressMessage(
+    public Task RouteIngressMessage(
       string brokerId,
       string queueName,
       DateTimeOffset receivedOnUtc,
@@ -80,48 +56,15 @@ namespace Eshva.Poezd.Core.Routing
       object payload,
       IReadOnlyDictionary<string, string> metadata)
     {
-      if (_isStopped)
-        throw new PoezdOperationException("Further message handling is stopped due an error during handling another message.");
-      if (payload == null) throw new ArgumentNullException(nameof(payload));
-      if (metadata == null) throw new ArgumentNullException(nameof(metadata));
-      if (string.IsNullOrWhiteSpace(brokerId)) throw new ArgumentNullException(nameof(brokerId));
-      if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentNullException(nameof(queueName));
-
-      using (_diContainerAdapter.BeginScope())
+      lock (_currentStateSyncObject)
       {
-        var messageBroker = _brokers.Single(broker => broker.Id.Equals(brokerId, StringComparison.InvariantCultureIgnoreCase));
-        if (messageBroker.Configuration.HasNoIngress)
-          throw new PoezdOperationException("Driver shouldn't route ingress messages if no ingress configured.");
-
-        var api = messageBroker.Ingress.GetApiByQueueName(queueName);
-
-        var messageHandlingContext = new MessageHandlingContext
-        {
-          Key = key,
-          Payload = payload,
-          Metadata = metadata,
-          QueueName = queueName,
-          ReceivedOnUtc = receivedOnUtc,
-          Broker = messageBroker,
-          Api = api
-        };
-
-        var pipeline = BuildIngressPipeline(messageBroker, api);
-
-        try
-        {
-          // TODO: Add timeout as a cancellation token and configuration its using router configuration fluent interface.
-          await pipeline.Execute(messageHandlingContext);
-        }
-        catch (Exception exception)
-        {
-          // TODO: Message handling shouldn't stop but decision what to do with erroneous message should be carried to
-          // some API-related strategy.
-          _isStopped = true;
-          throw new PoezdOperationException(
-            "An error occurred during ingress message handling. Inspect the inner exceptions for more details.",
-            exception);
-        }
+        return _currentState.RouteIngressMessage(
+          brokerId,
+          queueName,
+          receivedOnUtc,
+          key,
+          payload,
+          metadata);
       }
     }
 
@@ -134,41 +77,24 @@ namespace Eshva.Poezd.Core.Routing
       DateTimeOffset timestamp = default)
       where TMessage : class
     {
-      var apis = _brokers.SelectMany(broker => broker.Egress.Apis).Where(api => api.MessageTypesRegistry.DoesOwn<TMessage>()).ToArray();
-      if (!apis.Any()) throw new PoezdOperationException($"Unable to find destinations for message of type {message.GetType().FullName}.");
+      lock (_currentStateSyncObject)
+      {
+        return _currentState.RouteEgressMessage(
+          message,
+          correlationId,
+          causationId,
+          messageId,
+          timestamp);
+      }
+    }
 
-      var tasks = apis.Select(
-        async api =>
-        {
-          var context = new MessagePublishingContext
-          {
-            Message = message,
-            Broker = _brokers.Single(broker => broker.Egress.Apis.Contains(api)),
-            Api = api,
-            CorrelationId = correlationId,
-            CausationId = causationId,
-            MessageId = messageId,
-            Timestamp = timestamp
-          };
-
-          var pipeline = BuildEgressPipeline(_brokers.Single(broker => broker.Egress.Apis.Contains(api)), api);
-
-          try
-          {
-            await pipeline.Execute(context);
-            // TODO: Add timeout configuration using router configuration fluent interface.
-            var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
-            await context.Broker.Publish(context, timeout);
-          }
-          catch (Exception exception)
-          {
-            throw new PoezdOperationException(
-              "An error occurred during message publishing. Inspect the inner exceptions for more details.",
-              exception);
-          }
-        });
-
-      return Task.WhenAll(tasks);
+    /// <inheritdoc />
+    public void Dispose()
+    {
+      lock (_currentStateSyncObject)
+      {
+        _currentState.Dispose();
+      }
     }
 
     /// <summary>
@@ -192,83 +118,18 @@ namespace Eshva.Poezd.Core.Routing
       return poezdConfigurator.Configuration;
     }
 
-    /// <inheritdoc />
-    public void Dispose()
+    private void SetCurrentState(IMessageRouter state)
     {
-      _brokers.ForEach(broker => broker.Dispose());
-      _isDisposed = true;
-    }
-
-    private void InitializeMessageBrokers()
-    {
-      _brokers.AddRange(
-        _configuration.Brokers.Select(
-          configuration =>
-          {
-            var broker = new MessageBroker(
-              this,
-              configuration,
-              _diContainerAdapter);
-            broker.Initialize();
-            return broker;
-          }));
-    }
-
-    private static Pipeline<MessageHandlingContext> BuildIngressPipeline(IMessageBroker messageBroker, IIngressApi api)
-    {
-      try
+      lock (_currentStateSyncObject)
       {
-        var pipeline = new Pipeline<MessageHandlingContext>();
-        messageBroker.Ingress.EnterPipeFitter.AppendStepsInto(pipeline);
-        api.PipeFitter.AppendStepsInto(pipeline);
-        messageBroker.Ingress.ExitPipeFitter.AppendStepsInto(pipeline);
-        return pipeline;
+        _currentState = state;
       }
-      catch (Exception exception)
-      {
-        throw new PoezdOperationException(
-          "An error occurred during building an ingress pipeline. Inspect the inner exceptions for more details.",
-          exception);
-      }
-    }
-
-    private static Pipeline<MessagePublishingContext> BuildEgressPipeline(IMessageBroker messageBroker, IEgressApi api)
-    {
-      try
-      {
-        var pipeline = new Pipeline<MessagePublishingContext>();
-        messageBroker.Egress.EnterPipeFitter.AppendStepsInto(pipeline);
-        api.PipeFitter.AppendStepsInto(pipeline);
-        messageBroker.Egress.ExitPipeFitter.AppendStepsInto(pipeline);
-
-        return pipeline;
-      }
-      catch (Exception exception)
-      {
-        throw new PoezdOperationException(
-          "An error occurred during building an egress pipeline. Inspect the inner exceptions for more details.",
-          exception);
-      }
-    }
-
-    private void EnsureConfigurationValid()
-    {
-      var configurationErrors = _configuration.Validate().ToList();
-      if (!configurationErrors.Any()) return;
-
-      var message = new StringBuilder("Unable to start the message router due configuration errors:");
-      configurationErrors.ForEach(error => message.AppendLine($"\t* {error}"));
-
-      throw new PoezdConfigurationException(message.ToString());
     }
 
     private readonly List<IMessageBroker> _brokers = new List<IMessageBroker>();
     private readonly MessageRouterConfiguration _configuration;
+    private readonly object _currentStateSyncObject = new object();
     private readonly IDiContainerAdapter _diContainerAdapter;
-
-    // TODO: Use the State pattern.
-    private bool _isDisposed;
-    private bool _isStarted;
-    private bool _isStopped;
+    private IMessageRouter _currentState;
   }
 }

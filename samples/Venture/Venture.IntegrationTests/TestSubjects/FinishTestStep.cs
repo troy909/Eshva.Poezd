@@ -13,22 +13,22 @@ namespace Venture.IntegrationTests.TestSubjects
   {
     public FinishTestStep(Properties props)
     {
-      Props = props;
+      _props = props;
     }
-
-    public Properties Props { get; }
 
     public Task Execute(MessageHandlingContext context)
     {
-      Props.Semaphore.Release();
+      _props.Semaphore.Release();
       return Task.CompletedTask;
     }
 
+    private readonly Properties _props;
+
     public class Properties
     {
-      public Properties(int initialCount = 0, int maxCount = 1)
+      public Properties(int totalMessageCount = 1)
       {
-        Semaphore = new SemaphoreSlim(initialCount, maxCount);
+        Semaphore = new SemaphoreSlim(initialCount: 0, totalMessageCount);
       }
 
       public SemaphoreSlim Semaphore { get; }

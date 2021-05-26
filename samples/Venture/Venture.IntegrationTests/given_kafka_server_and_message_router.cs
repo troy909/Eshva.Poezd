@@ -42,7 +42,7 @@ namespace Venture.IntegrationTests
     }
 
     [Fact]
-    public async Task when_message_published_to_kafka_topic_it_should_be_received_by_properly_configured_poezd1()
+    public async Task when_message_published_to_kafka_topic_it_should_be_received_by_properly_configured_poezd()
     {
       var timeoutOrDoneSource = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5));
       var doneOrTimeout = timeoutOrDoneSource.Token;
@@ -190,6 +190,14 @@ namespace Venture.IntegrationTests
     private readonly KafkaTestContextFactory _kafkaTestContextFactory;
     private readonly StringCreator _stringCreator = new StringCreator();
     private readonly ITestOutputHelper _testOutput;
+
+    private class IngressApi1QueueNamePatternsProvider : IQueueNamePatternsProvider
+    {
+      public IEnumerable<string> GetQueueNamePatterns()
+      {
+        yield return "^some-";
+      }
+    }
 
     private class EnterPipeFitter : TypeBasedPipeFitter
     {

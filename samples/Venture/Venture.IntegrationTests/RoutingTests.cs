@@ -59,7 +59,6 @@ namespace Venture.IntegrationTests
       container.RegisterSingleton<EmptyPipeFitter>();
       container.RegisterSingleton<IHeaderValueCodec, Utf8ByteStringHeaderValueCodec>();
       container.RegisterSingleton<Utf8ByteStringHeaderValueCodec>();
-      container.RegisterSingleton<IngressApi1QueueNamePatternsProvider>();
       container.RegisterSingleton<EmptyHandlerRegistry>();
 
       return container;

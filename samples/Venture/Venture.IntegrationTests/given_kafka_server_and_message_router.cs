@@ -45,9 +45,9 @@ namespace Venture.IntegrationTests
     public async Task when_message_published_to_kafka_topic_it_should_be_received_by_properly_configured_poezd1()
     {
       var timeoutOrDoneSource = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5));
-      var timeoutOrDone = timeoutOrDoneSource.Token;
+      var doneOrTimeout = timeoutOrDoneSource.Token;
       var topic = RoutingTests.GetRandomTopic();
-      await using var kafkaTestContext = _kafkaTestContextFactory.Create<string, string>(timeoutOrDone);
+      await using var kafkaTestContext = _kafkaTestContextFactory.Create<string, string>(doneOrTimeout);
       await kafkaTestContext.CreateTopics(topic);
 
       var enterProperties = new MessageLoggingStep.Properties();
@@ -65,7 +65,7 @@ namespace Venture.IntegrationTests
       var container = BuildContainerToHandleMessages(enterProperties, exitProperties);
       container.RegisterSingleton(
         () => CreateMessageRouterConfigurationToHandleMessages().CreateMessageRouter(new SimpleInjectorAdapter(container)));
-      await container.GetInstance<IMessageRouter>().Start(timeoutOrDone);
+      await container.GetInstance<IMessageRouter>().Start(doneOrTimeout);
 
       var publishedKey2 = CreateString(length: 20);
       var publishedPayload2 = CreateString(length: 20);
@@ -75,7 +75,7 @@ namespace Venture.IntegrationTests
         publishedPayload2,
         kafkaTestContext);
 
-      await timeoutOrDone;
+      await doneOrTimeout;
 
       enterProperties.Messages.Select(message => (string) message.Key).Should().Equal(
         new[] {publishedKey1, publishedKey2},

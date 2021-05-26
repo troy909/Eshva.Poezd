@@ -24,7 +24,6 @@ namespace Eshva.Poezd.Core.IntegrationTests.Tools
       throw new KeyNotFoundException("An empty egress message types registry knows nothing about any message types.");
 
     /// <inheritdoc />
-    public bool DoesOwn<TMessage>() where TMessage : class =>
-      throw new KeyNotFoundException("An empty egress message types registry knows nothing about any message types.");
+    public bool DoesOwn<TMessage>() where TMessage : class => false;
   }
 }

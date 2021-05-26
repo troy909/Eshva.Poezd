@@ -39,7 +39,13 @@ namespace Eshva.Poezd.Core.Routing
     }
 
     /// <inheritdoc />
-    public Task Start(CancellationToken cancellationToken = default) => _currentState.Start(cancellationToken);
+    public Task Start(CancellationToken cancellationToken = default)
+    {
+      lock (_currentStateSyncObject)
+      {
+        return _currentState.Start(cancellationToken);
+      }
+    }
 
     /// <inheritdoc />
     public Task RouteIngressMessage(
@@ -48,14 +54,19 @@ namespace Eshva.Poezd.Core.Routing
       DateTimeOffset receivedOnUtc,
       object key,
       object payload,
-      IReadOnlyDictionary<string, string> metadata) =>
-      _currentState.RouteIngressMessage(
-        brokerId,
-        queueName,
-        receivedOnUtc,
-        key,
-        payload,
-        metadata);
+      IReadOnlyDictionary<string, string> metadata)
+    {
+      lock (_currentStateSyncObject)
+      {
+        return _currentState.RouteIngressMessage(
+          brokerId,
+          queueName,
+          receivedOnUtc,
+          key,
+          payload,
+          metadata);
+      }
+    }
 
     /// <inheritdoc />
     public Task RouteEgressMessage<TMessage>(
@@ -64,16 +75,27 @@ namespace Eshva.Poezd.Core.Routing
       string causationId = default,
       string messageId = default,
       DateTimeOffset timestamp = default)
-      where TMessage : class =>
-      _currentState.RouteEgressMessage(
-        message,
-        correlationId,
-        causationId,
-        messageId,
-        timestamp);
+      where TMessage : class
+    {
+      lock (_currentStateSyncObject)
+      {
+        return _currentState.RouteEgressMessage(
+          message,
+          correlationId,
+          causationId,
+          messageId,
+          timestamp);
+      }
+    }
 
     /// <inheritdoc />
-    public void Dispose() => _currentState.Dispose();
+    public void Dispose()
+    {
+      lock (_currentStateSyncObject)
+      {
+        _currentState.Dispose();
+      }
+    }
 
     /// <summary>
     /// Provides the message router configuration.
@@ -96,10 +118,17 @@ namespace Eshva.Poezd.Core.Routing
       return poezdConfigurator.Configuration;
     }
 
-    private void SetCurrentState(IMessageRouter state) => _currentState = state;
+    private void SetCurrentState(IMessageRouter state)
+    {
+      lock (_currentStateSyncObject)
+      {
+        _currentState = state;
+      }
+    }
 
     private readonly List<IMessageBroker> _brokers = new List<IMessageBroker>();
     private readonly MessageRouterConfiguration _configuration;
+    private readonly object _currentStateSyncObject = new object();
     private readonly IDiContainerAdapter _diContainerAdapter;
     private IMessageRouter _currentState;
   }

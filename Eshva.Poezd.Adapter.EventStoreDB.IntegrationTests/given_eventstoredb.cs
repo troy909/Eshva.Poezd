@@ -1,11 +1,9 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Eshva.Poezd.Adapter.EventStoreDB.Ingress;
+using Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests.Tools;
 using Eshva.Poezd.Adapter.SimpleInjector;
-using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using SimpleInjector;
@@ -68,49 +66,5 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests
     }
 
     private void PublishMessage() { }
-  }
-
-  internal class TestServiceHandlersRegistry : IHandlerRegistry
-  {
-    public IReadOnlyDictionary<Type, Type[]> HandlersGroupedByMessageType { get; }
-  }
-
-  internal class TestIngressApiMessageTypesRegistry : IIngressApiMessageTypesRegistry
-  {
-    public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) => throw new NotImplementedException();
-
-    public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
-      where TMessage : class => throw new NotImplementedException();
-  }
-
-  internal class TestQueueNamePatternsProvider : IQueueNamePatternsProvider
-  {
-    public IEnumerable<string> GetQueueNamePatterns() => throw new NotImplementedException();
-  }
-
-  internal class TestIngressExitPipeline : IPipeFitter
-  {
-    public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class
-    {
-      throw new NotImplementedException();
-    }
-  }
-
-  internal class TestIngressEnterPipeline : IPipeFitter
-  {
-    public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class
-    {
-      throw new NotImplementedException();
-    }
-  }
-
-  /// <summary>
-  /// Pipe fitter producing no steps.
-  /// </summary>
-  [ExcludeFromCodeCoverage]
-  internal class EmptyPipeFitter : IPipeFitter
-  {
-    /// <inheritdoc />
-    public void AppendStepsInto<TContext>(IPipeline<TContext> pipeline) where TContext : class { }
   }
 }

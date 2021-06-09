@@ -15,6 +15,8 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.Ingress
 
     public Type HeaderValueCodecType { get; internal set; }
 
+    public Type StreamSubscriptionFactoryType { get; internal set; }
+
     // TODO: Implement configuration validation.
     public IEnumerable<string> Validate() => Enumerable.Empty<string>();
   }

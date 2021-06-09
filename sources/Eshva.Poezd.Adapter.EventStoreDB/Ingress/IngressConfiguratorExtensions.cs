@@ -19,7 +19,9 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.Ingress
       var configuration = new BrokerIngressEventStoreDbDriverConfiguration();
       configurator(new BrokerIngressEventStoreDbDriverConfigurator(configuration));
       IBrokerIngressDriverConfigurator driverConfigurator = brokerIngress;
-      driverConfigurator.SetDriver(new BrokerIngressEventStoreDbDriver(configuration), configuration);
+      driverConfigurator.SetDriver(
+        new BrokerIngressEventStoreDbDriver(configuration, new DefaultStreamSubscriptionRegistry()),
+        configuration);
       return brokerIngress;
     }
   }

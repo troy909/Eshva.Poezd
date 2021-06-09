@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\samples\Venture\Common\Venture.Common.TestingTools\Venture.Common.TestingTools.csproj" />
     <ProjectReference Include="..\sources\Eshva.Poezd.Adapter.EventStoreDB\Eshva.Poezd.Adapter.EventStoreDB.csproj" />
     <ProjectReference Include="..\sources\Eshva.Poezd.Adapter.SimpleInjector\Eshva.Poezd.Adapter.SimpleInjector.csproj" />
     <ProjectReference Include="..\sources\Eshva.Poezd.Core\Eshva.Poezd.Core.csproj" />

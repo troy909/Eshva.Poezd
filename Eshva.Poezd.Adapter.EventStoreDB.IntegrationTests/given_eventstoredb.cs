@@ -1,6 +1,8 @@
 #region Usings
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Eshva.Poezd.Adapter.EventStoreDB.Ingress;
 using Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests.Tools;
 using Eshva.Poezd.Adapter.SimpleInjector;
@@ -8,6 +10,7 @@ using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
+using Venture.Common.TestingTools.Core;
 using Xunit;
 
 #endregion
@@ -17,21 +20,33 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests
   public class given_eventstoredb
   {
     [Fact]
-    public void when_setup_connection_it_should_handle_messages_from_eventstoredb()
+    public async Task when_setup_connection_it_should_handle_messages_from_eventstoredb()
     {
+      var timeoutOrDoneSource = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5));
+      var doneOrTimeout = timeoutOrDoneSource.Token;
+
       var isMessageHandled = false;
       var router = CreateConfiguredMessageRouter(() => isMessageHandled = true);
-      PublishMessage();
+      await router.Start(doneOrTimeout);
+
+      await PublishMessage();
+      await doneOrTimeout;
 
       isMessageHandled.Should().BeTrue("published message should be handled be properly configured message router");
     }
 
     private IMessageRouter CreateConfiguredMessageRouter(Action messageHandledAction)
     {
-      // TODO: Return message router.
-
       var container = new Container();
       container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+      container.RegisterSingleton<Utf8ByteStringHeaderValueCodec>();
+      container.RegisterSingleton<EmptyPipeFitter>();
+      container.RegisterSingleton<RegexQueueNameMatcher>();
+      container.RegisterSingleton<TestQueueNamePatternsProvider>();
+      container.RegisterSingleton<TestIngressApiMessageTypesRegistry>();
+      container.RegisterSingleton<TestServiceHandlersRegistry>();
+      container.RegisterSingleton<TestIngressEnterPipeline>();
+      container.RegisterSingleton<TestIngressExitPipeline>();
 
       var connectionConfiguration = new EventStoreDbConnectionConfiguration();
       var messageRouterConfiguration =
@@ -46,8 +61,10 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests
                       driver => driver
                         .WithConnection(connectionConfiguration)
                         .WithHeaderValueCodec<Utf8ByteStringHeaderValueCodec>())
-                    .WithEnterPipeFitter<TestIngressEnterPipeline>()
-                    .WithExitPipeFitter<TestIngressExitPipeline>()
+                    .WithEnterPipeFitter<EmptyPipeFitter>()
+                    .WithExitPipeFitter<EmptyPipeFitter>()
+                    // .WithEnterPipeFitter<TestIngressEnterPipeline>()
+                    // .WithExitPipeFitter<TestIngressExitPipeline>()
                     .WithQueueNameMatcher<RegexQueueNameMatcher>()
                     .AddApi(
                       api => api
@@ -61,10 +78,16 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests
                     ))
                 .WithoutEgress()));
 
+      // TODO: Call from an exit pipeline step.
+      messageHandledAction();
+
       container.RegisterSingleton(() => messageRouterConfiguration.CreateMessageRouter(new SimpleInjectorAdapter(container)));
       return container.GetInstance<IMessageRouter>();
     }
 
-    private void PublishMessage() { }
+    private Task PublishMessage()
+    {
+      return Task.CompletedTask;
+    }
   }
 }

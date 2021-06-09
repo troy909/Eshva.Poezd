@@ -1,6 +1,5 @@
-﻿#region Usings
+#region Usings
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,11 +12,14 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.Ingress
 {
   public class BrokerIngressEventStoreDbDriver : IBrokerIngressDriver
   {
-    public BrokerIngressEventStoreDbDriver(BrokerIngressEventStoreDbDriverConfiguration configuration) { }
+    public BrokerIngressEventStoreDbDriver(BrokerIngressEventStoreDbDriverConfiguration configuration)
+    {
+      _configuration = configuration;
+    }
 
     public void Dispose()
     {
-      throw new NotImplementedException();
+      // TODO: Dispose or close all subscriptions.
     }
 
     public void Initialize(
@@ -25,10 +27,13 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.Ingress
       IEnumerable<IIngressApi> apis,
       IDiContainerAdapter serviceProvider)
     {
-      throw new NotImplementedException();
+      // TODO: Initialize the driver.
     }
 
     public Task StartConsumeMessages(IEnumerable<string> queueNamePatterns, CancellationToken cancellationToken = default) =>
-      throw new NotImplementedException();
+      // TODO: Subscribe to subscription groups.
+      Task.CompletedTask;
+
+    private readonly BrokerIngressEventStoreDbDriverConfiguration _configuration;
   }
 }

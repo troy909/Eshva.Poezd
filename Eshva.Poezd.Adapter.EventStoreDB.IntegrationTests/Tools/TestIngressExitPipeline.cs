@@ -1,5 +1,9 @@
+#region Usings
+
 using System;
 using Eshva.Poezd.Core.Pipeline;
+
+#endregion
 
 namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests.Tools
 {

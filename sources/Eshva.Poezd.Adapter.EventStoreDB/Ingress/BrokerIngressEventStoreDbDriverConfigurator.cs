@@ -1,4 +1,4 @@
-﻿#region Usings
+#region Usings
 
 using System;
 
@@ -10,12 +10,21 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.Ingress
   {
     public BrokerIngressEventStoreDbDriverConfigurator(BrokerIngressEventStoreDbDriverConfiguration configuration)
     {
-      throw new NotImplementedException();
+      _configuration = configuration;
     }
 
-    public BrokerIngressEventStoreDbDriverConfigurator WithConnection(EventStoreDbConnectionConfiguration connectionConfiguration) =>
-      throw new NotImplementedException();
+    public BrokerIngressEventStoreDbDriverConfigurator WithConnection(EventStoreDbConnectionConfiguration connectionConfiguration)
+    {
+      _configuration.ConnectionConfiguration = connectionConfiguration;
+      return this;
+    }
 
-    public BrokerIngressEventStoreDbDriverConfigurator WithHeaderValueCodec<T>() => throw new NotImplementedException();
+    public BrokerIngressEventStoreDbDriverConfigurator WithHeaderValueCodec<THeaderValueCodec>() where THeaderValueCodec : IHeaderValueCodec
+    {
+      _configuration.HeaderValueCodecType = typeof(THeaderValueCodec);
+      return this;
+    }
+
+    private readonly BrokerIngressEventStoreDbDriverConfiguration _configuration;
   }
 }

@@ -1,13 +1,31 @@
+﻿#region Usings
+
 using System;
+using System.Collections.Generic;
 using Eshva.Poezd.Core.Pipeline;
+using JetBrains.Annotations;
+
+#endregion
 
 namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests.Tools
 {
-  internal class TestIngressApiMessageTypesRegistry : IIngressApiMessageTypesRegistry
+  [UsedImplicitly]
+  internal class TestIngressApiMessageTypesRegistry : IngressApiMessageTypesRegistry
   {
-    public Type GetMessageTypeByItsMessageTypeName(string messageTypeName) => throw new NotImplementedException();
+    public override void Initialize()
+    {
+      var messageType = typeof(TestMessage1);
+      AddDescriptor(
+        messageType.Name,
+        messageType,
+        new Descriptor());
+    }
 
-    public IIngressMessageTypeDescriptor<TMessage> GetDescriptorByMessageTypeName<TMessage>(string messageTypeName)
-      where TMessage : class => throw new NotImplementedException();
+    private class Descriptor : IIngressMessageTypeDescriptor<TestMessage1>
+    {
+      public IReadOnlyCollection<string> QueueNames { get; } = new string[0];
+
+      public TestMessage1 Parse(Memory<byte> bytes) => new TestMessage1();
+    }
   }
 }

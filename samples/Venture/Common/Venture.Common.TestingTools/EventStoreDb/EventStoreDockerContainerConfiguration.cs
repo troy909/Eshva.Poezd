@@ -8,9 +8,9 @@ using Venture.Common.TestingTools.Core;
 
 namespace Venture.Common.TestingTools.EventStoreDb
 {
-  public class EventStoreDbDockerContainerConfiguration : DockerContainerConfiguration
+  public class EventStoreDockerContainerConfiguration : DockerContainerConfiguration
   {
-    public ushort ExposedHttpPort { get; } = EventStoreHttpPort;
+    public ushort ExposedHttpPort { get; set; } = EventStoreHttpPort;
 
     public override IReadOnlyCollection<KeyValuePair<string, string>> GetVariables() => new Dictionary<string, string>
     {
@@ -29,6 +29,6 @@ namespace Venture.Common.TestingTools.EventStoreDb
 
     protected override DockerImage GetDefaultDockerImage() => new DockerImage("eventstore/eventstore:21.2.0-buster-slim");
 
-    private const ushort EventStoreHttpPort = 2113;
+    public const ushort EventStoreHttpPort = 2113;
   }
 }

@@ -14,8 +14,8 @@ namespace Venture.Common.TestingTools.Core
     {
       public PortBinding(ushort hostPort, ushort containerPort)
       {
-        ContainerPort = containerPort;
         HostPort = hostPort;
+        ContainerPort = containerPort;
       }
 
       public ushort HostPort { get; }

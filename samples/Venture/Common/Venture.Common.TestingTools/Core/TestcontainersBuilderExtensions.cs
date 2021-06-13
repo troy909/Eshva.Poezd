@@ -33,6 +33,6 @@ namespace Venture.Common.TestingTools.Core
       IProvideExposedPorts exposedPortsProvider)
       where TDockerContainer : IDockerContainer =>
       exposedPortsProvider.GetExposedPorts()
-        .Aggregate(builder, (current, exposedPort) => current.WithPortBinding(exposedPort));
+        .Aggregate(builder, (current, exposedPort) => current.WithExposedPort(exposedPort));
   }
 }

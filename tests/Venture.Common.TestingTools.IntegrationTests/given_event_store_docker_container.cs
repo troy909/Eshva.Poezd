@@ -3,20 +3,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using FluentAssertions;
+using RandomStringCreator;
 using Venture.Common.TestingTools.EventStoreDb;
+using Venture.Common.TestingTools.Network;
 using Xunit;
 
 #endregion
 
 namespace Venture.Common.TestingTools.IntegrationTests
 {
-  public class given_event_store_db_docker_container : IDisposable
+  [Collection(EventStoreSetupCollection.Name)]
+  public class given_event_store_docker_container : IDisposable
   {
-    public given_event_store_db_docker_container()
+    public given_event_store_docker_container()
     {
       _dockerClient = new DockerClientConfiguration().CreateClient();
     }
@@ -25,7 +29,7 @@ namespace Venture.Common.TestingTools.IntegrationTests
     public void when_constructed_with_valid_arguments_it_should_produce_instance_with_expected_state()
     {
       var configuration = CreateEventStoreDbContainerConfiguration();
-      var sut = new EventStoreDbDockerContainer(configuration);
+      var sut = new EventStoreDockerContainer(configuration);
 
       sut.Configuration.Should().Be(configuration, "constructor should assign container configuration");
     }
@@ -33,41 +37,45 @@ namespace Venture.Common.TestingTools.IntegrationTests
     [Fact]
     public async Task when_start_and_stop_it_should_start_docker_container_and_then_stop_it()
     {
-      var configuration = CreateEventStoreDbContainerConfiguration();
-      var sut = new EventStoreDbDockerContainer(configuration);
+      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
 
       var containers = await GetRunningContainers();
       containers.Should().NotContain(
-        container => container.Names.Any(name => name.Contains(EventStoreDbContainerName)),
+        container => container.Names.Any(name => name.Contains(_eventStoreDbContainerName)),
         "container shouldn't be started yet");
 
-      await sut.StartAsync();
+      var configuration = CreateEventStoreDbContainerConfiguration();
+      var sut = new EventStoreDockerContainer(configuration);
+
+      await sut.StartAsync(timeout);
 
       containers = await GetRunningContainers();
       containers.Should().Contain(
-        container => container.Names.Any(name => name.Contains(EventStoreDbContainerName)),
+        container => container.Names.Any(name => name.Contains(_eventStoreDbContainerName)),
         "container should be started");
 
-      await sut.StopAsync();
+      await sut.StopAsync(timeout);
 
       containers = await GetRunningContainers();
       containers.Should().NotContain(
-        container => container.Names.Any(name => name.Contains(EventStoreDbContainerName)),
+        container => container.Names.Any(name => name.Contains(_eventStoreDbContainerName)),
         "container should be stopped");
     }
 
-    public void Dispose()
-    {
-      _dockerClient.Dispose();
-    }
+    public void Dispose() => _dockerClient.Dispose();
 
     private Task<IList<ContainerListResponse>> GetRunningContainers() =>
       _dockerClient.Containers.ListContainersAsync(new ContainersListParameters());
 
-    private static EventStoreDbDockerContainerConfiguration CreateEventStoreDbContainerConfiguration() =>
-      new EventStoreDbDockerContainerConfiguration {ContainerName = EventStoreDbContainerName};
+    private EventStoreDockerContainerConfiguration CreateEventStoreDbContainerConfiguration() =>
+      new EventStoreDockerContainerConfiguration
+      {
+        ContainerName = _eventStoreDbContainerName,
+        ExposedHttpPort = _exposedHttpPort
+      };
 
     private readonly DockerClient _dockerClient;
-    private const string EventStoreDbContainerName = "TestingToolsEventStoreDb";
+    private readonly string _eventStoreDbContainerName = $"test-eventstore-{new StringCreator().Get(length: 10)}";
+    private readonly ushort _exposedHttpPort = NetworkTools.GetFreePort(rangeStart: 51000);
   }
 }

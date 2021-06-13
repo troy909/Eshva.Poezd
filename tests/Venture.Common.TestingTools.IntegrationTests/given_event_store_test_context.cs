@@ -3,11 +3,11 @@
 using System;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using EventStore.Client;
 using FluentAssertions;
 using RandomStringCreator;
+using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.EventStoreDb;
 using Xunit;
 
@@ -27,7 +27,7 @@ namespace Venture.Common.TestingTools.IntegrationTests
     [Fact]
     public async Task when_append_to_stream_it_should_append_event_to_specified_stream()
     {
-      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+      var timeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
       var testContext = new EventStoreTestContext(HostName, _fixture.ExposedHttpPort);
 
       const string eventPayload = "event payload";

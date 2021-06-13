@@ -2,9 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
@@ -26,7 +26,7 @@ namespace Venture.IntegrationTests
     public async Task when_message_published_to_kafka_topic_it_should_be_received_from_same_topic()
     {
       var topic = RoutingTests.GetRandomTopic();
-      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+      var timeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<string, string>(timeout);
       await kafkaTestContext.CreateTopics(topic);
 

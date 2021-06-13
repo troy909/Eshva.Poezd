@@ -3,7 +3,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Egress;
@@ -11,6 +10,7 @@ using Eshva.Poezd.Core.Common;
 using FluentAssertions;
 using Moq;
 using RandomStringCreator;
+using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
@@ -58,7 +58,7 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
       var producerFactory = new DefaultProducerFactory(configuratorMock.Object, serializerFactoryMock.Object);
       var producer = producerFactory.Create<string, byte[]>(CreateProducerConfig());
 
-      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+      var timeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<string, byte[]>(timeout);
       var topic = new StringCreator().Get(length: 10);
       await kafkaTestContext.CreateTopics(topic);

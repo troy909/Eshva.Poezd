@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
@@ -17,6 +16,7 @@ using Venture.CaseOffice.Messages.V1.Commands;
 using Venture.Common.Application.Storage;
 using Venture.Common.Poezd.Adapter;
 using Venture.Common.Poezd.Adapter.Ingress;
+using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;
@@ -63,7 +63,7 @@ namespace Venture.IntegrationTests
       container.RegisterInstance(registry);
 
       const string topic = "venture.commands.case-office.v1";
-      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+      var timeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<int, byte[]>(timeout);
       await kafkaTestContext.CreateTopics(topic);
 

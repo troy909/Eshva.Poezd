@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using FluentAssertions;
 using RandomStringCreator;
+using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.EventStoreDb;
 using Venture.Common.TestingTools.Network;
 using Xunit;
@@ -37,7 +37,7 @@ namespace Venture.Common.TestingTools.IntegrationTests
     [Fact]
     public async Task when_start_and_stop_it_should_start_docker_container_and_then_stop_it()
     {
-      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+      var timeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
 
       var containers = await GetRunningContainers();
       containers.Should().NotContain(

@@ -1,7 +1,6 @@
 #region Usings
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Eshva.Poezd.Adapter.EventStoreDB.Ingress;
 using Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests.Tools;
@@ -22,8 +21,7 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests
     [Fact]
     public async Task when_setup_connection_it_should_handle_messages_from_eventstoredb()
     {
-      var timeoutOrDoneSource = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5));
-      var doneOrTimeout = timeoutOrDoneSource.Token;
+      var doneOrTimeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
 
       var isMessageHandled = false;
       var router = CreateConfiguredMessageRouter(() => isMessageHandled = true);
@@ -85,9 +83,6 @@ namespace Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests
       return container.GetInstance<IMessageRouter>();
     }
 
-    private Task PublishMessage()
-    {
-      return Task.CompletedTask;
-    }
+    private Task PublishMessage() => Task.CompletedTask;
   }
 }

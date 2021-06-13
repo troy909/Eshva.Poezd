@@ -1,14 +1,14 @@
-﻿#region Usings
+#region Usings
 
 using System;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Ingress;
 using FluentAssertions;
 using Moq;
 using RandomStringCreator;
+using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
@@ -59,7 +59,7 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
         configuratorMock.Object,
         deserializerFactoryMock.Object);
 
-      var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(value: 5)).Token;
+      var timeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<int, byte[]>(timeout);
       var topic = new StringCreator().Get(length: 10);
       await kafkaTestContext.CreateTopics(topic);

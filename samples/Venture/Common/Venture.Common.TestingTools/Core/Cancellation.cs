@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 
 namespace Venture.Common.TestingTools.Core
 {
-  public static class AsyncExtensions
+  public static class Cancellation
   {
     /// <summary>
     /// Allows a cancellation token to be awaited.
@@ -22,6 +22,8 @@ namespace Venture.Common.TestingTools.Core
     [UsedImplicitly]
     public static CancellationTokenAwaiter GetAwaiter(this CancellationToken cancellationToken) =>
       new CancellationTokenAwaiter(cancellationToken);
+
+    public static CancellationToken TimeoutToken(TimeSpan timeoutLength) => new CancellationTokenSource(timeoutLength).Token;
 
     /// <summary>
     /// The awaiter for cancellation tokens.

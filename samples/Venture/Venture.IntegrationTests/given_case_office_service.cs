@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Eshva.Common.Testing;
+using Eshva.Common.Tpl;
 using FluentAssertions;
-using RandomStringCreator;
 using SimpleInjector;
 using Venture.CaseOffice.Application;
 using Venture.CaseOffice.Domain;
@@ -16,7 +17,6 @@ using Venture.CaseOffice.Messages.V1.Commands;
 using Venture.Common.Application.Storage;
 using Venture.Common.Poezd.Adapter;
 using Venture.Common.Poezd.Adapter.Ingress;
-using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;
@@ -72,8 +72,7 @@ namespace Venture.IntegrationTests
       var router = container.GetMessageRouter();
       await router.Start(timeout);
 
-      var stringCreator = new StringCreator();
-      var expectedReason = stringCreator.Get(length: 10);
+      var expectedReason = Randomize.String(length: 10);
       var (command, serialized) = CreateSerializedMessage(expectedReason);
       var headers = CreateHeaders(command.GetType());
 

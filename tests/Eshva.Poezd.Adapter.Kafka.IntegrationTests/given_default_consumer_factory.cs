@@ -4,11 +4,11 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Eshva.Common.Testing;
+using Eshva.Common.Tpl;
 using Eshva.Poezd.Adapter.Kafka.Ingress;
 using FluentAssertions;
 using Moq;
-using RandomStringCreator;
-using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.Kafka;
 using Xunit;
 
@@ -61,7 +61,7 @@ namespace Eshva.Poezd.Adapter.Kafka.IntegrationTests
 
       var timeout = Cancellation.TimeoutToken(TimeSpan.FromSeconds(value: 5));
       await using var kafkaTestContext = _kafkaTestContextFactory.Create<int, byte[]>(timeout);
-      var topic = new StringCreator().Get(length: 10);
+      var topic = Randomize.String(length: 10);
       await kafkaTestContext.CreateTopics(topic);
       var key = 123;
       var value = Encoding.UTF8.GetBytes("test-message");

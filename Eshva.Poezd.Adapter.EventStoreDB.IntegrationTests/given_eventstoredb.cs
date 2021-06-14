@@ -2,6 +2,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Eshva.Common.Tpl;
 using Eshva.Poezd.Adapter.EventStoreDB.Ingress;
 using Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests.Tools;
 using Eshva.Poezd.Adapter.SimpleInjector;
@@ -9,7 +10,6 @@ using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using Venture.Common.TestingTools.Core;
 using Xunit;
 
 #endregion

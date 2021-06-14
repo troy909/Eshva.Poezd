@@ -3,8 +3,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Eshva.Common.Testing;
 using FluentAssertions;
-using RandomStringCreator;
 using Venture.Common.Application.Egress;
 using Venture.Common.Poezd.Adapter.Egress;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
@@ -47,8 +47,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var sut = new VentureMessagePublisher(messageRouter);
       var message = new object();
 
-      var correlationId = _stringCreator.Get(length: 10);
-      var precedingMessageId = _stringCreator.Get(length: 10);
+      var correlationId = Randomize.String(length: 10);
+      var precedingMessageId = Randomize.String(length: 10);
       await sut.PublishSubsequentMessage(
         message,
         DateTimeOffset.UtcNow,
@@ -70,8 +70,8 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var publisher = new VentureMessagePublisher(messageRouter);
       var message = new object();
 
-      var correlationId = _stringCreator.Get(length: 10);
-      var precedingMessageId = _stringCreator.Get(length: 10);
+      var correlationId = Randomize.String(length: 10);
+      var precedingMessageId = Randomize.String(length: 10);
       var generatedOnUtc = DateTimeOffset.UtcNow;
 
       Func<Task> sut = () => publisher.PublishSubsequentMessage<object>(
@@ -132,7 +132,6 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         "a whitespace string is not valid preceding message ID");
     }
 
-    private readonly StringCreator _stringCreator = new StringCreator();
     private const string WhitespaceString = " \t\n";
   }
 }

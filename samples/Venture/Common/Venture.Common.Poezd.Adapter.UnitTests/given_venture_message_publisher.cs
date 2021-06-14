@@ -2,8 +2,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Eshva.Common.Testing;
 using FluentAssertions;
-using RandomStringCreator;
 using Venture.Common.Application.Egress;
 using Venture.Common.Poezd.Adapter.Egress;
 using Venture.Common.Poezd.Adapter.UnitTests.TestSubjects;
@@ -21,9 +21,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var messageRouter = new FakeMessageRouter();
       var sut = new VentureMessagePublisher(messageRouter);
       var message = new object();
-      var correlationId = _stringCreator.Get(length: 10);
-      var causationId = _stringCreator.Get(length: 10);
-      var messageId = _stringCreator.Get(length: 10);
+      var correlationId = Randomize.String(length: 10);
+      var causationId = Randomize.String(length: 10);
+      var messageId = Randomize.String(length: 10);
 
       await sut.Publish(
         message,
@@ -46,9 +46,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
       var messageRouter = new FakeMessageRouter();
       var sut = new VentureMessagePublisher(messageRouter);
       var message = new object();
-      var correlationId = _stringCreator.Get(length: 10);
-      var causationId = _stringCreator.Get(length: 10);
-      var messageId = _stringCreator.Get(length: 10);
+      var correlationId = Randomize.String(length: 10);
+      var causationId = Randomize.String(length: 10);
+      var messageId = Randomize.String(length: 10);
 
       await sut.Publish(
         message,
@@ -75,9 +75,9 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
         new VentureOutgoingMessageHandlingContext(
           new object(),
           DateTimeOffset.UtcNow,
-          _stringCreator.Get(length: 10),
-          _stringCreator.Get(length: 10),
-          _stringCreator.Get(length: 10)));
+          Randomize.String(length: 10),
+          Randomize.String(length: 10),
+          Randomize.String(length: 10)));
 
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("message"), "message is required");
     }
@@ -91,7 +91,5 @@ namespace Venture.Common.Poezd.Adapter.UnitTests
 
       sut.Should().Throw<ArgumentNullException>().Where(exception => exception.ParamName.Equals("context"), "context is required");
     }
-
-    private readonly StringCreator _stringCreator = new StringCreator();
   }
 }

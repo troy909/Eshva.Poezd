@@ -6,11 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using Eshva.Common.Testing;
+using Eshva.Common.Tpl;
 using FluentAssertions;
-using RandomStringCreator;
-using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.EventStoreDb;
-using Venture.Common.TestingTools.Network;
 using Xunit;
 
 #endregion
@@ -75,7 +74,7 @@ namespace Venture.Common.TestingTools.IntegrationTests
       };
 
     private readonly DockerClient _dockerClient;
-    private readonly string _eventStoreDbContainerName = $"test-eventstore-{new StringCreator().Get(length: 10)}";
-    private readonly ushort _exposedHttpPort = NetworkTools.GetFreePort(rangeStart: 51000);
+    private readonly string _eventStoreDbContainerName = $"test-eventstore-{Randomize.String(length: 10)}";
+    private readonly ushort _exposedHttpPort = NetworkTools.GetFreeTcpPort(rangeStart: 51000);
   }
 }

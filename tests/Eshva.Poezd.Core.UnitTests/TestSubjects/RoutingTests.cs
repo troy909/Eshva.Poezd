@@ -9,7 +9,6 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using Moq;
-using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Xunit.Abstractions;
@@ -385,9 +384,6 @@ namespace Eshva.Poezd.Core.UnitTests.TestSubjects
       return container;
     }
 
-    public static string RandomString(uint length = 10) => StringCreator.Get((int) length);
-
     public const string SampleBrokerServer = "sample-broker-server";
-    private static readonly StringCreator StringCreator = new StringCreator();
   }
 }

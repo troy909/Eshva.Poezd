@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Docker.DotNet" Version="3.125.4" />
+    <PackageReference Include="Eshva.Common.Testing" Version="1.2.0" />
+    <PackageReference Include="Eshva.Common.Tpl" Version="1.2.0" />
     <PackageReference Include="EventStore.Client.Grpc" Version="21.2.0" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
-    <PackageReference Include="RandomStringCreator" Version="2.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

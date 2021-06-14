@@ -2,6 +2,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Eshva.Common.Testing;
 using Eshva.Poezd.Adapter.SimpleInjector;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
@@ -28,9 +29,9 @@ namespace Eshva.Poezd.Core.UnitTests
       var state = new TestDriverState();
       await using (var container = RoutingTests.SetupContainer(_testOutputHelper)
         .AddRouterWithThreeBrokers(
-          RoutingTests.RandomString(),
-          RoutingTests.RandomString(),
-          RoutingTests.RandomString(),
+          Randomize.String(length: 10),
+          Randomize.String(length: 10),
+          Randomize.String(length: 10),
           state))
       {
         var messageRouter = container.GetMessageRouter();
@@ -64,9 +65,9 @@ namespace Eshva.Poezd.Core.UnitTests
       IMessageRouter messageRouter;
       await using (var container = RoutingTests.SetupContainer(_testOutputHelper)
         .AddRouterWithThreeBrokers(
-          RoutingTests.RandomString(),
-          RoutingTests.RandomString(),
-          RoutingTests.RandomString(),
+          Randomize.String(length: 10),
+          Randomize.String(length: 10),
+          Randomize.String(length: 10),
           state))
       {
         messageRouter = container.GetMessageRouter();

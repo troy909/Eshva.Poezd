@@ -1,10 +1,9 @@
 #region Usings
 
 using System.Threading.Tasks;
+using Eshva.Common.Testing;
 using JetBrains.Annotations;
-using RandomStringCreator;
 using Venture.Common.TestingTools.EventStoreDb;
-using Venture.Common.TestingTools.Network;
 using Xunit;
 
 #endregion
@@ -16,8 +15,8 @@ namespace Venture.Common.TestingTools.IntegrationTests
   {
     public EventStoreSetupContainerAsyncFixture()
     {
-      ContainerName = $"test-eventstore-{new StringCreator().Get(length: 10)}";
-      ExposedHttpPort = NetworkTools.GetFreePort(rangeStart: 52000);
+      ContainerName = $"test-eventstore-{Randomize.String(length: 10)}";
+      ExposedHttpPort = NetworkTools.GetFreeTcpPort(rangeStart: 52000);
       _container = new EventStoreDockerContainer(
         new EventStoreDockerContainerConfiguration
         {

@@ -4,10 +4,10 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Eshva.Common.Testing;
+using Eshva.Common.Tpl;
 using EventStore.Client;
 using FluentAssertions;
-using RandomStringCreator;
-using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.EventStoreDb;
 using Xunit;
 
@@ -38,7 +38,7 @@ namespace Venture.Common.TestingTools.IntegrationTests
         eventType,
         Encoding.UTF8.GetBytes(eventPayload),
         Encoding.UTF8.GetBytes(eventMetadata));
-      var streamName = RandomString();
+      var streamName = Randomize.String(length: 10);
 
       await testContext.AppendToStream(
         @event,
@@ -56,8 +56,6 @@ namespace Venture.Common.TestingTools.IntegrationTests
       Encoding.UTF8.GetString(eventRecord.Metadata.Span).Should().Be(eventMetadata);
       eventRecord.EventType.Should().Be(eventType);
     }
-
-    private static string RandomString(uint length = 10) => new StringCreator().Get((int) length);
 
     private readonly EventStoreClient _client;
     private readonly EventStoreSetupContainerAsyncFixture _fixture;

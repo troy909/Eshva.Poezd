@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Eshva.Common.Testing;
+using Eshva.Common.Tpl;
 using Eshva.Poezd.Adapter.Kafka;
 using Eshva.Poezd.Adapter.Kafka.Ingress;
 using Eshva.Poezd.Adapter.SimpleInjector;
@@ -16,12 +17,10 @@ using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using JetBrains.Annotations;
-using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Venture.CaseOffice.Messages;
 using Venture.Common.Poezd.Adapter.Ingress;
-using Venture.Common.TestingTools.Core;
 using Venture.Common.TestingTools.Kafka;
 using Venture.IntegrationTests.TestSubjects;
 using Xunit;
@@ -85,7 +84,7 @@ namespace Venture.IntegrationTests
         "these messages were published in this order");
     }
 
-    private string CreateString(int length) => _stringCreator.Get(length);
+    private string CreateString(uint length) => Randomize.String(length);
 
     private Task ProduceMessage(
       string topic,
@@ -188,7 +187,6 @@ namespace Venture.IntegrationTests
     }
 
     private readonly KafkaTestContextFactory _kafkaTestContextFactory;
-    private readonly StringCreator _stringCreator = new StringCreator();
     private readonly ITestOutputHelper _testOutput;
 
     private class IngressApi1QueueNamePatternsProvider : IQueueNamePatternsProvider

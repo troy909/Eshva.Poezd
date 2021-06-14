@@ -2,8 +2,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Eshva.Common.Testing;
 using FluentAssertions;
-using RandomStringCreator;
 using Venture.Common.Application.Egress;
 using Xunit;
 
@@ -18,9 +18,9 @@ namespace Venture.Common.Application.UnitTests
     {
       var message = new object();
       var generatedOnUtc = DateTimeOffset.UtcNow;
-      var correlationId = _stringCreator.Get(length: 10);
-      var causationId = _stringCreator.Get(length: 10);
-      var messageId = _stringCreator.Get(length: 10);
+      var correlationId = Randomize.String(length: 10);
+      var causationId = Randomize.String(length: 10);
+      var messageId = Randomize.String(length: 10);
       var context = new VentureOutgoingMessageHandlingContext(
         message,
         generatedOnUtc,
@@ -42,9 +42,9 @@ namespace Venture.Common.Application.UnitTests
     {
       var message = new object();
       var generatedOnUtc = DateTimeOffset.UtcNow;
-      var correlationId = _stringCreator.Get(length: 10);
-      var causationId = _stringCreator.Get(length: 10);
-      var messageId = _stringCreator.Get(length: 10);
+      var correlationId = Randomize.String(length: 10);
+      var causationId = Randomize.String(length: 10);
+      var messageId = Randomize.String(length: 10);
       Action sut = () => new VentureOutgoingMessageHandlingContext(
         message: null,
         generatedOnUtc,
@@ -138,7 +138,6 @@ namespace Venture.Common.Application.UnitTests
         "a whitespace string is not valid message ID");
     }
 
-    private readonly StringCreator _stringCreator = new StringCreator();
     private const string WhitespaceString = " \t\n";
   }
 }

@@ -12,7 +12,6 @@ using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
 using Eshva.Poezd.Core.Routing;
-using RandomStringCreator;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using Venture.Common.Poezd.Adapter.Ingress;
@@ -66,7 +65,7 @@ namespace Venture.IntegrationTests
 
     public static IMessageRouter GetMessageRouter(this Container container) => container.GetInstance<IMessageRouter>();
 
-    public static string GetRandomString() => StringCreator.Get(length: 10);
+    public static string GetRandomString() => Randomize.String(length: 10);
 
     public static string GetRandomTopic(string prefix = TopicPrefix) => $"{prefix}-{GetRandomString()}";
 
@@ -160,6 +159,5 @@ namespace Venture.IntegrationTests
     }
 
     private const string TopicPrefix = @"some";
-    private static readonly StringCreator StringCreator = new StringCreator();
   }
 }

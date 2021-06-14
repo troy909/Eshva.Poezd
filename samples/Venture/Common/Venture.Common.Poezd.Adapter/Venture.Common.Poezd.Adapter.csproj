@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Eshva.Common.Tpl" Version="1.1.0" />
+    <PackageReference Include="Eshva.Common.Tpl" Version="1.2.0" />
     <PackageReference Include="FlatSharp" Version="4.2.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
   </ItemGroup>

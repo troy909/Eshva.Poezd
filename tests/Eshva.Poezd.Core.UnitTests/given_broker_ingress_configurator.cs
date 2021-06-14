@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using Eshva.Common.Testing;
 using Eshva.Poezd.Core.Common;
 using Eshva.Poezd.Core.Configuration;
 using Eshva.Poezd.Core.Pipeline;
@@ -9,7 +10,6 @@ using Eshva.Poezd.Core.Routing;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Moq;
-using RandomStringCreator;
 using Xunit;
 
 #endregion
@@ -86,7 +86,7 @@ namespace Eshva.Poezd.Core.UnitTests
     {
       var configuration = new BrokerIngressConfiguration();
       var sut = new BrokerIngressConfigurator(configuration);
-      var expected = new StringCreator().Get(length: 10);
+      var expected = Randomize.String(length: 10);
       sut.AddApi(api => api.WithId(expected)).Should().BeSameAs(sut);
       configuration.Apis.Should().HaveCount(expected: 1, "an API should be added")
         .And.Subject.Single().Id.Should().Be(expected, "it should be added API instance");

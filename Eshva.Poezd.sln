@@ -63,13 +63,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.SimpleI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Core.IntegrationTests", "tests\Eshva.Poezd.Core.IntegrationTests\Eshva.Poezd.Core.IntegrationTests.csproj", "{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Adapter.EventStoreDB", "sources\Eshva.Poezd.Adapter.EventStoreDB\Eshva.Poezd.Adapter.EventStoreDB.csproj", "{06FF2506-501A-4684-9C30-645E45EE3484}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Venture.Common.TestingTools.IntegrationTests", "tests\Venture.Common.TestingTools.IntegrationTests\Venture.Common.TestingTools.IntegrationTests.csproj", "{63F62E9D-2AF5-4075-886C-BA5B19A40AAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Adapter.EventStoreDB.UnitTests", "tests\Eshva.Poezd.Adapter.EventStoreDB.UnitTests\Eshva.Poezd.Adapter.EventStoreDB.UnitTests.csproj", "{8B1FD4AF-6961-4B56-8DA9-C60393136C6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.EventStore.IntegrationTests", "tests\Eshva.Poezd.Adapter.EventStore.IntegrationTests\Eshva.Poezd.Adapter.EventStore.IntegrationTests.csproj", "{4A28B3D1-49CE-40E9-A810-DF65AF1BFDA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests", "Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests\Eshva.Poezd.Adapter.EventStoreDB.IntegrationTests.csproj", "{C9656A48-5DAD-4F90-84B8-DA4307D120CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.EventStore.UnitTests", "tests\Eshva.Poezd.Adapter.EventStore.UnitTests\Eshva.Poezd.Adapter.EventStore.UnitTests.csproj", "{4F9683B6-8BD2-4233-9829-F9253065BC9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Venture.Common.TestingTools.IntegrationTests", "tests\Venture.Common.TestingTools.IntegrationTests\Venture.Common.TestingTools.IntegrationTests.csproj", "{63F62E9D-2AF5-4075-886C-BA5B19A40AAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshva.Poezd.Adapter.EventStore", "sources\Eshva.Poezd.Adapter.EventStore\Eshva.Poezd.Adapter.EventStore.csproj", "{1516AAB7-787D-44F0-99C1-5A099E44C94C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,22 +157,22 @@ Global
 		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{06FF2506-501A-4684-9C30-645E45EE3484}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06FF2506-501A-4684-9C30-645E45EE3484}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06FF2506-501A-4684-9C30-645E45EE3484}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06FF2506-501A-4684-9C30-645E45EE3484}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B1FD4AF-6961-4B56-8DA9-C60393136C6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B1FD4AF-6961-4B56-8DA9-C60393136C6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B1FD4AF-6961-4B56-8DA9-C60393136C6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B1FD4AF-6961-4B56-8DA9-C60393136C6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9656A48-5DAD-4F90-84B8-DA4307D120CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9656A48-5DAD-4F90-84B8-DA4307D120CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9656A48-5DAD-4F90-84B8-DA4307D120CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9656A48-5DAD-4F90-84B8-DA4307D120CF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{63F62E9D-2AF5-4075-886C-BA5B19A40AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{63F62E9D-2AF5-4075-886C-BA5B19A40AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63F62E9D-2AF5-4075-886C-BA5B19A40AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63F62E9D-2AF5-4075-886C-BA5B19A40AAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A28B3D1-49CE-40E9-A810-DF65AF1BFDA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A28B3D1-49CE-40E9-A810-DF65AF1BFDA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A28B3D1-49CE-40E9-A810-DF65AF1BFDA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A28B3D1-49CE-40E9-A810-DF65AF1BFDA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F9683B6-8BD2-4233-9829-F9253065BC9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F9683B6-8BD2-4233-9829-F9253065BC9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F9683B6-8BD2-4233-9829-F9253065BC9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F9683B6-8BD2-4233-9829-F9253065BC9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1516AAB7-787D-44F0-99C1-5A099E44C94C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1516AAB7-787D-44F0-99C1-5A099E44C94C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1516AAB7-787D-44F0-99C1-5A099E44C94C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1516AAB7-787D-44F0-99C1-5A099E44C94C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,9 +199,9 @@ Global
 		{7A7532FC-28EE-4E00-BA6E-65230214054D} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 		{D49D761B-B80B-4301-AA37-F3B97A380CF3} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 		{6993B229-DA65-4FEA-BB11-32F5C58FE9C4} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
-		{8B1FD4AF-6961-4B56-8DA9-C60393136C6A} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
-		{C9656A48-5DAD-4F90-84B8-DA4307D120CF} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 		{63F62E9D-2AF5-4075-886C-BA5B19A40AAE} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
+		{4A28B3D1-49CE-40E9-A810-DF65AF1BFDA3} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
+		{4F9683B6-8BD2-4233-9829-F9253065BC9A} = {18170444-CA30-43F3-AA72-8CBB35A4631F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5A9A0B05-BB4E-449D-A533-4E46735CB138}

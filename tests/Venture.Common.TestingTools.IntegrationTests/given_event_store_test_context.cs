@@ -8,7 +8,7 @@ using Eshva.Common.Testing;
 using Eshva.Common.Tpl;
 using EventStore.Client;
 using FluentAssertions;
-using Venture.Common.TestingTools.EventStoreDb;
+using Venture.Common.TestingTools.EventStore;
 using Xunit;
 
 #endregion

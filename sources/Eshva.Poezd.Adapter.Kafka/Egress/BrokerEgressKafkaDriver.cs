@@ -39,8 +39,11 @@ namespace Eshva.Poezd.Adapter.Kafka.Egress
     public void Initialize(IEnumerable<IEgressApi> apis, IDiContainerAdapter serviceProvider)
     {
       if (_isInitialized)
+      {
         throw new PoezdOperationException(
           $"Kafka driver for broker with bootstrap servers{_driverConfiguration.ProducerConfig.BootstrapServers} is already initialized.");
+      }
+
       _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
       _apis = apis ?? throw new ArgumentNullException(nameof(apis));
 

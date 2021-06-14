@@ -3,7 +3,7 @@
 using System.Threading.Tasks;
 using Eshva.Common.Testing;
 using JetBrains.Annotations;
-using Venture.Common.TestingTools.EventStoreDb;
+using Venture.Common.TestingTools.EventStore;
 using Xunit;
 
 #endregion

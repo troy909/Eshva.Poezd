@@ -9,7 +9,7 @@ using Docker.DotNet.Models;
 using Eshva.Common.Testing;
 using Eshva.Common.Tpl;
 using FluentAssertions;
-using Venture.Common.TestingTools.EventStoreDb;
+using Venture.Common.TestingTools.EventStore;
 using Xunit;
 
 #endregion

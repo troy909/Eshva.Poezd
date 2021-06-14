@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Eshva.Common.Collections" Version="1.2.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
-    <PackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.92" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
+    <PackageReference Include="JetBrains.ExternalAnnotations" Version="10.2.94" />
   </ItemGroup>
 
 </Project>

@@ -114,6 +114,9 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
     {
       if (!_started || _stopped) return;
 
+      var consumerName = _consumer.Name;
+      var consumerMemberId = _consumer.MemberId;
+
       try
       {
         _consumer.Close();
@@ -131,8 +134,8 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
 
       _logger.LogInformation(
         "Closed consumer with name {Name} and {GroupID}.",
-        _consumer.Name,
-        _consumer.MemberId);
+        consumerName,
+        consumerMemberId);
     }
 
     /// <inheritdoc />

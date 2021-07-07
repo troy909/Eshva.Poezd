@@ -119,6 +119,8 @@ namespace Eshva.Poezd.Adapter.Kafka.Ingress
 
       try
       {
+        _consumer.Unsubscribe();
+        _consumer.Unassign();
         _consumer.Close();
       }
       catch (Exception exception)
